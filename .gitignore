@@ -38,16 +38,16 @@ project.lock.json
 *.sln.docstates
 
 # Build results
-CarHistoryReportSystemAPI/[Dd]ebug/
-CarHistoryReportSystemAPI/[Dd]ebugPublic/
-CarHistoryReportSystemAPI/[Rr]elease/
-CarHistoryReportSystemAPI/[Rr]eleases/
-CarHistoryReportSystemAPI/x64/
-CarHistoryReportSystemAPI/x86/
-CarHistoryReportSystemAPI/build/
-CarHistoryReportSystemAPI/bld/
-CarHistoryReportSystemAPI/[Bb]in/
-CarHistoryReportSystemAPI/[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
 msbuild.log
 msbuild.err
 msbuild.wrn
