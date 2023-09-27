@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,20 @@ namespace Domain.Entities
 {
     public class DataProvider
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string? Address { get; set; }
+        public string? WebsiteLink { get; set; }
+        public string? Service { get; set; }
+
+        public string? PhoneNumber { get; set; }
+
+        public string? Email { get; set; }
+
+        public DataProviderType Type { get; set; }
+
+        public ICollection<User> Users { get; set; } = new List<User>();
+
     }
 }

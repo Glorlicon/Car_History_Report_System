@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    enum DataProviderType
+    public enum DataProviderType
     {
+        CarDealer,
+        InsuranceCompany,
+        ServiceShop,
+        Manufacturer,
+        VehicleRegistry,
+        PoliceOffice
     }
 }

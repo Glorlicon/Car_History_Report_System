@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    enum Role
+    public enum Role
     {
+        Adminstrator,
+        User,
+        CarDealer,
+        InsuranceCompany,
+        ServiceShop,
+        Manufacturer,
+        VehicleRegistry,
+        PoliceOffice
     }
 }

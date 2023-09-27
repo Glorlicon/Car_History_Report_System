@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class CarServiceHistory
+    public class CarServiceHistory : CarHistory
     {
+        public string Description { get; set; }
+
+        public DateTime ServiceTime { get; set; }
     }
 }
