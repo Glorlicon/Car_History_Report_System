@@ -26,5 +26,11 @@ namespace Domain.Entities
 
         public ICollection<CarMaintainance> CarMaintainances { get;set; } = new List<CarMaintainance>();
         public ICollection<CarReport> CarReports { get; set; } = new List<CarReport>();
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public ICollection<CarStolenHistory> CarStolenHistories { get; set; } = new List<CarStolenHistory>();
+        public ICollection<CarAccidentHistory> CarAccidentHistories { get; set; } = new List<CarAccidentHistory>();
+        public ICollection<CarSalesInfo> CarSalesInfos { get; set; } = new List<CarSalesInfo>();
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
     }
 }

@@ -23,6 +23,8 @@ namespace Domain.Entities
         public DataProviderType Type { get; set; }
 
         public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<CarRecall> CarRecalls { get; set; } = new List<CarRecall>();
+
 
     }
 }

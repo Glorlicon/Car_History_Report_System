@@ -9,6 +9,7 @@ namespace Domain.Enum
     public enum Role
     {
         Adminstrator,
+        Guest,
         User,
         CarDealer,
         InsuranceCompany,
