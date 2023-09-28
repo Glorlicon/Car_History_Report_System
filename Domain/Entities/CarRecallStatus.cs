@@ -19,5 +19,6 @@ namespace Domain.Entities
         public CarRecall CarRecall { get; set; }
     
         //public enum Status
+        //gasdgkoasdogk
     }
 }
