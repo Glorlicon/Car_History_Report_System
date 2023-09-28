@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,9 @@ namespace Domain.Entities
 
         public int ManufacturerId { get; set; }
 
-        public CarSpecification CarSpecification { get; set; }
+        public CarSpecification Model { get; set; }
 
-        public DataProvider DataProvider { get; set; }
+        public DataProvider Manufacturer { get; set; }
 
         public string? Description { get; set; }
 

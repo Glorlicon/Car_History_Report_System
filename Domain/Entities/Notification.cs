@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Enum
+using Domain.Enum;
 
 namespace Domain.Entities
 {
@@ -11,20 +11,20 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
 
-        public int RelatedCarId { get; set; }
+        public int? RelatedCarId { get; set; }
 
-        public Car Car { get; set; }
+        public Car? RelatedCar { get; set; }
 
-        public Guid RelatedUserId { get; set; }
+        public Guid? RelatedUserId { get; set; }
 
-        public User User { get; set; }
+        public User? RelatedUser { get; set; }
 
-        public String? Description { get; set; }
+        public string Title { get; set; }
 
-        //public Type Type { get; set; }
+        public string? Description { get; set; }
 
         public DateTime CreatedTime { get; set; }
 
-        public String? RelatedLink { get; set; }
+        public string? RelatedLink { get; set; }
     }
 }

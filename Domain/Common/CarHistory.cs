@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Common
 {
-    public class CarHistory
+    public abstract class CarHistory
     {
         [Key]
         public int Id { get; set; }

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-	public enum Status
+	public enum RecallStatus
 	{
-			Pending,
-			Active,
-			Inactive
+		Open,
+		Closed
 	}
 }
