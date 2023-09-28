@@ -8,5 +8,9 @@ namespace Domain.Entities
 {
     public class CarOdometerHistory
     {
+
+        public DateOnly ReportDate { get; set; }
+        public long OdometerValue { get; set; }
+        public string Description { get; set; }
     }
 }
