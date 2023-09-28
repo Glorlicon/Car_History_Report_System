@@ -20,7 +20,6 @@ namespace Domain.Entities
         public Car Car { get; set; }
 
         public CarRecall CarRecall { get; set; }
-    
         public RecallStatus Status { get; set; }
     }
 }
