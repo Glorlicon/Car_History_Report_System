@@ -11,10 +11,7 @@ namespace Domain.Entities
 {
     public class CarRecallStatus
     {
-        [Key, Column(Order = 0)]
         public string CarId { get; set; }
-
-        [Key, Column(Order = 1)]
         public int CarRecallId { get; set; }
 
         public Car Car { get; set; }

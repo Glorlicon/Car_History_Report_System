@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Domain.Common;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Car
+    public class Car : BaseAuditableEntity
     {
         [Key]
         public string VinId { get; set; }
 
-        public string LicensePlateNumber { get; set; }
+        public string? LicensePlateNumber { get; set; }
 
         public string ModelId { get; set; }
 
@@ -42,7 +43,7 @@ namespace Domain.Entities
 
         public ICollection<CarMaintainance> CarMaintainances { get; set; } = new List<CarMaintainance>();
         public ICollection<CarStolenHistory> CarStolenHistories { get; set; } = new List<CarStolenHistory>();
-        public CarSalesInfo CarSalesInfos { get; set; } = null!;
+        public CarSalesInfo? CarSalesInfo { get; set; }
 
     }
 }

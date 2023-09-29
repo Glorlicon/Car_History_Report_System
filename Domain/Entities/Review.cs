@@ -10,10 +10,7 @@ namespace Domain.Entities
 {
     public class Review
     {
-        [Key,Column(Order = 0)]
-        public Guid UserId { get; set; }
-
-        [Key, Column(Order = 1)]
+        public string UserId { get; set; }
         public int DataProviderId { get; set; }
 
         public User User { get; set; }

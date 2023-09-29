@@ -15,7 +15,7 @@ namespace Domain.Entities
 
         public Car? RelatedCar { get; set; }
 
-        public Guid? RelatedUserId { get; set; }
+        public string? RelatedUserId { get; set; }
 
         public User? RelatedUser { get; set; }
 

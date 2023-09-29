@@ -11,16 +11,14 @@ namespace Domain.Entities
     public class ModelOdometer
     {
 
-        [Key, Column(Order = 0)]
         public string ModelId { get; set; }
 
-        [Key, Column(Order = 1)]
-        public string Name { get; set; }
+        public string MaintenancePart { get; set; }
 
-        public CarSpecification CarSpecification { get; set; }
+        public CarSpecification Model { get; set; }
 
         public int Odometer { get; set; }
 
-        public RecommendAction Action { get; set; }
+        public RecommendAction RecommendAction { get; set; }
     }
 }

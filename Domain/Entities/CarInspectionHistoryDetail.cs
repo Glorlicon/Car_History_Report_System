@@ -11,7 +11,8 @@ namespace Domain.Entities
         public int Id { get; set; }
         public int HistoryId { get; set; }
         public string InspectionPart { get; set; }
-        public bool isPassed { get; set; } = false;
+        public bool IsPassed { get; set; } = false;
+        public string? Note { get; set; }
         public CarInspectionHistory CarInspectionHistory { get; set; }
 
     }

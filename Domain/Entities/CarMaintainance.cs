@@ -10,17 +10,14 @@ namespace Domain.Entities
 {
     public class CarMaintainance
     {
+        public string UserId { get; set; }
 
-        [Key, Column(Order = 0)]
-        public Guid UserId { get; set; }
-
-        [Key, Column(Order = 1)]
-        public int CarId { get; set; }
+        public string CarId { get; set; }
 
         public Car Car { get; set; }
 
         public User User { get; set; }
 
-        public bool isDeleted { get; set; } = false;
+        public bool IsDeleted { get; set; } = false;
     }
 }

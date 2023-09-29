@@ -14,7 +14,7 @@ namespace Domain.Entities
         public string LastName { get; set; }
         public string? Address { get; set; }
 
-        public string? DataProviderId { get; set; }
+        public int? DataProviderId { get; set; }
 
         public DataProvider? DataProvider { get; set; }
 
