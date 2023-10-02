@@ -3,23 +3,26 @@ import GlobalNavigator from './components/navigator/GlobalNavigator';
 import logo from '../public/logo512.png';
 import './styles/App.css';
 import Footer from './components/footer/Footer';
+import CustomRoutes from './routes/CustomRoutes';
 
 function App() {
     const navItems = [
-        { label: 'Car Sale', link: '/' },
-        { label: 'Car Reports', link: '/about' },
+        { label: 'Car Sale', link: '/sales' },
+        { label: 'Car Reports', link: '/report' },
         {
             label: 'Car Maintenance', dropdownItems: [
-                { label: 'Find A Service Shop', link: '/service1' },
-                { label: 'Track My Car Maintenance', link: '/service2' }
+                { label: 'Find A Service Shop', link: '/serviceshop' },
+                { label: 'Track My Car Maintenance', link: '/maintenance' }
             ]
         },
-        { label: 'Car Values', link: '/contact' }
+        { label: 'Car Values', link: '/value' }
     ];
     return (
         <div className="App">
-            <GlobalNavigator items={navItems} />
-             
+            <header>
+                <GlobalNavigator items={navItems} />
+            </header>
+            <CustomRoutes />
             <Footer/>
         </div>
     );

@@ -19,7 +19,9 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         <nav className="global-nav">
             <div className="left-section">
                 <div className="logo-container">
-                    <img src={logo} alt="Company Logo" className="logo" />
+                    <a href="/">
+                        <img src={logo} alt="Company Logo" className="logo" />
+                    </a>
                 </div>
                 <button className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
                     ☰

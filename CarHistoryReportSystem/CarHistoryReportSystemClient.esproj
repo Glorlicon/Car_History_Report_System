@@ -13,5 +13,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\footer\" />
+    <Folder Include="src\components\forms\register\" />
+    <Folder Include="src\pages\admin\car_model\" />
+    <Folder Include="src\pages\admin\manufacturer\" />
+    <Folder Include="src\pages\manufacturer\car\" />
+    <Folder Include="src\pages\manufacturer\car_model\" />
+    <Folder Include="src\pages\user\" />
   </ItemGroup>
 </Project>
