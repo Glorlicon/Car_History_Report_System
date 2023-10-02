@@ -18,6 +18,11 @@
     <Folder Include="src\pages\admin\manufacturer\" />
     <Folder Include="src\pages\manufacturer\car\" />
     <Folder Include="src\pages\manufacturer\car_model\" />
+    <Folder Include="src\pages\insurance_company\" />
+    <Folder Include="src\pages\car_dealer\" />
+    <Folder Include="src\pages\vehicle_registry\" />
+    <Folder Include="src\pages\police\" />
+    <Folder Include="src\pages\service_shop\" />
     <Folder Include="src\pages\user\" />
   </ItemGroup>
 </Project>

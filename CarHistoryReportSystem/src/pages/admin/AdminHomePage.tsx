@@ -2,7 +2,7 @@ import React from 'react';
 
 function AdminHomePage() {
   return (
-    <p>Hello world!</p>
+      <p>Hello AdminHomePage!</p>
   );
 }
 
