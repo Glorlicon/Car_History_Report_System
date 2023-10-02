@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using Application.DomainServices;
+using Application.Interfaces;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddScoped<IAuthenticationServices, AuthenticationServices>();
             return services;
         }
     }

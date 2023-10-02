@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Application.DTO.Authentication;
+using AutoMapper;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace Application.Common
     {
         public MappingProfile()
         {
-            
+            CreateMap<RegistrationRequestDTO, User>();
         }
     }
 }
