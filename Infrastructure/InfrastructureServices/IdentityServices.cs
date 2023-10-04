@@ -3,6 +3,7 @@ using Application.DTO.Authentication;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -36,7 +37,10 @@ namespace Infrastructure.InfrastructureServices
 
         public async Task<User> GetUserAsync(string userId)
         {
-            return await _userManager.FindByIdAsync(userId);
+            var user =  await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                throw new UserNotFoundException($"user id {userId} was not found");
+            return user;
         }
 
         public async Task<bool> IsInRoleAsync(string userId, Role role)
@@ -92,7 +96,7 @@ namespace Infrastructure.InfrastructureServices
         {
             if (!await ValidateUser(username, password))
             {
-                return null;
+                throw new UserLoginValidatationException();
             }
             return await _userManager.GenerateEmailConfirmationTokenAsync(_user);
         }
@@ -144,7 +148,7 @@ namespace Infrastructure.InfrastructureServices
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return false;
+                throw new UserNotFoundException($"User with email {email} was not found");
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
         }
@@ -152,6 +156,8 @@ namespace Infrastructure.InfrastructureServices
         public async Task<bool> SetSuspendAccount(string userId,bool isSuspend)
         {
             var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                throw new UserNotFoundException($"user id {userId} was not found");
             await _userManager.SetLockoutEnabledAsync(user, isSuspend);
             return true;
         }

@@ -77,14 +77,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> CreateCarModelAsync([FromBody] CarSpecificationCreateRequestDTO request)
         {
             var result = await _carSpecService.CreateCarModel(request);
-            if (result == true)
-            {
-                return CreatedAtRoute("GetCarModel", new { modelId = request.ModelID },null);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return CreatedAtRoute("GetCarModel", new { modelId = request.ModelID },null);
         }
 
         /// <summary>
@@ -101,14 +94,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> UpdateCarModelAsync(string modelId, [FromBody] CarSpecificationUpdateRequestDTO request)
         {
             var result = await _carSpecService.UpdateCarModel(modelId, request);
-            if (result == true)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return NoContent();
         }
 
         /// <summary>
@@ -125,14 +111,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> DeleteCarModelAsync(string modelId)
         {
             var result = await _carSpecService.DeleteCarModel(modelId);
-            if (result == true)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return NoContent();
         }
     }
 }

@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -66,9 +67,9 @@ namespace Application.DomainServices
         public async Task<bool> DeleteCarModel(string modelId)
         {
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if(carSpec == null)
+            if(carSpec is null)
             {
-                return false;
+                throw new CarSpecificationNotFoundException(modelId);
             }
             _carSpecRepository.Delete(carSpec);
             await _carSpecRepository.SaveAsync();
@@ -79,9 +80,9 @@ namespace Application.DomainServices
         {
 
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if(carSpec == null)
+            if(carSpec is null)
             {
-                return false;
+                throw new CarSpecificationNotFoundException(modelId);
             }
             _mapper.Map(request, carSpec);
             await _carSpecRepository.SaveAsync();

@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,10 @@ namespace Application.DomainServices
         public async Task<User> GetCurrentUserAsync()
         {
             var userId = _currentUserServices.GetCurrentUserId();
-            return await _identityServices.GetUserAsync(userId);
+            var user = await _identityServices.GetUserAsync(userId);
+            if (user is null)
+                throw new UserNotFoundException("No current user is logged in");
+            return user;
         }
 
         public async Task<bool> IsInRoleAsync(string userId, Role role)
