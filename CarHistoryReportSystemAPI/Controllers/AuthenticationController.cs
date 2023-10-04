@@ -76,6 +76,15 @@ namespace CarHistoryReportSystemAPI.Controllers
             return Ok(new { Token = result });
         }
 
+        [HttpPost("resend-email-code")]
+        public async Task<IActionResult> ResendConfirmEmailCode(EmailConfirmationRequestDTO request)
+        {
+            var verificationCode = AuthenticationUtility.GenerateVerificationCode();
+            _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));
+            await _emailServices.SendEmailAsync(request.Email, "Your Verification Code", verificationCode);
+            return Ok();
+        }
+
         [Authorize(Roles = "Adminstrator")]
         [HttpPost("suspend-account", Name = "SuspendAccount")]
         public async Task<IActionResult> SuspendAccount(string userId)

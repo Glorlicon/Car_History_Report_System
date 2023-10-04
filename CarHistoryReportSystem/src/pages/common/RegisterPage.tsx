@@ -84,7 +84,7 @@ function RegisterPage() {
         setRegisterError(true)
         setErrorMessage(response.error as string)
     }
-
+    //TODO: fix css
     return (
         <div className="register-container">
             <form onSubmit={onSubmit} className="register-form">
@@ -103,7 +103,7 @@ function RegisterPage() {
                 ) : (
                         <div className="register-buttons">
                             {!isFirstStep && (
-                                <button type="button" onClick={back}>
+                                <button type="button" onClick={() => { setRegisterError(false); back(); }}>
                                     Back
                                 </button>
                             )}

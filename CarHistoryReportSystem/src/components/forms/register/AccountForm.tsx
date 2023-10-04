@@ -74,7 +74,7 @@ function AccountForm({
                 value={confirmPassword}
                 onChange={e => updateFields({ confirmPassword: e.target.value })}
             />
-            <div className={` ${shake ? 'shaking' : 'validation'}`}>
+            <div className={`${shake ? 'shaking' : 'validation'}`}>
                 {!validEmail && (
                     <div className="error">Email is invalid!</div>
                 )}
