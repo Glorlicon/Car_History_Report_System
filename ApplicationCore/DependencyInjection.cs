@@ -18,6 +18,7 @@ namespace Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddScoped<IAuthenticationServices, AuthenticationServices>();
+            services.AddScoped<ICarSpecificationService, CarSpecificationServices>();
             return services;
         }
     }

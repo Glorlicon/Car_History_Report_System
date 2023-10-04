@@ -1,4 +1,5 @@
 ﻿using Application.DTO.Authentication;
+using Application.DTO.CarSpecification;
 using AutoMapper;
 using Domain.Entities;
 using System;
@@ -14,6 +15,13 @@ namespace Application.Common
         public MappingProfile()
         {
             CreateMap<RegistrationRequestDTO, User>();
+            CreateMap<CarSpecificationCreateRequestDTO, CarSpecification>();
+            CreateMap<CarSpecificationUpdateRequestDTO, CarSpecification>();
+            CreateMap<CarSpecification, CarSpecificationResponseDTO>()
+                .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name))
+                .ForMember(csr => csr.FuelType, opt => opt.MapFrom(x => x.FuelType.ToString()))
+                .ForMember(csr => csr.BodyType, opt => opt.MapFrom(x => x.BodyType.ToString()));
+
         }
     }
 }

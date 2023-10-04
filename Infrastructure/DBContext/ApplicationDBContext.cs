@@ -5,18 +5,23 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Interfaces;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Infrastructure.DBContext
 {
     public class ApplicationDBContext : IdentityDbContext<User>
     {
-        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options): base(options)
-        {
+        private readonly ICurrentUserServices _currentUserServices;
 
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options
+                                    , ICurrentUserServices currentUserServices) : base(options)
+        {
+            _currentUserServices = currentUserServices;
         }
 
         #region DbSet
@@ -61,10 +66,12 @@ namespace Infrastructure.DBContext
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedTime = DateTime.Now;
+                        entry.Entity.CreatedByUserId = _currentUserServices.GetCurrentUserId();
                         break;
 
                     case EntityState.Modified:
                         entry.Entity.LastModified = DateTime.Now;
+                        entry.Entity.ModifiedByUserId = _currentUserServices.GetCurrentUserId();
                         break;
                 }
             }

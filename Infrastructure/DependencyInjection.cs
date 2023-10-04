@@ -3,6 +3,7 @@ using Domain.Entities;
 using Infrastructure.Configurations.EmailService;
 using Infrastructure.DBContext;
 using Infrastructure.InfrastructureServices;
+using Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ namespace Infrastructure
             services.ConfigureJWT(configuration);
             services.ConfigureEmailService(configuration);
             services.AddScoped<IIdentityServices, IdentityServices>();
+            services.AddScoped<ICarSpecificationRepository, CarSpecificationRepository>();
             return services;
         }
 

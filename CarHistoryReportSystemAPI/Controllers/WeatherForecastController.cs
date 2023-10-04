@@ -1,7 +1,10 @@
 using Application.Interfaces;
+using Application.Validation.WeatherForecast;
+using FluentValidation;
 using Infrastructure.Configurations.EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit.Cryptography;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -86,6 +89,24 @@ namespace CarHistoryReportSystemAPI.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost]
+        public ActionResult Post([FromBody] WeatherForecastTwo forecast)
+        {
+            try
+            {
+                TestService.TestWeather(forecast);
+            }
+            catch(ValidationException ex)
+            {
+                foreach(var error in ex.Errors)
+                {
+                    ModelState.TryAddModelError(error.ErrorCode, error.ErrorMessage);
+                }
+                return BadRequest(ModelState);
+            }
+            return Ok("Success!");
         }
     }
 }
