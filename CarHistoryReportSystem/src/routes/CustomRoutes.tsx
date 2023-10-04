@@ -9,6 +9,8 @@ import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
 import ManufacturerHomePage from '../pages/manufacturer/ManufacturerHomePage';
 import PoliceHomePage from '../pages/police/PoliceHomePage';
+import ServiceShopHomePage from '../pages/service_shop/ServiceShopHomePage';
+import AccountVeryficationPage from '../pages/special/AccountVeryficationPage';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 
 const CustomRoutes = () => {
@@ -20,12 +22,13 @@ const CustomRoutes = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
 
-
+                {/*Special*/}
+                <Route path="/account-verify" element={<AccountVeryficationPage />} />
                 {/*Admin*/}
                 <Route path="/admin" element={<AdminHomePage />} />
 
                 {/*Service Shop*/}
-                <Route path="/admin" element={<AdminHomePage />} />
+                <Route path="/service" element={<ServiceShopHomePage />} />
                 {/*Insurance*/}
                 <Route path="/insurance" element={<InsuranceCompanyHomePage />} />
                 {/*Police*/}

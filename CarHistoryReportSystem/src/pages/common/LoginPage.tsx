@@ -1,14 +1,48 @@
 import React, { useState } from 'react';
+import { Login } from '../../services/auth/Login';
 import '../../styles/LoginPage.css'
+import { useDispatch, useSelector } from 'react-redux';
+import { LoginResponse, Token } from '../../utils/Interfaces';
+import { setToken } from '../../store/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function LoginPage() {
-    const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [authenticationError, setAuthenticationError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Username:', username, 'Password:', password);
-        // Handle login logic here
+        setAuthenticationError(false)
+        setErrorMessage("")
+        setIsLoading(true);
+        const response = await Login({
+            username: username,
+            password: password
+        })
+        setIsLoading(false);
+        if (!response.error) {
+            const data = response.data as LoginResponse
+            if (data.isEmailVerified) {
+                const token = dispatch(setToken(data.token))
+                console.log("Token data:", JWTDecoder(data.token as string))
+                navigate('/')
+                //redirect to homepage + token
+                return
+            } else {
+                console.log("Login verify: ", data.isEmailVerified)
+                //redirect to email verify page
+                return 
+            }
+        }
+        setAuthenticationError(true)
+        setErrorMessage(response.error)
     };
     return (
         <div className="login-container">
@@ -31,7 +65,16 @@ function LoginPage() {
                 <div className="register-link">
                     <a href="/register"> Don't have an account? Register</a>
                 </div>
-                <button type="submit">Login</button>
+                <div className="error">
+                    {authenticationError && (
+                        <div className="message">{errorMessage}</div>
+                    )}
+                </div>
+                {isLoading ? (
+                    <div className="logging"></div>
+                ): (
+                    <button type="submit">Login</button>
+                )}
             </form>
         </div>
     );

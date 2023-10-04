@@ -1,11 +1,13 @@
 ﻿using Application.DTO.Authentication;
 using Application.Interfaces;
+using Application.Utility;
 using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -15,11 +17,13 @@ namespace CarHistoryReportSystemAPI.Controllers
     {
         private readonly IAuthenticationServices _authServices;
         private readonly IEmailServices _emailServices;
+        private readonly IMemoryCache _cache;
 
-        public AuthenticationController(IAuthenticationServices authServices, IEmailServices emailServices)
+        public AuthenticationController(IAuthenticationServices authServices, IEmailServices emailServices, IMemoryCache cache)
         {
             _authServices = authServices;
             _emailServices = emailServices;
+            _cache = cache;
         }
 
         [HttpPost("register")]
@@ -36,8 +40,11 @@ namespace CarHistoryReportSystemAPI.Controllers
             }
 
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authentication", new { result.VerifyToken, email = request.Email }, Request.Scheme);
-            //await _emailServices.SendEmailAsync(request.Email, "Confirmation Email Link", confirmationLink);
-            return StatusCode(201, new { userId = result.UserId , verifyToken = result.VerifyToken });
+
+            var verificationCode = AuthenticationUtility.GenerateVerificationCode();
+            _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));
+            await _emailServices.SendEmailAsync(request.Email, "Your Verification Code", verificationCode);
+            return StatusCode(201, new { userId = result.UserId , verifyToken = result.VerifyToken, code = verificationCode });
         }
 
         [HttpPost("login")]
@@ -54,6 +61,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost("confirm-email",Name = "ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationRequestDTO request)
         {
+            _cache.TryGetValue(request.Email, out string storedCode);
+            if (storedCode == null || storedCode != request.Code) return BadRequest("Invalid or expired code.");
             var result = await _authServices.ConfirmEmail(request.Token, request.Email);
             if(result)
                 return Ok();

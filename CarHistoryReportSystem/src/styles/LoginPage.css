@@ -13,6 +13,10 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .login-form input {
@@ -34,8 +38,8 @@
     transition: background-color 0.3s;
 }
 .login-form label {
-  display: block;
-  margin-bottom: 5px;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .login-form button:hover {
@@ -55,3 +59,46 @@
 .register-link a:hover {
     text-decoration: underline;
 }
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.error {
+    background-color: #FFC300;
+    display: block;
+    font-weight: bold;
+    text-align: center;
+    color: red;
+    font-size: 15px;
+    margin-bottom: 50px;
+    grid-column: 1/-1;
+}
+
+.message {
+    animation: shake 0.5s ease-in-out;
+    margin: 10px 10px 10px 10px;
+}
+
+.logging {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-top: 4px solid #000;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
+

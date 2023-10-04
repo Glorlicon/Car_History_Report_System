@@ -2,7 +2,7 @@ import React from 'react';
 
 function HomePage() {
   return (
-      <body>
+      <div>
           Hello<br/>
           a<br />
           a<br />
@@ -28,7 +28,7 @@ function HomePage() {
           a<br />
           a<br />
           a<br />
-      </body>
+      </div>
   );
 }
 
