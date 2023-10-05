@@ -69,6 +69,7 @@ function RegisterPage() {
         }
         if (!isLastStep) return next()
         setIsLoading(true);
+        console.log(data)
         const response = await registerUser({
             ...data,
             role: USER_ROLE.USER
