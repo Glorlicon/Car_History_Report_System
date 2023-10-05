@@ -25,3 +25,9 @@ export interface VerifyToken {
     token: string
 }
 
+export interface NavItem {
+    label: string
+    link?: string
+    dropdownItems?: NavItem[]
+}
+

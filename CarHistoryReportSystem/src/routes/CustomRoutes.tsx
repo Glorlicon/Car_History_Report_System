@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SpecialLayout from '../components/layout/SpecialLayout';
+import UserLayout from '../components/layout/UserLayout';
 import AdminHomePage from '../pages/admin/AdminHomePage';
+import UserListPage from '../pages/admin/UserListPage';
 import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
 import CarSalesPage from '../pages/common/CarSalesPage';
 import HomePage from '../pages/common/HomePage';
@@ -12,20 +15,21 @@ import PoliceHomePage from '../pages/police/PoliceHomePage';
 import ServiceShopHomePage from '../pages/service_shop/ServiceShopHomePage';
 import AccountVeryficationPage from '../pages/special/AccountVeryficationPage';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
+import { AdminNavigation, UserNavigation } from '../utils/const/NavigationItems';
 
 const CustomRoutes = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/sales" element={<CarSalesPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<UserLayout navItems={UserNavigation}> <HomePage /> </UserLayout>} />
+                <Route path="/sales" element={<UserLayout navItems={UserNavigation}> <CarSalesPage /> </UserLayout>} />
+                <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
+                <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
+                <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
 
-                {/*Special*/}
-                <Route path="/account-verify" element={<AccountVeryficationPage />} />
                 {/*Admin*/}
-                <Route path="/admin" element={<AdminHomePage />} />
+                <Route path="/admin" element={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>} />
+                <Route path="/admin/users" element={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>} />
 
                 {/*Service Shop*/}
                 <Route path="/service" element={<ServiceShopHomePage />} />
