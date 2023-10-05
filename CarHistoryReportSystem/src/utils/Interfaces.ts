@@ -17,6 +17,11 @@ export interface Token {
     roles: string
     name: string
     nameidentifier: string
+    email: string
     iss: string
+}
+
+export interface VerifyToken {
+    token: string
 }
 

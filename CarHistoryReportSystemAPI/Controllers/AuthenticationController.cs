@@ -70,14 +70,17 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         [HttpPost("resend-email-confirm-token", Name = "ResendConfirmEmail")]
-        public async Task<IActionResult> ResendConfirmEmailToken(LoginRequestDTO request)
+        public async Task<IActionResult> ResendConfirmEmailToken(EmailResendConfirmTokenRequestDTO request)
         {
             var result = await _authServices.ResendConfirmEmailTokenAsync(request);
+            var verificationCode = AuthenticationUtility.GenerateVerificationCode();
+            _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));
+            await _emailServices.SendEmailAsync(request.Email, "Your Verification Code", verificationCode);
             return Ok(new { Token = result });
         }
 
         [HttpPost("resend-email-code")]
-        public async Task<IActionResult> ResendConfirmEmailCode(EmailConfirmationRequestDTO request)
+        public async Task<IActionResult> ResendConfirmEmailCode(EmailCodeResendRequestDTO request)
         {
             var verificationCode = AuthenticationUtility.GenerateVerificationCode();
             _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));

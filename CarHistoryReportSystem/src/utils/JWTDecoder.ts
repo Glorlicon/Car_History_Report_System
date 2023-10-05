@@ -9,6 +9,7 @@ export function JWTDecoder(token: string): Token {
         roles: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
         name: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
         nameidentifier: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        email: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
         iss: decodedToken["iss"]
     }
 }

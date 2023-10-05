@@ -53,9 +53,12 @@ namespace Infrastructure.InfrastructureServices
             }
             var isSuspended = IsSuspended(_user);
             var isEmailVerified = await _userManager.IsEmailConfirmedAsync(_user);
-            if (!isEmailVerified || isSuspended) 
+            if (isSuspended) 
                 return new LoginResult(token: null, isEmailVerified: isEmailVerified, isUserExist: true, succeed: false, isSuspended: isSuspended);
-            var token = await CreateToken();
+            
+            var token = await CreateToken(isEmailVerified);
+            if (!isEmailVerified)
+                return new LoginResult(token: token, isEmailVerified: isEmailVerified, isUserExist: true, succeed: false, isSuspended: isSuspended);
             return new LoginResult(token: token, isEmailVerified: isEmailVerified, isUserExist: true, succeed: true, isSuspended: isSuspended);
         }
 
@@ -97,10 +100,10 @@ namespace Infrastructure.InfrastructureServices
             return await _userManager.GenerateEmailConfirmationTokenAsync(_user);
         }
 
-        public async Task<string> CreateToken()
+        public async Task<string> CreateToken(bool isVerified)
         {
             var signingCredentials = GetSigningCredentials();
-            var claims = await GetClaims();
+            var claims = await GetClaims(isVerified);
             var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
@@ -111,14 +114,15 @@ namespace Infrastructure.InfrastructureServices
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
-        private async Task<List<Claim>> GetClaims()
+        private async Task<List<Claim>> GetClaims(bool isVerified)
         {
             var claims = new List<Claim>
              {
                 new Claim(ClaimTypes.NameIdentifier,_user.Id),
                 new Claim(ClaimTypes.Name, _user.UserName),
-                new Claim(ClaimTypes.Role, _user.Role.ToString())
+                new Claim(ClaimTypes.Email, _user.Email)
              };
+            if (isVerified) claims.Add(new Claim(ClaimTypes.Role, _user.Role.ToString()));
             return claims;
         }
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
