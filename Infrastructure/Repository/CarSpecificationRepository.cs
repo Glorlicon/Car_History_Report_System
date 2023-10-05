@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTO.CarSpecification;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,20 @@ namespace Infrastructure.Repository
             return await FindByCondition(cs => cs.ModelID == modelId, trackChange)
                             .Include(x => x.Manufacturer)
                             .SingleOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<CarSpecification>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange)
+        {
+            return await FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange)
+                            .Include(x => x.Manufacturer)
+                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<CarSpecification>> GetCarModelByUserId(string userId, bool trackChange)
+        {
+            return await FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
+                            .Include(x => x.Manufacturer)
+                            .ToListAsync();
         }
     }
 }

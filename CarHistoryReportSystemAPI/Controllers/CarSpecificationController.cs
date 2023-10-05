@@ -19,7 +19,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <summary>
         /// Get All Car Models
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Car Model List</returns>
         [HttpGet(Name = "GetCarModels")]
         public async Task<IActionResult> GetCarModelsAsync()
         {
@@ -31,8 +31,10 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get Car Model By modelId
         /// </summary>
         /// <param name="modelId"></param>
-        /// <returns></returns>
+        /// <returns>Car Model</returns>
         [HttpGet("{modelId}", Name = "GetCarModel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarModelAsync(string modelId)
         {
             var carModel = await _carSpecService.GetCarModel(modelId, trackChange: false);
@@ -43,7 +45,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Car Models Created by UserId
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
+        /// <returns>Car Model List</returns>
         [HttpGet("user/{userId}", Name = nameof(GetCarModelByUserIdAsync))]
         public async Task<IActionResult> GetCarModelByUserIdAsync(string userId)
         {
@@ -55,7 +57,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Car Models of manufacturerId
         /// </summary>
         /// <param name="manufacturerId"></param>
-        /// <returns></returns>
+        /// <returns>Car Model List</returns>
         [HttpGet("manufacturer/{manufacturerId}", Name = "GetCarModelByManufacturerId")]
         public async Task<IActionResult> GetCarModelByManufacturerIdAsync(int manufacturerId)
         {
@@ -87,10 +89,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Updated Successfully</response>
         /// <response code="400">Updated failed</response>
+        /// <response code="404">Car model not found</response>
         [HttpPut("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateCarModelAsync(string modelId, [FromBody] CarSpecificationUpdateRequestDTO request)
         {
             var result = await _carSpecService.UpdateCarModel(modelId, request);
@@ -104,10 +108,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Updated Successfully</response>
         /// <response code="400">Updated failed</response>
+        /// <response code="404">Car model not found</response>
         [HttpDelete("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCarModelAsync(string modelId)
         {
             var result = await _carSpecService.DeleteCarModel(modelId);
