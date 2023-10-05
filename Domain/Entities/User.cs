@@ -22,7 +22,8 @@ namespace Domain.Entities
 
         public Role Role { get; set; }
 
-        public ICollection<CarMaintainance> CarMaintainances { get;set; } = new List<CarMaintainance>();
+        public ICollection<CarMaintainance> CarMaintainances { get; set; } = new List<CarMaintainance>();
+
         public ICollection<CarReport> CarReports { get; set; } = new List<CarReport>();
 
     }

@@ -47,7 +47,7 @@ namespace Application.DomainServices
 
         public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange)
         {
-            var carModels =  await _carSpecRepository
+            var carModels = await _carSpecRepository
                                     .FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange)
                                     .Include(x => x.Manufacturer)
                                     .ToListAsync();
@@ -66,7 +66,7 @@ namespace Application.DomainServices
         public async Task<bool> DeleteCarModel(string modelId)
         {
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if(carSpec == null)
+            if (carSpec == null)
             {
                 return false;
             }
@@ -79,7 +79,7 @@ namespace Application.DomainServices
         {
 
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if(carSpec == null)
+            if (carSpec == null)
             {
                 return false;
             }

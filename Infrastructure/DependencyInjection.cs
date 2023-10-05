@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DomainServices;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Configurations.EmailService;
 using Infrastructure.DBContext;
@@ -36,6 +37,8 @@ namespace Infrastructure
             services.ConfigureEmailService(configuration);
             services.AddScoped<IIdentityServices, IdentityServices>();
             services.AddScoped<ICarSpecificationRepository, CarSpecificationRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
 

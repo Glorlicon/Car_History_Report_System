@@ -79,7 +79,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             var result = await _carSpecService.CreateCarModel(request);
             if (result == true)
             {
-                return CreatedAtRoute("GetCarModel", new { modelId = request.ModelID },null);
+                return CreatedAtRoute("GetCarModel", new { modelId = request.ModelID }, null);
             }
             else
             {
