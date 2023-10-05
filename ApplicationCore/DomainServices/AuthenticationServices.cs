@@ -58,9 +58,9 @@ namespace Application.DomainServices
             return result;
         }
 
-        public async Task<string> ResendConfirmEmailTokenAsync(LoginRequestDTO loginRequest)
+        public async Task<string> ResendConfirmEmailTokenAsync(EmailResendConfirmTokenRequestDTO request)
         {
-            return await _identityServices.CreateConfirmEmailToken(loginRequest.UserName, loginRequest.Password);
+            return await _identityServices.CreateConfirmEmailToken(request.UserName, request.Password);
         }
 
         public async Task<bool> SuspendAccount(string userId)

@@ -22,6 +22,7 @@
   },
   "include": [
     "src",
-    "src/*"
+    "src/*",
+    "./node_modules/redux-persist/types"
   ]
 }

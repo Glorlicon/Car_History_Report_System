@@ -23,7 +23,7 @@ namespace Application.Interfaces
 
         Task<bool> ConfirmEmail(string token, string email);
 
-        Task<string> ResendConfirmEmailTokenAsync(LoginRequestDTO loginRequest);
+        Task<string> ResendConfirmEmailTokenAsync(EmailResendConfirmTokenRequestDTO request);
 
         Task<bool> SuspendAccount(string userId);
 

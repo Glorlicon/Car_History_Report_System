@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { isValidNumber } from '../../../utils/Validators';
 import FormWrapper from './FormWrapper';
 
 type UserData = {
@@ -9,14 +10,26 @@ type UserData = {
 
 type UserFormProps = UserData & {
     updateFields: (fields: Partial<UserData>) => void
+    setValid: React.Dispatch<React.SetStateAction<boolean>>
+    shake: boolean
 }
 
 function UserForm({
     firstName,
     lastName,
     phoneNumber,
-    updateFields
+    updateFields,
+    setValid,
+    shake
 }: UserFormProps) {
+    const [validNumber, setValidNumber] = useState(true)
+
+    useEffect(() => {
+        const isNumberValid = isValidNumber(phoneNumber);
+        setValidNumber(isNumberValid);
+        setValid(isNumberValid);
+    }, [phoneNumber])
+
     return (
         <FormWrapper title="User Details">
             <label>First Name</label>
@@ -42,8 +55,12 @@ function UserForm({
                 value={phoneNumber}
                 onChange={e => updateFields({ phoneNumber: e.target.value })}
             />
+            <div className={` ${shake ? 'shaking' : 'validation'}`}>
+                {!validNumber && (
+                    <div className="error">Phone number is not valid!!</div>
+                )}
+            </div>
         </FormWrapper>
   );
 }
-//validate the phone number
 export default UserForm;

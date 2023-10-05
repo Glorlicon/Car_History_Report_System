@@ -1,12 +1,7 @@
 ﻿import React, { useState } from 'react';
 import '../../styles/GlobalNavigator.css'
 import logo from '../../logo512.png';
-
-interface NavItem {
-    label: string
-    link?: string
-    dropdownItems?: NavItem[]
-}
+import { NavItem } from '../../utils/Interfaces';
 
 interface GlobalNavigatorProps {
     items: NavItem[]

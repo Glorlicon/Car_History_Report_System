@@ -1,10 +1,13 @@
 import React, { FormEvent, useState } from 'react';
 import AccountForm from '../../components/forms/register/AccountForm';
-import CodeForm from '../../components/forms/register/CodeForm';
 import UserForm from '../../components/forms/register/UserForm';
 import useMultistepForm from '../../utils/useMultistepForm';
 import '../../styles/RegisterPage.css'
-import { confirmPassword, isValidEmail, isValidNumber } from '../../utils/Validators';
+import { registerUser } from '../../services/auth/Register';
+import { USER_ROLE } from '../../utils/const/UserRole';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUserData, setVerifyToken } from '../../store/authSlice';
 
 type RegisterData = {
     email: string
@@ -36,40 +39,52 @@ const INITIAL_ERRORS: ValidationErrors = {
 
 function RegisterPage() {
     const [data, setData] = useState(INITIAL_DATA)
-    const [errors, setErrors] = useState(INITIAL_ERRORS)
+    const [valid, setValid] = useState(false)
+    const [shake, setShake] = useState(false)
+    const [registerError, setRegisterError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     function updateFiedls(fields: Partial<RegisterData>) {
         setData(prev => {
             return { ...prev, ...fields }
         })
     }
 
+
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } =
         useMultistepForm([
-            <UserForm {...data} updateFields={updateFiedls} />,
-            <AccountForm {...data} updateFields={updateFiedls} />,
-            /*<CodeForm {...data} updateFields={updateFiedls}/>*/
+            <UserForm {...data} updateFields={updateFiedls} setValid={setValid} shake={shake} />,
+            <AccountForm {...data} updateFields={updateFiedls} setValid={setValid} shake={shake} />,
         ])
-
-    function onSubmit(e: FormEvent) {
+    async function onSubmit(e: FormEvent) {
         e.preventDefault()
-        let invalidData: ValidationErrors = {
-            errors: []
+        setErrorMessage("")
+        if (!valid) {
+            setShake(true)
+            setTimeout(() => setShake(false), 300)
+            return
         }
-        if (!isValidEmail(data.email)) invalidData.errors.push("Email is invalid!!")
-        if (!isValidNumber(data.phoneNumber)) invalidData.errors.push("Phone number is invalid!!")
-        if (!confirmPassword(data.password, data.confirmPassword)) invalidData.errors.push("Passwords are not matching!!")
+        if (!isLastStep) return next()
+        setIsLoading(true);
+        const response = await registerUser({
+            ...data,
+            role: USER_ROLE.USER
+        })
+        setIsLoading(false)
 
-        if (!invalidData.errors) {
-            if (!isLastStep) return next()
-            console.log("Hello")
-            alert("Success")
-        } else {
-            setErrors(invalidData)
+        if (!response.error) {
+            const userData = dispatch(setUserData({ email: data.email, password: data.password }))
+            const verifyToken = dispatch(setVerifyToken(response.data.verifyToken))
+            console.log("Payload", userData.payload)
+            navigate("/account-verify")
         }
-        console.log("Hello")
-        console.log(invalidData.errors)
+        setRegisterError(true)
+        setErrorMessage(response.error as string)
     }
-
+    //TODO: fix css
     return (
         <div className="register-container">
             <form onSubmit={onSubmit} className="register-form">
@@ -77,14 +92,24 @@ function RegisterPage() {
                     {currentStepIndex + 1} / {steps.length}
                 </div>
                 {step}
-                <div className="register-buttons">
-                    {!isFirstStep && (
-                        <button type="button" onClick={back}>
-                            Back
-                        </button>
+
+                <div className="validation">
+                    {registerError && (
+                        <div className="error">{errorMessage}</div>
                     )}
-                    <button type="submit">{isLastStep ? "Finish" : "Next"}</button>
                 </div>
+                {isLoading ? (
+                    <div className="logging"></div>
+                ) : (
+                        <div className="register-buttons">
+                            {!isFirstStep && (
+                                <button type="button" onClick={() => { setRegisterError(false); back(); }}>
+                                    Back
+                                </button>
+                            )}
+                            <button type="submit">{isLastStep ? "Register" : "Next"}</button>
+                        </div>
+                )}
             </form>
         </div>
     );

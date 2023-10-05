@@ -1,14 +1,68 @@
 import React, { useState } from 'react';
+import { Login } from '../../services/auth/Login';
 import '../../styles/LoginPage.css'
+import { useDispatch, useSelector } from 'react-redux';
+import { LoginResponse, Token, VerifyToken } from '../../utils/Interfaces';
+import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import { SendVerifyToken } from '../../services/auth/Verify';
+import { RootState } from '../../store/State';
 
 function LoginPage() {
-    const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [authenticationError, setAuthenticationError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const token = useSelector((state: RootState) => state.auth.token)
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Username:', username, 'Password:', password);
-        // Handle login logic here
+        setAuthenticationError(false)
+        setErrorMessage("")
+        setIsLoading(true);
+        const response = await Login({
+            username: username,
+            password: password
+        })
+        setIsLoading(false);
+        if (!response.error) {
+            const data = response.data as LoginResponse
+            const dispatchToken = dispatch(setToken(data.token))
+            console.log("Data: ", data)
+            console.log("Data token: ", data.token)
+            console.log("JWT", dispatchToken.payload)
+            if (data.isEmailVerified) {
+                navigate('/')
+                return
+            } else {
+                setIsLoading(true);
+                const decodeJWTToken = JWTDecoder(data.token as string)
+                console.log("Email", decodeJWTToken.email)
+                const getVerifyToken = await SendVerifyToken({
+                    userName: username,
+                    password: password,
+                    email: decodeJWTToken.email
+                })
+                setIsLoading(false);
+                if (!getVerifyToken.error) {
+                    const verifyData = getVerifyToken.data as VerifyToken
+                    const decodedToken = JWTDecoder(data.token as string)
+                    const dispatchUser = dispatch(setUserData({ email: decodedToken.email, password: password }))
+                    const dispatchVerifyToken = dispatch(setVerifyToken(verifyData.token))
+                    navigate("/account-verify")
+                    return 
+                }
+                setAuthenticationError(true)
+                setErrorMessage(getVerifyToken.error)
+            }
+        }
+        setAuthenticationError(true)
+        setErrorMessage(response.error as string)
     };
     return (
         <div className="login-container">
@@ -31,7 +85,16 @@ function LoginPage() {
                 <div className="register-link">
                     <a href="/register"> Don't have an account? Register</a>
                 </div>
-                <button type="submit">Login</button>
+                <div className="error">
+                    {authenticationError && (
+                        <div className="message">{errorMessage}</div>
+                    )}
+                </div>
+                {isLoading ? (
+                    <div className="logging"></div>
+                ): (
+                    <button type="submit">Login</button>
+                )}
             </form>
         </div>
     );
