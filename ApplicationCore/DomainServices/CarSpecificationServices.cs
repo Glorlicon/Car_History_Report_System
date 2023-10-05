@@ -32,26 +32,25 @@ namespace Application.DomainServices
         public async Task<CarSpecificationResponseDTO> GetCarModel(string modelId, bool trackChange)
         {
             var carModel = await _carSpecRepository.GetCarModelById(modelId, trackChange);
+            if (carModel is null)
+            {
+                throw new CarSpecificationNotFoundException(modelId);
+            }
+
             var carModelsResponse = _mapper.Map<CarSpecificationResponseDTO>(carModel);
             return carModelsResponse;
         }
 
         public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, bool trackChange)
         {
-            var carModels = await _carSpecRepository
-                                    .FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
-                                    .Include(x => x.Manufacturer)
-                                    .ToListAsync();
+            var carModels = await _carSpecRepository.GetCarModelByUserId(userId, trackChange);
             var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
             return carModelsResponse;
         }
 
         public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange)
         {
-            var carModels =  await _carSpecRepository
-                                    .FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange)
-                                    .Include(x => x.Manufacturer)
-                                    .ToListAsync();
+            var carModels =  await _carSpecRepository.GetCarModelByManufacturerId(manufacturerId,trackChange);
             var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
             return carModelsResponse;
         }
