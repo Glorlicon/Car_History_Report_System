@@ -2,6 +2,10 @@
 import { Link } from 'react-router-dom';
 import { NavItem } from '../../utils/Interfaces';
 import '../../styles/SideNavigator.css'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/State';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import logo from '../../logo512.png'
 
 interface SideNavigationBarProps {
     items: NavItem[];
@@ -10,7 +14,9 @@ interface SideNavigationBarProps {
 const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-
+    const data = useSelector((state: RootState) => state.auth.token)
+    console.log(data)
+    const decoded = JWTDecoder(data as unknown as string)
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
     };
@@ -21,6 +27,12 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                 {isOpen ? '←' :'→'}
             </button>
             <nav className={`side-nav ${isOpen ? 'open' : ''}`}>
+                <div className="logo-container">
+                    <img src={logo} alt="Company Logo" className="logo" />
+                </div>
+                <div className="welcome-message">
+                    Welcome, {decoded.name}
+                </div>
                 <ul>
                     {items.map((item, index) => (
                         <li key={index}>

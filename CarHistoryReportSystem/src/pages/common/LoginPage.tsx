@@ -35,7 +35,7 @@ function LoginPage() {
             const dispatchToken = dispatch(setToken(data.token))
             console.log("Data: ", data)
             console.log("Data token: ", data.token)
-            console.log("JWT", dispatchToken.payload.token)
+            console.log("JWT", dispatchToken.payload)
             if (data.isEmailVerified) {
                 navigate('/')
                 return

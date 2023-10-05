@@ -22,7 +22,6 @@ const authSlice = createSlice({
         setUserData: (state, action) => {
             state.userData.email = action.payload.email
             state.userData.password = action.payload.password
-            console.log("State data: ", state.userData)
         },
         clearUserData: (state) => {
             state.userData = {
