@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,26 +32,25 @@ namespace Application.DomainServices
         public async Task<CarSpecificationResponseDTO> GetCarModel(string modelId, bool trackChange)
         {
             var carModel = await _carSpecRepository.GetCarModelById(modelId, trackChange);
+            if (carModel is null)
+            {
+                throw new CarSpecificationNotFoundException(modelId);
+            }
+
             var carModelsResponse = _mapper.Map<CarSpecificationResponseDTO>(carModel);
             return carModelsResponse;
         }
 
         public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, bool trackChange)
         {
-            var carModels = await _carSpecRepository
-                                    .FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
-                                    .Include(x => x.Manufacturer)
-                                    .ToListAsync();
+            var carModels = await _carSpecRepository.GetCarModelByUserId(userId, trackChange);
             var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
             return carModelsResponse;
         }
 
         public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange)
         {
-            var carModels = await _carSpecRepository
-                                    .FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange)
-                                    .Include(x => x.Manufacturer)
-                                    .ToListAsync();
+            var carModels =  await _carSpecRepository.GetCarModelByManufacturerId(manufacturerId,trackChange);
             var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
             return carModelsResponse;
         }
@@ -66,9 +66,9 @@ namespace Application.DomainServices
         public async Task<bool> DeleteCarModel(string modelId)
         {
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if (carSpec == null)
+            if(carSpec is null)
             {
-                return false;
+                throw new CarSpecificationNotFoundException(modelId);
             }
             _carSpecRepository.Delete(carSpec);
             await _carSpecRepository.SaveAsync();
@@ -79,9 +79,9 @@ namespace Application.DomainServices
         {
 
             var carSpec = await _carSpecRepository.GetCarModelById(modelId, trackChange: true);
-            if (carSpec == null)
+            if(carSpec is null)
             {
-                return false;
+                throw new CarSpecificationNotFoundException(modelId);
             }
             _mapper.Map(request, carSpec);
             await _carSpecRepository.SaveAsync();
