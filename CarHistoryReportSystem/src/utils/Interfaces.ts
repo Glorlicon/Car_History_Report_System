@@ -31,3 +31,14 @@ export interface NavItem {
     dropdownItems?: NavItem[]
 }
 
+export interface User {
+    userName: string
+    email: string
+    firstName: string
+    phoneNumber: string
+    lastName: string
+    address?: string
+    maxReports: number
+    role: number
+}
+
