@@ -5,7 +5,7 @@ import { ResendCode, VerifyEmail } from '../../services/auth/Verify';
 import { RootState } from '../../store/State';
 import { Login } from '../../services/auth/Login';
 import { LoginResponse } from '../../utils/Interfaces';
-import { setToken } from '../../store/authSlice';
+import { clearUserData, setToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 function AccountVeryficationPage() {
@@ -41,9 +41,11 @@ function AccountVeryficationPage() {
                 password: data.password as unknown as string
             })
             setLogin(false)
+            const clear = dispatch(clearUserData())
             if (!login.error) {
                 setLoginSuccess(true)
-                const data = response.data as LoginResponse
+                const data = login.data as LoginResponse
+                console.log(data)
                 const dispatchToken = dispatch(setToken(data.token))
                 navigate('/')
                 return
