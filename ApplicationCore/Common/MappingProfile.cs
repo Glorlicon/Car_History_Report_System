@@ -1,5 +1,6 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.CarSpecification;
+using Application.DTO.DataProvider;
 using Application.DTO.User;
 using AutoMapper;
 using Domain.Entities;
@@ -26,6 +27,11 @@ namespace Application.Common
             CreateMap<User, CreateUserRequestDTO>();
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();
+
+            CreateMap<DataProviderCreateRequestDTO, DataProvider>();
+            CreateMap<DataProviderUpdateRequestDTO, DataProvider>();
+            CreateMap<DataProvider, DataProviderResponseDTO>()
+                .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
 
         }
     }

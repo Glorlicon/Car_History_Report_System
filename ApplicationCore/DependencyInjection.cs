@@ -19,6 +19,7 @@ namespace Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddScoped<IAuthenticationServices, AuthenticationServices>();
             services.AddScoped<ICarSpecificationService, CarSpecificationServices>();
+            services.AddScoped<IDataProviderService, DataProviderService>();
             return services;
         }
     }

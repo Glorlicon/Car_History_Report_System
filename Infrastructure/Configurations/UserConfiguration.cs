@@ -23,6 +23,11 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(100);
             builder.Property(x => x.MaxReportNumber)
                 .HasDefaultValue(0);
+            builder.HasOne(x => x.DataProvider)
+                        .WithMany(x => x.Users)
+                        .HasForeignKey(x => x.DataProviderId)
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
