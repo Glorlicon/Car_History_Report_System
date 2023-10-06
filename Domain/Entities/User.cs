@@ -20,6 +20,8 @@ namespace Domain.Entities
 
         public int MaxReportNumber { get; set; } = 0;
 
+        public string? AvatarImageLink { get; set; }
+
         public Role Role { get; set; }
 
         public ICollection<CarMaintainance> CarMaintainances { get; set; } = new List<CarMaintainance>();
