@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Login } from '../../services/auth/Login';
 import '../../styles/LoginPage.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { LoginResponse, Token, VerifyToken } from '../../utils/Interfaces';
+import { LoginResponse, VerifyToken } from '../../utils/Interfaces';
 import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
@@ -19,7 +19,6 @@ function LoginPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const token = useSelector((state: RootState) => state.auth.token)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthenticationError(false)
@@ -32,12 +31,18 @@ function LoginPage() {
         setIsLoading(false);
         if (!response.error) {
             const data = response.data as LoginResponse
+            if (data.isSuspended) {
+                navigate('/suspended')
+                return
+            }
             const dispatchToken = dispatch(setToken(data.token))
-            console.log("Data: ", data)
-            console.log("Data token: ", data.token)
-            console.log("JWT", dispatchToken.payload)
             if (data.isEmailVerified) {
-                navigate('/')
+                const decodedData = JWTDecoder(data.token as unknown as string)
+                if (decodedData.roles === "Admin") {
+                    navigate('/admin')
+                } else {
+                    navigate('/')
+                }
                 return
             } else {
                 setIsLoading(true);

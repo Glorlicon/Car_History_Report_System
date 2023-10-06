@@ -1,0 +1,32 @@
+.profile-page {
+    text-align: center;
+    padding: 20px;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.profile-details {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 50px;
+}
+
+.profile-column {
+    text-align: left;
+}
+
+p {
+    margin: 5px 0;
+}

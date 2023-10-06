@@ -72,3 +72,17 @@ export async function Edit(id: string, data: User): Promise<APIResponse> {
         }
     }
 } 
+
+export async function Get(id: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/User/${id}`)
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}

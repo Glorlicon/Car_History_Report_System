@@ -14,6 +14,7 @@ import ManufacturerHomePage from '../pages/manufacturer/ManufacturerHomePage';
 import PoliceHomePage from '../pages/police/PoliceHomePage';
 import ServiceShopHomePage from '../pages/service_shop/ServiceShopHomePage';
 import AccountVeryficationPage from '../pages/special/AccountVeryficationPage';
+import SuspendPage from '../pages/special/SuspendPage';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 import { AdminNavigation, UserNavigation } from '../utils/const/NavigationItems';
 
@@ -26,7 +27,7 @@ const CustomRoutes = () => {
                 <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
-
+                <Route path="/suspend" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 {/*Admin*/}
                 <Route path="/admin" element={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>} />
                 <Route path="/admin/users" element={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>} />

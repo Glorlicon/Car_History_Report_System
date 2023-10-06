@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
                 <p>© 2023 My Company Name. All rights reserved.</p>
                 <div className="contact-info">
                     <p><strong>Address:</strong> FPT University, Ha Noi, Vietnam</p>
-                    <p><strong>Email:</strong> se_group_6@fpt.edu.vn</p>
+                    <p><strong>Email:</strong>se.group6.chrs@gmail.com</p>
                     <p><strong>Phone:</strong> +1 (123) 456-7890</p>
                 </div>
             </div>

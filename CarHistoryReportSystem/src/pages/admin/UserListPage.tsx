@@ -249,7 +249,7 @@ function UserListPage() {
               <div className="modal">
                   <div className="modal-content">
                       <span className="close-btn" onClick={() => setEditingUser(null)}>&times;</span>
-                      <h2>Edit User</h2>
+                      <h2>User Details</h2>
                       <div className="form-columns">
                           <div className="form-column">
                               <label>Email Address</label>
