@@ -9,6 +9,7 @@ function AdminManufacturerList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [currentId, setCurrentId] = useState<number>()
 
 
     const filteredManufacturers = manufactureres.filter((manu: any) => {
@@ -76,12 +77,12 @@ function AdminManufacturerList() {
                               <button onClick={fetchData} className="retry-btn">Retry</button>
                           </td>
                       </tr>
-                  ) : filteredUsers.length > 0 ? (
-                      filteredUsers.map((user: any, index: number) => (
+                      ) : filteredManufacturers.length > 0 ? (
+                          filteredManufacturers.map((manu: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditingUser(user); setCurrentId(user.id) }}>{user.id}</td>
-                              <td>{user.userName}</td>
-                              <td>{user.email}</td>
+                              <td onClick={() => { setEditingUser(manu); setCurrentId(manu.id) }}>{manu.id}</td>
+                              <td>{manu.name}</td>
+                              <td>{manu.description}</td>
                           </tr>
                       ))
                   ) : (
@@ -105,19 +106,6 @@ function AdminManufacturerList() {
                           <div className="form-column">
                               <label>Username</label>
                               <input type="text" name="userName" value={newUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Role: </label>
-                              <select name="role" value={newUser.role} onChange={handleInputChange}>
-                                  <option value={USER_ROLE.ADMIN}>Admin</option>
-                                  <option value={USER_ROLE.USER}>User</option>
-                                  <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                                  <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                                  <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                                  <option value={USER_ROLE.POLICE}>Police</option>
-                                  <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                                  <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
                           </div>
                           <div className="form-column">
                               <label>First Name</label>
@@ -160,19 +148,6 @@ function AdminManufacturerList() {
                           <div className="form-column">
                               <label>Username</label>
                               <input type="text" name="userName" value={editingUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Role: </label>
-                              <select name="role" value={editingUser.role} onChange={handleInputChange} disabled>
-                                  <option value={USER_ROLE.ADMIN}>Admin</option>
-                                  <option value={USER_ROLE.USER}>User</option>
-                                  <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                                  <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                                  <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                                  <option value={USER_ROLE.POLICE}>Police</option>
-                                  <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                                  <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
                           </div>
                           <div className="form-column">
                               <label>First Name</label>
