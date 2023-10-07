@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Enum;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,11 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, bool trackChange)
         {
             return await FindByCondition(dp => dp.Type == type, trackChange).ToListAsync();
+        }
+
+        public async Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderType type, bool trackChange)
+        {
+            return await FindByCondition(dp => dp.Type == type && !dp.Users.Any(),trackChange).ToListAsync();
         }
 
         public async Task<DataProvider?> GetDataProvider(int dataProviderId, bool trackChange)
