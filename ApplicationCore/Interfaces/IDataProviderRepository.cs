@@ -11,6 +11,8 @@ namespace Application.Interfaces
 {
     public interface IDataProviderRepository : IBaseRepository<DataProvider>
     {
+        Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderType type, bool trackChange);
+
         Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, bool trackChange);
 
         Task<DataProvider?> GetDataProvider(int dataProviderId, bool trackChange);
