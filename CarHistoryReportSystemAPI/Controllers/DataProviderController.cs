@@ -32,6 +32,19 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Data Providers
+        /// </summary>
+        /// <returns>Data Provider List</returns>
+        [HttpGet("type/{type}/no-user",Name = "GetDataProvidersWithoutUser")]
+        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderType type)
+        {
+            var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(type);
+            return Ok(dataProviders);
+        }
+
+        /// <summary>
         /// Get All Data Providers by type
         /// </summary>
         /// <returns>Data Provider List</returns>

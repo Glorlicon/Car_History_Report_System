@@ -32,6 +32,13 @@ namespace Application.DomainServices
             return dataProvidersResponse;
         }
 
+        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderType type)
+        {
+            var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(type, trackChange: false);
+            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
+            return dataProvidersResponse;
+        }
+
         public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, false);

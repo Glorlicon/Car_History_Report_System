@@ -13,6 +13,8 @@ namespace Application.Interfaces
     {
         Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProviders();
 
+        Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderType type);
+
         Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersByType(DataProviderType type);
 
         Task<DataProviderResponseDTO> GetDataProvider(int dataProviderId);
