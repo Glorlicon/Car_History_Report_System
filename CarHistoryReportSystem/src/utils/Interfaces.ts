@@ -42,3 +42,13 @@ export interface User {
     role: number
 }
 
+export interface Manufacturer {
+    id: number
+    name: string
+    description: string
+    address?: string
+    websiteLink?: string
+    phoneNumber?: string
+    email?: string
+}
+

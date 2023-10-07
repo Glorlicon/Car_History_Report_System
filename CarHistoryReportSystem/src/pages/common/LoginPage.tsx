@@ -47,7 +47,6 @@ function LoginPage() {
             } else {
                 setIsLoading(true);
                 const decodeJWTToken = JWTDecoder(data.token as string)
-                console.log("Email", decodeJWTToken.email)
                 const getVerifyToken = await SendVerifyToken({
                     userName: username,
                     password: password,

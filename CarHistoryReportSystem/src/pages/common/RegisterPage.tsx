@@ -69,7 +69,6 @@ function RegisterPage() {
         }
         if (!isLastStep) return next()
         setIsLoading(true);
-        console.log(data)
         const response = await registerUser({
             ...data,
             role: USER_ROLE.USER
@@ -79,7 +78,6 @@ function RegisterPage() {
         if (!response.error) {
             const userData = dispatch(setUserData({ email: data.email, password: data.password }))
             const verifyToken = dispatch(setVerifyToken(response.data.verifyToken))
-            console.log("Payload", userData.payload)
             navigate("/account-verify")
         }
         setRegisterError(true)

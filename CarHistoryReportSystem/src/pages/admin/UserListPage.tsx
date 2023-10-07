@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Add, Edit, List } from '../../services/api/Users';
+import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
 import { APIResponse, User } from '../../utils/Interfaces';
@@ -26,6 +28,8 @@ function UserListPage() {
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRole, setSelectedRole] = useState('all');
+
+    //const token = useSelector((state: RootState) => state.auth.token)
 
     const filteredUsers = users.filter((user: any) => {
         const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -245,6 +249,9 @@ function UserListPage() {
                   </div>
               </div>
           )}
+          {/*{isDataProvider && (*/}
+
+          {/*)}*/}
           {editingUser && (
               <div className="modal">
                   <div className="modal-content">
@@ -261,7 +268,7 @@ function UserListPage() {
                           </div>
                           <div className="form-column">
                               <label>Role: </label>
-                              <select name="role" value={editingUser.role} onChange={handleInputChange}>
+                              <select name="role" value={editingUser.role} onChange={handleInputChange} disabled>
                                   <option value={USER_ROLE.ADMIN}>Admin</option>
                                   <option value={USER_ROLE.USER}>User</option>
                                   <option value={USER_ROLE.DEALER}>Car Dealer</option>

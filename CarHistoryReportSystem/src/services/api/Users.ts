@@ -86,3 +86,16 @@ export async function Get(id: string): Promise<APIResponse> {
         }
     }
 }
+
+//export async function GetDataProviders(type: number): Promise<APIResponse> {
+//    try {
+//        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User/${type}`)
+//    } catch (error) {
+//        const axiosError = error as AxiosError
+//        if (axiosError.code === "ERR_NETWORK") {
+//            return { error: "Network error. Please check your internet connection!" }
+//        } else {
+//            return { error: "Something went wrong. Please try again" }
+//        }
+//    }
+//}
