@@ -18,8 +18,7 @@ namespace Application.DTO.User
         public string? Address { get; set; }
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; } = Role.User;
-        [Required(ErrorMessage = "Data ProviderId is required")]
-        public int DataProviderId { get; set; }
+        public int? DataProviderId { get; set; }
 
     }
 }

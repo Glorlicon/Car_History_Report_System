@@ -20,7 +20,7 @@ namespace Application.DTO.User
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; }
         public int DataProviderId { get; set; }
-        public bool isSuspended { get; set; }
+        public bool IsSuspended { get; set; }
 
     }
 }
