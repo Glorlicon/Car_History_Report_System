@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.Configuration.Annotations;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -84,12 +85,8 @@ namespace Application.DomainServices
         public async Task<UserResponseDTO> GetUser(string id)
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
-            if(user == null)
-            {
-                throw new 
-            }
             var userResponse = _mapper.Map<UserResponseDTO>(user);
-            userResponse.IsSuspended = _userManager.GetLockoutEnabledAsync(userResponse);
+            userResponse.IsSuspended = await _userManager.GetLockoutEnabledAsync(user);
             return userResponse;
         }
 
