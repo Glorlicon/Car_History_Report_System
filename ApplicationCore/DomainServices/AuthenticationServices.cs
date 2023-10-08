@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Authentication;
+using Application.DTO.User;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -56,6 +57,25 @@ namespace Application.DomainServices
             var user = _mapper.Map<User>(request);
             var result = await _identityServices.RegisterAsync(user, request.Password);
             return result;
+        }
+
+        public async Task<bool> ChangePassword(string userId, ChangePasswordUserRequestDTO request)
+        {
+            return await _identityServices.ChangePassword(userId, request);
+        }
+
+        public async Task<string> ForgotPassword(ForgotPasswordRequestDTO request)
+        {
+            return await _identityServices.ForgotPassword(request.Email);
+        }
+
+        public async Task<bool> ResetPassword(ResetPasswordRequestDTO request, string token)
+        {
+            if(request.newPassword != request.newRepeatPassword)
+            {
+                return false;
+            }
+            return await _identityServices.ResetPassword(request.Email, request.newPassword, token);
         }
 
         public async Task<string> ResendConfirmEmailTokenAsync(EmailResendConfirmTokenRequestDTO request)

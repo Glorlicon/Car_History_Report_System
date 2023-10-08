@@ -22,7 +22,9 @@ namespace Application.Interfaces
 
         Task<bool> UpdateUser(string id, UpdateUserRequestDTO request);
 
-        Task<bool> DeleteUser(string id);
+        //Task<bool> DeleteUser(string id);
+
+        Task<IEnumerable<string>> GetRoleList();
 
     }
 }
