@@ -106,18 +106,18 @@ namespace Infrastructure.InfrastructureServices
             {
                 throw new UserNotFoundException("User not found");
             }
-            if (!await _userManager.CheckPasswordAsync(user, request.oldPassword))
+            if (!await _userManager.CheckPasswordAsync(user, request.OldPassword))
             {
                 //TODO:
                 return false;
             }
 
-            if (request.Password != request.rePassword)
+            if (request.Password != request.RePassword)
             {
                 //TODO:
                 return false;
             }
-            await _userManager.ChangePasswordAsync(user, request.oldPassword, request.Password);
+            await _userManager.ChangePasswordAsync(user, request.OldPassword, request.Password);
             return true;
         }
 

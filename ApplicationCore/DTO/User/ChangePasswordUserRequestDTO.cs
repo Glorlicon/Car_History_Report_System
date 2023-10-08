@@ -10,10 +10,10 @@ namespace Application.DTO.User
     public class ChangePasswordUserRequestDTO
     {
         [Required(ErrorMessage = "Old password is required")]
-        public string oldPassword { get; set; }
+        public string OldPassword { get; set; }
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
         [Required(ErrorMessage = "Repeat password is required")]
-        public string rePassword { get; set; }
+        public string RePassword { get; set; }
     }
 }

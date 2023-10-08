@@ -74,18 +74,22 @@ namespace Application.DomainServices
         {
             var users = await _userRepository.GetAll(trackChange: false);
             var userResponse = _mapper.Map<IEnumerable<UserResponseDTO>>(users);
-            //foreach (var user in userResponse)
-            //{
-            //user.Role = from role in 
-            //user.RoleString = _userManager.GetRolesAsync(users.Where(us => us.Id == user.Id).First()).Result.FirstOrDefault();
-            //}
+            foreach(var user in userResponse)
+            {
+                user.IsSuspended = _userManager.GetLockoutEnabledAsync(users.Where(us => us.Id == user.Id).First()).Result;
+            }
             return userResponse;
         }
 
         public async Task<UserResponseDTO> GetUser(string id)
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
+            if(user == null)
+            {
+                throw new 
+            }
             var userResponse = _mapper.Map<UserResponseDTO>(user);
+            userResponse.IsSuspended = _userManager.GetLockoutEnabledAsync(userResponse);
             return userResponse;
         }
 
