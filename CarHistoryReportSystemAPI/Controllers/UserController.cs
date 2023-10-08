@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -38,9 +38,19 @@ namespace CarHistoryReportSystemAPI.Controllers
         //    _userService.AddRoleToUser2(model);
         //    return Ok();
         //}
-
+        /// <summary>
+        /// Create user
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <response code="201">Created Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Create Failed</response>
         [HttpPost]
-        //[Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequestDTO request)
         {
             var result = await _userService.CreateAsync(request);
@@ -56,11 +66,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Get User List
+        /// Get Users detail
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Return user list</returns>
         [HttpGet]
-        //[Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> ListAccountAsync()
         {
             var users = await _userService.GetAllUsers();
@@ -72,7 +83,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetUserDetail")]
-        //[Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetUserDetailAync(string id)
         {
             var user = await _userService.GetUser(id);
@@ -86,16 +97,18 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Updated Successfully</response>
         /// <response code="400">Updated failed</response>
+        /// <response code="404">User not found</response>
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUserAsync(string id, UpdateUserRequestDTO request)
         {
             var result = await _userService.UpdateUser(id, request);
             if (result == true)
             {
-                return NoContent();
+                return Ok(result);
             }
             else
             {
@@ -110,21 +123,28 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Delete Successfully</response>
         /// <response code="400">Delete failed</response>
-        [HttpDelete("{id}")]
+        //[HttpDelete("{id}")]
         //[Authorize(Roles = "Adminstrator")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUserAsync(string id)
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> DeleteUserAsync(string id)
+        //{
+        //    var result = await _userService.DeleteUser(id);
+        //    if (result == true)
+        //    {
+        //        return Ok(); ;
+        //    }
+        //    else
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
+
+        [HttpGet("get-roles")]
+        public async Task<IActionResult> GetRoleList()
         {
-            var result = await _userService.DeleteUser(id);
-            if (result == true)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            var roles = await _userService.GetRoleList();
+            return Ok(roles);
         }
     }
 }
