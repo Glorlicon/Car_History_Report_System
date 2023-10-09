@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Authentication;
+using Application.DTO.User;
 using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,14 @@ namespace Application.Interfaces
         Task<bool> IsInRoleAsync(string userId, Role role);
 
         Task<RegisterResult> RegisterAsync(User user, string password);
+
+        Task<bool> ChangePassword(string id, ChangePasswordUserRequestDTO request);
+
+        Task<string> ForgotPassword(string email);
+
+        Task<bool> ResetPassword(string email, string newPassword, string token);
+
+        Task<bool> ValidateUser(string username, string password);
 
         Task<LoginResult> Login(string username,string password);
 

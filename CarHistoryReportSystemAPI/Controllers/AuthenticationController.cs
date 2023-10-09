@@ -1,8 +1,11 @@
-﻿using Application.DTO.Authentication;
+﻿using Application.DomainServices;
+using Application.DTO.Authentication;
+using Application.DTO.User;
 using Application.Interfaces;
 using Application.Utility;
 using Domain.Entities;
 using Domain.Enum;
+using Infrastructure.InfrastructureServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +59,62 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return Unauthorized();
             }
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <response code="204">Change password Successfully</response>
+        /// <response code="400">Change password failed</response>
+        [HttpPut("change-password/{id}")]
+        //[Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangePasswordAsync(string id, ChangePasswordUserRequestDTO request)
+        {
+            var result = await _authServices.ChangePassword(id, request);
+            if (result == true)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("forgot")]
+        public async Task<IActionResult> Forgot([FromBody] ForgotPasswordRequestDTO request)
+        {
+            var token = await _authServices.ForgotPassword(request);
+            _emailServices.SendEmailAsync(request.Email, "Click this link to reset your password: ", "Token: "+ token);
+            if (token != null)
+            {
+                return Ok(token);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        /// <summary>
+        /// Reset password (bug invalid token) chua fix
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <response code="204">Change password Successfully</response>
+        /// <response code="400">Change password failed</response>
+        [HttpPost("reset/{token}")]
+        public async Task<IActionResult> Reset([FromBody] ResetPasswordRequestDTO request, string token)
+        {
+            var result = await _authServices.ResetPassword(request, token);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
         }
 
         [HttpPost("confirm-email",Name = "ConfirmEmail")]

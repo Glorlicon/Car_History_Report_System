@@ -23,5 +23,6 @@ namespace Application.DTO.User
         public string? Address { get; set; }
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; } = Role.User;
+        public int? DataProviderId { get; set; }
     }
 }

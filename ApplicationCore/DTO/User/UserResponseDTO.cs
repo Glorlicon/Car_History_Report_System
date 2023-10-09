@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Application.DTO.User
         public string? Address { get; set; }
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; }
-        //public String RoleString { get; set; }
-
+        public int DataProviderId { get; set; }
+        public bool IsSuspended { get; set; }
     }
 }

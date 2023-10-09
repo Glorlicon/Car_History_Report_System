@@ -1,10 +1,14 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Authentication;
+using Application.DTO.User;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
+using Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -37,7 +41,7 @@ namespace Infrastructure.InfrastructureServices
 
         public async Task<User> GetUserAsync(string userId)
         {
-            var user =  await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
                 throw new UserNotFoundException($"user id {userId} was not found");
             return user;
@@ -51,15 +55,15 @@ namespace Infrastructure.InfrastructureServices
 
         public async Task<LoginResult> Login(string username, string password)
         {
-            if (!await ValidateUser(username,password))
+            if (!await ValidateUser(username, password))
             {
                 return new LoginResult(token: null, isEmailVerified: false, isUserExist: false, succeed: false, isSuspended: false);
             }
             var isSuspended = IsSuspended(_user);
             var isEmailVerified = await _userManager.IsEmailConfirmedAsync(_user);
-            if (isSuspended) 
+            if (isSuspended)
                 return new LoginResult(token: null, isEmailVerified: isEmailVerified, isUserExist: true, succeed: false, isSuspended: isSuspended);
-            
+
             var token = await CreateToken(isEmailVerified);
             if (!isEmailVerified)
                 return new LoginResult(token: token, isEmailVerified: isEmailVerified, isUserExist: true, succeed: false, isSuspended: isSuspended);
@@ -79,12 +83,12 @@ namespace Infrastructure.InfrastructureServices
             return (_user != null && await _userManager.CheckPasswordAsync(_user, password));
         }
 
-        public async Task<RegisterResult> RegisterAsync(User user,string password)
+        public async Task<RegisterResult> RegisterAsync(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                return new RegisterResult(result, "","");
+                return new RegisterResult(result, "", "");
             }
             var userRoles = new List<string>(){
                 user.Role.ToString()
@@ -93,6 +97,48 @@ namespace Infrastructure.InfrastructureServices
             await _userManager.AddToRolesAsync(user, userRoles);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return new RegisterResult(result, user.Id, token);
+        }
+
+        public async Task<bool> ChangePassword(string userId, ChangePasswordUserRequestDTO request)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new UserNotFoundException("User not found");
+            }
+            if (!await _userManager.CheckPasswordAsync(user, request.OldPassword))
+            {
+                //TODO:
+                return false;
+            }
+
+            if (request.Password != request.RePassword)
+            {
+                //TODO:
+                return false;
+            }
+            await _userManager.ChangePasswordAsync(user, request.OldPassword, request.Password);
+            return true;
+        }
+
+        public async Task<string> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new UserNotFoundException("User not found");
+            }
+             
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            return token;
+        }
+
+        public async Task<bool> ResetPassword(string email, string newPassword, string token)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var result = _userManager.ResetPasswordAsync(user, token, newPassword);
+            return result.Result.Succeeded;
         }
 
         public async Task<string> CreateConfirmEmailToken(string username, string password)
@@ -153,7 +199,7 @@ namespace Infrastructure.InfrastructureServices
             return result.Succeeded;
         }
 
-        public async Task<bool> SetSuspendAccount(string userId,bool isSuspend)
+        public async Task<bool> SetSuspendAccount(string userId, bool isSuspend)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
