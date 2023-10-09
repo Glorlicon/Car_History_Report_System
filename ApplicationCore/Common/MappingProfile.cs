@@ -23,7 +23,8 @@ namespace Application.Common
                 .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name))
                 .ForMember(csr => csr.FuelType, opt => opt.MapFrom(x => x.FuelType.ToString()))
                 .ForMember(csr => csr.BodyType, opt => opt.MapFrom(x => x.BodyType.ToString()));
-            CreateMap<User, UserResponseDTO>();
+            CreateMap<User, UserResponseDTO>()
+            .ForMember(urr => urr.IsSuspended, opt => opt.MapFrom(src => src.LockoutEnabled));
             CreateMap<User, CreateUserRequestDTO>();
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();

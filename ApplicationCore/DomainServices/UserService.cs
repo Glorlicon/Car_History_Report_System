@@ -74,11 +74,8 @@ namespace Application.DomainServices
         public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
         {
             var users = await _userRepository.GetAll(trackChange: false);
+
             var userResponse = _mapper.Map<IEnumerable<UserResponseDTO>>(users);
-            foreach(var user in userResponse)
-            {
-                user.IsSuspended = _userManager.GetLockoutEnabledAsync(users.Where(us => us.Id == user.Id).First()).Result;
-            }
             return userResponse;
         }
 
@@ -86,7 +83,6 @@ namespace Application.DomainServices
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
             var userResponse = _mapper.Map<UserResponseDTO>(user);
-            userResponse.IsSuspended = await _userManager.GetLockoutEnabledAsync(user);
             return userResponse;
         }
 
