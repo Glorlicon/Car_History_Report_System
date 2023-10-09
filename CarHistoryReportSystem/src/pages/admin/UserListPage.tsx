@@ -122,19 +122,19 @@ function UserListPage() {
         fetchData();
     }, []);
   return (
-        <div className="user-list-page">
-          <div className="top-bar">
-              <button className="add-account-btn" onClick={() => setShowModal(true)}>+ Add Account</button>
-                <div className="search-filter-container">
+        <div className="ad-user-list-page">
+          <div className="ad-user-top-bar">
+              <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ Add Account</button>
+              <div className="ad-user-search-filter-container">
                   <input
                       type="text"
-                      className="search-bar"
+                      className="ad-user-search-bar"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={handleSearchChange}
                   />
                   <select
-                      className="filter-dropdown"
+                      className="ad-user-filter-dropdown"
                       value={selectedRole}
                       onChange={handleFilterChange}
                   >
@@ -150,7 +150,7 @@ function UserListPage() {
                   </select>
                 </div>
             </div>
-            <table className="user-table">
+            <table className="ad-user-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -164,14 +164,14 @@ function UserListPage() {
                   {loading ? (
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
-                              <div className="spinner"></div>
+                              <div className="ad-user-spinner"></div>
                           </td>
                       </tr>
                   ) : error ? (
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
                               {error}
-                              <button onClick={fetchData} className="retry-btn">Retry</button>
+                                  <button onClick={fetchData} className="ad-user-retry-btn">Retry</button>
                           </td>
                           </tr>
                       ) : filteredUsers.length > 0 ? (
@@ -182,7 +182,7 @@ function UserListPage() {
                               <td>{user.email}</td>
                               <td>{user.role}</td>
                               <td>
-                                  <button className="suspend-btn">Suspend</button>
+                                  <button className="ad-user-suspend-btn">Suspend</button>
                               </td>
                           </tr>
                       ))
@@ -195,20 +195,20 @@ function UserListPage() {
           </table>
           {/*Pop-up add window*/ }
           {showModal && (
-              <div className="modal">
-                  <div className="modal-content">
-                      <span className="close-btn" onClick={() => setShowModal(false)}>&times;</span>
+              <div className="ad-user-modal">
+                  <div className="ad-user-modal-content">
+                      <span className="ad-user-close-btn" onClick={() => setShowModal(false)}>&times;</span>
                       <h2>Add User</h2>
-                      <div className="form-columns">
-                          <div className="form-column">
+                      <div className="ad-user-form-columns">
+                          <div className="ad-user-form-column">
                               <label>Email Address</label>
                               <input type="text" name="email" value={newUser.email} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Username</label>
                               <input type="text" name="userName" value={newUser.userName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                           <label>Role: </label>
                           <select name="role" value={newUser.role} onChange={handleInputChange}>
                               <option value={USER_ROLE.ADMIN}>Admin</option>
@@ -221,30 +221,32 @@ function UserListPage() {
                               <option value={USER_ROLE.SERVICE}>Service Shop</option>
                               </select>
                           </div>
-                          <div className="form-column">
+                      </div>
+                      <div className="ad-user-form-columns">
+                          <div className="ad-user-form-column">
                               <label>First Name</label>
                               <input type="text" name="firstName" value={newUser.firstName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Last Name</label>
                               <input type="text" name="lastName" value={newUser.lastName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Phone</label>
                               <input type="text" name="phoneNumber" value={newUser.phoneNumber} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Address</label>
                               <input type="text" name="address" value={newUser.address} onChange={handleInputChange} required />
                           </div>
                       </div>
-                      <button onClick={handleAddUser} disabled={adding} className="add-btn">
+                      <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
-                              <div className="inline-spinner"></div>
+                              <div className="ad-user-inline-spinner"></div>
                           ) : 'Add'}
                       </button>
                       {addError && (
-                          <p className="error">{addError}</p>
+                          <p className="ad-user-error">{addError}</p>
                       )}
                   </div>
               </div>
@@ -253,20 +255,20 @@ function UserListPage() {
 
           {/*)}*/}
           {editingUser && (
-              <div className="modal">
-                  <div className="modal-content">
-                      <span className="close-btn" onClick={() => setEditingUser(null)}>&times;</span>
+              <div className="ad-user-modal">
+                  <div className="ad-user-modal-content">
+                      <span className="ad-user-close-btn" onClick={() => setEditingUser(null)}>&times;</span>
                       <h2>User Details</h2>
-                      <div className="form-columns">
-                          <div className="form-column">
+                      <div className="ad-user-form-columns">
+                          <div className="ad-user-form-column">
                               <label>Email Address</label>
                               <input type="text" name="email" value={editingUser.email} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Username</label>
                               <input type="text" name="userName" value={editingUser.userName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Role: </label>
                               <select name="role" value={editingUser.role} onChange={handleInputChange} disabled>
                                   <option value={USER_ROLE.ADMIN}>Admin</option>
@@ -279,30 +281,30 @@ function UserListPage() {
                                   <option value={USER_ROLE.SERVICE}>Service Shop</option>
                               </select>
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>First Name</label>
                               <input type="text" name="firstName" value={editingUser.firstName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Last Name</label>
                               <input type="text" name="lastName" value={editingUser.lastName} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Phone</label>
                               <input type="text" name="phoneNumber" value={editingUser.phoneNumber} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
+                          <div className="ad-user-form-column">
                               <label>Address</label>
                               <input type="text" name="address" value={editingUser.address} onChange={handleInputChange} required />
                           </div>
                       </div>
-                      <button onClick={handleEditUser} disabled={adding} className="add-btn">
+                      <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
-                              <div className="inline-spinner"></div>
+                              <div className="ad-user-inline-spinner"></div>
                           ) : 'Update'}
                       </button>
                       {addError && (
-                          <p className="error">{addError}</p>
+                          <p className="ad-user-error">{addError}</p>
                       )}
                   </div>
               </div>

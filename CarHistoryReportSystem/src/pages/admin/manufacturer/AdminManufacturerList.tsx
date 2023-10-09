@@ -1,34 +1,117 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListDataProviderTypes } from '../../../services/api/DataProvider';
-import { APIResponse } from '../../../utils/Interfaces';
+import { useSelector } from 'react-redux';
+import '../../../styles/AdminManus.css';
+import { AddManufacturer, EditManufacturer, List, ListDataProviderTypes } from '../../../services/api/DataProvider';
+import { RootState } from '../../../store/State';
+import { APIResponse, Manufacturer } from '../../../utils/Interfaces';
+import { isValidEmail, isValidNumber } from '../../../utils/Validators';
+import { JWTDecoder } from '../../../utils/JWTDecoder';
 
 function AdminManufacturerList() {
-    const [dataProviders, setDataProviders] = useState([])
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const [dataProviders, setDataProviders] = useState<string[]>([])
     const [manufactureres, setManufacturers] = useState([])
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [currentId, setCurrentId] = useState<number>()
-
+    const [editManu, setEditManu] = useState<Manufacturer | null>(null)
+    const [adding, setAdding] = useState(false);
+    const [addError, setAddError] = useState<string | null>(null);
+    const emptyManu: Manufacturer = {
+        id: 0,
+        name: "",
+        description: "",
+        address: "",
+        email: "",
+        phoneNumber: "",
+        websiteLink: ""
+    }
+    const [newManu, setNewManu] = useState<Manufacturer>(emptyManu)
 
     const filteredManufacturers = manufactureres.filter((manu: any) => {
         const matchingQuery = manu.name.toLowerCase().includes(searchQuery.toLowerCase())
         return matchingQuery
     })
 
+    const validateManu = (manu: Manufacturer): boolean => {
+        if (manu.email && !isValidEmail(manu.email)) {
+            setAddError("Invalid email address");
+            return false;
+        }
+        if (manu.phoneNumber && !isValidNumber(manu.phoneNumber)) {
+            setAddError("Invalid phone number");
+            return false;
+        }
+        if (!manu.description || !manu.name) {
+            setAddError("Name and description must be filled out");
+            return false;
+        }
+        return true;
+    };
+
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
     };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        if (editManu) {
+            setEditManu({
+                ...editManu,
+                [e.target.name]: e.target.value
+            })
+        } else {
+            setNewManu({
+                ...newManu,
+                [e.target.name]: e.target.value,
+            });
+        }
+    };
+
+    const handleAddManu = async () => {
+        if (validateManu(newManu)) {
+            setAdding(true);
+            setAddError(null);
+            const response: APIResponse = await AddManufacturer(dataProviders,newManu,token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setShowModal(false);
+                setNewManu(emptyManu)
+                fetchData();
+            }
+        }
+    };
+
+    const handleEditManu = async () => {
+        if (!editManu) return
+        if (validateManu(editManu)) {
+            setAdding(true);
+            setAddError(null);
+            const response: APIResponse = await EditManufacturer(editManu, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setShowModal(false);
+                setEditManu(null);
+                fetchData();
+            }
+        }
+    };
+
     const fetchData = async () => {
+        console.log(JWTDecoder(token))
         setLoading(true);
         setError(null);
-        const dataProviderResponse: APIResponse = await ListDataProviderTypes();
+        const dataProviderResponse: APIResponse = await ListDataProviderTypes(token);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {
             setDataProviders(dataProviderResponse.data)
-            const manufacturerResponse: APIResponse = await List(dataProviders)
+            const manufacturerResponse: APIResponse = await List(token)
             if (manufacturerResponse.error) {
                 setError(manufacturerResponse.error)
             } else {
@@ -42,20 +125,20 @@ function AdminManufacturerList() {
         fetchData();
     }, []);
   return (
-      <div className="manu-list-page">
-          <div className="top-bar">
-              <button className="add-manu-btn" onClick={() => setShowModal(true)}>+ Add Manufacturer</button>
-              <div className="search-filter-container">
+      <div className="ad-manu-list-page">
+          <div className="ad-manu-top-bar">
+              <button className="add-ad-manu-btn" onClick={() => setShowModal(true)}>+ Add Manufacturer</button>
+              <div className="ad-manu-search-filter-container">
                   <input
                       type="text"
-                      className="search-bar"
+                      className="ad-manu-search-bar"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={handleSearchChange}
                   />
               </div>
           </div>
-          <table className="manu-table">
+          <table className="ad-manu-table">
               <thead>
                   <tr>
                       <th>ID</th>
@@ -67,112 +150,120 @@ function AdminManufacturerList() {
                   {loading ? (
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
-                              <div className="spinner"></div>
+                              <div className="ad-manu-spinner"></div>
                           </td>
                       </tr>
                   ) : error ? (
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
                               {error}
-                              <button onClick={fetchData} className="retry-btn">Retry</button>
+                              <button onClick={fetchData} className="ad-manu-retry-btn">Retry</button>
                           </td>
                       </tr>
                       ) : filteredManufacturers.length > 0 ? (
                           filteredManufacturers.map((manu: any, index: number) => (
-                          <tr key={index}>
-                              <td onClick={() => { setEditingUser(manu); setCurrentId(manu.id) }}>{manu.id}</td>
+                              <tr key={index}>
+                              <td onClick={() => { setEditManu(manu); setCurrentId(manu.id) }}>{manu.id}</td>
                               <td>{manu.name}</td>
                               <td>{manu.description}</td>
                           </tr>
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>No users found</td>
+                          <td colSpan={5}>No manufacturers added by admin</td>
                       </tr>
                   )}
               </tbody>
           </table>
           {/*Pop-up add window*/}
           {showModal && (
-              <div className="modal">
-                  <div className="modal-content">
-                      <span className="close-btn" onClick={() => setShowModal(false)}>&times;</span>
-                      <h2>Add User</h2>
-                      <div className="form-columns">
-                          <div className="form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={newUser.email} onChange={handleInputChange} required />
+              <div className="ad-manu-modal">
+                  <div className="ad-manu-modal-content">
+                      <span className="ad-manu-close-btn" onClick={() => {setShowModal(false); setNewManu(emptyManu)}}>&times;</span>
+                      <h2>Add Manufacturer</h2>
+                      <div className="ad-manu-form-columns">
+                          <div className="ad-manu-form-column">
+                              <label>Name</label>
+                              <input type="text" name="name" value={newManu.name} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={newUser.userName} onChange={handleInputChange} required />
+                          <div className="ad-manu-form-column">
+                              <label>Description</label>
+                              <input type="text" name="description" value={newManu.description} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={newUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={newUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={newUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
+                          <div className="ad-manu-form-column">
                               <label>Address</label>
-                              <input type="text" name="address" value={newUser.address} onChange={handleInputChange} required />
+                              <input type="text" name="address" value={newManu.address} onChange={handleInputChange}/>
                           </div>
                       </div>
-                      <button onClick={handleAddUser} disabled={adding} className="add-btn">
+                      <div className="ad-manu-form-columns">
+                          <div className="form-column">
+                              <label>Website Link</label>
+                              <input type="text" name="websiteLink" value={newManu.websiteLink} onChange={handleInputChange}/>
+                          </div>
+                          <div className="ad-manu-form-column">
+                              <label>Phone</label>
+                              <input type="text" name="phoneNumber" value={newManu.phoneNumber} onChange={handleInputChange}/>
+                          </div>
+                          <div className="ad-manu-form-column">
+                              <label>Email</label>
+                              <input type="text" name="email" value={newManu.email} onChange={handleInputChange}/>
+                          </div>
+                      </div>
+                      <button onClick={handleAddManu} disabled={adding} className="ad-manu-add-btn">
                           {adding ? (
-                              <div className="inline-spinner"></div>
+                              <div className="ad-manu-inline-spinner"></div>
                           ) : 'Add'}
                       </button>
                       {addError && (
-                          <p className="error">{addError}</p>
+                          <p className="ad-manu-error">{addError}</p>
                       )}
                   </div>
               </div>
           )}
-          {editingUser && (
-              <div className="modal">
-                  <div className="modal-content">
-                      <span className="close-btn" onClick={() => setEditingUser(null)}>&times;</span>
+          {editManu && (
+              <div className="ad-manu-modal">
+                  <div className="ad-manu-modal-content">
+                      <span className="ad-manu-close-btn" onClick={() => setEditManu(null)}>&times;</span>
                       <h2>User Details</h2>
-                      <div className="form-columns">
-                          <div className="form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={editingUser.email} onChange={handleInputChange} required />
+                      <div className="ad-manu-form-columns">
+                          <div className="ad-manu-form-column">
+                              <label>ID</label>
+                              <input type="text" name="id" value={editManu.id} onChange={handleInputChange} disabled />
                           </div>
-                          <div className="form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={editingUser.userName} onChange={handleInputChange} required />
+                          <div className="ad-manu-form-column">
+                              <label>Name</label>
+                              <input type="text" name="name" value={editManu.name} onChange={handleInputChange} required />
                           </div>
-                          <div className="form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={editingUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={editingUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={editingUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="form-column">
-                              <label>Address</label>
-                              <input type="text" name="address" value={editingUser.address} onChange={handleInputChange} required />
+                          <div className="ad-manu-form-column">
+                              <label>Description</label>
+                              <input type="text" name="description" value={editManu.description} onChange={handleInputChange} required />
                           </div>
                       </div>
-                      <button onClick={handleEditUser} disabled={adding} className="add-btn">
+                      <div className="ad-manu-form-columns">
+                          <div className="ad-manu-form-column">
+                              <label>Address</label>
+                              <input type="text" name="address" value={editManu.address} onChange={handleInputChange} required />
+                          </div>
+                          <div className="ad-manu-form-column">
+                              <label>Website Link</label>
+                              <input type="text" name="websiteLink" value={editManu.websiteLink} onChange={handleInputChange} required />
+                          </div>
+                          <div className="ad-manu-form-column">
+                              <label>Phone</label>
+                              <input type="text" name="phoneNumber" value={editManu.phoneNumber} onChange={handleInputChange} required />
+                          </div>
+                          <div className="ad-manu-form-column">
+                              <label>Email</label>
+                              <input type="text" name="email" value={editManu.email} onChange={handleInputChange} required />
+                          </div>
+                      </div>
+                      <button onClick={handleEditManu} disabled={adding} className="ad-manu-add-btn">
                           {adding ? (
-                              <div className="inline-spinner"></div>
+                              <div className="ad-manu-inline-spinner"></div>
                           ) : 'Update'}
                       </button>
                       {addError && (
-                          <p className="error">{addError}</p>
+                          <p className="ad-manu-error">{addError}</p>
                       )}
                   </div>
               </div>

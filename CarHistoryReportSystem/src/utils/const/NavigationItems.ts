@@ -13,7 +13,7 @@ export const UserNavigation = [
 export const AdminNavigation = [
     { label: 'Users List', link: '/admin/users' },
     { label: 'Admin Car List', link: '/admin/cars' },
-    { label: 'Admin Car Model List', link: '/admin/models' },
+    { label: 'Admin Car Model List', link: '/admin/car-models' },
     { label: 'Admin Manufacturer List', link: '/admin/manufacturers' },
     { label: 'Request List', link: '/admin/requests' },
     { label: 'Monetization Information', link: '/admin/monetization' }

@@ -20,9 +20,7 @@ namespace Application.Common
             CreateMap<CarSpecificationCreateRequestDTO, CarSpecification>();
             CreateMap<CarSpecificationUpdateRequestDTO, CarSpecification>();
             CreateMap<CarSpecification, CarSpecificationResponseDTO>()
-                .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name))
-                .ForMember(csr => csr.FuelType, opt => opt.MapFrom(x => x.FuelType.ToString()))
-                .ForMember(csr => csr.BodyType, opt => opt.MapFrom(x => x.BodyType.ToString()));
+                .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name));
             CreateMap<User, UserResponseDTO>();
             CreateMap<User, CreateUserRequestDTO>();
             CreateMap<CreateUserRequestDTO, User>();

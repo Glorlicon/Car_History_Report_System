@@ -27,9 +27,9 @@ namespace Application.DTO.CarSpecification
         public DateOnly ReleasedDate { get; set; }
         public string Country { get; set; }
 
-        public string FuelType { get; set; }
+        public FuelType FuelType { get; set; }
 
-        public string BodyType { get; set; }
+        public BodyType BodyType { get; set; }
 
         public int RidingCapacity { get; set; }
 

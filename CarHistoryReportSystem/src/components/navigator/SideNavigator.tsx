@@ -15,7 +15,6 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const data = useSelector((state: RootState) => state.auth.token)
-    console.log(data)
     const decoded = JWTDecoder(data as unknown as string)
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
