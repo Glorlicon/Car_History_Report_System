@@ -173,6 +173,7 @@ namespace Infrastructure.InfrastructureServices
                 new Claim(ClaimTypes.Email, _user.Email)
              };
             if (isVerified) claims.Add(new Claim(ClaimTypes.Role, _user.Role.ToString()));
+            if (_user.DataProviderId != null) claims.Add(new Claim("dataprovider", _user.DataProviderId.ToString()));
             return claims;
         }
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)

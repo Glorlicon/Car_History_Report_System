@@ -15,10 +15,12 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const data = useSelector((state: RootState) => state.auth.token)
-    console.log(data)
     const decoded = JWTDecoder(data as unknown as string)
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+    };
+    const handleLogout = () => {
+        // Your logout logic here
     };
 
     return (
@@ -27,8 +29,8 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                 {isOpen ? '←' :'→'}
             </button>
             <nav className={`side-nav ${isOpen ? 'open' : ''}`}>
-                <div className="logo-container">
-                    <img src={logo} alt="Company Logo" className="logo" />
+                <div className="side-logo-container">
+                    <img src={logo} alt="Company Logo" className="side-logo" />
                 </div>
                 <div className="welcome-message">
                     Welcome, {decoded.name}
@@ -57,6 +59,9 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                         </li>
                     ))}
                 </ul>
+                <div className="logout-container">
+                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                </div>
             </nav>
         </div>
     );

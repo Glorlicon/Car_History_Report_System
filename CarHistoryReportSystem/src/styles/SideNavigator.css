@@ -35,12 +35,14 @@
 }
 
 .side-nav {
-  width: 0;
-  height: 100vh;
-  background-color: #2c3e50;
-  overflow-x: hidden;
-  transition: 0.5s;
-  padding-top: 60px;
+    width: 0;
+    height: 100vh;
+    background-color: #2c3e50;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    position: fixed;
+    z-index: 1000;
 }
 
 .side-nav.open {
@@ -72,7 +74,7 @@
 .dropdown-menu {
   padding-left: 20px;
 }
-.logo-container {
+.side-logo-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -80,7 +82,28 @@
     background-color: #2c3e50; /* Adjust as needed */
 }
 
-.logo {
-    max-width: 80%; /* Adjust as needed */
-    height: auto;
+.side-logo {
+    max-width: 50%; /* Adjust as needed */
+    margin-bottom: 70px;
 }
+
+.logout-container {
+    bottom: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Adjust as needed */
+    text-align: center;
+    padding: 10px 0;
+}
+
+.logout-btn {
+    background-color: #e74c3c; /* Adjust as needed */
+    color: #ecf0f1; /* Adjust as needed */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .logout-btn:hover {
+        background-color: #c0392b; /* Adjust as needed */
+    }

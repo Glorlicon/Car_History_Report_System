@@ -19,6 +19,7 @@ export interface Token {
     nameidentifier: string
     email: string
     iss: string
+    dataprovider: number
 }
 
 export interface VerifyToken {
@@ -29,5 +30,55 @@ export interface NavItem {
     label: string
     link?: string
     dropdownItems?: NavItem[]
+}
+
+export interface User {
+    id: string
+    userName: string
+    email: string
+    firstName: string
+    phoneNumber: string
+    lastName: string
+    address?: string
+    maxReports: number
+    role: number
+    isSuspended?: boolean
+}
+
+export interface Manufacturer {
+    id: number
+    name: string
+    description: string
+    address?: string
+    websiteLink?: string
+    phoneNumber?: string
+    email?: string
+}
+
+export interface CarModel {
+    modelID: string,
+    manufacturerId: number,
+    manufacturerName: string,
+    wheelFormula?: string,
+    wheelTread?: string,
+    dimension?: string,
+    wheelBase?: number,
+    weight?: number,
+    releasedDate: string,
+    country: string,
+    fuelType: number,
+    bodyType: number,
+    ridingCapacity?: number,
+    personCarriedNumber?: number,
+    seatNumber?: number,
+    layingPlaceNumber?: number,
+    maximumOutput?: number,
+    engineDisplacement?: number,
+    rpm?: number,
+    tireNumber?: number,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
 }
 

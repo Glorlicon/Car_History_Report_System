@@ -9,8 +9,10 @@ type SpecialLayoutProps = {
 const SpecialLayout: React.FC<SpecialLayoutProps> = ({ children, navItems }) => {
     return (
         <div className="App">
-            <SideNavigator items={navItems}/>
-            {children}
+            <SideNavigator items={navItems} />
+            <div className="special-page-content">
+                {children}
+            </div>
         </div>
     )
 }

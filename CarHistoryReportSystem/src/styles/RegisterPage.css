@@ -106,9 +106,6 @@
     grid-column: 1/-1;
 }
 
-.error {
-    margin: 0px 5px 0px 5px;
-}
 .logging {
     border: 4px solid rgba(0, 0, 0, 0.1);
     width: 36px;
