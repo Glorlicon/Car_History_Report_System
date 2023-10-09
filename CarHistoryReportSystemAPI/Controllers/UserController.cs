@@ -71,7 +71,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Return user list</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
-        [Authorize(Roles = "Adminstrator")]
+        //[Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> ListAccountAsync()
         {
             var users = await _userService.GetAllUsers();

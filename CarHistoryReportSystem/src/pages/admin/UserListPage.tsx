@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Add, Edit, List } from '../../services/api/Users';
+import { Add, Edit, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
 import { APIResponse, User } from '../../utils/Interfaces';
+import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidEmail, isValidNumber } from '../../utils/Validators';
 
 function UserListPage() {
+    //TODO details is user is data provider
     const [users, setUsers] = useState([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -15,6 +17,7 @@ function UserListPage() {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [currentId, setCurrentId] = useState<string>("")
     const [newUser, setNewUser] = useState<User>({
+        id: '',
         userName: '',
         email: '',
         firstName: '',
@@ -28,9 +31,10 @@ function UserListPage() {
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRole, setSelectedRole] = useState('all');
-
-    //const token = useSelector((state: RootState) => state.auth.token)
-
+    const [suspendTab, setSuspendTab] = useState(false);
+    const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    console.log("Token: ", token)
     const filteredUsers = users.filter((user: any) => {
         const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = selectedRole === 'all' || user.role.toString() === selectedRole;
@@ -101,6 +105,38 @@ function UserListPage() {
             } else {
                 setShowModal(false);
                 setEditingUser(null);
+                fetchData();
+            }
+        }
+    };
+
+    const handleSuspendClick = (user: User) => {
+        setError(null);
+        setAddError(null)
+        setUserToSuspend(user);
+        setSuspendTab(true);
+    };
+    const handleCancel = () => {
+        setSuspendTab(false);
+        setError(null);
+        setAddError(null)
+        setUserToSuspend(null);
+    };
+
+    const handleConfirmSuspend = async () => {
+        // send suspend/unsuspend request here
+        let response: APIResponse
+        if (userToSuspend) {
+            setAdding(true)
+            setAddError(null)
+            if (userToSuspend.isSuspended) response = await UnsuspendUser(userToSuspend.id, token)
+            else response = await SuspendUser(userToSuspend.id, token)
+            setAdding(false)
+            if (response.error) {
+                setAddError(response.error)
+            } else {
+                setSuspendTab(false);
+                setUserToSuspend(null);
                 fetchData();
             }
         }
@@ -182,7 +218,11 @@ function UserListPage() {
                               <td>{user.email}</td>
                               <td>{user.role}</td>
                               <td>
-                                  <button className="ad-user-suspend-btn">Suspend</button>
+                                      {user.isSuspended ? (
+                                          <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(user)}>Unsuspend</button>
+                                      ) : (
+                                          <button className="ad-user-suspend-btn" onClick={() => handleSuspendClick(user)}>Suspend</button>
+                                      )}
                               </td>
                           </tr>
                       ))
@@ -281,6 +321,8 @@ function UserListPage() {
                                   <option value={USER_ROLE.SERVICE}>Service Shop</option>
                               </select>
                           </div>
+                      </div>
+                      <div className="ad-user-form-columns">
                           <div className="ad-user-form-column">
                               <label>First Name</label>
                               <input type="text" name="firstName" value={editingUser.firstName} onChange={handleInputChange} required />
@@ -303,6 +345,25 @@ function UserListPage() {
                               <div className="ad-user-inline-spinner"></div>
                           ) : 'Update'}
                       </button>
+                      {addError && (
+                          <p className="ad-user-error">{addError}</p>
+                      )}
+                  </div>
+              </div>
+          )}
+          {suspendTab && (
+              <div className="ad-user-modal">
+                  <div className="ad-user-modal-content">
+                      <h2>Confirmation</h2>
+                      <p>Are you sure you want to {(userToSuspend && userToSuspend.isSuspended) ? 'unsuspend' : 'suspend'} user {userToSuspend?.userName} ?</p>
+                      {adding ? (
+                          <div className="ad-user-inline-spinner"></div>
+                      ) : (
+                              <>
+                                  <button onClick={handleConfirmSuspend} className="ad-user-add-btn">Yes</button>
+                                  <button onClick={handleCancel} className="ad-user-add-btn">No</button>
+                              </>
+                      )}
                       {addError && (
                           <p className="ad-user-error">{addError}</p>
                       )}

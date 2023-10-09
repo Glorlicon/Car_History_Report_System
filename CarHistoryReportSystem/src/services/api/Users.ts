@@ -7,7 +7,7 @@ interface CreateErrors {
 }
 export async function List(): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/User`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User`)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -23,7 +23,7 @@ export async function Add(data: User): Promise<APIResponse> {
     const verifiedData: User = { ...data, role: +data.role }
     console.log("verifiedData: ", verifiedData)
     try {
-        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/User`, verifiedData)
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/User`, verifiedData)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -50,7 +50,7 @@ export async function Edit(id: string, data: User): Promise<APIResponse> {
     const verifiedData: User = { ...data, role: +data.role }
     console.log("verifiedData: ", verifiedData)
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/User/${id}`, verifiedData)
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`, verifiedData)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -75,7 +75,7 @@ export async function Edit(id: string, data: User): Promise<APIResponse> {
 
 export async function Get(id: string): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/User/${id}`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -99,3 +99,42 @@ export async function Get(id: string): Promise<APIResponse> {
 //        }
 //    }
 //}
+
+export async function SuspendUser(id: string, token: string): Promise<APIResponse> {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Authentication/suspend-account?userId=${id}`, {} ,{
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        console.log(response)
+        return { data: "Success"}
+    } catch (error) {
+        console.log(error)
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+
+export async function UnsuspendUser(id: string, token: string): Promise<APIResponse> {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Authentication/unsuspend-account?userId=${id}`, {} ,{
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        console.log(response)
+        return { data: "Success" }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}

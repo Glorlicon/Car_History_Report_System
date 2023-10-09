@@ -33,6 +33,7 @@ export interface NavItem {
 }
 
 export interface User {
+    id: string
     userName: string
     email: string
     firstName: string
@@ -41,6 +42,7 @@ export interface User {
     address?: string
     maxReports: number
     role: number
+    isSuspended?: boolean
 }
 
 export interface Manufacturer {

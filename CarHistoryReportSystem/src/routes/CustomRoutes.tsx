@@ -29,7 +29,7 @@ const CustomRoutes = () => {
                 <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
-                <Route path="/suspend" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
+                <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 {/*Admin*/}
                 <Route path="/admin" element={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>} />
                 <Route path="/admin/users" element={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>} />
