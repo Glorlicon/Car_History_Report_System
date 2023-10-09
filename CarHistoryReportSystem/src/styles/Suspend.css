@@ -1,0 +1,23 @@
+.suspended-page {
+    text-align: center;
+    padding: 50px;
+    background-color: #f8d7da;
+    color: #721c24;
+    margin: 15px 0;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}
+
+.suspended-page h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.suspended-page p {
+    margin-bottom: 20px;
+}
+
+.suspended-page a {
+    color: #721c24;
+    text-decoration: underline;
+}

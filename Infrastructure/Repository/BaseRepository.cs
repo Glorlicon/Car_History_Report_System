@@ -1,0 +1,61 @@
+﻿using Application.Interfaces;
+using Infrastructure.DBContext;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Repository
+{
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    {
+        protected ApplicationDBContext repositoryContext;
+
+        public BaseRepository(ApplicationDBContext repositoryContext)
+        {
+            this.repositoryContext = repositoryContext;
+        }
+
+        public IQueryable<T> FindAll(bool trackChanges)
+        {
+            return !trackChanges ? repositoryContext.Set<T>().AsNoTracking()
+                                 : repositoryContext.Set<T>();
+        }
+
+        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
+        {
+            return !trackChanges ? repositoryContext.Set<T>()
+                                                    .Where(expression)
+                                                    .AsNoTracking()
+                                 : repositoryContext.Set<T>()
+                                                    .Where(expression);
+        }
+
+        public virtual async Task<IEnumerable<T>> GetAll(bool trackChange)
+        {
+            return await FindAll(trackChange).ToListAsync();
+        }
+        public void Create(T entity)
+        {
+            repositoryContext.Set<T>().Add(entity);
+        }
+
+        public void Delete(T entity)
+        {
+            repositoryContext.Set<T>().Remove(entity);
+        }
+
+        public void Update(T entity)
+        {
+            repositoryContext.Set<T>().Update(entity);
+        }
+
+        public Task SaveAsync()
+        {
+            return repositoryContext.SaveChangesAsync();
+        }
+    }
+}

@@ -1,5 +1,6 @@
 .App {
-  text-align: center;
+    text-align: center;
+    padding-top: 100px;
 }
 
 .App-logo {
@@ -35,4 +36,13 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.special-page-content {
+    transition: margin-left 0.5s;
+}
+
+/* When sidebar is open, push main content to the right */
+.side-nav.open + .special-page-content {
+    margin-left: 200px; /* Should be equal to the width of the sidebar when open */
 }
