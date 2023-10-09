@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.Configuration.Annotations;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -73,12 +74,8 @@ namespace Application.DomainServices
         public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
         {
             var users = await _userRepository.GetAll(trackChange: false);
+
             var userResponse = _mapper.Map<IEnumerable<UserResponseDTO>>(users);
-            //foreach (var user in userResponse)
-            //{
-            //user.Role = from role in 
-            //user.RoleString = _userManager.GetRolesAsync(users.Where(us => us.Id == user.Id).First()).Result.FirstOrDefault();
-            //}
             return userResponse;
         }
 
