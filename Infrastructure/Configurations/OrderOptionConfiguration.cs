@@ -19,6 +19,12 @@ namespace Infrastructure.Configurations
             builder.Property(co => co.Description)
                 .HasMaxLength(2000)
                 .IsRequired();
+            builder.Property(x => x.Price)
+                .HasPrecision(14,2);
+            builder.Property(x => x.Discount)
+                .HasPrecision(14,2);
+            builder.Property(x => x.TotalAmount)
+                .HasPrecision(14,2);
         }
     }
 }
