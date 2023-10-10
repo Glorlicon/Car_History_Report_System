@@ -20,9 +20,13 @@ namespace Domain.Entities
 
         public string? Email { get; set; }
 
+        public string? ImageLink { get; set; }
+
         public DataProviderType Type { get; set; }
 
         public ICollection<User> Users { get; set; } = new List<User>();
+
+        public ICollection<WorkingTime> WorkingTimes { get; set; } = new List<WorkingTime>();
 
     }
 }
