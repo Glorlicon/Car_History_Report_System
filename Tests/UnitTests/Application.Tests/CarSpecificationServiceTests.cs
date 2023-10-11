@@ -6,6 +6,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Models;
 using Application.DomainServices;
 using Application.DTO.CarSpecification;
 using Application.Interfaces;
@@ -23,6 +24,7 @@ namespace UnitTests.Application.Tests
     {
         private IMapper mapper;
         private List<CarSpecification> carModelsTestData;
+        private CarSpecificationParameter parameter;
 
         public CarSpecificationServiceTests()
         {
@@ -30,6 +32,7 @@ namespace UnitTests.Application.Tests
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
             mapper = new Mapper(configuration);
             carModelsTestData = GetCarModelsList();
+            parameter = new CarSpecificationParameter();
         }
 
 
@@ -109,14 +112,15 @@ namespace UnitTests.Application.Tests
             // Arrange
             bool trackChange = false;
             var mockRepo = new Mock<ICarSpecificationRepository>();
-            mockRepo.Setup(repo => repo.GetAll(trackChange))
+            mockRepo.Setup(repo => repo.GetAllCarModels(parameter, trackChange))
                     .ReturnsAsync(carModelsTestData);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
             var service = new CarSpecificationServices(mockRepo.Object, mapper);
             // Act
-            var result = await service.GetAllCarModels(trackChange);
+            var result = await service.GetAllCarModels(parameter, trackChange);
             // Assert
             Assert.Equal(3, result.Count());
-            Assert.IsAssignableFrom<IEnumerable<CarSpecificationResponseDTO>>(result);
+            Assert.IsAssignableFrom<PagedList<CarSpecificationResponseDTO>>(result);
         }
 
         [Fact]
@@ -163,11 +167,12 @@ namespace UnitTests.Application.Tests
             string userId = "User1";
             bool trackChange = false;
             var mockRepo = new Mock<ICarSpecificationRepository>();
-            mockRepo.Setup(repo => repo.GetCarModelByUserId(userId,trackChange))
+            mockRepo.Setup(repo => repo.GetCarModelByUserId(userId, parameter, trackChange))
                     .ReturnsAsync(GetCarModelsListByUserId(userId));
+            mockRepo.Setup(repo => repo.CountByCondition(cs => cs.CreatedByUserId == userId)).ReturnsAsync(2);
             var service = new CarSpecificationServices(mockRepo.Object, mapper);
             // Act
-            var result = await service.GetCarModelByUserId(userId, trackChange);
+            var result = await service.GetCarModelByUserId(userId, parameter, trackChange);
             // Assert
             Assert.Equal(2, result.Count());
             Assert.IsAssignableFrom<IEnumerable<CarSpecificationResponseDTO>>(result);
@@ -181,11 +186,12 @@ namespace UnitTests.Application.Tests
             int manufacturerId = 1;
             bool trackChange = false;
             var mockRepo = new Mock<ICarSpecificationRepository>();
-            mockRepo.Setup(repo => repo.GetCarModelByManufacturerId(manufacturerId, trackChange))
+            mockRepo.Setup(repo => repo.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange))
                     .ReturnsAsync(GetCarModelsListByManufacturerId(manufacturerId));
+            mockRepo.Setup(repo => repo.CountByCondition(cs => cs.ManufacturerId == manufacturerId)).ReturnsAsync(2);
             var service = new CarSpecificationServices(mockRepo.Object, mapper);
             // Act
-            var result = await service.GetCarModelByManufacturerId(manufacturerId, trackChange);
+            var result = await service.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange);
             // Assert
             Assert.Equal(2, result.Count());
             Assert.IsAssignableFrom<IEnumerable<CarSpecificationResponseDTO>>(result);
