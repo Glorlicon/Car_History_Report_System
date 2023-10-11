@@ -23,6 +23,11 @@ namespace Infrastructure.Repository
             return await FindAll(trackChanges).ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> GetAllUser(bool trackChanges)
+        {
+            return await FindAll(trackChanges).Include(u => u.DataProvider).ToListAsync();
+        }
+
         public async Task<User> GetUserByUserId(string id, bool trackChanges)
         {
             return await FindByCondition(u => u.Id == id, trackChanges)
