@@ -1,4 +1,5 @@
-﻿using Application.DTO.CarSpecification;
+﻿using Application.Common.Models;
+using Application.DTO.CarSpecification;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,11 +24,20 @@ namespace Application.DomainServices
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CarSpecificationResponseDTO>> GetAllCarModels(bool trackChange)
+        public async Task<PagedList<CarSpecificationResponseDTO>> GetAllCarModels(CarSpecificationParameter parameter, bool trackChange)
         {
-            var carModels = await _carSpecRepository.GetAll(trackChange);
-            var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
-            return carModelsResponse;
+            var carModels = await _carSpecRepository.GetAllCarModels(parameter, trackChange);
+            var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
+            var count = await _carSpecRepository.FindAll(trackChange).CountAsync();
+            return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<PagedList<CarSpecificationResponseDTO>> GetAllCarModelsTest(CarSpecificationParameter parameter, bool trackChange)
+        {
+            var carModels = await _carSpecRepository.GetAllCarModelsTest(parameter, trackChange);
+            var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
+            var count = await _carSpecRepository.FindAll(trackChange).CountAsync();
+            return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<CarSpecificationResponseDTO> GetCarModel(string modelId, bool trackChange)
@@ -41,18 +52,31 @@ namespace Application.DomainServices
             return carModelsResponse;
         }
 
-        public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, bool trackChange)
+        public async Task<PagedList<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, CarSpecificationParameter parameter, bool trackChange)
         {
-            var carModels = await _carSpecRepository.GetCarModelByUserId(userId, trackChange);
-            var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
-            return carModelsResponse;
+            var carModels = await _carSpecRepository.GetCarModelByUserId(userId, parameter, trackChange);
+            var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
+            var count = await _carSpecRepository.FindByCondition(cs => cs.CreatedByUserId == userId, trackChange).CountAsync();
+            return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange)
+        public async Task<PagedList<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, CarSpecificationParameter parameter, bool trackChange)
         {
-            var carModels =  await _carSpecRepository.GetCarModelByManufacturerId(manufacturerId,trackChange);
-            var carModelsResponse = _mapper.Map<IEnumerable<CarSpecificationResponseDTO>>(carModels);
-            return carModelsResponse;
+            var carModels =  await _carSpecRepository.GetCarModelByManufacturerId(manufacturerId,parameter, trackChange);
+            var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
+            var count = await _carSpecRepository.FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange).CountAsync();
+            return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<PagedList<CarSpecificationResponseDTO>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter)
+        {
+            var carModels = await _carSpecRepository.GetCarModelsCreatedByAdminstrator(parameter, trackChange: false);
+            var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
+            var count = await _carSpecRepository
+                            .FindAll(trackChanges: false)
+                            .Include(x => x.CreatedByUser)
+                            .Where(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator).CountAsync();
+            return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<bool> CreateCarModel(CarSpecificationCreateRequestDTO request)
