@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Add, Edit, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
+import UserModalAccountPage from '../../components/forms/admin/User/UserModalAccountPage';
+import UserModalDetailsPage from '../../components/forms/admin/User/UserModalDetailsPage';
+import { Add, Edit, GetDataProviders, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
-import { APIResponse, User } from '../../utils/Interfaces';
+import { APIResponse, DataProvider, User } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidEmail, isValidNumber } from '../../utils/Validators';
 
@@ -27,12 +29,16 @@ function UserListPage() {
         role: 1,
         address: ''
     });
+    const [modalPage, setModalPage] = useState(1);
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRole, setSelectedRole] = useState('all');
     const [suspendTab, setSuspendTab] = useState(false);
     const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
+    const [isDataProvider, setIsDataProvider] = useState(false)
+    const [isNewDataProvider, setNewDataProvider] = useState(false)
+    const [providersList, setProvidersList] = useState<DataProvider[] | null>(null)
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     console.log("Token: ", token)
     const filteredUsers = users.filter((user: any) => {
@@ -65,6 +71,25 @@ function UserListPage() {
         setSelectedRole(e.target.value);
     };
 
+    const handleCheckboxToggle = () => {
+        setNewDataProvider(!isNewDataProvider)
+    }
+
+    const handleNextModalPage = () => {
+        if (modalPage < 4) {
+            setModalPage(prevPage => prevPage + 1);
+        } else {
+            if (editingUser) handleEditUser();
+            else handleAddUser();
+        }
+    };
+
+    const handlePreviousModalPage = () => {
+        if (modalPage > 1) {
+            setModalPage(prevPage => prevPage - 1);
+        }
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editingUser) {
             setEditingUser({
@@ -88,6 +113,7 @@ function UserListPage() {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
+                setModalPage(1);
                 fetchData();
             }
         }
@@ -105,6 +131,7 @@ function UserListPage() {
             } else {
                 setShowModal(false);
                 setEditingUser(null);
+                setModalPage(1);
                 fetchData();
             }
         }
@@ -154,9 +181,32 @@ function UserListPage() {
         }
     };
 
+    const getProviders = async () => {
+        if (newUser.role === USER_ROLE.DEALER ||
+            newUser.role === USER_ROLE.INSURANCE ||
+            newUser.role === USER_ROLE.MANUFACTURER ||
+            newUser.role === USER_ROLE.POLICE ||
+            newUser.role === USER_ROLE.REGISTRY ||
+            newUser.role === USER_ROLE.SERVICE
+        ) {
+            setIsDataProvider(true)
+            if (isNewDataProvider) {
+                //temporary
+                const response = await GetDataProviders(newUser.role - 2, token)
+                if (response.data) setProvidersList(response.data)
+                else console.log("Cannot get providers list")
+            }
+        }
+        else setIsDataProvider(false)
+    }
+
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        getProviders()
+    }, [newUser.role])
   return (
         <div className="ad-user-list-page">
           <div className="ad-user-top-bar">
@@ -237,49 +287,22 @@ function UserListPage() {
           {showModal && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => setShowModal(false)}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
                       <h2>Add User</h2>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={newUser.email} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={newUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                          <label>Role: </label>
-                          <select name="role" value={newUser.role} onChange={handleInputChange}>
-                              <option value={USER_ROLE.ADMIN}>Admin</option>
-                              <option value={USER_ROLE.USER}>User</option>
-                              <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                              <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                              <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                              <option value={USER_ROLE.POLICE}>Police</option>
-                              <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                              <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
-                          </div>
-                      </div>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={newUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={newUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={newUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Address</label>
-                              <input type="text" name="address" value={newUser.address} onChange={handleInputChange} required />
-                          </div>
-                      </div>
+                      <UserModalDetailsPage
+                          model={newUser}
+                          handleInputChange={handleInputChange}
+                      />
+                      <UserModalAccountPage
+                          model={newUser}
+                          handleInputChange={handleInputChange}
+                          isDataProvider={isDataProvider}
+                          handleCheckboxToggle={handleCheckboxToggle}
+                          action="Add"
+                          isNewDataProvider={isNewDataProvider}
+                          providerList={providersList}
+                      />
+                      { }
                       <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
@@ -291,59 +314,34 @@ function UserListPage() {
                   </div>
               </div>
           )}
-          {/*{isDataProvider && (*/}
-
-          {/*)}*/}
           {editingUser && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => setEditingUser(null)}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); setModalPage(1) }}>&times;</span>
                       <h2>User Details</h2>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={editingUser.email} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={editingUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Role: </label>
-                              <select name="role" value={editingUser.role} onChange={handleInputChange} disabled>
-                                  <option value={USER_ROLE.ADMIN}>Admin</option>
-                                  <option value={USER_ROLE.USER}>User</option>
-                                  <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                                  <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                                  <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                                  <option value={USER_ROLE.POLICE}>Police</option>
-                                  <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                                  <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
-                          </div>
-                      </div>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={editingUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={editingUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={editingUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Address</label>
-                              <input type="text" name="address" value={editingUser.address} onChange={handleInputChange} required />
-                          </div>
-                      </div>
+                      <UserModalDetailsPage
+                          model={editingUser}
+                          handleInputChange={handleInputChange}
+                      />
+                      <UserModalAccountPage
+                          model={editingUser}
+                          handleInputChange={handleInputChange}
+                          isDataProvider={isDataProvider}
+                          handleCheckboxToggle={handleCheckboxToggle}
+                          action="Edit"
+                          isNewDataProvider={isNewDataProvider}
+                          providerList={null}
+                      />
                       <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
                           ) : 'Update'}
+                      </button>
+                      <button onClick={handlePreviousModalPage} disabled={modalPage === 1} className="ad-user-prev-btn">
+                          Previous
+                      </button>
+                      <button onClick={handleNextModalPage} disabled={adding} className="ad-user-next-btn">
+                          {modalPage < 2 ? 'Next' : (adding ? (<div className="ad-user-inline-spinner"></div>) : 'Update')}
                       </button>
                       {addError && (
                           <p className="ad-user-error">{addError}</p>

@@ -185,7 +185,7 @@
         margin-bottom: 10px;
     }
 
-.ad-user-add-btn {
+.ad-user-prev-btn {
     background-color: #3498db;
     color: #fff;
     border: none;
@@ -193,8 +193,24 @@
     cursor: pointer;
     border-radius: 5px;
     margin-top: 20px;
+    margin-right: 10px;
 }
 
-    .ad-user-add-btn:hover {
+    .ad-user-prev-btn:hover {
+        background-color: #2980b9;
+    }
+
+.ad-user-next-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+    .ad-user-next-btn:hover {
         background-color: #2980b9;
     }

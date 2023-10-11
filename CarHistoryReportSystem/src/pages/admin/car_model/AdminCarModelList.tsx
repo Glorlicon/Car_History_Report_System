@@ -22,7 +22,7 @@ function AdminCarModelList() {
     const [newManu, setNewManu] = useState(false)
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [page, setPage] = useState(1);
+    const [modalPage, setModalPage] = useState(1);
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -69,8 +69,8 @@ function AdminCarModelList() {
     };
 
     const handleNextPage = () => {
-        if (page < 4) {
-            setPage(prevPage => prevPage + 1);
+        if (modalPage < 4) {
+            setModalPage(prevPage => prevPage + 1);
         } else {
             if (editModel) handleEditModel();
             else handleAddModel();
@@ -78,8 +78,8 @@ function AdminCarModelList() {
     };
 
     const handlePreviousPage = () => {
-        if (page > 1) {
-            setPage(prevPage => prevPage - 1);
+        if (modalPage > 1) {
+            setModalPage(prevPage => prevPage - 1);
         }
     };
 
@@ -111,7 +111,7 @@ function AdminCarModelList() {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
-                setPage(1);
+                setModalPage(1);
                 fetchData();
             }
         }
@@ -128,7 +128,7 @@ function AdminCarModelList() {
             } else {
                 setShowModal(false);
                 setEditModel(null);
-                setPage(1);
+                setModalPage(1);
                 fetchData();
             }
         }
@@ -213,9 +213,9 @@ function AdminCarModelList() {
           {showModal && (
               <div className="ad-car-model-modal">
                   <div className="ad-car-model-modal-content">
-                      <span className="ad-car-model-close-btn" onClick={() => { setShowModal(false); setPage(1)}}>&times;</span>
+                      <span className="ad-car-model-close-btn" onClick={() => { setShowModal(false); setModalPage(1)}}>&times;</span>
                       <h2>Add Car Model</h2>
-                          {page === 1 && (
+                      {modalPage === 1 && (
                           <CarModelModalIdentificationPage
                                   action="Add"
                                   model={newModel}
@@ -223,29 +223,29 @@ function AdminCarModelList() {
                                   handleInputChange={handleInputChange}
                                 />
                           )}
-                          {page === 2 && (
+                      {modalPage === 2 && (
                               <CarModelModalPhysCharacteristicPage
                                   model={newModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                          {page === 3 && (
+                      {modalPage === 3 && (
                               <CarModelModalEnginePage
                                   model={newModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                          {page === 4 && (
+                      {modalPage === 4 && (
                               <CarModelCapacityPage
                                   model={newModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                      <button onClick={handlePreviousPage} disabled={page === 1} className="ad-car-model-prev-btn">
+                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="ad-car-model-prev-btn">
                           Previous
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="ad-car-model-next-btn">
-                          {page < 4 ? 'Next' : (adding ? (<div className="ad-car-model-inline-spinner"></div>) : 'Add')}
+                          {modalPage < 4 ? 'Next' : (adding ? (<div className="ad-car-model-inline-spinner"></div>) : 'Add')}
                       </button>
                       {addError && (
                           <p className="ad-car-model-error">{addError}</p>
@@ -256,9 +256,9 @@ function AdminCarModelList() {
           {editModel && (
               <div className="ad-car-model-modal">
                   <div className="ad-car-model-modal-content">
-                      <span className="ad-car-model-close-btn" onClick={() => { setEditModel(null); setPage(1)}}>&times;</span>
+                      <span className="ad-car-model-close-btn" onClick={() => { setEditModel(null); setModalPage(1)}}>&times;</span>
                       <h2>Edit Car Model</h2>
-                          {page === 1 && (
+                      {modalPage === 1 && (
                               <CarModelModalIdentificationPage
                                   action="Edit"
                                   model={editModel}
@@ -266,29 +266,29 @@ function AdminCarModelList() {
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                          {page === 2 && (
+                      {modalPage === 2 && (
                               <CarModelModalPhysCharacteristicPage
                                   model={editModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                          {page === 3 && (
+                      {modalPage === 3 && (
                               <CarModelModalEnginePage
                                   model={editModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                          {page === 4 && (
+                      {modalPage === 4 && (
                               <CarModelCapacityPage
                                   model={editModel}
                                   handleInputChange={handleInputChange}
                               />
                           )}
-                      <button onClick={handlePreviousPage} disabled={page === 1} className="ad-car-model-prev-btn">
+                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="ad-car-model-prev-btn">
                           Previous
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="ad-car-model-next-btn">
-                          {page < 4 ? 'Next' : (adding ? (<div className="ad-car-model-inline-spinner"></div>) : 'Update')}
+                          {modalPage < 4 ? 'Next' : (adding ? (<div className="ad-car-model-inline-spinner"></div>) : 'Update')}
                       </button>
                       {addError && (
                           <p className="ad-car-model-error">{addError}</p>
