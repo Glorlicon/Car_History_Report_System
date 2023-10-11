@@ -10,5 +10,6 @@ namespace Application.Interfaces
     public interface IUserRepository : IBaseRepository<User>
     {
         Task<User> GetUserByUserId(string id, bool trackChanges);
+        Task<IEnumerable<User>> GetAllUser(bool trackChanges);
     }
 }

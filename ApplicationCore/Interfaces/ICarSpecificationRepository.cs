@@ -12,8 +12,14 @@ namespace Application.Interfaces
     {
         Task<CarSpecification> GetCarModelById(string modelId, bool trackChange);
 
-        Task<IEnumerable<CarSpecification>> GetCarModelByUserId(string userId, bool trackChange);
+        Task<IEnumerable<CarSpecification>> GetAllCarModels(CarSpecificationParameter parameter, bool trackChange);
 
-        Task<IEnumerable<CarSpecification>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange);
+        Task<IEnumerable<CarSpecification>> GetAllCarModelsTest(CarSpecificationParameter parameter, bool trackChange);
+
+        Task<IEnumerable<CarSpecification>> GetCarModelByUserId(string userId, CarSpecificationParameter parameter, bool trackChange);
+
+        Task<IEnumerable<CarSpecification>> GetCarModelByManufacturerId(int manufacturerId, CarSpecificationParameter parameter, bool trackChange);
+
+        Task<IEnumerable<CarSpecification>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter, bool trackChange);
     }
 }

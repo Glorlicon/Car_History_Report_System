@@ -1,8 +1,12 @@
-﻿using Application.DTO.CarSpecification;
+﻿using Application.Common.Models;
+using Application.DTO.CarSpecification;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -11,10 +15,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class CarSpecificationController : ControllerBase
     {
         private readonly ICarSpecificationService _carSpecService;
+        private readonly IMapper _mapper;
 
-        public CarSpecificationController(ICarSpecificationService carSpecService)
+        public CarSpecificationController(ICarSpecificationService carSpecService, IMapper mapper)
         {
             _carSpecService = carSpecService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -23,9 +29,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Model List</returns>
         [HttpGet(Name = "GetCarModels")]
         [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCarModelsAsync()
+        public async Task<IActionResult> GetCarModelsAsync([FromQuery] CarSpecificationParameter parameter)
         {
-            var carModels = await _carSpecService.GetAllCarModels(trackChange: false);
+            var carModels = await _carSpecService.GetAllCarModels(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
+        }
+
+        /// <summary>
+        /// Get All Car Models Test
+        /// </summary>
+        /// <returns>Car Model List</returns>
+        [HttpGet("test",Name = "GetCarModelsTest")]
+        [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCarModelsTestAsync([FromQuery] CarSpecificationParameter parameter)
+        {
+            var carModels = await _carSpecService.GetAllCarModelsTest(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
 
@@ -49,10 +69,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="userId"></param>
         /// <returns>Car Model List</returns>
         [HttpGet("user/{userId}", Name = nameof(GetCarModelByUserIdAsync))]
+        [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCarModelByUserIdAsync(string userId)
+        public async Task<IActionResult> GetCarModelByUserIdAsync(string userId, [FromQuery] CarSpecificationParameter parameter)
         {
-            var carModels = await _carSpecService.GetCarModelByUserId(userId, trackChange: false);
+            var carModels = await _carSpecService.GetCarModelByUserId(userId, parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
 
@@ -63,9 +85,24 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Model List</returns>
         [HttpGet("manufacturer/{manufacturerId}", Name = "GetCarModelByManufacturerId")]
         [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCarModelByManufacturerIdAsync(int manufacturerId)
+        public async Task<IActionResult> GetCarModelByManufacturerIdAsync(int manufacturerId, [FromQuery] CarSpecificationParameter parameter)
         {
-            var carModels = await _carSpecService.GetCarModelByManufacturerId(manufacturerId, trackChange: false);
+            var carModels = await _carSpecService.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
+        }
+
+        /// <summary>
+        /// Get All Car Models that adminstrator create
+        /// </summary>
+        /// <returns>Car Model List</returns>
+        [HttpGet("creaeted-by-admin", Name = "GetCarModelsCreatedByAdminstrator")]
+        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCarModelsCreatedByAdminstrator([FromQuery] CarSpecificationParameter parameter)
+        {
+            var carModels = await _carSpecService.GetCarModelsCreatedByAdminstrator(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
 
