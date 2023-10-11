@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Application.DTO.DataProvider;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,5 +25,6 @@ namespace Application.DTO.User
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; } = Role.User;
         public int? DataProviderId { get; set; }
+        public DataProviderCreateRequestDTO? DataProvider { get; set; }
     }
 }
