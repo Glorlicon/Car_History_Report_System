@@ -43,6 +43,7 @@ export interface User {
     maxReports: number
     role: number
     isSuspended?: boolean
+    dataProviderId?: number | null
     dataProvider?: {
         name: string
         description?: string

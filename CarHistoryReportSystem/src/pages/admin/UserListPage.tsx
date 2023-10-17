@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import UserModalAccountPage from '../../components/forms/admin/User/UserModalAccountPage';
 import UserModalDetailsPage from '../../components/forms/admin/User/UserModalDetailsPage';
+import UserModalProviderPage from '../../components/forms/admin/User/UserModalProviderPage';
 import { Add, Edit, GetDataProviders, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
@@ -29,7 +30,6 @@ function UserListPage() {
         role: 1,
         address: ''
     });
-    const [modalPage, setModalPage] = useState(1);
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -40,7 +40,7 @@ function UserListPage() {
     const [isNewDataProvider, setNewDataProvider] = useState(false)
     const [providersList, setProvidersList] = useState<DataProvider[] | null>(null)
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    console.log("Token: ", token)
+    console.log(token)
     const filteredUsers = users.filter((user: any) => {
         const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = selectedRole === 'all' || user.role.toString() === selectedRole;
@@ -75,20 +75,7 @@ function UserListPage() {
         setNewDataProvider(!isNewDataProvider)
     }
 
-    const handleNextModalPage = () => {
-        if (modalPage < 4) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editingUser) handleEditUser();
-            else handleAddUser();
-        }
-    };
 
-    const handlePreviousModalPage = () => {
-        if (modalPage > 1) {
-            setModalPage(prevPage => prevPage - 1);
-        }
-    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editingUser) {
@@ -103,17 +90,39 @@ function UserListPage() {
             });
         }
     };
+
+    const handleInputDataProviderChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setNewUser({
+            ...newUser,
+            dataProvider: {
+                ...newUser.dataProvider as DataProvider,
+                [e.target.name]: e.target.value
+            },
+            dataProviderId: null
+        })
+    }
+
     const handleAddUser = async () => {
         if (validateUser(newUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Add(newUser);
+            const response: APIResponse = await Add(newUser,token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
-                setModalPage(1);
+                setNewUser({
+                    id: '',
+                    userName: '',
+                    email: '',
+                    firstName: '',
+                    phoneNumber: '',
+                    lastName: '',
+                    maxReports: 0,
+                    role: 1,
+                    address: ''
+                });
                 fetchData();
             }
         }
@@ -124,14 +133,13 @@ function UserListPage() {
         if (validateUser(editingUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Edit(currentId, editingUser);
+            const response: APIResponse = await Edit(currentId, editingUser,token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
                 setEditingUser(null);
-                setModalPage(1);
                 fetchData();
             }
         }
@@ -149,6 +157,14 @@ function UserListPage() {
         setAddError(null)
         setUserToSuspend(null);
     };
+
+    const handleInputDataProviderSelect = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setNewUser({
+            ...newUser,
+            dataProviderId: e.target.value as unknown as number,
+            dataProvider: undefined
+        })
+    }
 
     const handleConfirmSuspend = async () => {
         // send suspend/unsuspend request here
@@ -172,7 +188,7 @@ function UserListPage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const response: APIResponse = await List();
+        const response: APIResponse = await List(token);
         setLoading(false);
         if (response.error) {
             setError(response.error);
@@ -182,27 +198,60 @@ function UserListPage() {
     };
 
     const getProviders = async () => {
-        if (newUser.role === USER_ROLE.DEALER ||
-            newUser.role === USER_ROLE.INSURANCE ||
-            newUser.role === USER_ROLE.MANUFACTURER ||
-            newUser.role === USER_ROLE.POLICE ||
-            newUser.role === USER_ROLE.REGISTRY ||
-            newUser.role === USER_ROLE.SERVICE
+        if (newUser.role == USER_ROLE.DEALER ||
+            newUser.role == USER_ROLE.INSURANCE ||
+            newUser.role == USER_ROLE.MANUFACTURER ||
+            newUser.role == USER_ROLE.POLICE ||
+            newUser.role == USER_ROLE.REGISTRY ||
+            newUser.role == USER_ROLE.SERVICE
         ) {
-            setIsDataProvider(true)
-            if (isNewDataProvider) {
-                //temporary
-                const response = await GetDataProviders(newUser.role - 2, token)
-                if (response.data) setProvidersList(response.data)
-                else console.log("Cannot get providers list")
+            const temp = setIsDataProvider(true)
+            console.log("Role", newUser.role)
+            const response = await GetDataProviders(newUser.role - 2, token)
+            if (response.data) setProvidersList(response.data)
+            else console.log("Cannot get providers list")
+        }
+        else {
+            const temp = setIsDataProvider(false)
+        }
+    }
+
+    const changeSize = () => {
+        const element = document.querySelector('.ad-user-modal-content')
+        if (element instanceof HTMLElement) {
+            console.log(isDataProvider)
+            if (isDataProvider) {
+                element.style.width = '570px'
+            } else {
+                element.style.width = '400px'
             }
         }
-        else setIsDataProvider(false)
+    }
+
+    const editChangeSize = () => {
+        console.log("Here")
+        const element = document.querySelector('.ad-user-modal-content')
+        if (element instanceof HTMLElement) {
+            console.log("Hmm",editingUser?.dataProvider)
+            if (editingUser?.dataProvider) {
+                element.style.width = '570px'
+            } else {
+                element.style.width = '400px'
+            }
+        }
     }
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+         changeSize()
+    }, [isDataProvider])
+
+    useEffect(() => {
+        if (editingUser?.dataProvider) editChangeSize()
+    }, [editingUser])
 
     useEffect(() => {
         getProviders()
@@ -263,7 +312,7 @@ function UserListPage() {
                       ) : filteredUsers.length > 0 ? (
                           filteredUsers.map((user: any, index: number) => (
                               <tr key={index}>
-                              <td onClick={() => { setEditingUser(user); setCurrentId(user.id) }}>{user.id}</td>
+                                  <td onClick={() => { setEditingUser(user); setCurrentId(user.id)}}>{user.id}</td>
                               <td>{user.userName}</td>
                               <td>{user.email}</td>
                               <td>{user.role}</td>
@@ -287,7 +336,7 @@ function UserListPage() {
           {showModal && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setShowModal(false); }}>&times;</span>
                       <h2>Add User</h2>
                       <UserModalDetailsPage
                           model={newUser}
@@ -296,13 +345,19 @@ function UserListPage() {
                       <UserModalAccountPage
                           model={newUser}
                           handleInputChange={handleInputChange}
-                          isDataProvider={isDataProvider}
-                          handleCheckboxToggle={handleCheckboxToggle}
                           action="Add"
-                          isNewDataProvider={isNewDataProvider}
-                          providerList={providersList}
                       />
-                      { }
+                      {isDataProvider && providersList && (
+                          < UserModalProviderPage
+                              model={newUser.dataProvider as DataProvider}
+                              action="Add"
+                              isDataProvider={isDataProvider}
+                              providerList={providersList}
+                              handleCheckboxToggle={handleCheckboxToggle}
+                              handleInputDataProviderChange={handleInputDataProviderChange}
+                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                          />
+                      )}
                       <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
@@ -317,7 +372,7 @@ function UserListPage() {
           {editingUser && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); setModalPage(1) }}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); }}>&times;</span>
                       <h2>User Details</h2>
                       <UserModalDetailsPage
                           model={editingUser}
@@ -326,22 +381,23 @@ function UserListPage() {
                       <UserModalAccountPage
                           model={editingUser}
                           handleInputChange={handleInputChange}
-                          isDataProvider={isDataProvider}
-                          handleCheckboxToggle={handleCheckboxToggle}
                           action="Edit"
-                          isNewDataProvider={isNewDataProvider}
-                          providerList={null}
                       />
+                      {editingUser.dataProvider && (
+                          <UserModalProviderPage
+                              model={editingUser.dataProvider as DataProvider}
+                              action="Edit"
+                              isDataProvider={true}
+                              providerList={null}
+                              handleCheckboxToggle={handleCheckboxToggle}
+                              handleInputDataProviderChange={handleInputDataProviderChange}
+                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                          />
+                      )}
                       <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
                           ) : 'Update'}
-                      </button>
-                      <button onClick={handlePreviousModalPage} disabled={modalPage === 1} className="ad-user-prev-btn">
-                          Previous
-                      </button>
-                      <button onClick={handleNextModalPage} disabled={adding} className="ad-user-next-btn">
-                          {modalPage < 2 ? 'Next' : (adding ? (<div className="ad-user-inline-spinner"></div>) : 'Update')}
                       </button>
                       {addError && (
                           <p className="ad-user-error">{addError}</p>
