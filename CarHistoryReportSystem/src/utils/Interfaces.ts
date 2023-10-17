@@ -43,6 +43,17 @@ export interface User {
     maxReports: number
     role: number
     isSuspended?: boolean
+    dataProviderId?: number | null
+    dataProvider?: {
+        name: string
+        description?: string
+        address?: string
+        websiteLink?: string
+        service?: string
+        phoneNumber?: string
+        email?: string
+        type: number
+    }
 }
 
 export interface Manufacturer {
@@ -80,5 +91,18 @@ export interface CarModel {
     modifiedByUserId?: string,
     createdTime?: string,
     lastModified?: string
+}
+
+export interface DataProvider {
+    id: number
+    name: string
+    description?: string
+    address?: string
+    websiteLink?: string
+    service?: string
+    phoneNumber?: string
+    email?: string
+    type: number
+    typeName: string
 }
 

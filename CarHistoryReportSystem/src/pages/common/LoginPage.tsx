@@ -38,7 +38,7 @@ function LoginPage() {
             const dispatchToken = dispatch(setToken(data.token))
             if (data.isEmailVerified) {
                 const decodedData = JWTDecoder(data.token as unknown as string)
-                if (decodedData.roles === "Admin") {
+                if (decodedData.roles === "Adminstrator") {
                     navigate('/admin')
                 } else {
                     navigate('/')
