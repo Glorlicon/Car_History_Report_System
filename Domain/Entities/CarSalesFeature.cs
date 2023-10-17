@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
+    /*
     public class CarSalesFeature 
     {
         public int Id { get; set; }
@@ -17,4 +18,5 @@ namespace Domain.Entities
 
         public CarSalesInfo SalesInfo { get; set; }
     }
+    */
 }

@@ -196,7 +196,7 @@ function AdminManufacturerList() {
                           </div>
                       </div>
                       <div className="ad-manu-form-columns">
-                          <div className="form-column">
+                          <div className="ad-manu-form-column">
                               <label>Website Link</label>
                               <input type="text" name="websiteLink" value={newManu.websiteLink} onChange={handleInputChange}/>
                           </div>

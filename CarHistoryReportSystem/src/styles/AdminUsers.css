@@ -193,8 +193,11 @@
     cursor: pointer;
     border-radius: 5px;
     margin-top: 20px;
+    margin-right: 10px;
 }
 
     .ad-user-add-btn:hover {
         background-color: #2980b9;
     }
+
+

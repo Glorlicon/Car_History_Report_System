@@ -43,9 +43,6 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(18)
                         .HasColumnType("nvarchar(18)");
 
-                    b.Property<int?>("CarSalesInfoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -55,6 +52,11 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentOdometer")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("EngineNumber")
                         .IsRequired()
@@ -82,8 +84,6 @@ namespace Infrastructure.DBContext.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("VinId");
-
-                    b.HasIndex("CarSalesInfoId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -453,7 +453,7 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ManufacturerId")
+                    b.Property<int?>("ManufacturerId")
                         .HasColumnType("int");
 
                     b.Property<string>("ModifiedByUserId")
@@ -554,29 +554,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.ToTable("CarReports");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CarSalesFeature", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("SalesInfoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SalesInfoId");
-
-                    b.ToTable("CarSalesFeature");
-                });
-
             modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -584,6 +561,10 @@ namespace Infrastructure.DBContext.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CarId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(18)");
 
                     b.Property<string>("CreatedByUserId")
                         .HasColumnType("nvarchar(450)");
@@ -596,6 +577,11 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<string>("Features")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -607,6 +593,9 @@ namespace Infrastructure.DBContext.Migrations
                         .HasColumnType("decimal(14,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CarId")
+                        .IsUnique();
 
                     b.HasIndex("CreatedByUserId");
 
@@ -1240,57 +1229,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "697651b6-4c34-4ac9-b016-60b8f198ca6a",
-                            ConcurrencyStamp = "8d3ada5d-4d51-45d8-a28e-f19bcb417d29",
+                            Id = "af91af0e-6293-4170-9c07-425297f0fd2b",
+                            ConcurrencyStamp = "77dac981-3e82-439a-ab1e-6f28f964aa51",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "8dbc29c4-e443-40ae-9514-a89b53c6dfca",
-                            ConcurrencyStamp = "35eefe85-e499-4aa0-8872-9ee1aaeb7b6b",
+                            Id = "025d5dbd-c9e1-49fa-a5d3-030cd841ce12",
+                            ConcurrencyStamp = "6fa9c2d9-3f94-4ed8-8af3-54feb9fe36fd",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "ae8b57c0-cfd9-4f6c-baff-99a567f2a07c",
-                            ConcurrencyStamp = "fd2a7cc7-5deb-465d-b79f-9f47f9d6766f",
+                            Id = "b4a0a1f0-254c-4ddc-a53a-80a7589ae41d",
+                            ConcurrencyStamp = "2f70f384-8d60-4bf7-b1d6-3d24854248df",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "0a2fa5da-5fab-4c03-940e-ce9e5b39cc26",
-                            ConcurrencyStamp = "b4b6d5a3-def7-4c03-881d-fcb8cdb1f4a2",
+                            Id = "a56f44ec-69e6-48cf-9fd3-c1ffe1d1f9f4",
+                            ConcurrencyStamp = "a6ab798b-727a-4cb9-a42b-e55f522daf5a",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "4673d56e-11ca-4cba-89a9-fab7b8d9260d",
-                            ConcurrencyStamp = "1865c9e9-9330-4bf3-ad2e-1b97832c70fd",
+                            Id = "64ed13ae-9ad4-48dc-9ad8-7d8d7e495a68",
+                            ConcurrencyStamp = "c429fe55-93dd-40aa-8ae2-a76533441d36",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "2e54970d-1974-4182-8de8-aaff4ae71cce",
-                            ConcurrencyStamp = "b76e105e-0048-4a6a-b7e9-7c2c2c579693",
+                            Id = "ac9cebcd-c518-4bbd-9952-56c4e64dd556",
+                            ConcurrencyStamp = "b8a991ea-5dd0-4470-be0d-8a195e03b513",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "6a9429f5-1de2-4101-afe8-889df17a19aa",
-                            ConcurrencyStamp = "1a88eb75-060c-40db-b8f1-d2ba1ef8dacb",
+                            Id = "01e3cc89-c0a4-471f-b59d-95f32679b7b8",
+                            ConcurrencyStamp = "6e879a42-964f-4f08-a7cf-304abe855596",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "6750c860-f53a-4887-8de8-eadf949ab47a",
-                            ConcurrencyStamp = "c004c892-c0e8-472c-9f80-77c2974175f9",
+                            Id = "97c09e19-319d-4d72-9772-57b793f91412",
+                            ConcurrencyStamp = "536253f3-d498-4dfb-acc6-250307e5f7ac",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });
@@ -1419,10 +1408,6 @@ namespace Infrastructure.DBContext.Migrations
 
             modelBuilder.Entity("Domain.Entities.Car", b =>
                 {
-                    b.HasOne("Domain.Entities.CarSalesInfo", "CarSalesInfo")
-                        .WithMany()
-                        .HasForeignKey("CarSalesInfoId");
-
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
@@ -1436,8 +1421,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasOne("Domain.Entities.User", "ModifiedByUser")
                         .WithMany()
                         .HasForeignKey("ModifiedByUserId");
-
-                    b.Navigation("CarSalesInfo");
 
                     b.Navigation("CreatedByUser");
 
@@ -1610,9 +1593,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasOne("Domain.Entities.DataProvider", "Manufacturer")
                         .WithMany()
-                        .HasForeignKey("ManufacturerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ManufacturerId");
 
                     b.HasOne("Domain.Entities.User", "ModifiedByUser")
                         .WithMany()
@@ -1686,19 +1667,14 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CarSalesFeature", b =>
+            modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
                 {
-                    b.HasOne("Domain.Entities.CarSalesInfo", "SalesInfo")
-                        .WithMany("Features")
-                        .HasForeignKey("SalesInfoId")
+                    b.HasOne("Domain.Entities.Car", "Car")
+                        .WithOne("CarSalesInfo")
+                        .HasForeignKey("Domain.Entities.CarSalesInfo", "CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SalesInfo");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
-                {
                     b.HasOne("Domain.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId");
@@ -1706,6 +1682,8 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasOne("Domain.Entities.User", "ModifiedByUser")
                         .WithMany()
                         .HasForeignKey("ModifiedByUserId");
+
+                    b.Navigation("Car");
 
                     b.Navigation("CreatedByUser");
 
@@ -1956,6 +1934,8 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.Navigation("CarRecallStatuses");
 
+                    b.Navigation("CarSalesInfo");
+
                     b.Navigation("CarServiceHistories");
 
                     b.Navigation("CarStolenHistories");
@@ -1969,11 +1949,6 @@ namespace Infrastructure.DBContext.Migrations
             modelBuilder.Entity("Domain.Entities.CarRecall", b =>
                 {
                     b.Navigation("CarRecallStatuses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
-                {
-                    b.Navigation("Features");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarSpecification", b =>

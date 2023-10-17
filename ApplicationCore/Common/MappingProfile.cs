@@ -1,4 +1,5 @@
 ﻿using Application.DTO.Authentication;
+using Application.DTO.Car;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.DTO.User;
@@ -32,6 +33,15 @@ namespace Application.Common
             CreateMap<DataProvider, DataProviderResponseDTO>()
                 .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
 
+            CreateMap<CarCreateRequestDTO, Car>();
+            CreateMap<CarUpdateRequestDTO, Car>();
+            CreateMap<Car, CarResponseDTO>()
+                .ForMember(c => c.ColorName, opt => opt.MapFrom(x => x.Color.ToString()));
+            CreateMap<CarSalesInfoCreateRequestDTO, CarSalesInfo>();
+            CreateMap<CarSalesInfoUpdateRequestDTO, CarSalesInfo>();
+            CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>();
+            CreateMap<CarImages, CarImagesResponseDTO>();
+            CreateMap<CarImagesCreateDTO, CarImages>();
         }
     }
 }
