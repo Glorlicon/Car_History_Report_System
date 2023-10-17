@@ -44,6 +44,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
@@ -56,6 +57,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .SingleOrDefaultAsync();
         }
 
@@ -65,6 +67,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
@@ -77,6 +80,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
@@ -89,6 +93,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
@@ -101,6 +106,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
                             .Filter(parameter)
                             .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)

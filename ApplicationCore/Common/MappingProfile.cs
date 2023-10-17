@@ -40,6 +40,8 @@ namespace Application.Common
             CreateMap<CarSalesInfoCreateRequestDTO, CarSalesInfo>();
             CreateMap<CarSalesInfoUpdateRequestDTO, CarSalesInfo>();
             CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>();
+            CreateMap<CarImages, CarImagesResponseDTO>();
+            CreateMap<CarImagesCreateDTO, CarImages>();
         }
     }
 }

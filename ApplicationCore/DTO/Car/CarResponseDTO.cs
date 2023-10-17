@@ -34,6 +34,8 @@ namespace Application.DTO.Car
         public CarSpecificationResponseDTO Model { get; set; } = null!;
         public CarSalesInfoResponseDTO? CarSalesInfo { get; set; }
 
+        public List<CarImagesResponseDTO> CarImages { get; set; }
+
         public string? CreatedByUserId { get; set; }
         public string? ModifiedByUserId { get; set; }
 
