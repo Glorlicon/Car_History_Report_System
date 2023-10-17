@@ -4,6 +4,7 @@ using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.DBContext.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231016033351_ChangeCarSalesFeature")]
+    partial class ChangeCarSalesFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,11 +54,6 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentOdometer")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
 
                     b.Property<string>("EngineNumber")
                         .IsRequired()
@@ -453,7 +450,7 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ManufacturerId")
+                    b.Property<int>("ManufacturerId")
                         .HasColumnType("int");
 
                     b.Property<string>("ModifiedByUserId")
@@ -1229,57 +1226,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af91af0e-6293-4170-9c07-425297f0fd2b",
-                            ConcurrencyStamp = "77dac981-3e82-439a-ab1e-6f28f964aa51",
+                            Id = "d6974125-f767-483e-93a9-169c1b14ace6",
+                            ConcurrencyStamp = "94350b71-f521-4f36-b303-1dcb1b5d42db",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "025d5dbd-c9e1-49fa-a5d3-030cd841ce12",
-                            ConcurrencyStamp = "6fa9c2d9-3f94-4ed8-8af3-54feb9fe36fd",
+                            Id = "1f88ebd5-3bf6-496c-a344-108a1b6c24b5",
+                            ConcurrencyStamp = "8cac58ec-de63-45a5-854d-5d77c69f0b04",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "b4a0a1f0-254c-4ddc-a53a-80a7589ae41d",
-                            ConcurrencyStamp = "2f70f384-8d60-4bf7-b1d6-3d24854248df",
+                            Id = "bf2c67c6-791d-4bc8-877c-17884014aae5",
+                            ConcurrencyStamp = "54db511c-ebb5-4c83-9c41-62cb0be48413",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "a56f44ec-69e6-48cf-9fd3-c1ffe1d1f9f4",
-                            ConcurrencyStamp = "a6ab798b-727a-4cb9-a42b-e55f522daf5a",
+                            Id = "1468dfda-b4f1-41b7-ba6b-cfa22d1f0c64",
+                            ConcurrencyStamp = "c8003c73-46b6-4747-82b8-7a2ffbd6cbb6",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "64ed13ae-9ad4-48dc-9ad8-7d8d7e495a68",
-                            ConcurrencyStamp = "c429fe55-93dd-40aa-8ae2-a76533441d36",
+                            Id = "87d35539-9548-40b2-90d5-34ff26c1cc7a",
+                            ConcurrencyStamp = "5d6f5e8c-12d4-449d-8fce-087a358ce2e9",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "ac9cebcd-c518-4bbd-9952-56c4e64dd556",
-                            ConcurrencyStamp = "b8a991ea-5dd0-4470-be0d-8a195e03b513",
+                            Id = "35cd5e0c-2248-4393-acb1-2faaa3f790e1",
+                            ConcurrencyStamp = "383c830d-1fcb-4f7d-889e-97fc7b3130fa",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "01e3cc89-c0a4-471f-b59d-95f32679b7b8",
-                            ConcurrencyStamp = "6e879a42-964f-4f08-a7cf-304abe855596",
+                            Id = "dba9038a-618c-40e0-bba1-4e26fe21c8fc",
+                            ConcurrencyStamp = "23309dd1-61ee-4d3c-bd12-90318c40ca87",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "97c09e19-319d-4d72-9772-57b793f91412",
-                            ConcurrencyStamp = "536253f3-d498-4dfb-acc6-250307e5f7ac",
+                            Id = "71ed671c-8c87-4f33-9dbb-9ba347009acd",
+                            ConcurrencyStamp = "da07c605-cad1-4743-94fb-78afa86736db",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });
@@ -1593,7 +1590,9 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasOne("Domain.Entities.DataProvider", "Manufacturer")
                         .WithMany()
-                        .HasForeignKey("ManufacturerId");
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "ModifiedByUser")
                         .WithMany()

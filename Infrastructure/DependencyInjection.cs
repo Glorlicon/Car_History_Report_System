@@ -40,6 +40,9 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDataProviderRepository, DataProviderRepository>();
+            services.AddScoped<ICarRepository, CarRepository>();
+            services.AddScoped<ICarSalesInfoRepository, CarSalesInfoRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
 

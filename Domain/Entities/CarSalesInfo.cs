@@ -11,9 +11,13 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
 
+        public string CarId { get; set; }
+
+        public Car Car { get; set; }
+
         public string Description { get; set; }
 
-        public ICollection<CarSalesFeature> Features {  get; set; }
+        public List<string> Features {  get; set; }
 
         public decimal Price { get; set; }
     }

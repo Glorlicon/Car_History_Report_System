@@ -20,6 +20,8 @@ namespace Domain.Entities
 
         public Color Color { get; set; }
 
+        public int CurrentOdometer { get; set; }
+
         public string EngineNumber { get; set; }
 
         public bool IsModified { get; set; } = false;

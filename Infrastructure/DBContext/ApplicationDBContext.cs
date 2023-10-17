@@ -39,7 +39,7 @@ namespace Infrastructure.DBContext
         public DbSet<CarRecall> CarRecalls { get; set; }
         public DbSet<CarRecallStatus> CarRecallStatus { get; set; }
         public DbSet<CarSalesInfo> CarSalesInfo { get; set; }
-        public DbSet<CarSalesFeature> CarSalesFeature { get; set; }
+        //public DbSet<CarSalesFeature> CarSalesFeature { get; set; }
         public DbSet<CarReport> CarReports { get; set; }
         public DbSet<CarSpecification> CarSpecification { get; set; }
         public DbSet<DataProvider> DataProviders { get; set; }

@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using Application.Validation.WeatherForecast;
+using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Configurations.EmailService;
 using Microsoft.AspNetCore.Authorization;
@@ -19,12 +20,14 @@ namespace CarHistoryReportSystemAPI.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailServices _emailServices;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IEmailServices emailServices)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IEmailServices emailServices, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _emailServices = emailServices;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -114,6 +117,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         public IEnumerable<WeatherForecast> GetException()
         {
             throw new DbUpdateException("Random Exception");
+        }
+
+        [HttpGet("test-unit-of-work")]
+        public async Task<IActionResult> TestUnitOfWork()
+        {
+            CarSpecification carSpec = new CarSpecification
+            {
+                ModelID = "TestUOW_2",
+                ReleasedDate = DateOnly.FromDateTime(DateTime.Today),
+                Country = "VN",
+                FuelType = Domain.Enum.FuelType.Gasoline,
+                BodyType = Domain.Enum.BodyType.SUV,
+
+            };
+            DataProvider dataProvider = new DataProvider
+            {
+                Id = 0,
+                Name = "TestUOW_2",
+                Description = "TestUOW",
+                Type = Domain.Enum.DataProviderType.CarDealer
+            };
+            _unitOfWork.CarSpecificationRepository.Create(carSpec);
+            throw new Exception("Interrupt");
+            _unitOfWork.DataProviderRepository.Create(dataProvider);
+            await _unitOfWork.SaveAsync();
+            return Ok(new {carSpecId = carSpec.ModelID, dataProviderId = dataProvider.Id});
         }
     }
 }
