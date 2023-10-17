@@ -23,6 +23,8 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(20);
             builder.Property(c => c.EngineNumber)
                 .HasMaxLength(20);
+            builder.Property(c => c.CurrentOdometer)
+                .HasDefaultValue(0);
             builder.Property(c => c.Color)
                 .HasConversion(
                     co => co.ToString(),

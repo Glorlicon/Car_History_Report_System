@@ -14,9 +14,9 @@ namespace Domain.Entities
 
         public string? Description { get; set; }
 
-        public int ManufacturerId { get; set; }
+        public int? ManufacturerId { get; set; }
 
-        public DataProvider Manufacturer { get; set; }
+        public DataProvider? Manufacturer { get; set; }
 
         public ICollection<Car> Cars { get; set; } = new List<Car>();
     }

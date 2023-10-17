@@ -20,6 +20,7 @@ namespace Application
             services.AddScoped<IAuthenticationServices, AuthenticationServices>();
             services.AddScoped<ICarSpecificationService, CarSpecificationServices>();
             services.AddScoped<IDataProviderService, DataProviderService>();
+            services.AddScoped<ICarServices, CarServices>();
             return services;
         }
     }
