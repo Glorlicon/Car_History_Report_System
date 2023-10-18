@@ -69,6 +69,7 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<CarSpecification>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter,bool trackChange)
         {
             return await FindAll(trackChange)
+                            .Include(x => x.Manufacturer)
                             .Include(x => x.CreatedByUser)
                             .Where(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)

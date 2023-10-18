@@ -1,9 +1,33 @@
 import axios, { AxiosError } from "axios"
 import { APIResponse, CarModel } from "../../utils/Interfaces"
 
-export async function ListAdminCarModels(): Promise<APIResponse> {
+export async function ListAdminCarModels(token: string): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/created-by-admin`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+
+export async function ListManufaturerCarModels(id: number, token: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/manufacturer/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError

@@ -96,7 +96,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Car Models that adminstrator create
         /// </summary>
         /// <returns>Car Model List</returns>
-        [HttpGet("creaeted-by-admin", Name = "GetCarModelsCreatedByAdminstrator")]
+        [HttpGet("created-by-admin", Name = "GetCarModelsCreatedByAdminstrator")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<CarSpecificationResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCarModelsCreatedByAdminstrator([FromQuery] CarSpecificationParameter parameter)

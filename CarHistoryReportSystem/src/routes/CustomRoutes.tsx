@@ -12,14 +12,17 @@ import HomePage from '../pages/common/HomePage';
 import LoginPage from '../pages/common/LoginPage';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
+import ManufacturerCarModelList from '../pages/manufacturer/car_model/ManufacturerCarModelList';
 import ManufacturerHomePage from '../pages/manufacturer/ManufacturerHomePage';
 import PoliceHomePage from '../pages/police/PoliceHomePage';
 import ServiceShopHomePage from '../pages/service_shop/ServiceShopHomePage';
 import AccountVeryficationPage from '../pages/special/AccountVeryficationPage';
 import SuspendPage from '../pages/special/SuspendPage';
 import UnauthorizedPage from '../pages/special/UnauthorizedPage';
+import TestImage from '../pages/TestImage';
+import TestImage2 from '../pages/TestImage2';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 
 const CustomRoutes = () => {
@@ -49,11 +52,14 @@ const CustomRoutes = () => {
                 {/*Police*/}
                 <Route path="/police" element={<PoliceHomePage />} />
                 {/*Manufacturer*/}
-                <Route path="/manufacturer" element={<ManufacturerHomePage />} />
+                <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />
                 {/*Car Dealer*/}
                 <Route path="/dealer" element={<CarDealerHomePage />} />
                 {/*Vehicle Registry*/}
                 <Route path="/vehicleregistry" element={<VehicleRegistryHomePage />} />
+                <Route path="/test" element={<TestImage />} />
+                <Route path="/test2" element={<TestImage2 />} />
             </Routes>
         </Router>
     )
