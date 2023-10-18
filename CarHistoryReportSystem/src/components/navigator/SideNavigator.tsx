@@ -1,11 +1,12 @@
 ﻿import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { NavItem } from '../../utils/Interfaces';
 import '../../styles/SideNavigator.css'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import logo from '../../logo512.png'
+import { logout } from '../../store/authSlice';
 
 interface SideNavigationBarProps {
     items: NavItem[];
@@ -19,8 +20,14 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
     };
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const handleLogout = () => {
-        // Your logout logic here
+        console.log("Logging out...");
+        dispatch(logout())
+        navigate('/login')
+        console.log("Should have navigated to /");
+        return
     };
 
     return (
