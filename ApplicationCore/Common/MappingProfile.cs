@@ -1,5 +1,7 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.Car;
+using Application.DTO.CarOwnerHistory;
+using Application.DTO.CarPart;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.DTO.User;
@@ -42,6 +44,16 @@ namespace Application.Common
             CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>();
             CreateMap<CarImages, CarImagesResponseDTO>();
             CreateMap<CarImagesCreateDTO, CarImages>();
+
+            CreateMap<CarPartCreateRequestDTO, CarPart>();
+            CreateMap<CarPartUpdateRequestDTO, CarPart>();
+            CreateMap<CarPart, CarPartResponseDTO>()
+                .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name));
+
+            CreateMap<CarOwnerHistoryCreateRequestDTO, CarOwnerHistory>();
+            CreateMap<CarOwnerHistoryUpdateRequestDTO, CarOwnerHistory>();
+            CreateMap<CarOwnerHistory, CarOwnerHistoryResponseDTO>()
+                .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
         }
     }
 }

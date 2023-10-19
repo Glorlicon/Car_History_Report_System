@@ -53,12 +53,14 @@ namespace Infrastructure.Repository
 
         public async Task<Car> GetCarById(string vinId, bool trackChange)
         {
-            return await FindByCondition(c => c.VinId == vinId, trackChange)
+            var car =  await FindByCondition(c => c.VinId == vinId, trackChange)
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
                             .Include(c => c.CarImages)
+                            .Include(c => c.CarParts)
                             .SingleOrDefaultAsync();
+            return car;
         }
 
         public async Task<IEnumerable<Car>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter, bool trackChange)

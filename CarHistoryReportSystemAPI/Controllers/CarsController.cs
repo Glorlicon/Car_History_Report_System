@@ -1,7 +1,11 @@
 ﻿using Application.DTO.Car;
+using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
+using Application.Validation.Car;
 using AutoMapper;
 using Domain.Enum;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +28,19 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Cars
         /// </summary>
         /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
         [HttpGet(Name = "GetCars")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsAsync([FromQuery] CarParameter parameter)
         {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var cars = await _carService.GetAllCars(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
@@ -53,7 +66,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="vinId"></param>
         /// <returns>CarSalesInfo</returns>
         [HttpGet("{vinId}/car-sales-info", Name = "GetCarSalesInfo")]
-        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CarSalesInfoResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarSalesInfoAsync(string vinId)
         {
@@ -70,10 +83,19 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}", Name = nameof(GetCarByUserIdAsync))]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarByUserIdAsync(string userId, [FromQuery] CarParameter parameter)
         {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var cars = await _carService.GetCarCreatedByUserId(userId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
@@ -84,37 +106,64 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <param name="manufacturerId"></param>
         /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
         [HttpGet("manufacturer/{manufacturerId}", Name = "GetCarByManufacturerId")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarByManufacturerIdAsync(int manufacturerId, [FromQuery] CarParameter parameter)
         {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var cars = await _carService.GetCarByManufacturerId(manufacturerId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
 
         /// <summary>
-        /// Get All Cars of manufacturerId
+        /// Get All Cars of Car Dealer Id Selling
         /// </summary>
         /// <param name="carDealerId"></param>
         /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
         [HttpGet("car-dealer/{carDealerId}", Name = "GetCarsByCarDealerId")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsByCarDealerIdAsync(int carDealerId, [FromQuery] CarParameter parameter)
         {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var cars = await _carService.GetCarsByCarDealerId(carDealerId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
 
         /// <summary>
-        /// Get All Cars of manufacturerId
+        /// Get All Cars Currently selling
         /// </summary>
         /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
         [HttpGet("selling", Name = "GetCarsCurrentlySelling")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsCurrentlySellingAsync([FromQuery] CarParameter parameter)
         {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var cars = await _carService.GetCarsCurrentlySelling(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
@@ -135,6 +184,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarAsync([FromBody] CarCreateRequestDTO request)
         {
+            CarCreateRequestDTOValidator validator = new CarCreateRequestDTOValidator();
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var result = await _carService.CreateCar(request);
             return NoContent();
         }
@@ -196,6 +252,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarAsync(string vinId, [FromBody] CarUpdateRequestDTO request)
         {
+            CarUpdateRequestDTOValidator validator = new CarUpdateRequestDTOValidator();
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var result = await _carService.UpdateCar(vinId, request);
             return NoContent();
         }
@@ -230,6 +293,27 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var listTypes = Enum.GetNames(typeof(Color));
             return Ok(listTypes);
+        }
+
+        /// <summary>
+        /// Sold Car
+        /// </summary>
+        /// <param name="vinId"></param>
+        /// <returns></returns>
+        /// <response code="204">Updated Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="404">vinId not found</response>
+        /// <response code="500">Sold Car Failed</response>
+        [HttpPost("{vinId}/sold")]
+        [Authorize(Roles = "CarDealer")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SoldCar(string vinId, [FromBody] CarOwnerHistoryCreateRequestDTO request)
+        {
+            var result = await _carService.SoldCar(vinId, request);
+            return NoContent();
         }
     }
 }

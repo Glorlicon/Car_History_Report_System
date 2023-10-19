@@ -15,6 +15,10 @@ namespace Application.Interfaces
 
         ICarSalesInfoRepository CarSalesInfoRepository { get; }
 
+        ICarPartRepository CarPartRepository { get; }
+
+        ICarOwnerHistoryRepository CarOwnerHistoryRepository { get; }
+
         Task SaveAsync();
     }
 }

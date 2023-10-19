@@ -1,6 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
 using Application.DTO.Car;
+using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarSpecification;
 using Application.Interfaces;
 using AutoMapper;
@@ -18,11 +19,13 @@ namespace Application.DomainServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICarOwnerHistoryServices _carOwnerHistoryServices;
 
-        public CarServices(IUnitOfWork unitOfWork, IMapper mapper)
+        public CarServices(IUnitOfWork unitOfWork, IMapper mapper, ICarOwnerHistoryServices carOwnerHistoryServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _carOwnerHistoryServices = carOwnerHistoryServices;
         }
 
         public async Task<PagedList<CarResponseDTO>> GetAllCars(CarParameter parameter)
@@ -81,6 +84,14 @@ namespace Application.DomainServices
             var car = _mapper.Map<Car>(request);
             _unitOfWork.CarRepository.Create(car);
             await _unitOfWork.SaveAsync();
+            /*
+            if (request.CarPartIds != null)
+            {
+                var carParts = await _unitOfWork.CarPartRepository.GetCarPartsByIdList(request.CarPartIds, true);
+                car.CarParts = carParts;
+                await _unitOfWork.SaveAsync();
+            }
+            */
             return true;
         }
 
@@ -99,18 +110,35 @@ namespace Application.DomainServices
         public async Task<bool> UpdateCar(string vinId, CarUpdateRequestDTO request)
         {
             var car = await _unitOfWork.CarRepository.GetCarById(vinId, trackChange: true);
+
             if (car is null)
             {
                 throw new CarNotFoundException(vinId);
             }
             _mapper.Map(request,car);
-            await _unitOfWork.CarRepository.SaveAsync();
+            /*
+            if (request.CarPartIds != null)
+            {
+                var carParts = await _unitOfWork.CarPartRepository.GetCarPartsByIdList(request.CarPartIds, true);
+                car.CarParts = carParts;
+            }
+            */
+            await _unitOfWork.SaveAsync();
             return true;
         }
 
-        public async Task<bool> SoldCar(string vinID)
+        public async Task<bool> SoldCar(string vinID, CarOwnerHistoryCreateRequestDTO request)
         {
-            throw new NotImplementedException();
+            var car = await _unitOfWork.CarRepository.GetCarById(vinID, trackChange: true);
+
+            if (car is null)
+            {
+                throw new CarNotFoundException(vinID);
+            }
+            car.CarSalesInfo = null;
+            await _carOwnerHistoryServices.CreateCarOwnerHistory(request);
+            //await _unitOfWork.SaveAsync();
+            return true;
         }
 
         public async Task<bool> CreateCarSalesInfo(string vinId, CarSalesInfoCreateRequestDTO request)
