@@ -42,6 +42,8 @@ namespace Infrastructure
             services.AddScoped<IDataProviderRepository, DataProviderRepository>();
             services.AddScoped<ICarRepository, CarRepository>();
             services.AddScoped<ICarSalesInfoRepository, CarSalesInfoRepository>();
+            services.AddScoped<ICarPartRepository, CarPartRepository>();
+            services.AddScoped<ICarOwnerHistoryRepository, CarOwnerHistoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
