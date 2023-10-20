@@ -8,6 +8,7 @@ import AdminManufacturerList from '../pages/admin/manufacturer/AdminManufacturer
 import UserListPage from '../pages/admin/UserListPage';
 import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
 import CarSalesPage from '../pages/common/CarSalesPage';
+import CarSalesDetailPage from '../pages/common/CarSalesDetailPage';
 import HomePage from '../pages/common/HomePage';
 import LoginPage from '../pages/common/LoginPage';
 import RegisterPage from '../pages/common/RegisterPage';
@@ -33,6 +34,7 @@ const CustomRoutes = () => {
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
+                <Route path="/sales/details" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
                 {/*Admin*/}
                 <Route path="/admin" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>}></ProtectedRoute>} />
