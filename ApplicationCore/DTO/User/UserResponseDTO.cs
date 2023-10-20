@@ -23,6 +23,7 @@ namespace Application.DTO.User
         public Role Role { get; set; }
         public int DataProviderId { get; set; }
         public bool IsSuspended { get; set; }
+        public string? AvatarImageLink { get; set; }
         public DataProviderResponseDTO DataProvider { get; set; }
 
     }

@@ -44,6 +44,7 @@ export interface User {
     role: number
     isSuspended?: boolean
     dataProviderId?: number | null
+    avatarImageLink?: string
     dataProvider?: {
         name: string
         description?: string
