@@ -104,9 +104,13 @@ export async function Edit(id: string, data: User, token: string): Promise<APIRe
     }
 } 
 
-export async function Get(id: string): Promise<APIResponse> {
+export async function Get(id: string, token: string): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError

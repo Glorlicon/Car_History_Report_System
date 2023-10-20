@@ -19,6 +19,7 @@ namespace Application.DTO.User
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; } = Role.User;
         public int? DataProviderId { get; set; }
+        public string? AvatarImageLink { get; set; }
 
     }
 }
