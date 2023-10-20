@@ -12,6 +12,7 @@ import CarDealerCarList from '../pages/car_dealer/CarDealerCarList';
 import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
 import CarDealerShopDetailsPage from '../pages/car_dealer/CarDealerShopDetailsPage';
 import CarSalesPage from '../pages/common/CarSalesPage';
+import CarSalesDetailPage from '../pages/common/CarSalesDetailPage';
 import HomePage from '../pages/common/HomePage';
 import Request from '../pages/common/UserRequest';
 import LoginPage from '../pages/common/LoginPage';
@@ -46,6 +47,7 @@ const CustomRoutes = () => {
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/sales/details" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
                 {/*Admin*/}
                 <Route path="/admin" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>}></ProtectedRoute>} />
