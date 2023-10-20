@@ -2,6 +2,7 @@
 using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
 using Application.Validation.Car;
+using Application.Validation.CarOwnerHistory;
 using AutoMapper;
 using Domain.Enum;
 using FluentValidation;
@@ -312,6 +313,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SoldCar(string vinId, [FromBody] CarOwnerHistoryCreateRequestDTO request)
         {
+            CarOwnerHistoryCreateRequestDTOValidator validator = new CarOwnerHistoryCreateRequestDTOValidator();
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var result = await _carService.SoldCar(vinId, request);
             return NoContent();
         }
