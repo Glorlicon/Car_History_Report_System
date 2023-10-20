@@ -1,6 +1,10 @@
 ﻿using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
+using Application.Validation.Car;
+using Application.Validation.CarOwnerHistory;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +97,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarOwnerHistoryAsync([FromBody] CarOwnerHistoryCreateRequestDTO request)
         {
+            CarOwnerHistoryCreateRequestDTOValidator validator = new CarOwnerHistoryCreateRequestDTOValidator();
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var result = await _carOwnerHistoryService.CreateCarOwnerHistory(request);
             return NoContent();
         }
@@ -114,6 +125,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarOwnerHistoryAsync(int id, [FromBody] CarOwnerHistoryUpdateRequestDTO request)
         {
+            CarOwnerHistoryUpdateRequestDTOValidator validator = new CarOwnerHistoryUpdateRequestDTOValidator();
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var result = await _carOwnerHistoryService.UpdateCarOwnerHistory(id, request);
             return NoContent();
         }
