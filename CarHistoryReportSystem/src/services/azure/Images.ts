@@ -9,13 +9,14 @@ export async function UploadImages(image: File | null): Promise<APIResponse> {
     const client = blobServiceClient.getContainerClient(containerName);
     const renameImage = `${Date.now()}-${image.name}`
     const blockClient = client.getBlockBlobClient(renameImage);
+    console.log("Image", renameImage)
     try {
         await blockClient.uploadBrowserData(image, {
             blockSize: 4 * 1024 * 1024, // 4MB blocks
             concurrency: 20,
         });
         //setUploadStatus('Image uploaded successfully');
-        return { data: "Image uploaded successfully" }
+        return { data: renameImage }
     } catch (error) {
         console.error('Error uploading to blob storage', error);
         //setUploadStatus('Failed to upload image');
@@ -24,5 +25,5 @@ export async function UploadImages(image: File | null): Promise<APIResponse> {
 }
 
 export function GetImages(image: string): string {
-    return `https://carhistoryreportsystem.blob.core.windows.net/images/chrs/${image}.png`
+    return `https://carhistoryreportsystem.blob.core.windows.net/images/chrs/${image}`
 }

@@ -84,7 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetUserDetail")]
-        [Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator,User")]
         public async Task<IActionResult> GetUserDetailAync(string id)
         {
             var user = await _userService.GetUser(id);
@@ -100,7 +100,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Updated failed</response>
         /// <response code="404">User not found</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
