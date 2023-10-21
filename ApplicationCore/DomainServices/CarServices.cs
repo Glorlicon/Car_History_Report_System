@@ -60,6 +60,15 @@ namespace Application.DomainServices
             return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
+
+        public async Task<PagedList<CarResponseDTO>> GetCarsByAdminstrator(CarParameter parameter)
+        {
+            var cars = await _unitOfWork.CarRepository.GetCarsByAdminstrator(parameter, false);
+            var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
+            var count = await _unitOfWork.CarRepository.CountCarByCondition(c => c.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, parameter);
+            return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
         public async Task<PagedList<CarResponseDTO>> GetCarsCurrentlySelling(CarParameter parameter)
         {
             var cars = await _unitOfWork.CarRepository.GetCarsCurrentlySelling(parameter, false);

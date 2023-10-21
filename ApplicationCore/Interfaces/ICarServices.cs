@@ -22,6 +22,8 @@ namespace Application.Interfaces
 
         Task<PagedList<CarResponseDTO>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter);
 
+        Task<PagedList<CarResponseDTO>> GetCarsByAdminstrator(CarParameter parameter);
+
         Task<PagedList<CarResponseDTO>> GetCarsCurrentlySelling(CarParameter parameter);
 
         Task<bool> SoldCar(string vinID, CarOwnerHistoryCreateRequestDTO request);
