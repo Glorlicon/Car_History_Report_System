@@ -1,10 +1,12 @@
 ﻿using Application.Common.Models;
+using Application.DTO.Car;
 using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
 using Infrastructure.DBContext;
+using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,8 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<Request>> GetAllRequests(RequestParameter parameter, bool trackChange)
         {
             return await FindAll(trackChange)
+                            .Filter(parameter)
+                            .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
@@ -49,6 +53,8 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<Request>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
         {
             return await FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
+                            .Filter(parameter)
+                            .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
