@@ -4,6 +4,7 @@ using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
+using Application.DTO.Request;
 using Application.DTO.User;
 using AutoMapper;
 using Domain.Entities;
@@ -54,6 +55,10 @@ namespace Application.Common
             CreateMap<CarOwnerHistoryUpdateRequestDTO, CarOwnerHistory>();
             CreateMap<CarOwnerHistory, CarOwnerHistoryResponseDTO>()
                 .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
+
+            CreateMap<CreateRequestRequestDTO, Request>();
+            CreateMap<Request, RequestUpdateRequestDTO>();
+            CreateMap<Request, RequestResponseDTO>();
         }
     }
 }

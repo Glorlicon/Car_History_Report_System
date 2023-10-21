@@ -23,5 +23,7 @@ namespace Application.DTO.DataProvider
         public DataProviderType Type { get; set; }
 
         public string TypeName { get; set; }
+
+        public string? ImageLink { get; set; }
     }
 }
