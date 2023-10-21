@@ -9,83 +9,198 @@ function CarSalesPage() {
 
     return (
         <>
-            <header>
-                <div id="logo">LOGO</div>
-                <nav>
-                    <a href="#">Home</a>
-                    <a href="#">Used Cars</a>
-                    {/* ... other navigation links ... */}
-                </nav>
-                <div id="user-profile">Username <a href="#">Logout</a></div>
-            </header>
-
             <main>
                 <aside id="filters">
                     <div id="search">
                         <input type="text" placeholder="Search" />
                     </div>
+                    <button id="clear-filters">Search</button>
+                    <div className="clear-filters">
+                        <p>Filters</p>
+                        <button>Clear Filters</button>
+                    </div>
                     <div id="filter-options">
-                        <select>
-                            <option value="make-model">Make & Model</option>
-                        </select>
-                        <select>
-                            <option value="year">Year</option>
-                        </select>
+                        <div className="filter-choice">
+                            <p>Make & Model</p>
+                            <select>
+                                <option value="make-model">Any Make & Model</option>
+                            </select>
+                        </div>
+                        <div className="filter-choice">
+                            <p>Year</p>
+                            <select>
+                                <option value="make-model">Any Year</option>
+                            </select>
+                        </div>
+                        <div className="filter-choice">
+                            <p>Price</p>
+                            <select>
+                                <option value="make-model">Any Price</option>
+                            </select>
+                        </div>
+                        <div className="filter-choice">
+                            <p>Milage</p>
+                            <select>
+                                <option value="make-model">Any Milage</option>
+                            </select>
+                        </div>
+                        <div className="filter-choice">
+                            <p>Body Style</p>
+                            <select>
+                                <option value="make-model">Any Body Style</option>
+                            </select>
+                        </div>
                         {/* ... other filters ... */}
                     </div>
-                    <button id="clear-filters">Clear All</button>
+                    
                 </aside>
 
                 <section id="car-listings">
                     <div id="sorting">
-                        <label htmlFor="sort-by">Sort By: </label>
-                        <select id="sort-by">
-                            <option value="distance">Distance</option>
-                            <option value="distance">Value</option>
-                            <option value="distance">Price</option>
-                            {/* ... other sorting options ... */}
-                        </select>
+                        <div className="paging-result">
+                            <p>Test</p>
+                        </div>
+                        <div className="sorting-option">
+                            <label htmlFor="sort-by">Sort By: </label>
+                            <select id="sort-by">
+                                <option value="distance">Distance</option>
+                                <option value="value">Value</option>
+                                <option value="price">Price</option>
+                                {/* ... other sorting options ... */}
+                            </select>
+                        </div>
                     </div>
 
                     <article className="car-card">
-                        <img src="#" alt="Car Image" />
-                        <div className="car-details">
-                            <h2>ModelName</h2>
-                            <p>DealerName</p>
-                            <p>Location</p>
-                            {/* ... other car attributes ... */}
-                            <p>Description</p>
+                        <div className="Car-header">
+                            <h3>Used Model Name</h3>
+                            <img src="#" alt="Car Image" />
+                            
                         </div>
+
+                        <div className="used-car-info-container">
+                            <div className="used-car-info">
+                                <h3>Price: Price</h3>
+                                <p><strong>Dealer:</strong> DealerName</p>
+                            </div>
+                            <div className="used-car-info">
+                                <p><strong>Location:</strong> Location</p>
+                                <p><strong>Color:</strong> Color</p>
+                                <p><strong>Transmission:</strong> Transmission</p>
+                                <p><strong>MPG:</strong> MPG</p>
+                            </div>
+
+                            <div className="used-car-info">
+                                <p><strong>Mileage:</strong> Mileage</p>
+                                <p><strong>Body Style:</strong> BodyStyle</p>
+                                <p><strong>Engine:</strong> Engine</p>
+
+                            </div>
+
+                        </div>
+                        <div className="description">
+                            <p><strong>Description:</strong> Description</p>
+                        </div>
+                        
                     </article>
+
                     <article className="car-card">
-                        <img src="#" alt="Car Image" />
-                        <div className="car-details">
-                            <h2>ModelName</h2>
-                            <p>DealerName</p>
-                            <p>Location</p>
-                            {/* ... other car attributes ... */}
-                            <p>Description</p>
+                        <div className="Car-header">
+                            <h3>Used Model Name</h3>
+                            <img src="#" alt="Car Image" />
+
                         </div>
+
+                        <div className="used-car-info-container">
+                            <div className="used-car-info">
+                                <h3>Price: Price</h3>
+                                <p><strong>Dealer:</strong> DealerName</p>
+                            </div>
+                            <div className="used-car-info">
+                                <p><strong>Location:</strong> Location</p>
+                                <p><strong>Color:</strong> Color</p>
+                                <p><strong>Transmission:</strong> Transmission</p>
+                                <p><strong>MPG:</strong> MPG</p>
+                            </div>
+
+                            <div className="used-car-info">
+                                <p><strong>Mileage:</strong> Mileage</p>
+                                <p><strong>Body Style:</strong> BodyStyle</p>
+                                <p><strong>Engine:</strong> Engine</p>
+
+                            </div>
+
+                        </div>
+                        <div className="description">
+                            <p><strong>Description:</strong> Description</p>
+                        </div>
+
                     </article>
+
                     <article className="car-card">
-                        <img src="#" alt="Car Image" />
-                        <div className="car-details">
-                            <h2>ModelName</h2>
-                            <p>DealerName</p>
-                            <p>Location</p>
-                            {/* ... other car attributes ... */}
-                            <p>Description</p>
+                        <div className="Car-header">
+                            <h3>Used Model Name</h3>
+                            <img src="#" alt="Car Image" />
+
                         </div>
+
+                        <div className="used-car-info-container">
+                            <div className="used-car-info">
+                                <h3>Price: Price</h3>
+                                <p><strong>Dealer:</strong> DealerName</p>
+                            </div>
+                            <div className="used-car-info">
+                                <p><strong>Location:</strong> Location</p>
+                                <p><strong>Color:</strong> Color</p>
+                                <p><strong>Transmission:</strong> Transmission</p>
+                                <p><strong>MPG:</strong> MPG</p>
+                            </div>
+
+                            <div className="used-car-info">
+                                <p><strong>Mileage:</strong> Mileage</p>
+                                <p><strong>Body Style:</strong> BodyStyle</p>
+                                <p><strong>Engine:</strong> Engine</p>
+
+                            </div>
+
+                        </div>
+                        <div className="description">
+                            <p><strong>Description:</strong> Description</p>
+                        </div>
+
                     </article>
+
                     <article className="car-card">
-                        <img src="#" alt="Car Image" />
-                        <div className="car-details">
-                            <h2>ModelName</h2>
-                            <p>DealerName</p>
-                            <p>Location</p>
-                            {/* ... other car attributes ... */}
-                            <p>Description</p>
+                        <div className="Car-header">
+                            <h3>Used Model Name</h3>
+                            <img src="#" alt="Car Image" />
+
                         </div>
+
+                        <div className="used-car-info-container">
+                            <div className="used-car-info">
+                                <h3>Price: Price</h3>
+                                <p><strong>Dealer:</strong> DealerName</p>
+                            </div>
+                            <div className="used-car-info">
+                                <p><strong>Location:</strong> Location</p>
+                                <p><strong>Color:</strong> Color</p>
+                                <p><strong>Transmission:</strong> Transmission</p>
+                                <p><strong>MPG:</strong> MPG</p>
+                            </div>
+
+                            <div className="used-car-info">
+                                <p><strong>Mileage:</strong> Mileage</p>
+                                <p><strong>Body Style:</strong> BodyStyle</p>
+                                <p><strong>Engine:</strong> Engine</p>
+
+                            </div>
+
+                        </div>
+                        <div className="description">
+                            <p><strong>Description:</strong> Description</p>
+                        </div>
+
                     </article>
 
                     {/* ... other car cards ... */}
