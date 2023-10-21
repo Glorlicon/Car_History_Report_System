@@ -16,3 +16,8 @@ export function isValidPassword(password: string): boolean {
     const passwordRegex = /^(?=.{8,})(?=\D*\d)(?=[^A-Z]*[A-Z])(?=\w*\W)/;
     return passwordRegex.test(password) || password.length === 0;
 }
+
+export function isValidVIN(vin: string): boolean {
+    const vinRegex = /^(RL[0,4,A,C,E,H,L,M,V]|RP8)[A-HJ-NPR-Z0-9]{14}$/;
+    return vinRegex.test(vin) || vin.length === 0;
+}

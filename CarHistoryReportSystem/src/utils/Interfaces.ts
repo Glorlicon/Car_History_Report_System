@@ -107,3 +107,28 @@ export interface DataProvider {
     typeName: string
 }
 
+export interface CarSalesInfo {
+    description: string
+    features: string[]
+    price: number
+}
+
+export interface CarImages {
+    id: number
+    imageLink: string
+}
+export interface Car {
+    vinId: string
+    licensePlateNumber: string
+    modelId: string
+    color: number
+    colorName: string
+    currentOdometer: number
+    engineNumber: string
+    isModified: boolean
+    isCommercialUse: true
+    model: CarModel
+    carSalesInfo?: CarSalesInfo
+    carImages?: CarImages
+}
+

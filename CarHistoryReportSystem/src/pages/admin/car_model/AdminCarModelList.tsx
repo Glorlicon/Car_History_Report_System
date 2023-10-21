@@ -21,7 +21,6 @@ function AdminCarModelList() {
     const [error, setError] = useState<string | null>(null);
     const [newManu, setNewManu] = useState(false)
     const [loading, setLoading] = useState<boolean>(false);
-    console.log(token)
     const [searchQuery, setSearchQuery] = useState('');
     const [modalPage, setModalPage] = useState(1);
     const [adding, setAdding] = useState(false);
