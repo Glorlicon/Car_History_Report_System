@@ -149,6 +149,29 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Cars Created by adminstrator
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("created-by-admin", Name = "GetCarsByAdminstrator")]
+        [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarsByAdminstratorAsync([FromQuery] CarParameter parameter)
+        {
+            CarParameterValidator validator = new CarParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            var cars = await _carService.GetCarsByAdminstrator(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
+            return Ok(cars);
+        }
+
+        /// <summary>
         /// Get All Cars Currently selling
         /// </summary>
         /// <returns>Car List</returns>
