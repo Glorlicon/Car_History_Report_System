@@ -122,12 +122,12 @@ export interface Car {
     licensePlateNumber: string
     modelId: string
     color: number
-    colorName: string
+    colorName?: string
     currentOdometer: number
     engineNumber: string
     isModified: boolean
-    isCommercialUse: true
-    model: CarModel
+    isCommercialUse: boolean
+    model?: CarModel
     carSalesInfo?: CarSalesInfo
     carImages?: CarImages
 }

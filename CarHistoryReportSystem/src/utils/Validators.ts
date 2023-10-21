@@ -21,3 +21,8 @@ export function isValidVIN(vin: string): boolean {
     const vinRegex = /^(RL[0,4,A,C,E,H,L,M,V]|RP8)[A-HJ-NPR-Z0-9]{14}$/;
     return vinRegex.test(vin) || vin.length === 0;
 }
+
+export function isValidPlateNumber(plate: string): boolean {
+    const plateRegex = /^(1[1-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])(A|B|C|D|E|F|G|H|R|LD)\s(\d{4}|\d{3}\.\d{2})$/;
+    return plateRegex.test(plate) || plate.length === 0;
+}
