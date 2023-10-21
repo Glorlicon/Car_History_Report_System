@@ -155,6 +155,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("created-by-admin", Name = "GetCarsByAdminstrator")]
+        [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsByAdminstratorAsync([FromQuery] CarParameter parameter)
