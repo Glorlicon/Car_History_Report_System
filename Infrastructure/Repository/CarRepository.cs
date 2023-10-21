@@ -102,6 +102,19 @@ namespace Infrastructure.Repository
                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<Car>> GetCarsByAdminstrator(CarParameter parameter, bool trackChange)
+        {
+            return await FindByCondition(c => c.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, trackChange)
+                            .Include(c => c.Model)
+                            .ThenInclude(c => c.Manufacturer)
+                            .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
+        }
+
         public async Task<IEnumerable<Car>> GetCarsCurrentlySelling(CarParameter parameter, bool trackChange)
         {
             return await FindByCondition(c => c.CarSalesInfo != null, trackChange)
