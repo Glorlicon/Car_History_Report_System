@@ -1,11 +1,15 @@
-﻿using Application.DTO.Authentication;
+﻿using Application.DomainServices;
+using Application.DTO.Authentication;
+using Application.DTO.Car;
 using Application.DTO.CarSpecification;
 using Application.DTO.User;
 using Application.Interfaces;
+using Application.Validation.Car;
 using Domain.Entities;
 using Infrastructure.InfrastructureServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -14,14 +18,10 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IAuthenticationServices _authServices;
-        private readonly IEmailServices _emailServices;
 
-        public UserController(IUserService userService, IAuthenticationServices authServices, IEmailServices emailServices)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _authServices = authServices;
-            _emailServices = emailServices;
         }
 
 
@@ -71,10 +71,11 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Return user list</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
-        [Authorize(Roles = "Adminstrator")]
-        public async Task<IActionResult> ListAccountAsync()
+        //[Authorize(Roles = "Adminstrator")]
+        public async Task<IActionResult> ListAccountAsync([FromQuery] UserParameter parameter)
         {
-            var users = await _userService.GetAllUsers();
+            var users = await _userService.GetAllUsers(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(users.PagingData));
             return Ok(users);
         }
         /// <summary>

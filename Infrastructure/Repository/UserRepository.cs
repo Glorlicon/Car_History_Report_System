@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.DTO.CarSpecification;
+using Application.DTO.User;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +25,13 @@ namespace Infrastructure.Repository
             return await FindAll(trackChanges).ToListAsync();
         }
 
-        public async Task<IEnumerable<User>> GetAllUser(bool trackChanges)
+        public async Task<IEnumerable<User>> GetAllUser(UserParameter parameter, bool trackChanges)
         {
-            return await FindAll(trackChanges).Include(u => u.DataProvider).ToListAsync();
+            return await FindAll(trackChanges)
+                .Include(u => u.DataProvider)
+                .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                .ToListAsync();
         }
 
         public async Task<User> GetUserByUserId(string id, bool trackChanges)

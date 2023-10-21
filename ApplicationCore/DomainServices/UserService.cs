@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarSpecification;
 using Application.DTO.User;
 using Application.Interfaces;
 using Application.Utility;
@@ -70,18 +71,21 @@ namespace Application.DomainServices
             return result;
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
-        {
-            var users = await _userRepository.GetAllUser(trackChanges: false);
+        public async Task<PagedList<UserResponseDTO>> GetAllUsers(UserParameter parameter, bool trackChange)
+        {           
+            var users = await _userRepository.GetAllUser(parameter, trackChange);
 
-            var userResponse = _mapper.Map<IEnumerable<UserResponseDTO>>(users);
+            var userResponse = _mapper.Map<List<UserResponseDTO>>(users);
+
+            var count = await _userRepository.CountAll();
 
             //foreach (var user in userResponse)
             //{
             //user.Role = from role in 
             //user.RoleString = _userManager.GetRolesAsync(users.Where(us => us.Id == user.Id).First()).Result.FirstOrDefault();
             //}
-            return userResponse;
+
+            return new PagedList<UserResponseDTO>(userResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<UserResponseDTO> GetUser(string id)
