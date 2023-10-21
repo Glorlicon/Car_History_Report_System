@@ -1,5 +1,5 @@
 .availability-section {
-    flex-basis: calc(40% - 10px); /* Remaining 40% for the availability section */
+    flex-basis: calc(40% - 10px);
     margin-left: 10px;
     width: 100%;
     border: 1px solid #e0e0e0;
@@ -7,11 +7,19 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles for the separate boxes for Vehicle Highlights and Dealer Details */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+}
+
+
 .box {
     border: 1px solid #e0e0e0;
     padding: 1rem;
-    margin-bottom: 1rem; /* Space between the two boxes */
+    margin-bottom: 1rem;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -58,7 +66,7 @@
 }
 
 .car-detail-main {
-    flex-basis: calc(60% - 10px); /* Make this section take 60% of the container width */
+    flex-basis: calc(60% - 10px);
     margin-right: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
