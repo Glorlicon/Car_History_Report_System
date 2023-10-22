@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { CreateCarForSale, ListCarDealerCarForSale, SaleCar } from '../../services/api/Car';
+import { CreateCarForSale, EditCarForSale, ListCarDealerCarForSale, SaleCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
 import { APIResponse, Car, CarSaleDetails, CarSalesInfo } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidNumber, isValidVIN } from '../../utils/Validators';
 import '../../styles/CarDealerCars.css'
+import { useNavigate } from 'react-router-dom';
 
 function CarDealerCarList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const dealerId = JWTDecoder(token).dataprovider
+    const navigate = useNavigate()
     const [error, setError] = useState<string | null>(null);
     const [carList, setCarList] = useState<Car[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [newCarSales, setNewCarSales] = useState<CarSalesInfo>({
+    const basicCarSale = {
         carId: '',
         description: '',
         features: [],
         price: 0,
-        carImages: [] as any,
-        notes: ''
-    });
+        carImages: [] as any
+    }
+    const [newCarSales, setNewCarSales] = useState<CarSalesInfo>(basicCarSale);
     const [feature, setFeature] = useState<string>('');
     const [images, setImages] = useState<File>();
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,10 +48,17 @@ function CarDealerCarList() {
     const [saleDetails, setSaleDetails] = useState<CarSaleDetails|null>();
 
     const handleAddFeature = () => {
-        setNewCarSales({
-            ...newCarSales,
-            features: [...newCarSales.features, feature],
-        });
+        if (editCarSales) {
+            setEditCarSales({
+                ...editCarSales,
+                features: [...editCarSales.features, feature],
+            });
+        } else {
+            setNewCarSales({
+                ...newCarSales,
+                features: [...newCarSales.features, feature],
+            });
+        }
         setFeature('');
     };
 
@@ -89,12 +98,12 @@ function CarDealerCarList() {
         if (editCarSales != null && validateCarSales(editCarSales)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await CreateCarForSale(newCarSales, token);
+            const response: APIResponse = await EditCarForSale(editCarSales, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
-                setShowModal(false);
+                setEditCarSales(null)
                 fetchData();
             }
         }
@@ -125,6 +134,9 @@ function CarDealerCarList() {
             startDate: '',
             dob:''
         })
+    }
+    const handleDetailsClick = (id: string) => {
+        navigate(`/dealer/cars/${id}`)
     }
     const handleCarSale = async() => {
         if (saleDetails!=null && validateSaleDetails(saleDetails)) {
@@ -223,7 +235,7 @@ function CarDealerCarList() {
                               <td>{model.modelId}</td>
                               <td>{model.carSalesInfo.price}</td>
                               <td>
-                                  <button className="dealer-car-sales-action-btn" onClick={() => { } }>Details</button>
+                                  <button className="dealer-car-sales-action-btn" onClick={() => handleDetailsClick(model.vinId) }>Details</button>
                                   <button className="dealer-car-sales-action-btn" onClick={() => handleSoldClick(model.vinId) }>Sold</button>
                               </td>
                           </tr>
@@ -238,7 +250,7 @@ function CarDealerCarList() {
           {showModal && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
-                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); }}>&times;</span>
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale) }}>&times;</span>
                       <h2>Add Car</h2>
                       <h3>DevNote: add images later</h3>
                       <div className="dealer-car-sales-form-columns">
@@ -249,12 +261,6 @@ function CarDealerCarList() {
                           <div className="dealer-car-sales-form-column">
                               <label>Car VIN id</label>
                               <input type="text" name="carId" value={newCarSales.carId} onChange={handleInputChange} />
-                          </div>
-                      </div>
-                      <div className="dealer-car-sales-form-columns">
-                          <div className="ad-car-model-form-column">
-                              <label>Notes</label>
-                              <input type="text" name="notes" value={newCarSales.notes} onChange={handleInputChange} />
                           </div>
                           <div className="dealer-car-sales-form-column">
                               <label>Price</label>
@@ -285,9 +291,53 @@ function CarDealerCarList() {
                   </div>
               </div>
           )}
-          {saleDetails && (
+          {editCarSales && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null) }}>&times;</span>
+                      <h2>Edit Car</h2>
+                      <h3>DevNote: add images later</h3>
+                      <div className="dealer-car-sales-form-columns">
+                          <div className="dealer-car-sales-form-column">
+                              <label>Description</label>
+                              <input type="text" name="description" value={editCarSales.description} onChange={handleInputChange} />
+                          </div>
+                          <div className="dealer-car-sales-form-column">
+                              <label>Car VIN id</label>
+                              <input type="text" name="carId" value={editCarSales.carId} onChange={handleInputChange} disabled/>
+                          </div>
+                          <div className="dealer-car-sales-form-column">
+                              <label>Price</label>
+                              <input type="number" name="price" value={editCarSales.price} onChange={handleInputChange} min="0" />
+                          </div>
+                      </div>
+                      <div className="dealer-car-sales-form-columns">
+                          <div className="dealer-car-sales-form-column">
+                              <label>Features: </label>
+                              <input type="text" name="feature" value={feature} onChange={e => { if (e.target.value != '') setFeature(e.target.value) }} />
+                              <button className="dealer-car-sales-add-feature-btn" type="button" onClick={handleAddFeature}>+Add Feature</button>
+                              <ul className="dealer-car-sales-feature-list">
+                                  {editCarSales.features.map((f, index) => (
+                                      <li key={index} className="dealer-car-sales-feature-list-item">
+                                          <span style={{ marginRight: '10px' }}>{f}</span>
+                                          <button className="dealer-car-sales-remove-feature-btn" type="button" onClick={() => handleRemoveFeature(index)}>Remove Feature</button>
+                                      </li>
+                                  ))}
+                              </ul>
+                          </div>
+                      </div>
+                      <button onClick={handleEditCarSales} disabled={adding} className="dealer-car-sales-add-btn">
+                          {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit'}
+                      </button>
+                      {addError && (
+                          <p className="dealer-car-sales-error">{addError}</p>
+                      )}
+                  </div>
+              </div>
+          )}
+          {saleDetails && (
+              <div className="dealer-car-sales-modal">
+                  <div className="dealer-car-sales-modal-content-sale">
                       <span className="dealer-car-sales-close-btn" onClick={() => { setSaleDetails(null); }}>&times;</span>
                       <h2>Sale Car {saleDetails.carId}</h2>
                       <div className="dealer-car-sales-form-columns">

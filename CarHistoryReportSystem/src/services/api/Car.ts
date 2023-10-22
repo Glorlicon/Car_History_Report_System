@@ -157,6 +157,7 @@ export async function SaleCar(data: CarSaleDetails, token: string) {
 }
 
 export async function EditCarForSale(data: CarSalesInfo, token: string) {
+    console.log("Data",data)
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${data.carId}/car-sales-info`, data,
             {
@@ -171,6 +172,27 @@ export async function EditCarForSale(data: CarSalesInfo, token: string) {
         console.log("Add Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+export async function GetCar(id: string, token: string) {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else if (axiosError.response?.status === 404) {
+            return { error: (axiosError.response.data as any).error }
         } else {
             return { error: "Something went wrong. Please try again" }
         }

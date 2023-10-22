@@ -113,7 +113,6 @@ export interface CarSalesInfo {
     features: string[]
     price: number
     carImages?: CarImages
-    notes?: string
 }
 
 export interface CarSaleDetails {
@@ -143,6 +142,6 @@ export interface Car {
     isCommercialUse: boolean
     model?: CarModel
     carSalesInfo?: CarSalesInfo
-    carImages?: CarImages
+    carImages?: CarImages[]
 }
 

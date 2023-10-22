@@ -41,6 +41,8 @@ function LoginPage() {
                     navigate('/admin')
                 } else if (decodedData.roles === "Manufacturer") {
                     navigate('/manufacturer')
+                } else if (decodedData.roles === "CarDealer") {
+                    navigate('/dealer')
                 } else {
                     navigate('/')
                 }
