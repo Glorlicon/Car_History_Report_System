@@ -39,8 +39,10 @@ function LoginPage() {
                 const decodedData = JWTDecoder(data.token as unknown as string)
                 if (decodedData.roles === "Adminstrator") {
                     navigate('/admin')
-                } if (decodedData.roles === "Manufacturer") {
+                } else if (decodedData.roles === "Manufacturer") {
                     navigate('/manufacturer')
+                } else if (decodedData.roles === "CarDealer") {
+                    navigate('/dealer')
                 } else {
                     navigate('/')
                 }
