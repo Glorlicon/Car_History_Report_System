@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AdminAddCar, AdminEditCar, ListAdminCar } from '../../../services/api/Car';
+import { AddCar, EditCar, ListAdminCar } from '../../../services/api/Car';
 import { ListAdminCarModels } from '../../../services/api/CarModel';
 import { RootState } from '../../../store/State';
 import { APIResponse, Car, CarModel } from '../../../utils/Interfaces';
@@ -76,8 +76,7 @@ function AdminCarList() {
         if (validateCar(newCar)) {
             setAdding(true);
             setAddError(null);
-            console.log("Dad", newCar)
-            const response: APIResponse = await AdminAddCar(newCar, token);
+            const response: APIResponse = await AddCar(newCar, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -93,7 +92,7 @@ function AdminCarList() {
         if (editCar != null && validateCar(editCar)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AdminEditCar(editCar, token);
+            const response: APIResponse = await EditCar(editCar, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);

@@ -109,12 +109,26 @@ export interface DataProvider {
 
 export interface CarSalesInfo {
     description: string
+    carId?: string
     features: string[]
     price: number
+    carImages?: CarImages
+    notes?: string
+}
+
+export interface CarSaleDetails {
+    name: string
+    phoneNumber: string
+    carId: string
+    address: string
+    dob: string
+    startDate: string
+    note: string
 }
 
 export interface CarImages {
     id: number
+    carId?: string
     imageLink: string
 }
 export interface Car {

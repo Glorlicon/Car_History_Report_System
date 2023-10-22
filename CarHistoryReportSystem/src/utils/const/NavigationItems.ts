@@ -26,3 +26,8 @@ export const ManufacturerNavigation = [
     { label: 'Recall List', link: '/manufacturer/recalls' },
     { label: 'Car History Report', link: '/manufacturer/reports' }
 ]
+
+export const CarDealerNavigation = [
+    { label: 'Dealer Details', link: '/dealer/details' },
+    { label: 'Car List', link: '/dealer/cars' }
+]

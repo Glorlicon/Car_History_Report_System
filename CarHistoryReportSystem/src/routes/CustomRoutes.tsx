@@ -7,12 +7,16 @@ import AdminCarList from '../pages/admin/car/AdminCarList';
 import AdminCarModelList from '../pages/admin/car_model/AdminCarModelList';
 import AdminManufacturerList from '../pages/admin/manufacturer/AdminManufacturerList';
 import UserListPage from '../pages/admin/UserListPage';
+import CarDealerCarDetails from '../pages/car_dealer/CarDealerCarDetails';
+import CarDealerCarList from '../pages/car_dealer/CarDealerCarList';
 import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
+import CarDealerShopDetailsPage from '../pages/car_dealer/CarDealerShopDetailsPage';
 import CarSalesPage from '../pages/common/CarSalesPage';
 import HomePage from '../pages/common/HomePage';
 import LoginPage from '../pages/common/LoginPage';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
+import ManufacturerCarList from '../pages/manufacturer/car/ManufacturerCarList';
 import ManufacturerCarModelList from '../pages/manufacturer/car_model/ManufacturerCarModelList';
 import ManufacturerHomePage from '../pages/manufacturer/ManufacturerHomePage';
 import PoliceHomePage from '../pages/police/PoliceHomePage';
@@ -24,7 +28,7 @@ import TestImage from '../pages/TestImage';
 import TestImage2 from '../pages/TestImage2';
 import UserProfile from '../pages/user/UserProfile';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 
 const CustomRoutes = () => {
@@ -59,8 +63,12 @@ const CustomRoutes = () => {
                 {/*Manufacturer*/}
                 <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/manufacturer/cars" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarList /></UserLayout>}></ProtectedRoute>} />
                 {/*Car Dealer*/}
                 <Route path="/dealer" element={<CarDealerHomePage />} />
+                <Route path="/dealer/details" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerShopDetailsPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/dealer/cars" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerCarList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/dealer/cars/:id" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerCarDetails /></UserLayout>}></ProtectedRoute>} />
                 {/*Vehicle Registry*/}
                 <Route path="/vehicleregistry" element={<VehicleRegistryHomePage />} />
                 <Route path="/test" element={<TestImage />} />
