@@ -20,6 +20,6 @@ namespace Application.DTO.Car
 
         public bool IsCommercialUse { get; set; } = false;
 
-        public List<CarImagesCreateDTO>? CarImages { get; set; }
+        //public List<CarImagesCreateDTO>? CarImages { get; set; }
     }
 }

@@ -93,14 +93,6 @@ namespace Application.DomainServices
             var car = _mapper.Map<Car>(request);
             _unitOfWork.CarRepository.Create(car);
             await _unitOfWork.SaveAsync();
-            /*
-            if (request.CarPartIds != null)
-            {
-                var carParts = await _unitOfWork.CarPartRepository.GetCarPartsByIdList(request.CarPartIds, true);
-                car.CarParts = carParts;
-                await _unitOfWork.SaveAsync();
-            }
-            */
             return true;
         }
 
@@ -125,13 +117,6 @@ namespace Application.DomainServices
                 throw new CarNotFoundException(vinId);
             }
             _mapper.Map(request,car);
-            /*
-            if (request.CarPartIds != null)
-            {
-                var carParts = await _unitOfWork.CarPartRepository.GetCarPartsByIdList(request.CarPartIds, true);
-                car.CarParts = carParts;
-            }
-            */
             await _unitOfWork.SaveAsync();
             return true;
         }
@@ -145,6 +130,7 @@ namespace Application.DomainServices
                 throw new CarNotFoundException(vinID);
             }
             car.CarSalesInfo = null;
+            car.CarImages = null;
             await _carOwnerHistoryServices.CreateCarOwnerHistory(request);
             //await _unitOfWork.SaveAsync();
             return true;
@@ -159,6 +145,7 @@ namespace Application.DomainServices
             }
             var carSalesInfo = _mapper.Map<CarSalesInfo>(request);
             car.CarSalesInfo = carSalesInfo;
+            _mapper.Map(request.CarImages, car.CarImages);
             await _unitOfWork.SaveAsync();
             return true;
         }
@@ -172,6 +159,7 @@ namespace Application.DomainServices
             }
             _mapper.Map(request, car.CarSalesInfo);
             car.CarSalesInfo.Features = new List<string>(car.CarSalesInfo.Features);
+            _mapper.Map(request.CarImages, car.CarImages);
             await _unitOfWork.SaveAsync();
             return true;
         }
