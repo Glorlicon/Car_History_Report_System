@@ -27,6 +27,7 @@ namespace Domain.Entities
         public ICollection<User> Users { get; set; } = new List<User>();
 
         public ICollection<WorkingTime> WorkingTimes { get; set; } = new List<WorkingTime>();
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     }
 }

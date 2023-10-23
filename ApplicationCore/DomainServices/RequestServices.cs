@@ -51,7 +51,7 @@ namespace Application.DomainServices
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<bool> CreateRequest(CreateRequestRequestDTO requestDTO)
+        public async Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO)
         {
             var request = _mapper.Map<Request>(requestDTO);
             _requestRepository.Create(request);

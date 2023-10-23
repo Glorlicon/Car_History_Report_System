@@ -18,7 +18,7 @@ namespace Application.Interfaces
 
         Task<PagedList<RequestResponseDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange);
 
-        Task<bool> CreateRequest(CreateRequestRequestDTO requestDTO);
+        Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO);
 
         Task<bool> DeleteRequest(int id);
 

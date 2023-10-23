@@ -31,10 +31,19 @@ namespace Application.Common
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();
 
-            CreateMap<DataProviderCreateRequestDTO, DataProvider>();
-            CreateMap<DataProviderUpdateRequestDTO, DataProvider>();
             CreateMap<DataProvider, DataProviderResponseDTO>()
                 .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
+            CreateMap<Review, DataProviderReviewsResponseDTO>();
+            CreateMap<WorkingTime, DataProviderWorkingTimesResponseDTO>();
+            CreateMap<DataProviderCreateRequestDTO, DataProvider>();
+            CreateMap<DataProviderUpdateRequestDTO, DataProvider>();
+            CreateMap<DataProviderWorkingTimesCreateRequestDTO, WorkingTime>()
+                .ForMember(dpwt => dpwt.StartTime, opt => opt.MapFrom(x => new TimeOnly(x.StartHour,x.StartMinute)))
+                .ForMember(dpwt => dpwt.EndTime, opt => opt.MapFrom(x => new TimeOnly(x.EndHour,x.EndMinute)));
+            CreateMap<DataProviderWorkingTimesUpdateRequestDTO, WorkingTime>()  
+            .ForMember(dpwt => dpwt.StartTime, opt => opt.MapFrom(x => new TimeOnly(x.StartHour, x.StartMinute)))
+                .ForMember(dpwt => dpwt.EndTime, opt => opt.MapFrom(x => new TimeOnly(x.EndHour, x.EndMinute)));
+
 
             CreateMap<CarCreateRequestDTO, Car>();
             CreateMap<CarUpdateRequestDTO, Car>();
@@ -56,9 +65,11 @@ namespace Application.Common
             CreateMap<CarOwnerHistory, CarOwnerHistoryResponseDTO>()
                 .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
 
-            CreateMap<CreateRequestRequestDTO, Request>();
+            CreateMap<RequestCreateRequestDTO, Request>();
             CreateMap<Request, RequestUpdateRequestDTO>();
             CreateMap<Request, RequestResponseDTO>();
+
+
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTO.Request
 {
-    public class CreateRequestRequestDTO
+    public class RequestCreateRequestDTO
     {
         public string Description {  get; set; }
 

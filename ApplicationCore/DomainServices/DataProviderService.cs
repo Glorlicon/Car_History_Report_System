@@ -1,10 +1,15 @@
-﻿using Application.DTO.CarSpecification;
+﻿using Application.Common.Models;
+using Application.DTO.Car;
+using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.Interfaces;
+using Application.Validation.Car;
+using Application.Validation.DataProvider;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
+using FluentValidation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,16 +30,17 @@ namespace Application.DomainServices
             _identityServices = identityServices;
         }
 
-        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProviders()
+        public async Task<PagedList<DataProviderResponseDTO>> GetAllDataProviders(DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderRepository.GetAll(trackChange: false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
+            var dataProviders = await _dataProviderRepository.GetAllDataProviders(parameter, trackChange: false);
+            var dataProvidersResponse = _mapper.Map<List<DataProviderResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountAll();
+            return new PagedList<DataProviderResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderType type)
+        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
         {
-            var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(type, trackChange: false);
+            var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(parameter, type, trackChange: false);
             var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
             return dataProvidersResponse;
         }
