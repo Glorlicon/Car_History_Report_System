@@ -18,3 +18,16 @@ export const AdminNavigation = [
     { label: 'Request List', link: '/admin/requests' },
     { label: 'Monetization Information', link: '/admin/monetization' }
 ]
+
+export const ManufacturerNavigation = [
+    { label: 'Manufacturer Details', link: '/manufacturer/details' },
+    { label: 'Car Model List', link: '/manufacturer/car-models' },
+    { label: 'Car List', link: '/manufacturer/cars' },
+    { label: 'Recall List', link: '/manufacturer/recalls' },
+    { label: 'Car History Report', link: '/manufacturer/reports' }
+]
+
+export const CarDealerNavigation = [
+    { label: 'Dealer Details', link: '/dealer/details' },
+    { label: 'Car List', link: '/dealer/cars' }
+]

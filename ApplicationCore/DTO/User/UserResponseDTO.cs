@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Application.DTO.DataProvider;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,5 +23,8 @@ namespace Application.DTO.User
         public Role Role { get; set; }
         public int DataProviderId { get; set; }
         public bool IsSuspended { get; set; }
+        public string? AvatarImageLink { get; set; }
+        public DataProviderResponseDTO DataProvider { get; set; }
+
     }
 }

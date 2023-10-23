@@ -1,11 +1,15 @@
-﻿using Application.DTO.Authentication;
+﻿using Application.DomainServices;
+using Application.DTO.Authentication;
+using Application.DTO.Car;
 using Application.DTO.CarSpecification;
 using Application.DTO.User;
 using Application.Interfaces;
+using Application.Validation.Car;
 using Domain.Entities;
 using Infrastructure.InfrastructureServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -14,14 +18,10 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IAuthenticationServices _authServices;
-        private readonly IEmailServices _emailServices;
 
-        public UserController(IUserService userService, IAuthenticationServices authServices, IEmailServices emailServices)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _authServices = authServices;
-            _emailServices = emailServices;
         }
 
 
@@ -72,9 +72,10 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
         //[Authorize(Roles = "Adminstrator")]
-        public async Task<IActionResult> ListAccountAsync()
+        public async Task<IActionResult> ListAccountAsync([FromQuery] UserParameter parameter)
         {
-            var users = await _userService.GetAllUsers();
+            var users = await _userService.GetAllUsers(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(users.PagingData));
             return Ok(users);
         }
         /// <summary>
@@ -83,7 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetUserDetail")]
-        [Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator,User")]
         public async Task<IActionResult> GetUserDetailAync(string id)
         {
             var user = await _userService.GetUser(id);
@@ -99,7 +100,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Updated failed</response>
         /// <response code="404">User not found</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

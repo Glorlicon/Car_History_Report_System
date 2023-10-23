@@ -39,7 +39,7 @@ namespace Infrastructure.DBContext
         public DbSet<CarRecall> CarRecalls { get; set; }
         public DbSet<CarRecallStatus> CarRecallStatus { get; set; }
         public DbSet<CarSalesInfo> CarSalesInfo { get; set; }
-        public DbSet<CarSalesFeature> CarSalesFeature { get; set; }
+        //public DbSet<CarSalesFeature> CarSalesFeature { get; set; }
         public DbSet<CarReport> CarReports { get; set; }
         public DbSet<CarSpecification> CarSpecification { get; set; }
         public DbSet<DataProvider> DataProviders { get; set; }
@@ -50,6 +50,11 @@ namespace Infrastructure.DBContext
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderOption> OrderOptions { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Request> Requests { get; set; }
+
+        public DbSet<WorkingTime> WorkingTimes { get; set; }
+
+        public DbSet<CarImages> CarImages { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

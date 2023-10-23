@@ -34,6 +34,16 @@ namespace Infrastructure.Repository
                                                     .Where(expression);
         }
 
+        public async Task<int> CountAll()
+        {
+            return await FindAll(false).CountAsync();
+        }
+
+        public async Task<int> CountByCondition(Expression<Func<T, bool>> expression)
+        {
+            return await FindByCondition(expression, false).CountAsync();
+        }
+
         public virtual async Task<IEnumerable<T>> GetAll(bool trackChange)
         {
             return await FindAll(trackChange).ToListAsync();
@@ -56,6 +66,11 @@ namespace Infrastructure.Repository
         public Task SaveAsync()
         {
             return repositoryContext.SaveChangesAsync();
+        }
+
+        public void Attach(object obj)
+        {
+            repositoryContext.Attach(obj);
         }
     }
 }

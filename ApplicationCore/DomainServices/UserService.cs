@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,17 +25,16 @@ namespace Application.DomainServices
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        private readonly UserManager<User> _userManager;
         private readonly IEmailServices _emailServices;
         private readonly IIdentityServices _identityServices;
-        private readonly static Random _rand = new Random();
 
 
-        public UserService(IMapper mapper, IUserRepository userRepository, UserManager<User> userManager, IEmailServices emailServices, IIdentityServices identityServices)
+        public UserService(IMapper mapper, IUserRepository userRepository, 
+            IEmailServices emailServices, 
+            IIdentityServices identityServices)
         {
             _mapper = mapper;
             _userRepository = userRepository;
-            _userManager = userManager;
             _emailServices = emailServices;
             _identityServices = identityServices;
         }
@@ -71,12 +71,21 @@ namespace Application.DomainServices
             return result;
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
-        {
-            var users = await _userRepository.GetAll(trackChange: false);
+        public async Task<PagedList<UserResponseDTO>> GetAllUsers(UserParameter parameter, bool trackChange)
+        {           
+            var users = await _userRepository.GetAllUser(parameter, trackChange);
 
-            var userResponse = _mapper.Map<IEnumerable<UserResponseDTO>>(users);
-            return userResponse;
+            var userResponse = _mapper.Map<List<UserResponseDTO>>(users);
+
+            var count = await _userRepository.CountAll();
+
+            //foreach (var user in userResponse)
+            //{
+            //user.Role = from role in 
+            //user.RoleString = _userManager.GetRolesAsync(users.Where(us => us.Id == user.Id).First()).Result.FirstOrDefault();
+            //}
+
+            return new PagedList<UserResponseDTO>(userResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<UserResponseDTO> GetUser(string id)
@@ -113,8 +122,9 @@ namespace Application.DomainServices
 
         public async Task<IEnumerable<string>> GetRoleList()
         {
-            List<string> roles = ((Role[])Enum.GetValues(typeof(Role))).Select(c => c.ToString()).ToList();
-            return roles;
+            //List<string> roles = ((Role[])Enum.GetValues(typeof(Role))).Select(c => c.ToString()).ToList();
+            var listRoles = Enum.GetNames(typeof(Role));
+            return  listRoles;
         }
     }
 }

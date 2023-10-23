@@ -20,6 +20,8 @@ namespace Domain.Entities
 
         public Color Color { get; set; }
 
+        public int CurrentOdometer { get; set; }
+
         public string EngineNumber { get; set; }
 
         public bool IsModified { get; set; } = false;
@@ -40,6 +42,8 @@ namespace Domain.Entities
         public ICollection<CarRecallStatus> CarRecallStatuses { get; set; } = new List<CarRecallStatus>();
 
         public ICollection<CarPart> CarParts { get; set; } = new List<CarPart>();
+
+        public ICollection<CarImages> CarImages { get; set; } = new List<CarImages>();
 
         public ICollection<CarMaintainance> CarMaintainances { get; set; } = new List<CarMaintainance>();
         public ICollection<CarStolenHistory> CarStolenHistories { get; set; } = new List<CarStolenHistory>();

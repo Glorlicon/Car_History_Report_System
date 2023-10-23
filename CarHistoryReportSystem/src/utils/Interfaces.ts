@@ -43,6 +43,18 @@ export interface User {
     maxReports: number
     role: number
     isSuspended?: boolean
+    dataProviderId?: number | null
+    avatarImageLink?: string
+    dataProvider?: {
+        name: string
+        description?: string
+        address?: string
+        websiteLink?: string
+        service?: string
+        phoneNumber?: string
+        email?: string
+        type: number
+    }
 }
 
 export interface Manufacturer {
@@ -80,5 +92,56 @@ export interface CarModel {
     modifiedByUserId?: string,
     createdTime?: string,
     lastModified?: string
+}
+
+export interface DataProvider {
+    id: number
+    name: string
+    description?: string
+    address?: string
+    websiteLink?: string
+    service?: string
+    phoneNumber?: string
+    email?: string
+    type: number
+    typeName: string
+}
+
+export interface CarSalesInfo {
+    description: string
+    carId?: string
+    features: string[]
+    price: number
+    carImages?: CarImages
+}
+
+export interface CarSaleDetails {
+    name: string
+    phoneNumber: string
+    carId: string
+    address: string
+    dob: string
+    startDate: string
+    note: string
+}
+
+export interface CarImages {
+    id: number
+    carId?: string
+    imageLink: string
+}
+export interface Car {
+    vinId: string
+    licensePlateNumber: string
+    modelId: string
+    color: number
+    colorName?: string
+    currentOdometer: number
+    engineNumber: string
+    isModified: boolean
+    isCommercialUse: boolean
+    model?: CarModel
+    carSalesInfo?: CarSalesInfo
+    carImages?: CarImages[]
 }
 

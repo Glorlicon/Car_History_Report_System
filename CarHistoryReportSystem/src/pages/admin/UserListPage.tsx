@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Add, Edit, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
+import UserModalAccountPage from '../../components/forms/admin/User/UserModalAccountPage';
+import UserModalDetailsPage from '../../components/forms/admin/User/UserModalDetailsPage';
+import UserModalProviderPage from '../../components/forms/admin/User/UserModalProviderPage';
+import { Add, Edit, GetDataProviders, List, SuspendUser, UnsuspendUser } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
-import { APIResponse, User } from '../../utils/Interfaces';
+import { APIResponse, DataProvider, User } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidEmail, isValidNumber } from '../../utils/Validators';
 
@@ -33,8 +36,10 @@ function UserListPage() {
     const [selectedRole, setSelectedRole] = useState('all');
     const [suspendTab, setSuspendTab] = useState(false);
     const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
+    const [isDataProvider, setIsDataProvider] = useState(false)
+    const [isNewDataProvider, setNewDataProvider] = useState(false)
+    const [providersList, setProvidersList] = useState<DataProvider[] | null>(null)
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    console.log("Token: ", token)
     const filteredUsers = users.filter((user: any) => {
         const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = selectedRole === 'all' || user.role.toString() === selectedRole;
@@ -65,6 +70,12 @@ function UserListPage() {
         setSelectedRole(e.target.value);
     };
 
+    const handleCheckboxToggle = () => {
+        setNewDataProvider(!isNewDataProvider)
+    }
+
+
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editingUser) {
             setEditingUser({
@@ -78,16 +89,39 @@ function UserListPage() {
             });
         }
     };
+
+    const handleInputDataProviderChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setNewUser({
+            ...newUser,
+            dataProvider: {
+                ...newUser.dataProvider as DataProvider,
+                [e.target.name]: e.target.value
+            },
+            dataProviderId: null
+        })
+    }
+
     const handleAddUser = async () => {
         if (validateUser(newUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Add(newUser);
+            const response: APIResponse = await Add(newUser,token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
+                setNewUser({
+                    id: '',
+                    userName: '',
+                    email: '',
+                    firstName: '',
+                    phoneNumber: '',
+                    lastName: '',
+                    maxReports: 0,
+                    role: 1,
+                    address: ''
+                });
                 fetchData();
             }
         }
@@ -98,7 +132,7 @@ function UserListPage() {
         if (validateUser(editingUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Edit(currentId, editingUser);
+            const response: APIResponse = await Edit(currentId, editingUser,token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -123,6 +157,14 @@ function UserListPage() {
         setUserToSuspend(null);
     };
 
+    const handleInputDataProviderSelect = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setNewUser({
+            ...newUser,
+            dataProviderId: e.target.value as unknown as number,
+            dataProvider: undefined
+        })
+    }
+
     const handleConfirmSuspend = async () => {
         // send suspend/unsuspend request here
         let response: APIResponse
@@ -145,7 +187,7 @@ function UserListPage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const response: APIResponse = await List();
+        const response: APIResponse = await List(token);
         setLoading(false);
         if (response.error) {
             setError(response.error);
@@ -154,9 +196,61 @@ function UserListPage() {
         }
     };
 
+    const getProviders = async () => {
+        if (newUser.role == USER_ROLE.DEALER ||
+            newUser.role == USER_ROLE.INSURANCE ||
+            newUser.role == USER_ROLE.MANUFACTURER ||
+            newUser.role == USER_ROLE.POLICE ||
+            newUser.role == USER_ROLE.REGISTRY ||
+            newUser.role == USER_ROLE.SERVICE
+        ) {
+            const temp = setIsDataProvider(true)
+            const response = await GetDataProviders(newUser.role - 2, token)
+            if (response.data) setProvidersList(response.data)
+            else console.log("Cannot get providers list")
+        }
+        else {
+            const temp = setIsDataProvider(false)
+        }
+    }
+
+    const changeSize = () => {
+        const element = document.querySelector('.ad-user-modal-content')
+        if (element instanceof HTMLElement) {
+            if (isDataProvider) {
+                element.style.width = '570px'
+            } else {
+                element.style.width = '400px'
+            }
+        }
+    }
+
+    const editChangeSize = () => {
+        const element = document.querySelector('.ad-user-modal-content')
+        if (element instanceof HTMLElement) {
+            if (editingUser?.dataProvider) {
+                element.style.width = '570px'
+            } else {
+                element.style.width = '400px'
+            }
+        }
+    }
+
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+         changeSize()
+    }, [isDataProvider])
+
+    useEffect(() => {
+        if (editingUser?.dataProvider) editChangeSize()
+    }, [editingUser])
+
+    useEffect(() => {
+        getProviders()
+    }, [newUser.role])
   return (
         <div className="ad-user-list-page">
           <div className="ad-user-top-bar">
@@ -213,7 +307,7 @@ function UserListPage() {
                       ) : filteredUsers.length > 0 ? (
                           filteredUsers.map((user: any, index: number) => (
                               <tr key={index}>
-                              <td onClick={() => { setEditingUser(user); setCurrentId(user.id) }}>{user.id}</td>
+                                  <td onClick={() => { setEditingUser(user); setCurrentId(user.id)}}>{user.id}</td>
                               <td>{user.userName}</td>
                               <td>{user.email}</td>
                               <td>{user.role}</td>
@@ -237,49 +331,28 @@ function UserListPage() {
           {showModal && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => setShowModal(false)}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setShowModal(false); }}>&times;</span>
                       <h2>Add User</h2>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={newUser.email} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={newUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                          <label>Role: </label>
-                          <select name="role" value={newUser.role} onChange={handleInputChange}>
-                              <option value={USER_ROLE.ADMIN}>Admin</option>
-                              <option value={USER_ROLE.USER}>User</option>
-                              <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                              <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                              <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                              <option value={USER_ROLE.POLICE}>Police</option>
-                              <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                              <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
-                          </div>
-                      </div>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={newUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={newUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={newUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Address</label>
-                              <input type="text" name="address" value={newUser.address} onChange={handleInputChange} required />
-                          </div>
-                      </div>
+                      <UserModalDetailsPage
+                          model={newUser}
+                          handleInputChange={handleInputChange}
+                      />
+                      <UserModalAccountPage
+                          model={newUser}
+                          handleInputChange={handleInputChange}
+                          action="Add"
+                      />
+                      {isDataProvider && providersList && (
+                          < UserModalProviderPage
+                              model={newUser.dataProvider as DataProvider}
+                              action="Add"
+                              isDataProvider={isDataProvider}
+                              providerList={providersList}
+                              handleCheckboxToggle={handleCheckboxToggle}
+                              handleInputDataProviderChange={handleInputDataProviderChange}
+                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                          />
+                      )}
                       <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
@@ -291,55 +364,31 @@ function UserListPage() {
                   </div>
               </div>
           )}
-          {/*{isDataProvider && (*/}
-
-          {/*)}*/}
           {editingUser && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => setEditingUser(null)}>&times;</span>
+                      <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); }}>&times;</span>
                       <h2>User Details</h2>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>Email Address</label>
-                              <input type="text" name="email" value={editingUser.email} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Username</label>
-                              <input type="text" name="userName" value={editingUser.userName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Role: </label>
-                              <select name="role" value={editingUser.role} onChange={handleInputChange} disabled>
-                                  <option value={USER_ROLE.ADMIN}>Admin</option>
-                                  <option value={USER_ROLE.USER}>User</option>
-                                  <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                                  <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                                  <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                                  <option value={USER_ROLE.POLICE}>Police</option>
-                                  <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                                  <option value={USER_ROLE.SERVICE}>Service Shop</option>
-                              </select>
-                          </div>
-                      </div>
-                      <div className="ad-user-form-columns">
-                          <div className="ad-user-form-column">
-                              <label>First Name</label>
-                              <input type="text" name="firstName" value={editingUser.firstName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Last Name</label>
-                              <input type="text" name="lastName" value={editingUser.lastName} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Phone</label>
-                              <input type="text" name="phoneNumber" value={editingUser.phoneNumber} onChange={handleInputChange} required />
-                          </div>
-                          <div className="ad-user-form-column">
-                              <label>Address</label>
-                              <input type="text" name="address" value={editingUser.address} onChange={handleInputChange} required />
-                          </div>
-                      </div>
+                      <UserModalDetailsPage
+                          model={editingUser}
+                          handleInputChange={handleInputChange}
+                      />
+                      <UserModalAccountPage
+                          model={editingUser}
+                          handleInputChange={handleInputChange}
+                          action="Edit"
+                      />
+                      {editingUser.dataProvider && (
+                          <UserModalProviderPage
+                              model={editingUser.dataProvider as DataProvider}
+                              action="Edit"
+                              isDataProvider={true}
+                              providerList={null}
+                              handleCheckboxToggle={handleCheckboxToggle}
+                              handleInputDataProviderChange={handleInputDataProviderChange}
+                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                          />
+                      )}
                       <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>

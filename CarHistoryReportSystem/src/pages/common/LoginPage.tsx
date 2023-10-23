@@ -7,7 +7,6 @@ import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { SendVerifyToken } from '../../services/auth/Verify';
-import { RootState } from '../../store/State';
 
 function LoginPage() {
     const dispatch = useDispatch()
@@ -38,8 +37,12 @@ function LoginPage() {
             const dispatchToken = dispatch(setToken(data.token))
             if (data.isEmailVerified) {
                 const decodedData = JWTDecoder(data.token as unknown as string)
-                if (decodedData.roles === "Admin") {
+                if (decodedData.roles === "Adminstrator") {
                     navigate('/admin')
+                } else if (decodedData.roles === "Manufacturer") {
+                    navigate('/manufacturer')
+                } else if (decodedData.roles === "CarDealer") {
+                    navigate('/dealer')
                 } else {
                     navigate('/')
                 }

@@ -1,0 +1,84 @@
+.dealer-car-sales-details-page {
+    padding: 20px;
+    padding-top: 120px;
+}
+.dealer-car-sales-details-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.dealer-car-sales-details-retry-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dealer-car-sales-details-retry-btn:hover {
+    background-color: #2980b9;
+}
+.dealer-car-sales-details-container {
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 40px auto;
+}
+
+.dealer-car-sales-details-header {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.dealer-car-sales-details-section {
+    margin-bottom: 20px;
+}
+
+.dealer-car-sales-details-images {
+    position: relative;
+}
+
+.dealer-car-sales-details-images-arrow-left {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    left: 10px;
+}
+
+
+.dealer-car-sales-details-images-arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    right: 10px;
+}

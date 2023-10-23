@@ -1,4 +1,5 @@
-﻿using Application.DTO.CarSpecification;
+﻿using Application.Common.Models;
+using Application.DTO.CarSpecification;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
@@ -11,13 +12,17 @@ namespace Application.Interfaces
 {
     public interface ICarSpecificationService
     {
-        Task<IEnumerable<CarSpecificationResponseDTO>> GetAllCarModels(bool trackChange);
+        Task<PagedList<CarSpecificationResponseDTO>> GetAllCarModels(CarSpecificationParameter parameter, bool trackChange);
+
+        Task<PagedList<CarSpecificationResponseDTO>> GetAllCarModelsTest(CarSpecificationParameter parameter, bool trackChange);
 
         Task<CarSpecificationResponseDTO> GetCarModel(string modelId, bool trackChange);
 
-        Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, bool trackChange);
+        Task<PagedList<CarSpecificationResponseDTO>> GetCarModelByUserId(string userId, CarSpecificationParameter parameter, bool trackChange);
 
-        Task<IEnumerable<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, bool trackChange);
+        Task<PagedList<CarSpecificationResponseDTO>> GetCarModelByManufacturerId(int manufacturerId, CarSpecificationParameter parameter, bool trackChange);
+
+        Task<PagedList<CarSpecificationResponseDTO>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter);
 
         Task<bool> CreateCarModel(CarSpecificationCreateRequestDTO request);
 
