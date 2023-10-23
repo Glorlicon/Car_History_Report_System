@@ -12,6 +12,9 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' " >
+    <FrameworkPathOverride>/usr/local/share/dotnet/shared/Microsoft.NETCore.App/7.0.5/mscorlib.dll</FrameworkPathOverride>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\footer\" />
     <Folder Include="src\components\forms\admin\User\" />
