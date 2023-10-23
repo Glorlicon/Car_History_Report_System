@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Application.DTO.Car;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,9 @@ namespace Application.DTO.DataProvider
         public string TypeName { get; set; }
 
         public string? ImageLink { get; set; }
+
+        public List<DataProviderWorkingTimesResponseDTO> WorkingTimes { get; set; }
+
+        public List<DataProviderReviewsResponseDTO> Reviews { get; set; }
     }
 }

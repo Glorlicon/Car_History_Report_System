@@ -1,5 +1,9 @@
-﻿using Application.DTO.DataProvider;
+﻿using Application.Common.Models;
+using Application.DTO.Car;
 using Application.DTO.DataProvider;
+using Application.DTO.DataProvider;
+using Application.DTO.Request;
+using Domain.Entities;
 using Domain.Enum;
 using System;
 using System.Collections.Generic;
@@ -11,9 +15,9 @@ namespace Application.Interfaces
 {
     public interface IDataProviderService
     {
-        Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProviders();
+        Task<PagedList<DataProviderResponseDTO>> GetAllDataProviders(DataProviderParameter parameter);
 
-        Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderType type);
+        Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type);
 
         Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersByType(DataProviderType type);
 

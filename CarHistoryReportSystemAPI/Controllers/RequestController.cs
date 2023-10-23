@@ -2,8 +2,11 @@
 using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
+using Application.Validation.Car;
 using Application.Validation.CarOwnerHistory;
+using Application.Validation.Request;
 using Domain.Enum;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -26,8 +29,16 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Request list</returns>
         [HttpGet(Name = "GetRequests")]
         [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
+        //[Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestsAsync([FromQuery] RequestParameter parameter)
         {
+            RequestParameterValidator validator = new RequestParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var requests = await _requestService.GetAllRequests(parameter, trackChange: false);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(requests.PagingData));
             return Ok(requests);
@@ -57,6 +68,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRequestByUserIdAsync(string userId, [FromQuery] RequestParameter parameter)
         {
+            RequestParameterValidator validator = new RequestParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
             var requests = await _requestService.GetAllRequestByUserId(userId, parameter, trackChange: false);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(requests.PagingData));
             return Ok(requests);
@@ -75,7 +93,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateRequestAsync([FromBody] CreateRequestRequestDTO requestDTO)
+        public async Task<IActionResult> CreateRequestAsync([FromBody] RequestCreateRequestDTO requestDTO)
         {
             var result = await _requestService.CreateRequest(requestDTO);
             if (result == true)

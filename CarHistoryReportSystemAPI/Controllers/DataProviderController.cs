@@ -1,9 +1,15 @@
-﻿using Application.DTO.DataProvider;
+﻿using Application.DomainServices;
+using Application.DTO.DataProvider;
+using Application.DTO.Request;
 using Application.Interfaces;
+using Application.Validation.Request;
 using Domain.Enum;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -25,9 +31,17 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet(Name = "GetDataProviders")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDataProvidersAsync()
+        public async Task<IActionResult> GetDataProvidersAsync([FromQuery] DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderService.GetAllDataProviders();
+            //RequestParameterValidator validator = new RequestParameterValidator();
+            //var result = validator.Validate(parameter);
+            //if (!result.IsValid)
+            //{
+            //    result.AddToModelState(ModelState);
+            //    return BadRequest(ModelState);
+            //}
+            var dataProviders = await _dataProviderService.GetAllDataProviders(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
         }
 
@@ -38,9 +52,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet("type/{type}/no-user",Name = "GetDataProvidersWithoutUser")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderType type)
+        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderParameter parameter, DataProviderType type)
         {
-            var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(type);
+            var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
             return Ok(dataProviders);
         }
 
