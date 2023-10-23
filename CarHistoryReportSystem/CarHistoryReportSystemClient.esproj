@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.74-alpha">
   <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupCommand>set BROWSER=none&amp;&amp;npm start</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
     <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
