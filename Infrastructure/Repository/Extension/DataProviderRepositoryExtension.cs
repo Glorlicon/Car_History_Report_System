@@ -15,8 +15,6 @@ namespace Infrastructure.Repository.Extension
         {
             if (parameter.Type != null)
                 query = query.Where(x => x.Type == parameter.Type);
-            if (parameter.Service != null)
-                query = query.Where(x => x.Service == parameter.Service);
             return query;
         }
 

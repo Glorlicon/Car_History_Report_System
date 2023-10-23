@@ -29,7 +29,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Request list</returns>
         [HttpGet(Name = "GetRequests")]
         [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
-        //[Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestsAsync([FromQuery] RequestParameter parameter)
         {
             RequestParameterValidator validator = new RequestParameterValidator();
@@ -52,6 +52,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet("{id}", Name = "GetRequest")]
         [ProducesResponseType(typeof(RequestResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestAsync(int id)
         {
             var request = await _requestService.GetRequest(id, trackChange: false);
@@ -64,7 +65,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="userId"></param>
         /// <returns>Request List</returns>
         [HttpGet("user/{userId}", Name = nameof(GetAllRequestByUserIdAsync))]
-        //[Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRequestByUserIdAsync(string userId, [FromQuery] RequestParameter parameter)
         {
@@ -89,7 +90,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateRequest")]
-        //[Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -118,7 +119,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Request not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -146,7 +147,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Request not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -23,7 +23,7 @@ namespace Application.Validation.DataProvider
             else
             {
                 RuleFor(x => x.DayOfWeek).InclusiveBetween(0, 6).WithMessage("Day of week can only be in range of [0,6] (0 equal Sunday)");
-                RuleFor(x => x.StartHour).InclusiveBetween(0, 23).WithMessage("Hour can only be in range of [0,23] ");
+                RuleFor(x => x.StartHour).InclusiveBetween(0, 23).WithMessage("Hour can only be in range of [0,23]");
                 RuleFor(x => x.StartMinute).InclusiveBetween(0, 59).WithMessage("Minute can only be in range of [0,59]");
                 RuleFor(x => x.EndHour).InclusiveBetween(0, 23).WithMessage("Hour can only be in range of [0,23]");
                 RuleFor(x => x.EndMinute).InclusiveBetween(0, 59).WithMessage("Minute can only be in range of [0,59]");
