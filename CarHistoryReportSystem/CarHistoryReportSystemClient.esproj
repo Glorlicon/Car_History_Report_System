@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.74-alpha">
   <PropertyGroup>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <StartupCommand>set BROWSER=none&amp;&amp;npm start</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
     <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
@@ -10,6 +11,9 @@
     <ProductionBuildCommand>npm run build</ProductionBuildCommand>
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' " >
+    <FrameworkPathOverride>/usr/local/share/dotnet/shared/Microsoft.NETCore.App/7.0.5/mscorlib.dll</FrameworkPathOverride>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\footer\" />
