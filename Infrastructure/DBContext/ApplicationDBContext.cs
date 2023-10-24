@@ -44,7 +44,7 @@ namespace Infrastructure.DBContext
         public DbSet<CarSpecification> CarSpecification { get; set; }
         public DbSet<DataProvider> DataProviders { get; set; }
 
-        public DbSet<ModelMaintainance> ModelOdometers { get; set; }
+        public DbSet<ModelMaintainance> ModelMaintainances { get; set; }
         //public DbSet<RecommendAction> RecommendActions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Order> Order { get; set; }
