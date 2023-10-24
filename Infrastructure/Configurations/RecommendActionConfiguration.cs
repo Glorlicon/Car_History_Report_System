@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
+    /*
     public class RecommendActionConfiguration : IEntityTypeConfiguration<RecommendAction>
     {
         public void Configure(EntityTypeBuilder<RecommendAction> builder)
@@ -18,4 +19,5 @@ namespace Infrastructure.Configurations
                 .IsRequired();
         }
     }
+    */
 }

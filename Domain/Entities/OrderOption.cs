@@ -13,8 +13,8 @@ namespace Domain.Entities
         public string Description { get; set; }
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
-        public DateOnly DiscountStart { get; set; }
-        public DateOnly DiscountEnd { get; set; }
+        public DateOnly? DiscountStart { get; set; }
+        public DateOnly? DiscountEnd { get; set; }
         public int ReportNumber { get; set; }
         public decimal TotalAmount { get; set; }
     }
