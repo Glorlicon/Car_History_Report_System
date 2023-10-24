@@ -47,6 +47,7 @@ namespace Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
+            services.AddScoped<ICarMaintainanceRepository, CarMaintainanceRepository>();
             return services;
         }
 

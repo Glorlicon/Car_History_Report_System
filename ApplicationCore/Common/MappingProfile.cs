@@ -1,5 +1,6 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.Car;
+using Application.DTO.CarMaintainance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
 using Application.DTO.CarSpecification;
@@ -69,7 +70,7 @@ namespace Application.Common
             CreateMap<Request, RequestUpdateRequestDTO>();
             CreateMap<Request, RequestResponseDTO>();
 
-
+            CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();
         }
     }
 }
