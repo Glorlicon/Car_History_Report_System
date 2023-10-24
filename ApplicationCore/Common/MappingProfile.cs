@@ -31,7 +31,7 @@ namespace Application.Common
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();
 
-            CreateMap<DataProvider, DataProviderResponseDTO>()
+            CreateMap<DataProvider, DataProviderDetailsResponseDTO>()
                 .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
             CreateMap<Review, DataProviderReviewsResponseDTO>();
             CreateMap<WorkingTime, DataProviderWorkingTimesResponseDTO>();

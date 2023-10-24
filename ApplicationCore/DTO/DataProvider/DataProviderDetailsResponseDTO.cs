@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTO.DataProvider
 {
-    public class DataProviderResponseDTO
+    public class DataProviderDetailsResponseDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
