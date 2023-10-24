@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -15,8 +16,13 @@ namespace Infrastructure.Configurations
         {
             builder.Property(co => co.Note)
                 .HasMaxLength(200);
-            builder.Property(co => co.Description)
-                .HasMaxLength(2000)
+            builder.Property(co => co.OtherServices)
+                .HasMaxLength(500)
+                .IsRequired();
+            builder.Property(x => x.Services)
+                .HasConversion(
+                    f => f.ToString(),
+                    f => (CarServiceType)Enum.Parse(typeof(CarServiceType), f))
                 .IsRequired();
         }
     }

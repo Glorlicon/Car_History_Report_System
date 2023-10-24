@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
-    public class ModelOdometerConfiguration : IEntityTypeConfiguration<ModelOdometer>
+    public class ModelOdometerConfiguration : IEntityTypeConfiguration<ModelMaintainance>
     {
-        public void Configure(EntityTypeBuilder<ModelOdometer> builder)
+        public void Configure(EntityTypeBuilder<ModelMaintainance> builder)
         {
             builder.HasKey(x => new { x.ModelId, x.MaintenancePart });
             builder.Property(x => x.MaintenancePart)
