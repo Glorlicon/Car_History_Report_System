@@ -15,9 +15,7 @@ namespace Application.DTO.DataProvider
         public string? Address { get; set; }
         public string? WebsiteLink { get; set; }
         public string? Service { get; set; }
-        [Phone(ErrorMessage = "Invalid Phone Number")]
         public string? PhoneNumber { get; set; }
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string? Email { get; set; }
         public DataProviderType Type { get; set; }
         public string? ImageLink { get; set; }
