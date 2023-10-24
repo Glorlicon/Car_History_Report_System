@@ -19,6 +19,8 @@ namespace Application.Interfaces
 
         ICarOwnerHistoryRepository CarOwnerHistoryRepository { get; }
 
+        ICarMaintainanceRepository CarMaintainanceRepository { get; }
+
         Task SaveAsync();
     }
 }

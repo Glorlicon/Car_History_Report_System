@@ -24,6 +24,7 @@ namespace Application
             services.AddScoped<ICarPartServices, CarPartServices>();
             services.AddScoped<ICarOwnerHistoryServices, CarOwnerHistoryServices>();
             services.AddScoped<IRequestServices, RequestServices>();
+            services.AddScoped<ICarMaintainanceServices, CarMaintainanceServices>();
             return services;
         }
     }

@@ -18,6 +18,7 @@ namespace Infrastructure.Repository
         private ICarSalesInfoRepository _carSalesInfoRepository;
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
+        private ICarMaintainanceRepository _carMaintainanceRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -27,7 +28,8 @@ namespace Infrastructure.Repository
             IDataProviderRepository dataProviderRepository,
             ICarSalesInfoRepository carSalesInfoRepository,
             ICarPartRepository carPartRepository,
-            ICarOwnerHistoryRepository carOwnerHistoryRepository)
+            ICarOwnerHistoryRepository carOwnerHistoryRepository,
+            ICarMaintainanceRepository carMaintainanceRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -37,6 +39,7 @@ namespace Infrastructure.Repository
             _carSalesInfoRepository = carSalesInfoRepository;
             _carPartRepository = carPartRepository;
             _carOwnerHistoryRepository = carOwnerHistoryRepository;
+            _carMaintainanceRepository = carMaintainanceRepository;
         }
 
         public ICarRepository CarRepository
@@ -72,6 +75,11 @@ namespace Infrastructure.Repository
         public ICarOwnerHistoryRepository CarOwnerHistoryRepository
         {
             get { return _carOwnerHistoryRepository; }
+        }
+
+        public ICarMaintainanceRepository CarMaintainanceRepository
+        {
+            get { return _carMaintainanceRepository;}
         }
 
         public async Task SaveAsync()
