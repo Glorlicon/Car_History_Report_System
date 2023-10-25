@@ -43,6 +43,10 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(expression, false).CountAsync();
         }
+        public async Task<bool> IsExist(Expression<Func<T, bool>> expression)
+        {
+            return await repositoryContext.Set<T>().AnyAsync(expression);
+        }
 
         public virtual async Task<IEnumerable<T>> GetAll(bool trackChange)
         {

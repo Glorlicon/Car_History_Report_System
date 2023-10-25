@@ -128,5 +128,12 @@ namespace Infrastructure.Repository
                             .Take(parameter.PageSize)
                             .ToListAsync();
         }
+
+        public async Task<IEnumerable<string>> GetCarIdsByModelId(string modelId, bool trackChange)
+        {
+            return await FindByCondition(c => c.ModelId == modelId, trackChange)
+                            .Select(x => x.VinId)
+                            .ToListAsync();
+        }
     }
 }

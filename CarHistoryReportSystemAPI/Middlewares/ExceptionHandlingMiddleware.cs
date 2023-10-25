@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Application.Common.Models;
+using Domain.Exceptions;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Middlewares
@@ -28,9 +29,9 @@ namespace CarHistoryReportSystemAPI.Middlewares
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
-            var response = new
+            var response = new ErrorDetails
             {
-                error = exception.Message
+                Error = exception.Message
             };
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

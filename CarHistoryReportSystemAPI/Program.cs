@@ -1,7 +1,6 @@
 using Application;
 using Application.Interfaces;
 using CarHistoryReportSystemAPI;
-using CarHistoryReportSystemAPI.Extensions;
 using CarHistoryReportSystemAPI.Middlewares;
 using CarHistoryReportSystemAPI.Services;
 using CarHistoryReportSystemAPI.Utility;

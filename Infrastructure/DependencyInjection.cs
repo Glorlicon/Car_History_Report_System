@@ -48,6 +48,8 @@ namespace Infrastructure
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
             services.AddScoped<ICarMaintainanceRepository, CarMaintainanceRepository>();
+            services.AddScoped<ICarRecallRepository, CarRecallRepository>();
+            services.AddScoped<ICarRecallStatusRepository, CarRecallStatusRepository>();
             return services;
         }
 
