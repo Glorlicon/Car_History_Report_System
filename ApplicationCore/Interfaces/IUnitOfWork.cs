@@ -21,6 +21,10 @@ namespace Application.Interfaces
 
         ICarMaintainanceRepository CarMaintainanceRepository { get; }
 
+        ICarRecallRepository CarRecallRepository { get; }
+
+        ICarRecallStatusRepository CarRecallStatusRepository { get; }
+
         Task SaveAsync();
     }
 }
