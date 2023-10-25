@@ -20,7 +20,7 @@ namespace Infrastructure.Repository.Extension
                 query = query.Where(x => x.Model.BodyType == parameter.BodyType);
             query = query.Where(x => x.Model.ReleasedDate.Year >= parameter.YearStart && x.Model.ReleasedDate.Year <= parameter.YearEnd);
             query = query.Where(x => x.CurrentOdometer >= parameter.MileageMin && x.CurrentOdometer <= parameter.MileageMax);
-            query = query.Where(x => x.CarSalesInfo != null &&  x.CarSalesInfo.Price >= parameter.PriceMin && x.CarSalesInfo.Price <= parameter.PriceMax);
+            query = query.Where(x => x.CarSalesInfo == null ||  (x.CarSalesInfo.Price >= parameter.PriceMin && x.CarSalesInfo.Price <= parameter.PriceMax));
             return query;
         }
 

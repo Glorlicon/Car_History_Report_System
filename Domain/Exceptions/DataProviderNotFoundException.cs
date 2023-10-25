@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-    public class DataProviderNotFoundExpcetion : NotFoundException
+    public class DataProviderNotFoundException : NotFoundException
     {
-        public DataProviderNotFoundExpcetion(int? dataProviderId)
+        public DataProviderNotFoundException(int? dataProviderId)
             : base($"Data Provider with id {dataProviderId} was not found")
         {
 

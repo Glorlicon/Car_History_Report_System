@@ -142,8 +142,7 @@ function AdminCarModelList() {
             setError(manuListResponse.error);
         } else {
             setManufacturers(manuListResponse.data)
-            console.log(manuListResponse.data)
-            const carModelResponse: APIResponse = await ListAdminCarModels()
+            const carModelResponse: APIResponse = await ListAdminCarModels(token)
             if (carModelResponse.error) {
                 setError(carModelResponse.error)
             } else {

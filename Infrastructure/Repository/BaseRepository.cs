@@ -67,5 +67,10 @@ namespace Infrastructure.Repository
         {
             return repositoryContext.SaveChangesAsync();
         }
+
+        public void Attach(object obj)
+        {
+            repositoryContext.Attach(obj);
+        }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
+    /*
     public class CarOdometerHistoryConfiguration : IEntityTypeConfiguration<CarOdometerHistory>
     {
         public void Configure(EntityTypeBuilder<CarOdometerHistory> builder)
@@ -19,4 +20,5 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(200);
         }
     }
+    */
 }

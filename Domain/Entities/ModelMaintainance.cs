@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class ModelOdometer
+    public class ModelMaintainance
     {
 
         public string ModelId { get; set; }
@@ -17,8 +17,10 @@ namespace Domain.Entities
 
         public CarSpecification Model { get; set; }
 
-        public int Odometer { get; set; }
+        public int? OdometerPerMaintainance { get; set; }
 
-        public RecommendAction RecommendAction { get; set; }
+        public DateTime? TimePerMaintainance { get; set; }
+
+        public string RecommendAction { get; set; }
     }
 }

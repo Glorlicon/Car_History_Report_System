@@ -1,4 +1,5 @@
 ﻿using Application.DTO.DataProvider;
+using Application.DTO.Request;
 using Domain.Entities;
 using Domain.Enum;
 using System;
@@ -11,7 +12,9 @@ namespace Application.Interfaces
 {
     public interface IDataProviderRepository : IBaseRepository<DataProvider>
     {
-        Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderType type, bool trackChange);
+        Task<IEnumerable<DataProvider>> GetAllDataProviders(DataProviderParameter parameter, bool trackChange);
+
+        Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type, bool trackChange);
 
         Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, bool trackChange);
 

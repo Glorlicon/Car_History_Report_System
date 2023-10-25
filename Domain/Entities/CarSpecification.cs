@@ -48,7 +48,7 @@ namespace Domain.Entities
 
         public DataProvider? Manufacturer { get; set; }
 
-        public ICollection<ModelOdometer> ModelOdometers { get; set; } = new List<ModelOdometer>();
+        public ICollection<ModelMaintainance> ModelOdometers { get; set; } = new List<ModelMaintainance>();
         public ICollection<CarRecall> CarRecalls { get; set; } = new List<CarRecall>();
     }
 }

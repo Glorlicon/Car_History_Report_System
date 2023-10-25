@@ -16,7 +16,7 @@ namespace Application.Interfaces
         //public void AddRoleToUser2(User model);
 
         Task<RegisterResult> CreateAsync(CreateUserRequestDTO request);
-        Task<IEnumerable<UserResponseDTO>> GetAllUsers();
+        Task<PagedList<UserResponseDTO>> GetAllUsers(UserParameter parameter, bool trackChange);
 
         Task<UserResponseDTO> GetUser(string id);
 

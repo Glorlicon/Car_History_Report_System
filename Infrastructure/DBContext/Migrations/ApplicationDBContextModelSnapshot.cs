@@ -136,6 +136,12 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
+
                     b.Property<float>("Serverity")
                         .HasColumnType("real");
 
@@ -209,6 +215,12 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -289,6 +301,12 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
@@ -319,55 +337,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasIndex("CarId");
 
                     b.ToTable("CarMaintainances");
-                });
-
-            modelBuilder.Entity("Domain.Entities.CarOdometerHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CarId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(18)");
-
-                    b.Property<string>("CreatedByUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedByUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("OdometerValue")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("ReportDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("ModifiedByUserId");
-
-                    b.ToTable("CarOdometersHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarOwnerHistory", b =>
@@ -413,10 +382,16 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
 
                     b.Property<DateOnly?>("StartDate")
                         .HasColumnType("date");
@@ -622,11 +597,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -637,8 +607,23 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OtherServices")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
+
                     b.Property<DateTime>("ServiceTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Services")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -775,6 +760,12 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
+
                     b.Property<DateTime>("ReportedDate")
                         .HasColumnType("datetime2");
 
@@ -842,7 +833,7 @@ namespace Infrastructure.DBContext.Migrations
                     b.ToTable("DataProviders");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ModelOdometer", b =>
+            modelBuilder.Entity("Domain.Entities.ModelMaintainance", b =>
                 {
                     b.Property<string>("ModelId")
                         .HasColumnType("nvarchar(450)");
@@ -851,17 +842,19 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Odometer")
+                    b.Property<int?>("OdometerPerMaintainance")
                         .HasColumnType("int");
 
-                    b.Property<int>("RecommendActionId")
-                        .HasColumnType("int");
+                    b.Property<string>("RecommendAction")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TimePerMaintainance")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ModelId", "MaintenancePart");
 
-                    b.HasIndex("RecommendActionId");
-
-                    b.ToTable("ModelOdometers");
+                    b.ToTable("ModelMaintainances");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -927,7 +920,6 @@ namespace Infrastructure.DBContext.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -956,10 +948,10 @@ namespace Infrastructure.DBContext.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<DateOnly>("DiscountEnd")
+                    b.Property<DateOnly?>("DiscountEnd")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("DiscountStart")
+                    b.Property<DateOnly?>("DiscountStart")
                         .HasColumnType("date");
 
                     b.Property<string>("Name")
@@ -981,24 +973,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OrderOptions");
-                });
-
-            modelBuilder.Entity("Domain.Entities.RecommendAction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RecommendActions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
@@ -1229,57 +1203,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af91af0e-6293-4170-9c07-425297f0fd2b",
-                            ConcurrencyStamp = "77dac981-3e82-439a-ab1e-6f28f964aa51",
+                            Id = "92790515-368e-4e9c-94d5-96e709ef9b0d",
+                            ConcurrencyStamp = "fc01ea83-7719-4d32-89c6-42d8f2257783",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "025d5dbd-c9e1-49fa-a5d3-030cd841ce12",
-                            ConcurrencyStamp = "6fa9c2d9-3f94-4ed8-8af3-54feb9fe36fd",
+                            Id = "ee228b23-df24-42dc-89f7-7d38e6f89354",
+                            ConcurrencyStamp = "5d6d66af-4c57-4d8f-b429-84f5d5985a6d",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "b4a0a1f0-254c-4ddc-a53a-80a7589ae41d",
-                            ConcurrencyStamp = "2f70f384-8d60-4bf7-b1d6-3d24854248df",
+                            Id = "b76855c1-bf52-4755-bae6-f79411934673",
+                            ConcurrencyStamp = "1d95e16d-b27d-43c4-8b99-ad65e0cbe3d9",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "a56f44ec-69e6-48cf-9fd3-c1ffe1d1f9f4",
-                            ConcurrencyStamp = "a6ab798b-727a-4cb9-a42b-e55f522daf5a",
+                            Id = "06b68dee-89d8-4585-b2a1-4654919e01c9",
+                            ConcurrencyStamp = "09a0c495-3f23-4def-8234-9412cf665dca",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "64ed13ae-9ad4-48dc-9ad8-7d8d7e495a68",
-                            ConcurrencyStamp = "c429fe55-93dd-40aa-8ae2-a76533441d36",
+                            Id = "70aafdaa-8257-4a07-a13b-64be24b83481",
+                            ConcurrencyStamp = "a2ec23f4-2c6d-46ef-9bbf-e981f5ebb517",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "ac9cebcd-c518-4bbd-9952-56c4e64dd556",
-                            ConcurrencyStamp = "b8a991ea-5dd0-4470-be0d-8a195e03b513",
+                            Id = "6a926ae8-43a4-4db7-a866-d67d278a0db7",
+                            ConcurrencyStamp = "c9cd8c47-f39b-415b-9fc4-a8b15f9979f8",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "01e3cc89-c0a4-471f-b59d-95f32679b7b8",
-                            ConcurrencyStamp = "6e879a42-964f-4f08-a7cf-304abe855596",
+                            Id = "cab88091-5e25-4c42-961d-d700628431db",
+                            ConcurrencyStamp = "eb440afa-9b22-4331-b8d6-91e61f112eaf",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "97c09e19-319d-4d72-9772-57b793f91412",
-                            ConcurrencyStamp = "536253f3-d498-4dfb-acc6-250307e5f7ac",
+                            Id = "53a39e52-b13d-442e-9f09-4cea0d05eb9b",
+                            ConcurrencyStamp = "3f8c5125-6ed9-427a-ae45-9d242700eab2",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });
@@ -1539,29 +1513,6 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CarOdometerHistory", b =>
-                {
-                    b.HasOne("Domain.Entities.Car", "Car")
-                        .WithMany("CarOdometerHistories")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.HasOne("Domain.Entities.User", "ModifiedByUser")
-                        .WithMany()
-                        .HasForeignKey("ModifiedByUserId");
-
-                    b.Navigation("Car");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("ModifiedByUser");
-                });
-
             modelBuilder.Entity("Domain.Entities.CarOwnerHistory", b =>
                 {
                     b.HasOne("Domain.Entities.Car", "Car")
@@ -1757,7 +1708,7 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("ModifiedByUser");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ModelOdometer", b =>
+            modelBuilder.Entity("Domain.Entities.ModelMaintainance", b =>
                 {
                     b.HasOne("Domain.Entities.CarSpecification", "Model")
                         .WithMany("ModelOdometers")
@@ -1765,15 +1716,7 @@ namespace Infrastructure.DBContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.RecommendAction", "RecommendAction")
-                        .WithMany()
-                        .HasForeignKey("RecommendActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Model");
-
-                    b.Navigation("RecommendAction");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -1801,9 +1744,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("OrderOption");
 
@@ -1828,7 +1769,7 @@ namespace Infrastructure.DBContext.Migrations
             modelBuilder.Entity("Domain.Entities.Review", b =>
                 {
                     b.HasOne("Domain.Entities.DataProvider", "DataProvider")
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("DataProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1928,8 +1869,6 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.Navigation("CarMaintainances");
 
-                    b.Navigation("CarOdometerHistories");
-
                     b.Navigation("CarOwnerHistories");
 
                     b.Navigation("CarRecallStatuses");
@@ -1960,6 +1899,8 @@ namespace Infrastructure.DBContext.Migrations
 
             modelBuilder.Entity("Domain.Entities.DataProvider", b =>
                 {
+                    b.Navigation("Reviews");
+
                     b.Navigation("Users");
 
                     b.Navigation("WorkingTimes");

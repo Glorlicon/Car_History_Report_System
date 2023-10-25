@@ -1,9 +1,17 @@
-﻿using Application.DTO.DataProvider;
+﻿using Application.DomainServices;
+using Application.DTO.DataProvider;
+using Application.DTO.Request;
 using Application.Interfaces;
+using Application.Validation.Request;
 using Domain.Enum;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Application.Validation.DataProvider;
+using Domain.Entities;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -24,10 +32,18 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Data Provider List</returns>
         [HttpGet(Name = "GetDataProviders")]
         [Authorize(Roles = "Adminstrator")]
-        [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDataProvidersAsync()
+        [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDataProvidersAsync([FromQuery] DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderService.GetAllDataProviders();
+            DataProviderParameterValidator validator = new DataProviderParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            var dataProviders = await _dataProviderService.GetAllDataProviders(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
         }
 
@@ -37,10 +53,10 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Data Provider List</returns>
         [HttpGet("type/{type}/no-user",Name = "GetDataProvidersWithoutUser")]
         [Authorize(Roles = "Adminstrator")]
-        [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderType type)
+        [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderParameter parameter, DataProviderType type)
         {
-            var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(type);
+            var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
             return Ok(dataProviders);
         }
 
@@ -49,7 +65,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <returns>Data Provider List</returns>
         [HttpGet("type/{type}",Name = "GetDataProvidersByType")]
-        [ProducesResponseType(typeof(IEnumerable<DataProviderResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDataProvidersByTypeAsync(DataProviderType type)
         {
             var dataProviders = await _dataProviderService.GetAllDataProvidersByType(type);
@@ -62,7 +78,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="dataProviderId"></param>
         /// <returns>Data Provider</returns>
         [HttpGet("{dataProviderId}", Name = "GetDataProvider")]
-        [ProducesResponseType(typeof(DataProviderResponseDTO),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DataProviderDetailsResponseDTO),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDataProviderAsync(int dataProviderId)
         {
@@ -87,7 +103,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="userId"></param>
         /// <returns>Data Provider</returns>
         [HttpGet("user/{userId}", Name = nameof(GetDataProviderByUserIdAsync))]
-        [ProducesResponseType(typeof(DataProviderResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DataProviderDetailsResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDataProviderByUserIdAsync(string userId)
         {
@@ -110,9 +126,16 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateDataProviderAsync([FromBody] DataProviderCreateRequestDTO request)
         {
-            var dataProviderId = await _dataProviderService.CreateDataProvider(request);
+            DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
+            var result = validator.Validate(request);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            var dataProvider = await _dataProviderService.CreateDataProvider(request);
             // Change Later
-            return CreatedAtRoute("GetDataProvider", new { dataProviderId = dataProviderId }, null);
+            return Ok(dataProvider);
         }
 
         /// <summary>
@@ -132,8 +155,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateDataProviderAsync(int dataProviderId, [FromBody] DataProviderUpdateRequestDTO request)
         {
-            var result = await _dataProviderService.UpdateDataProvider(dataProviderId, request);
-            return NoContent();
+            DataProviderUpdateRequestDTOValidator validator = new DataProviderUpdateRequestDTOValidator();
+            var result = validator.Validate(request);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            var dataProvider = await _dataProviderService.UpdateDataProvider(dataProviderId, request);
+            return Ok(dataProvider);
         }
 
         /// <summary>
@@ -147,8 +177,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{dataProviderId}")]
         [Authorize(Roles = "Adminstrator")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteDataProviderAsync(int dataProviderId)

@@ -30,7 +30,7 @@ namespace Infrastructure.DBContext
         public DbSet<CarInspectionHistory> CarInspectionsHistory { get; set;}
         public DbSet<CarInspectionHistoryDetail> CarInspectionHistoryDetails { get;set; }
         public DbSet<CarInsurance> CarInsurances { get; set; }
-        public DbSet<CarOdometerHistory> CarOdometersHistory { get;set; }
+        //public DbSet<CarOdometerHistory> CarOdometersHistory { get;set; }
         public DbSet<CarOwnerHistory> CarOwnersHistory { get; set;}
         public DbSet<CarServiceHistory> CarServicesHistory { get; set; }
         public DbSet<CarStolenHistory> CarStolenHistory { get; set; }
@@ -44,8 +44,8 @@ namespace Infrastructure.DBContext
         public DbSet<CarSpecification> CarSpecification { get; set; }
         public DbSet<DataProvider> DataProviders { get; set; }
 
-        public DbSet<ModelOdometer> ModelOdometers { get; set; }
-        public DbSet<RecommendAction> RecommendActions { get; set; }
+        public DbSet<ModelMaintainance> ModelMaintainances { get; set; }
+        //public DbSet<RecommendAction> RecommendActions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderOption> OrderOptions { get; set; }

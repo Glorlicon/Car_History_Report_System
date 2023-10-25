@@ -53,12 +53,14 @@ namespace Infrastructure.Repository
 
         public async Task<Car> GetCarById(string vinId, bool trackChange)
         {
-            return await FindByCondition(c => c.VinId == vinId, trackChange)
+            var car =  await FindByCondition(c => c.VinId == vinId, trackChange)
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
                             .Include(c => c.CarImages)
+                            .Include(c => c.CarParts)
                             .SingleOrDefaultAsync();
+            return car;
         }
 
         public async Task<IEnumerable<Car>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter, bool trackChange)
@@ -90,6 +92,19 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<Car>> GetCarsByUserId(string userId, CarParameter parameter, bool trackChange)
         {
             return await FindByCondition(c => c.CreatedByUserId == userId, trackChange)
+                            .Include(c => c.Model)
+                            .ThenInclude(c => c.Manufacturer)
+                            .Include(c => c.CarSalesInfo)
+                            .Include(c => c.CarImages)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Car>> GetCarsByAdminstrator(CarParameter parameter, bool trackChange)
+        {
+            return await FindByCondition(c => c.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, trackChange)
                             .Include(c => c.Model)
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)

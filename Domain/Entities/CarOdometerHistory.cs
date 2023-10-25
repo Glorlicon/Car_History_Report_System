@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
+    /*
     public class CarOdometerHistory : CarHistory
     {
 
@@ -14,4 +15,5 @@ namespace Domain.Entities
         public int OdometerValue { get; set; }
         public string? Description { get; set; }
     }
+    */
 }

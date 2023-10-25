@@ -40,7 +40,6 @@ function UserListPage() {
     const [isNewDataProvider, setNewDataProvider] = useState(false)
     const [providersList, setProvidersList] = useState<DataProvider[] | null>(null)
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    console.log(token)
     const filteredUsers = users.filter((user: any) => {
         const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = selectedRole === 'all' || user.role.toString() === selectedRole;
@@ -206,7 +205,6 @@ function UserListPage() {
             newUser.role == USER_ROLE.SERVICE
         ) {
             const temp = setIsDataProvider(true)
-            console.log("Role", newUser.role)
             const response = await GetDataProviders(newUser.role - 2, token)
             if (response.data) setProvidersList(response.data)
             else console.log("Cannot get providers list")
@@ -219,7 +217,6 @@ function UserListPage() {
     const changeSize = () => {
         const element = document.querySelector('.ad-user-modal-content')
         if (element instanceof HTMLElement) {
-            console.log(isDataProvider)
             if (isDataProvider) {
                 element.style.width = '570px'
             } else {
@@ -229,10 +226,8 @@ function UserListPage() {
     }
 
     const editChangeSize = () => {
-        console.log("Here")
         const element = document.querySelector('.ad-user-modal-content')
         if (element instanceof HTMLElement) {
-            console.log("Hmm",editingUser?.dataProvider)
             if (editingUser?.dataProvider) {
                 element.style.width = '570px'
             } else {

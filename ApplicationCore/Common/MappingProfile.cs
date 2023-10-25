@@ -1,7 +1,11 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.Car;
+using Application.DTO.CarMaintainance;
+using Application.DTO.CarOwnerHistory;
+using Application.DTO.CarPart;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
+using Application.DTO.Request;
 using Application.DTO.User;
 using AutoMapper;
 using Domain.Entities;
@@ -28,10 +32,19 @@ namespace Application.Common
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();
 
+            CreateMap<DataProvider, DataProviderDetailsResponseDTO>()
+                .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
+            CreateMap<Review, DataProviderReviewsResponseDTO>();
+            CreateMap<WorkingTime, DataProviderWorkingTimesResponseDTO>();
             CreateMap<DataProviderCreateRequestDTO, DataProvider>();
             CreateMap<DataProviderUpdateRequestDTO, DataProvider>();
-            CreateMap<DataProvider, DataProviderResponseDTO>()
-                .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
+            CreateMap<DataProviderWorkingTimesCreateRequestDTO, WorkingTime>()
+                .ForMember(dpwt => dpwt.StartTime, opt => opt.MapFrom(x => new TimeOnly(x.StartHour,x.StartMinute)))
+                .ForMember(dpwt => dpwt.EndTime, opt => opt.MapFrom(x => new TimeOnly(x.EndHour,x.EndMinute)));
+            CreateMap<DataProviderWorkingTimesUpdateRequestDTO, WorkingTime>()  
+            .ForMember(dpwt => dpwt.StartTime, opt => opt.MapFrom(x => new TimeOnly(x.StartHour, x.StartMinute)))
+                .ForMember(dpwt => dpwt.EndTime, opt => opt.MapFrom(x => new TimeOnly(x.EndHour, x.EndMinute)));
+
 
             CreateMap<CarCreateRequestDTO, Car>();
             CreateMap<CarUpdateRequestDTO, Car>();
@@ -42,6 +55,22 @@ namespace Application.Common
             CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>();
             CreateMap<CarImages, CarImagesResponseDTO>();
             CreateMap<CarImagesCreateDTO, CarImages>();
+
+            CreateMap<CarPartCreateRequestDTO, CarPart>();
+            CreateMap<CarPartUpdateRequestDTO, CarPart>();
+            CreateMap<CarPart, CarPartResponseDTO>()
+                .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name));
+
+            CreateMap<CarOwnerHistoryCreateRequestDTO, CarOwnerHistory>();
+            CreateMap<CarOwnerHistoryUpdateRequestDTO, CarOwnerHistory>();
+            CreateMap<CarOwnerHistory, CarOwnerHistoryResponseDTO>()
+                .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
+
+            CreateMap<RequestCreateRequestDTO, Request>();
+            CreateMap<Request, RequestUpdateRequestDTO>();
+            CreateMap<Request, RequestResponseDTO>();
+
+            CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();
         }
     }
 }

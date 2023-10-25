@@ -16,6 +16,10 @@ namespace Domain.Common
 
         public string? Note { get; set; }
 
+        public int? Odometer { get; set; }
+
+        public DateOnly? ReportDate { get; set; }
+
         public Car Car { get; set; } = null!;
     }
 }

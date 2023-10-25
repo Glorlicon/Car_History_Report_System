@@ -1,10 +1,15 @@
-﻿using Application.DTO.CarSpecification;
+﻿using Application.Common.Models;
+using Application.DTO.Car;
+using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.Interfaces;
+using Application.Validation.Car;
+using Application.Validation.DataProvider;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
+using FluentValidation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,39 +30,40 @@ namespace Application.DomainServices
             _identityServices = identityServices;
         }
 
-        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProviders()
+        public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderRepository.GetAll(trackChange: false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
+            var dataProviders = await _dataProviderRepository.GetAllDataProviders(parameter, trackChange: false);
+            var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountAll();
+            return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
+        {
+            var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(parameter, type, trackChange: false);
+            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
             return dataProvidersResponse;
         }
 
-        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderType type)
-        {
-            var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(type, trackChange: false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
-        }
-
-        public async Task<IEnumerable<DataProviderResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
+        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderResponseDTO>>(dataProviders);
+            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
             return dataProvidersResponse;
         }
 
-        public async Task<DataProviderResponseDTO> GetDataProvider(int dataProviderId)
+        public async Task<DataProviderDetailsResponseDTO> GetDataProvider(int dataProviderId)
         {
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, false);
             if(dataProvider is null)
             {
-                throw new DataProviderNotFoundExpcetion(dataProviderId);
+                throw new DataProviderNotFoundException(dataProviderId);
             }
-            var dataProviderResponse = _mapper.Map<DataProviderResponseDTO>(dataProvider);
+            var dataProviderResponse = _mapper.Map<DataProviderDetailsResponseDTO>(dataProvider);
             return dataProviderResponse;
         }
 
-        public async Task<DataProviderResponseDTO> GetDataProviderByUserId(string userId)
+        public async Task<DataProviderDetailsResponseDTO> GetDataProviderByUserId(string userId)
         {
             var user = await _identityServices.GetUserAsync(userId);
             if(user is null)
@@ -66,16 +72,17 @@ namespace Application.DomainServices
             }
             if(user.DataProviderId is null)
             {
-                throw new DataProviderNotFoundExpcetion(user.DataProviderId);
+                throw new DataProviderNotFoundException(user.DataProviderId);
             }
             return await GetDataProvider(user.DataProviderId.Value);
         }
-        public async Task<int> CreateDataProvider(DataProviderCreateRequestDTO request)
+        public async Task<DataProviderDetailsResponseDTO> CreateDataProvider(DataProviderCreateRequestDTO request)
         {
             var dataProvider = _mapper.Map<DataProvider>(request);
             _dataProviderRepository.Create(dataProvider);
             await _dataProviderRepository.SaveAsync();
-            return dataProvider.Id;
+            var result = _mapper.Map<DataProviderDetailsResponseDTO>(dataProvider);
+            return result;
         }
 
         public async Task<bool> DeleteDataProvider(int dataProviderId)
@@ -83,7 +90,7 @@ namespace Application.DomainServices
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, true);
             if (dataProvider is null)
             {
-                throw new DataProviderNotFoundExpcetion(dataProviderId);
+                throw new DataProviderNotFoundException(dataProviderId);
             }
             _dataProviderRepository.Delete(dataProvider);
             await _dataProviderRepository.SaveAsync();
@@ -95,7 +102,7 @@ namespace Application.DomainServices
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, true);
             if (dataProvider is null)
             {
-                throw new DataProviderNotFoundExpcetion(dataProviderId);
+                throw new DataProviderNotFoundException(dataProviderId);
             }
             _mapper.Map(request, dataProvider);
             await _dataProviderRepository.SaveAsync();

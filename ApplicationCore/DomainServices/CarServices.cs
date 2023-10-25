@@ -1,6 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
 using Application.DTO.Car;
+using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarSpecification;
 using Application.Interfaces;
 using AutoMapper;
@@ -18,11 +19,13 @@ namespace Application.DomainServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICarOwnerHistoryServices _carOwnerHistoryServices;
 
-        public CarServices(IUnitOfWork unitOfWork, IMapper mapper)
+        public CarServices(IUnitOfWork unitOfWork, IMapper mapper, ICarOwnerHistoryServices carOwnerHistoryServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _carOwnerHistoryServices = carOwnerHistoryServices;
         }
 
         public async Task<PagedList<CarResponseDTO>> GetAllCars(CarParameter parameter)
@@ -54,6 +57,15 @@ namespace Application.DomainServices
             var cars = await _unitOfWork.CarRepository.GetCarsByCarDealerId(carDealerId, parameter, false);
             var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
             var count = await _unitOfWork.CarRepository.CountCarByCondition(c => c.CreatedByUser.DataProviderId == carDealerId, parameter);
+            return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+
+        public async Task<PagedList<CarResponseDTO>> GetCarsByAdminstrator(CarParameter parameter)
+        {
+            var cars = await _unitOfWork.CarRepository.GetCarsByAdminstrator(parameter, false);
+            var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
+            var count = await _unitOfWork.CarRepository.CountCarByCondition(c => c.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, parameter);
             return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -99,18 +111,29 @@ namespace Application.DomainServices
         public async Task<bool> UpdateCar(string vinId, CarUpdateRequestDTO request)
         {
             var car = await _unitOfWork.CarRepository.GetCarById(vinId, trackChange: true);
+
             if (car is null)
             {
                 throw new CarNotFoundException(vinId);
             }
             _mapper.Map(request,car);
-            await _unitOfWork.CarRepository.SaveAsync();
+            await _unitOfWork.SaveAsync();
             return true;
         }
 
-        public async Task<bool> SoldCar(string vinID)
+        public async Task<bool> SoldCar(string vinID, CarOwnerHistoryCreateRequestDTO request)
         {
-            throw new NotImplementedException();
+            var car = await _unitOfWork.CarRepository.GetCarById(vinID, trackChange: true);
+
+            if (car is null)
+            {
+                throw new CarNotFoundException(vinID);
+            }
+            car.CarSalesInfo = null;
+            car.CarImages = null;
+            await _carOwnerHistoryServices.CreateCarOwnerHistory(request);
+            //await _unitOfWork.SaveAsync();
+            return true;
         }
 
         public async Task<bool> CreateCarSalesInfo(string vinId, CarSalesInfoCreateRequestDTO request)
@@ -122,6 +145,7 @@ namespace Application.DomainServices
             }
             var carSalesInfo = _mapper.Map<CarSalesInfo>(request);
             car.CarSalesInfo = carSalesInfo;
+            _mapper.Map(request.CarImages, car.CarImages);
             await _unitOfWork.SaveAsync();
             return true;
         }
@@ -135,6 +159,7 @@ namespace Application.DomainServices
             }
             _mapper.Map(request, car.CarSalesInfo);
             car.CarSalesInfo.Features = new List<string>(car.CarSalesInfo.Features);
+            _mapper.Map(request.CarImages, car.CarImages);
             await _unitOfWork.SaveAsync();
             return true;
         }
