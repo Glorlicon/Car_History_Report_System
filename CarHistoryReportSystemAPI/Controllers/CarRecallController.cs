@@ -168,11 +168,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarRecallStatusesByCar(string vinId, [FromQuery] CarRecallStatusParameter parameter)
         {
             CarRecallStatusParameterValidator validator = new CarRecallStatusParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var carRecallStatuses = await _carRecallService.GetCarRecallStatusByCar(vinId, parameter);
             return Ok(carRecallStatuses);

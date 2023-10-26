@@ -31,7 +31,7 @@ namespace CarHistoryReportSystemAPI.Middlewares
             };
             var response = new ErrorDetails
             {
-                Error = exception.Message
+                Error = new List<string> { exception.Message }
             };
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

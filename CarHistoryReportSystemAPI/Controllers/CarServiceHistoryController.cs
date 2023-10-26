@@ -1,4 +1,5 @@
-﻿using Application.DTO.CarServiceHistory;
+﻿using Application.Common.Models;
+using Application.DTO.CarServiceHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Application.Validation.Car;
@@ -110,8 +111,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             await _carServiceHistoryService.CreateCarHistory(request);
             return NoContent();
@@ -138,8 +143,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach(var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             await _carServiceHistoryService.UpdateCarHistory(id, request);
             return NoContent();
