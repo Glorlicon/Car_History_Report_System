@@ -6,7 +6,8 @@ const TestImage2: React.FC = () => {
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const images = [
         { "name": "splunk" },
-        { "name": "test" }
+        { "name": "test" },
+        { "name": "1698226415316-BkTest"}
     ]
 
   return (

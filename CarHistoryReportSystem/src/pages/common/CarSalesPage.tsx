@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
+import {ListCarForSale } from '../../services/api/CarForSale';
+import { APIResponse, Car, CarModel } from '../../utils/Interfaces';
 import '../../styles/CarForSale.css'
 
 function CarSalesPage() {
     const data = useSelector((state: RootState) => state.auth.token);
-    console.log(data);
+    const [error, setError] = useState<string | null>(null);
+    const [carList, setCarList] = useState<Car[]>([]);
+    const [modelList, setModelList] = useState<CarModel[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        const carListResponse: APIResponse = await ListCarForSale()
+        if (carListResponse.error) {
+            setError(carListResponse.error)
+        } else {
+            setCarList(carListResponse.data)
+        }
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <>
@@ -71,137 +92,90 @@ function CarSalesPage() {
                         </div>
                     </div>
 
-                    <article className="car-card">
-                        <div className="Car-header">
-                            <h3>Used Model Name</h3>
-                            <img src="#" alt="Car Image" />
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                <div className="ad-car-spinner"></div>
+                            </td>
+                        </tr>
+                    ) : error ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                {error}
+                                <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
+                            </td>
+                        </tr>
+                        ) : carList.length > 0 ? (
+                                carList.map((model: any, index: number) => (
+                                    <article className="car-card" key={index}>
+                                        <div className="Car-header">
+                                            <h3>Used {model.modelId}</h3>
+                                            <img src="{model.CarSalesInfo.carImages.imageLink}" alt="Car Image" />
+
+                                        </div>
+
+                                        <div className="used-car-info-container">
+                                            <div className="used-car-info">
+                                                <h3>Price: {model.carSalesInfo.price}</h3>
+                                                <p><strong>Dealer:</strong> DealerName</p>
+                                            </div>
+                                            <div className="used-car-info">
+                                                <p><strong>Color:</strong> {model.colorName}</p>
+                                            </div>
+
+                                            <div className="used-car-info">
+                                                <p><strong>Mileage:</strong> {model.currentOdometer}</p>
+                                                <p><strong>Body Style:</strong> {model.modelId}</p>
+
+                                            </div>
+
+                                        </div>
+                                        <div className="description">
+                                            <p><strong>Description:</strong> {model.carSalesInfo.description}</p>
+                                        </div>
+
+                                    </article>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={5}>No cars found</td>
+                        </tr>
+                    )}
+
+                    {/*<article className="car-card">*/}
+                    {/*    <div className="Car-header">*/}
+                    {/*        <h3>Used Model Name</h3>*/}
+                    {/*        <img src="#" alt="Car Image" />*/}
                             
-                        </div>
+                    {/*    </div>*/}
 
-                        <div className="used-car-info-container">
-                            <div className="used-car-info">
-                                <h3>Price: Price</h3>
-                                <p><strong>Dealer:</strong> DealerName</p>
-                            </div>
-                            <div className="used-car-info">
-                                <p><strong>Location:</strong> Location</p>
-                                <p><strong>Color:</strong> Color</p>
-                                <p><strong>Transmission:</strong> Transmission</p>
-                                <p><strong>MPG:</strong> MPG</p>
-                            </div>
+                    {/*    <div className="used-car-info-container">*/}
+                    {/*        <div className="used-car-info">*/}
+                    {/*            <h3>Price: Price</h3>*/}
+                    {/*            <p><strong>Dealer:</strong> DealerName</p>*/}
+                    {/*        </div>*/}
+                    {/*        <div className="used-car-info">*/}
+                    {/*            <p><strong>Location:</strong> Location</p>*/}
+                    {/*            <p><strong>Color:</strong> Color</p>*/}
+                    {/*            <p><strong>Transmission:</strong> Transmission</p>*/}
+                    {/*            <p><strong>MPG:</strong> MPG</p>*/}
+                    {/*        </div>*/}
 
-                            <div className="used-car-info">
-                                <p><strong>Mileage:</strong> Mileage</p>
-                                <p><strong>Body Style:</strong> BodyStyle</p>
-                                <p><strong>Engine:</strong> Engine</p>
+                    {/*        <div className="used-car-info">*/}
+                    {/*            <p><strong>Mileage:</strong> Mileage</p>*/}
+                    {/*            <p><strong>Body Style:</strong> BodyStyle</p>*/}
+                    {/*            <p><strong>Engine:</strong> Engine</p>*/}
 
-                            </div>
+                    {/*        </div>*/}
 
-                        </div>
-                        <div className="description">
-                            <p><strong>Description:</strong> Description</p>
-                        </div>
+                    {/*    </div>*/}
+                    {/*    <div className="description">*/}
+                    {/*        <p><strong>Description:</strong> Description</p>*/}
+                    {/*    </div>*/}
                         
-                    </article>
+                    {/*</article>*/}
 
-                    <article className="car-card">
-                        <div className="Car-header">
-                            <h3>Used Model Name</h3>
-                            <img src="#" alt="Car Image" />
-
-                        </div>
-
-                        <div className="used-car-info-container">
-                            <div className="used-car-info">
-                                <h3>Price: Price</h3>
-                                <p><strong>Dealer:</strong> DealerName</p>
-                            </div>
-                            <div className="used-car-info">
-                                <p><strong>Location:</strong> Location</p>
-                                <p><strong>Color:</strong> Color</p>
-                                <p><strong>Transmission:</strong> Transmission</p>
-                                <p><strong>MPG:</strong> MPG</p>
-                            </div>
-
-                            <div className="used-car-info">
-                                <p><strong>Mileage:</strong> Mileage</p>
-                                <p><strong>Body Style:</strong> BodyStyle</p>
-                                <p><strong>Engine:</strong> Engine</p>
-
-                            </div>
-
-                        </div>
-                        <div className="description">
-                            <p><strong>Description:</strong> Description</p>
-                        </div>
-
-                    </article>
-
-                    <article className="car-card">
-                        <div className="Car-header">
-                            <h3>Used Model Name</h3>
-                            <img src="#" alt="Car Image" />
-
-                        </div>
-
-                        <div className="used-car-info-container">
-                            <div className="used-car-info">
-                                <h3>Price: Price</h3>
-                                <p><strong>Dealer:</strong> DealerName</p>
-                            </div>
-                            <div className="used-car-info">
-                                <p><strong>Location:</strong> Location</p>
-                                <p><strong>Color:</strong> Color</p>
-                                <p><strong>Transmission:</strong> Transmission</p>
-                                <p><strong>MPG:</strong> MPG</p>
-                            </div>
-
-                            <div className="used-car-info">
-                                <p><strong>Mileage:</strong> Mileage</p>
-                                <p><strong>Body Style:</strong> BodyStyle</p>
-                                <p><strong>Engine:</strong> Engine</p>
-
-                            </div>
-
-                        </div>
-                        <div className="description">
-                            <p><strong>Description:</strong> Description</p>
-                        </div>
-
-                    </article>
-
-                    <article className="car-card">
-                        <div className="Car-header">
-                            <h3>Used Model Name</h3>
-                            <img src="#" alt="Car Image" />
-
-                        </div>
-
-                        <div className="used-car-info-container">
-                            <div className="used-car-info">
-                                <h3>Price: Price</h3>
-                                <p><strong>Dealer:</strong> DealerName</p>
-                            </div>
-                            <div className="used-car-info">
-                                <p><strong>Location:</strong> Location</p>
-                                <p><strong>Color:</strong> Color</p>
-                                <p><strong>Transmission:</strong> Transmission</p>
-                                <p><strong>MPG:</strong> MPG</p>
-                            </div>
-
-                            <div className="used-car-info">
-                                <p><strong>Mileage:</strong> Mileage</p>
-                                <p><strong>Body Style:</strong> BodyStyle</p>
-                                <p><strong>Engine:</strong> Engine</p>
-
-                            </div>
-
-                        </div>
-                        <div className="description">
-                            <p><strong>Description:</strong> Description</p>
-                        </div>
-
-                    </article>
+                   
 
                     {/* ... other car cards ... */}
 
