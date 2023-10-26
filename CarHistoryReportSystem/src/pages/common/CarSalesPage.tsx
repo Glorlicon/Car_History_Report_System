@@ -21,6 +21,7 @@ function CarSalesPage() {
         } else {
             setCarList(carListResponse.data)
         }
+        console.log(carList)
         setLoading(false)
     }
 
