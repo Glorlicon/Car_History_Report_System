@@ -1,4 +1,5 @@
-﻿using Application.DomainServices;
+﻿using Application.Common.Models;
+using Application.DomainServices;
 using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
@@ -51,7 +52,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Model</returns>
         [HttpGet("{id}", Name = "GetRequest")]
         [ProducesResponseType(typeof(RequestResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status404NotFound)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestAsync(int id)
         {
