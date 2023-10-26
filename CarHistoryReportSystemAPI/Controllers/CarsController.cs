@@ -1,4 +1,5 @@
-﻿using Application.DTO.Car;
+﻿using Application.Common.Models;
+using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
 using Application.Validation.Car;
@@ -36,11 +37,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarsAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetAllCars(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -91,11 +96,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarByUserIdAsync(string userId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetCarCreatedByUserId(userId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -114,11 +123,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarByManufacturerIdAsync(int manufacturerId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetCarByManufacturerId(manufacturerId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -137,11 +150,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarsByCarDealerIdAsync(int carDealerId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByCarDealerId(carDealerId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -161,11 +178,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarsByAdminstratorAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByAdminstrator(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -183,11 +204,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarsCurrentlySellingAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var cars = await _carService.GetCarsCurrentlySelling(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
@@ -213,8 +238,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var result = await _carService.CreateCar(request);
             return NoContent();
@@ -281,8 +310,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var result = await _carService.UpdateCar(vinId, request);
             return NoContent();
@@ -341,8 +374,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var result = await _carService.SoldCar(vinId, request);
             return NoContent();

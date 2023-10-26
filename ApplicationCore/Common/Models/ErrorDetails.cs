@@ -9,7 +9,7 @@ namespace Application.Common.Models
 {
     public class ErrorDetails
     {
-        public string Error { get; set; }
+        public List<string> Error { get; set; } = new List<string>();
         public override string ToString() => JsonSerializer.Serialize(this);
     }
 }

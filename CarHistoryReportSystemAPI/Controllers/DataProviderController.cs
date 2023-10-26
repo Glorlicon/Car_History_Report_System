@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Application.Validation.DataProvider;
 using Domain.Entities;
+using Application.Common.Models;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -36,11 +37,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetDataProvidersAsync([FromQuery] DataProviderParameter parameter)
         {
             DataProviderParameterValidator validator = new DataProviderParameterValidator();
-            var result = validator.Validate(parameter);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var dataProviders = await _dataProviderService.GetAllDataProviders(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
@@ -127,11 +132,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> CreateDataProviderAsync([FromBody] DataProviderCreateRequestDTO request)
         {
             DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
-            var result = validator.Validate(request);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var dataProvider = await _dataProviderService.CreateDataProvider(request);
             // Change Later
@@ -156,11 +165,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> UpdateDataProviderAsync(int dataProviderId, [FromBody] DataProviderUpdateRequestDTO request)
         {
             DataProviderUpdateRequestDTOValidator validator = new DataProviderUpdateRequestDTOValidator();
-            var result = validator.Validate(request);
-            if (!result.IsValid)
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
             {
-                result.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var dataProvider = await _dataProviderService.UpdateDataProvider(dataProviderId, request);
             return Ok(dataProvider);

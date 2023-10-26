@@ -1,4 +1,5 @@
-﻿using Application.DTO.Car;
+﻿using Application.Common.Models;
+using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
 using Application.Validation.Car;
@@ -101,8 +102,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var result = await _carOwnerHistoryService.CreateCarOwnerHistory(request);
             return NoContent();
@@ -129,8 +134,12 @@ namespace CarHistoryReportSystemAPI.Controllers
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState);
-                return BadRequest(ModelState);
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
             }
             var result = await _carOwnerHistoryService.UpdateCarOwnerHistory(id, request);
             return NoContent();
