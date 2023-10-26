@@ -38,7 +38,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CarServiceHistoryResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarServiceHistorysAsync([FromQuery] CarServiceHistoryParameter parameter)
         {
             var carServiceHistorys = await _carServiceHistoryService.GetAllCarHistorys(parameter);
@@ -53,7 +53,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Service History</returns>
         [HttpGet("{id}", Name = "GetCarServiceHistory")]
         [ProducesResponseType(typeof(CarServiceHistoryResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarServiceHistoryAsync(int id)
         {
             var carServiceHistory = await _carServiceHistoryService.GetCarHistory(id);
@@ -68,7 +68,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}")]
         [ProducesResponseType(typeof(IEnumerable<CarServiceHistoryResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarServiceHistoryByCarIdAsync(string vinId, [FromQuery] CarServiceHistoryParameter parameter)
         {
             var carServiceHistorys = await _carServiceHistoryService.GetCarHistoryByCarId(vinId, parameter);
@@ -84,7 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(IEnumerable<CarServiceHistoryResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarServiceHistoryByUserIdAsync(string userId, [FromQuery] CarServiceHistoryParameter parameter)
         {
             var carServiceHistorys = await _carServiceHistoryService.GetCarHistoryByUserId(userId, parameter);
@@ -103,8 +103,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost(Name = "CreateCarServiceHistory")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarServiceHistoryAsync([FromBody] CarServiceHistoryCreateRequestDTO request)
         {
             CarServiceHistoryCreateRequestDTOValidator validator = new CarServiceHistoryCreateRequestDTOValidator();
@@ -134,9 +134,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarServiceHistoryAsync(int id, [FromBody] CarServiceHistoryUpdateRequestDTO request)
         {
             CarServiceHistoryUpdateRequestDTOValidator validator = new CarServiceHistoryUpdateRequestDTOValidator();
@@ -166,9 +166,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpDelete("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCarHistoryAsync(int id)
         {
             await _carServiceHistoryService.DeleteCarHistory(id);

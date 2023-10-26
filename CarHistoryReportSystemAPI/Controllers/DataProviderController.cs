@@ -84,7 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Data Provider</returns>
         [HttpGet("{dataProviderId}", Name = "GetDataProvider")]
         [ProducesResponseType(typeof(DataProviderDetailsResponseDTO),StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDataProviderAsync(int dataProviderId)
         {
             var dataProvider = await _dataProviderService.GetDataProvider(dataProviderId);
@@ -109,7 +109,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Data Provider</returns>
         [HttpGet("user/{userId}", Name = nameof(GetDataProviderByUserIdAsync))]
         [ProducesResponseType(typeof(DataProviderDetailsResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDataProviderByUserIdAsync(string userId)
         {
             var dataProvider = await _dataProviderService.GetDataProviderByUserId(userId);
@@ -127,8 +127,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost(Name = "CreateDataProvider")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateDataProviderAsync([FromBody] DataProviderCreateRequestDTO request)
         {
             DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
@@ -159,9 +159,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{dataProviderId}")]
         [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateDataProviderAsync(int dataProviderId, [FromBody] DataProviderUpdateRequestDTO request)
         {
             DataProviderUpdateRequestDTOValidator validator = new DataProviderUpdateRequestDTOValidator();
@@ -190,10 +190,10 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{dataProviderId}")]
         [Authorize(Roles = "Adminstrator")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteDataProviderAsync(int dataProviderId)
         {
             var result = await _dataProviderService.DeleteDataProvider(dataProviderId);

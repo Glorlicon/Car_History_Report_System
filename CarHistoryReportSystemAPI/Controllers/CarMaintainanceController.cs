@@ -1,4 +1,5 @@
-﻿using Application.DomainServices;
+﻿using Application.Common.Models;
+using Application.DomainServices;
 using Application.DTO.Car;
 using Application.DTO.CarMaintainance;
 using Application.Interfaces;
@@ -46,8 +47,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost("car-maintainance")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddCarToTrackingList([FromBody] AddCarToTrackingListRequestDTO request)
         {
             await _carMaintainanceServices.AddCarToTrackingList(request);
@@ -67,9 +68,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpDelete("car-maintainance/car/{vinId}/user/{userId}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveCarFromTrackingListAsync(string vinId, string userId)
         {
             await _carMaintainanceServices.RemoveCarFromTrackingList(vinId, userId);

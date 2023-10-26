@@ -33,7 +33,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet(Name = "GetCars")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -59,7 +59,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car</returns>
         [HttpGet("{vinId}", Name = "GetCar")]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarAsync(string vinId)
         {
             var car = await _carService.GetCar(vinId);
@@ -73,7 +73,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>CarSalesInfo</returns>
         [HttpGet("{vinId}/car-sales-info", Name = "GetCarSalesInfo")]
         [ProducesResponseType(typeof(CarSalesInfoResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarSalesInfoAsync(string vinId)
         {
             var car = await _carService.GetCar(vinId);
@@ -92,7 +92,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}", Name = nameof(GetCarByUserIdAsync))]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarByUserIdAsync(string userId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -119,7 +119,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("manufacturer/{manufacturerId}", Name = "GetCarByManufacturerId")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarByManufacturerIdAsync(int manufacturerId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -146,7 +146,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("car-dealer/{carDealerId}", Name = "GetCarsByCarDealerId")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsByCarDealerIdAsync(int carDealerId, [FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -174,7 +174,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet("created-by-admin", Name = "GetCarsByAdminstrator")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsByAdminstratorAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -200,7 +200,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         [HttpGet("selling", Name = "GetCarsCurrentlySelling")]
         [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarsCurrentlySellingAsync([FromQuery] CarParameter parameter)
         {
             CarParameterValidator validator = new CarParameterValidator();
@@ -230,8 +230,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost(Name = "CreateCar")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarAsync([FromBody] CarCreateRequestDTO request)
         {
             CarCreateRequestDTOValidator validator = new CarCreateRequestDTOValidator();
@@ -260,8 +260,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost("{vinId}/car-sales-info",Name = "CreateCarSalesInfo")]
         [Authorize(Roles = "Adminstrator,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarSalesInfoAsync(string vinId, [FromBody] CarSalesInfoCreateRequestDTO request)
         {
             var result = await _carService.CreateCarSalesInfo(vinId, request);
@@ -280,9 +280,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{vinId}/car-sales-info")]
         [Authorize(Roles = "Adminstrator,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarSalesInfoAsync(string vinId, [FromBody] CarSalesInfoUpdateRequestDTO request)
         {
             var result = await _carService.UpdateCarSalesInfo(vinId, request);
@@ -301,9 +301,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{vinId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarAsync(string vinId, [FromBody] CarUpdateRequestDTO request)
         {
             CarUpdateRequestDTOValidator validator = new CarUpdateRequestDTOValidator();
@@ -333,9 +333,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpDelete("{vinId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCarAsync(string vinId)
         {
             var result = await _carService.DeleteCar(vinId);
@@ -365,9 +365,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost("{vinId}/sold")]
         [Authorize(Roles = "CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SoldCar(string vinId, [FromBody] CarOwnerHistoryCreateRequestDTO request)
         {
             CarOwnerHistoryCreateRequestDTOValidator validator = new CarOwnerHistoryCreateRequestDTOValidator();
