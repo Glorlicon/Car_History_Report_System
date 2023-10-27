@@ -3,7 +3,7 @@ import { BlobServiceClient } from '@azure/storage-blob';
 
 export async function UploadImages(image: File | null): Promise<APIResponse> {
     if (!image) return { error: "No image was found" }
-    const blobSasUrl = 'https://carhistoryreportsystem.blob.core.windows.net/images?sp=racwdli&st=2023-10-18T18:40:40Z&se=2023-10-25T18:40:40Z&sv=2022-11-02&sr=c&sig=lcRIP2y61fLANLycJ5GlAeO07Vm%2F97lII7pDUN7WOG0%3D'
+    const blobSasUrl = 'https://carhistoryreportsystem.blob.core.windows.net/images?sp=racwdli&st=2023-10-22T13:12:13Z&se=2023-12-30T21:12:13Z&sv=2022-11-02&sr=c&sig=zKs5WLz86nB35z0sh5cNxSvedOe2t9PhtPcV%2B1pebo4%3D'
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
     const containerName = 'chrs';
     const client = blobServiceClient.getContainerClient(containerName);
