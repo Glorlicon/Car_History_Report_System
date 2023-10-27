@@ -30,7 +30,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <returns>Request list</returns>
         [HttpGet(Name = "GetRequests")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponsDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestsAsync([FromQuery] RequestParameter parameter)
         {
@@ -67,7 +67,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Request List</returns>
         [HttpGet("user/{userId}", Name = nameof(GetAllRequestByUserIdAsync))]
         [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponsDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRequestByUserIdAsync(string userId, [FromQuery] RequestParameter parameter)
         {
             RequestParameterValidator validator = new RequestParameterValidator();

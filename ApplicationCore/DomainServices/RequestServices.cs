@@ -24,15 +24,15 @@ namespace Application.DomainServices
             _mapper = mapper;
         }
 
-        public async Task<PagedList<RequestResponsDTO>> GetAllRequests(RequestParameter parameter, bool trackChange)
+        public async Task<PagedList<RequestResponseDTO>> GetAllRequests(RequestParameter parameter, bool trackChange)
         {
             var requests = await _requestRepository.GetAllRequests(parameter, trackChange);
-            var requestsResponse = _mapper.Map<List<RequestResponsDTO>>(requests);
+            var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
             var count = await _requestRepository.CountAll();
-            return new PagedList<RequestResponsDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+            return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<RequestResponsDTO> GetRequest(int id, bool trackChange)
+        public async Task<RequestResponseDTO> GetRequest(int id, bool trackChange)
         {
             var request = await _requestRepository.GetRequestById(id, trackChange);
             if (request is null)
@@ -40,16 +40,16 @@ namespace Application.DomainServices
                 throw new RequestNotFoundException(id);
             }
 
-            var requestResponse = _mapper.Map<RequestResponsDTO>(request);
+            var requestResponse = _mapper.Map<RequestResponseDTO>(request);
             return requestResponse;
         }
 
-        public async Task<PagedList<RequestResponsDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
+        public async Task<PagedList<RequestResponseDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
         {
             var requests = await _requestRepository.GetAllRequestByUserId(userId, parameter, trackChange);
-            var requestsResponse = _mapper.Map<List<RequestResponsDTO>>(requests);
+            var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
             var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == userId);
-            return new PagedList<RequestResponsDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+            return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO)
