@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select/dist/declarations/src/Select';
 import { Car, CarModel } from '../../../../utils/Interfaces';
 
 interface CarIdentificationPageProps {
@@ -14,6 +15,10 @@ const CarIdentificationPage: React.FC<CarIdentificationPageProps> = ({
     carModels
 }) => {
     const edit = action === "Edit"
+    const options = carModels.map(m => ({
+        value: m.modelID,
+        label: m.modelID
+    }))
   return (
       <>
           <div className="ad-car-form-columns">
@@ -30,8 +35,8 @@ const CarIdentificationPage: React.FC<CarIdentificationPageProps> = ({
               <div className="ad-car-form-column">
                   <label>Model</label>
                   <select disabled={edit} name="modelId" value={model.modelId} onChange={handleInputChange}>
-                      {carModels.map((manu: any, index: number) => (
-                          <option key={index} value={manu.modelID}>{manu.modelID}</option>
+                      {carModels.map((m: any, index: number) => (
+                          <option key={index} value={m.modelID}>{m.modelID}</option>
                       ))}
                   </select>
               </div>

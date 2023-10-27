@@ -147,6 +147,12 @@ export interface Car {
     carImages?: CarImages[]
 }
 
+export interface CarMaintenance {
+    carId: string
+    userId: string
+}
+
+
 export interface UsersRequest {
     id?: number
     description: string
