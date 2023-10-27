@@ -30,5 +30,8 @@ namespace Application.Interfaces
         Task<bool> DeleteDataProvider(int dataProviderId);
 
         Task<bool> UpdateDataProvider(int dataProviderId, DataProviderUpdateRequestDTO request);
+
+        Task<bool> ContactDataProvider(DataProviderContactCreateRequestDTO request);
+
     }
 }
