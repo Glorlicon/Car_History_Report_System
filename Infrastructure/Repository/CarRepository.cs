@@ -128,5 +128,13 @@ namespace Infrastructure.Repository
                             .Take(parameter.PageSize)
                             .ToListAsync();
         }
+
+        public async Task<Car> GetCarIncludeDataProviderFromVinId(string VinId, bool trackChange)
+        {
+            return await FindByCondition(c => c.VinId == VinId, trackChange)
+                .Include(u => u.CreatedByUser)
+                .ThenInclude(dp => dp.DataProvider)
+                .SingleOrDefaultAsync();
+        }
     }
 }

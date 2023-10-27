@@ -66,8 +66,8 @@ namespace Application.Common
                 .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
 
             CreateMap<RequestCreateRequestDTO, Request>();
-            CreateMap<Request, RequestUpdateRequestDTO>();
-            CreateMap<Request, RequestResponseDTO>();
+            CreateMap<RequestUpdateRequestDTO, Request>();
+            CreateMap<Request, RequestResponseRequestDTO>();
 
 
         }

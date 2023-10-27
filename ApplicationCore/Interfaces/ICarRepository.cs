@@ -29,5 +29,8 @@ namespace Application.Interfaces
         Task<int> CountCarByCondition(Expression<Func<Car, bool>> expression, CarParameter parameter);
 
         Task<int> CountCarAll(CarParameter parameter);
+
+        Task<Car> GetCarIncludeDataProviderFromVinId(string VinId, bool trackChange);
+
     }
 }

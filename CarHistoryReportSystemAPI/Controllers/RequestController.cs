@@ -28,7 +28,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <returns>Request list</returns>
         [HttpGet(Name = "GetRequests")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<RequestResponseRequestDTO>), StatusCodes.Status200OK)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestsAsync([FromQuery] RequestParameter parameter)
         {
@@ -50,7 +50,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Model</returns>
         [HttpGet("{id}", Name = "GetRequest")]
-        [ProducesResponseType(typeof(RequestResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RequestResponseRequestDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestAsync(int id)
@@ -66,7 +66,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Request List</returns>
         [HttpGet("user/{userId}", Name = nameof(GetAllRequestByUserIdAsync))]
         [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<RequestResponseRequestDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRequestByUserIdAsync(string userId, [FromQuery] RequestParameter parameter)
         {
             RequestParameterValidator validator = new RequestParameterValidator();

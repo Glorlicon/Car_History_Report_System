@@ -187,5 +187,32 @@ namespace CarHistoryReportSystemAPI.Controllers
             return NoContent();
 
         }
+
+        /// <summary>
+        /// Contact Data Provider
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <response code="201">Contacted Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Contact Failed</response>
+        [HttpPost("contact")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ContactCreateDataProviderAsync([FromBody] DataProviderContactCreateRequestDTO request)
+        {
+            //DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
+            //var result = validator.Validate(request);
+            //if (!result.IsValid)
+            //{
+            //    result.AddToModelState(ModelState);
+            //    return BadRequest(ModelState);
+            //}
+            var result = await _dataProviderService.ContactDataProvider(request);
+            // Change Later
+            return Ok(result);
+        }
     }
 }
