@@ -1,3 +1,5 @@
+import internal from "stream"
+
 export interface APIResponse {
     data?: any
     error?: string
@@ -143,5 +145,15 @@ export interface Car {
     model?: CarModel
     carSalesInfo?: CarSalesInfo
     carImages?: CarImages[]
+}
+
+export interface UserRequest {
+    id: number
+    description: string
+    response: string
+    type: string
+    status: string
+    createdTimed: Date
+    lastModified: Date
 }
 

@@ -13,6 +13,7 @@ import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
 import CarDealerShopDetailsPage from '../pages/car_dealer/CarDealerShopDetailsPage';
 import CarSalesPage from '../pages/common/CarSalesPage';
 import HomePage from '../pages/common/HomePage';
+import Request from '../pages/common/UserRequest';
 import LoginPage from '../pages/common/LoginPage';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
@@ -37,6 +38,7 @@ const CustomRoutes = () => {
             <Routes>
                 <Route path="/unauthorized" element={<UserLayout navItems={UserNavigation}> <UnauthorizedPage /> </UserLayout>} />
                 <Route path="/" element={<UserLayout navItems={UserNavigation}> <HomePage /> </UserLayout>} />
+                <Route path="/Request" element={<UserLayout navItems={UserNavigation}> <Request /> </UserLayout>} />
                 <Route path="/sales" element={<UserLayout navItems={UserNavigation}> <CarSalesPage /> </UserLayout>} />
                 <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
