@@ -51,7 +51,6 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Model</returns>
         [HttpGet("{id}", Name = "GetRequest")]
-        [ProducesResponseType(typeof(RequestResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status404NotFound)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> GetRequestAsync(int id)

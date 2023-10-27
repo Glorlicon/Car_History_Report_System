@@ -69,7 +69,7 @@ namespace Application.Common
                 .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
 
             CreateMap<RequestCreateRequestDTO, Request>();
-            CreateMap<Request, RequestUpdateRequestDTO>();
+            CreateMap<RequestUpdateRequestDTO, Request>();
             CreateMap<Request, RequestResponseDTO>();
 
             CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();

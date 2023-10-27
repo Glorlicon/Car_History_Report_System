@@ -129,6 +129,14 @@ namespace Infrastructure.Repository
                             .ToListAsync();
         }
 
+        public async Task<Car> GetCarIncludeDataProviderFromVinId(string VinId, bool trackChange)
+        {
+            return await FindByCondition(c => c.VinId == VinId, trackChange)
+                .Include(u => u.CreatedByUser)
+                .ThenInclude(dp => dp.DataProvider)
+                .SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<string>> GetCarIdsByModelId(string modelId, bool trackChange)
         {
             return await FindByCondition(c => c.ModelId == modelId, trackChange)

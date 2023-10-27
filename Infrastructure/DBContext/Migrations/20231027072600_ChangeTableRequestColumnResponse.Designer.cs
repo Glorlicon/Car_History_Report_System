@@ -4,6 +4,7 @@ using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.DBContext.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231027072600_ChangeTableRequestColumnResponse")]
+    partial class ChangeTableRequestColumnResponse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarsVinId");
 
-                    b.ToTable("CarCarPart", (string)null);
+                    b.ToTable("CarCarPart");
                 });
 
             modelBuilder.Entity("Domain.Entities.Car", b =>
@@ -91,7 +93,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("Cars", (string)null);
+                    b.ToTable("Cars");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarAccidentHistory", b =>
@@ -153,7 +155,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarAccidentsHistory", (string)null);
+                    b.ToTable("CarAccidentsHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarImages", b =>
@@ -177,7 +179,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarImages", (string)null);
+                    b.ToTable("CarImages");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInspectionHistory", b =>
@@ -230,7 +232,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarInspectionsHistory", (string)null);
+                    b.ToTable("CarInspectionsHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInspectionHistoryDetail", b =>
@@ -263,7 +265,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarInspectionHistoryId");
 
-                    b.ToTable("CarInspectionHistoryDetails", (string)null);
+                    b.ToTable("CarInspectionHistoryDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInsurance", b =>
@@ -318,7 +320,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarInsurances", (string)null);
+                    b.ToTable("CarInsurances");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarMaintainance", b =>
@@ -336,7 +338,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarMaintainances", (string)null);
+                    b.ToTable("CarMaintainances");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarOwnerHistory", b =>
@@ -404,7 +406,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarOwnersHistory", (string)null);
+                    b.ToTable("CarOwnersHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarPart", b =>
@@ -447,7 +449,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarParts", (string)null);
+                    b.ToTable("CarParts");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarRecall", b =>
@@ -490,7 +492,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarRecalls", (string)null);
+                    b.ToTable("CarRecalls");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarRecallStatus", b =>
@@ -508,7 +510,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarRecallId");
 
-                    b.ToTable("CarRecallStatus", (string)null);
+                    b.ToTable("CarRecallStatus");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarReport", b =>
@@ -526,7 +528,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarReports", (string)null);
+                    b.ToTable("CarReports");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
@@ -576,7 +578,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarSalesInfo", (string)null);
+                    b.ToTable("CarSalesInfo");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarServiceHistory", b =>
@@ -633,7 +635,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarServicesHistory", (string)null);
+                    b.ToTable("CarServicesHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarSpecification", b =>
@@ -722,7 +724,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarSpecification", (string)null);
+                    b.ToTable("CarSpecification");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarStolenHistory", b =>
@@ -780,7 +782,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarStolenHistory", (string)null);
+                    b.ToTable("CarStolenHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.DataProvider", b =>
@@ -830,7 +832,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProviders", (string)null);
+                    b.ToTable("DataProviders");
                 });
 
             modelBuilder.Entity("Domain.Entities.ModelMaintainance", b =>
@@ -854,7 +856,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("ModelId", "MaintenancePart");
 
-                    b.ToTable("ModelMaintainances", (string)null);
+                    b.ToTable("ModelMaintainances");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -896,7 +898,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("RelatedUserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
@@ -928,7 +930,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderOption", b =>
@@ -972,7 +974,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderOptions", (string)null);
+                    b.ToTable("OrderOptions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
@@ -1018,7 +1020,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("Requests", (string)null);
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -1043,7 +1045,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("DataProviderId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1170,7 +1172,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("DataProviderId");
 
-                    b.ToTable("WorkingTimes", (string)null);
+                    b.ToTable("WorkingTimes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

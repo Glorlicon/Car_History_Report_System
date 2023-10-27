@@ -21,6 +21,8 @@ namespace UnitTests.Application.Tests
         private List<DataProvider> dataProvidersTestData;
         private DataProviderParameter parameter;
         private Mock<IIdentityServices> mockService;
+        private Mock<IEmailServices> mockEmailService;
+        private Mock<ICarRepository> mockCarRepository;
 
         public DataProviderServicesTests()
         {
@@ -30,7 +32,8 @@ namespace UnitTests.Application.Tests
             dataProvidersTestData = GetDataProviders();
             parameter = new DataProviderParameter();
             mockService = new Mock<IIdentityServices>();
-
+            mockEmailService = new Mock<IEmailServices>();
+            mockCarRepository = new Mock<ICarRepository>();
         }
 
         private List<DataProvider> GetDataProviders()
@@ -403,7 +406,7 @@ namespace UnitTests.Application.Tests
                     .ReturnsAsync(dataProvidersTestData);
             mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
             // Act
             var result = await service.GetAllDataProviders(parameter);
             // Assert
@@ -422,7 +425,7 @@ namespace UnitTests.Application.Tests
                 .ReturnsAsync(dataProvidersTestData.First());
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
             // Act
             var result = await service.GetDataProvider(id);
             // Asserts
@@ -442,7 +445,7 @@ namespace UnitTests.Application.Tests
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Object);
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
             // Act
             Func<Task> act = () => service.GetDataProvider(id);
             // Assert
@@ -465,7 +468,7 @@ namespace UnitTests.Application.Tests
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Object);
             //mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
             // Act
             Func<Task> act = () => service.UpdateDataProvider(id, request);
             // Assert
@@ -486,7 +489,7 @@ namespace UnitTests.Application.Tests
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Obje;ct);
             //mockUnitOfWork.Setup(uow => uow.SaveAsync())
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
             // Act
             Func<Task> act = () => service.DeleteDataProvider(id);
             // Assert

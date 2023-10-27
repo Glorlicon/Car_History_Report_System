@@ -4,6 +4,7 @@ using Application.DTO.Request;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,7 @@ namespace Application.DomainServices
         public async Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO)
         {
             var request = _mapper.Map<Request>(requestDTO);
+            request.Status = UserRequestStatus.Pending;
             _requestRepository.Create(request);
             await _requestRepository.SaveAsync();
             return true;
@@ -78,7 +80,7 @@ namespace Application.DomainServices
             {
                 throw new RequestNotFoundException(id);
             }
-            _mapper.Map(request, requestDTO);
+            _mapper.Map(requestDTO, request);
             await _requestRepository.SaveAsync();
             return true;
         }

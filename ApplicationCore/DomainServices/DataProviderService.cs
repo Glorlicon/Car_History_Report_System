@@ -23,11 +23,15 @@ namespace Application.DomainServices
         private readonly IDataProviderRepository _dataProviderRepository;
         private readonly IIdentityServices _identityServices;
         private readonly IMapper _mapper;
-        public DataProviderService(IDataProviderRepository dataProviderRepository, IMapper mapper, IIdentityServices identityServices)
+        private readonly IEmailServices _emailServices;
+        private readonly ICarRepository _carRepository;
+        public DataProviderService(IDataProviderRepository dataProviderRepository, IMapper mapper, IIdentityServices identityServices, IEmailServices emailServices, ICarRepository carRepository)
         {
             _dataProviderRepository = dataProviderRepository;
             _mapper = mapper;
             _identityServices = identityServices;
+            _emailServices = emailServices;
+            _carRepository = carRepository;
         }
 
         public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter)
@@ -55,7 +59,7 @@ namespace Application.DomainServices
         public async Task<DataProviderDetailsResponseDTO> GetDataProvider(int dataProviderId)
         {
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, false);
-            if(dataProvider is null)
+            if (dataProvider is null)
             {
                 throw new DataProviderNotFoundException(dataProviderId);
             }
@@ -66,11 +70,11 @@ namespace Application.DomainServices
         public async Task<DataProviderDetailsResponseDTO> GetDataProviderByUserId(string userId)
         {
             var user = await _identityServices.GetUserAsync(userId);
-            if(user is null)
+            if (user is null)
             {
                 throw new UserNotFoundException(userId);
             }
-            if(user.DataProviderId is null)
+            if (user.DataProviderId is null)
             {
                 throw new DataProviderNotFoundException(user.DataProviderId);
             }
@@ -106,6 +110,31 @@ namespace Application.DomainServices
             }
             _mapper.Map(request, dataProvider);
             await _dataProviderRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<bool> ContactDataProvider(DataProviderContactCreateRequestDTO request)
+        {
+            var car = await _carRepository.GetCarIncludeDataProviderFromVinId(request.VinId, trackChange: false);
+
+            if (car == null)
+            {
+                throw (new CarNotFoundException(request.VinId));
+            }
+
+            if (car.CreatedByUser.DataProvider == null)
+            {
+                throw (new DataProviderNotFoundException(car.CreatedByUser.DataProviderId));
+            }
+            await _emailServices.SendEmailAsync(car.CreatedByUser.DataProvider.Email + "", "User contact",
+               "Hello " + car.CreatedByUser.DataProvider.Name + "\n" +
+               "This user interested in this car with VinId : " + request.VinId + "\n" +
+               "This is user contact: \n" +
+               "FirstName: " + request.FirstName + "\n" +
+               "LastName: " + request.LastName + "\n" +
+               "Email: " + request.Email + "\n" +
+               "ZipCode: " + request.ZipCode + "\n" +
+               "PhoneNumber: " + request.PhoneNumber + "\n");
             return true;
         }
     }
