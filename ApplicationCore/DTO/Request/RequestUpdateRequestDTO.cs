@@ -9,7 +9,7 @@ namespace Application.DTO.Request
 {
     public class RequestUpdateRequestDTO
     {
-        public string Response { get; set; }
+        public string? Response { get; set; }
 
         public UserRequestStatus Status { get; set; }
     }

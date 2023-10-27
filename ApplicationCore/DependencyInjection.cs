@@ -1,5 +1,7 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
+using Domain.Entities;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -24,7 +26,23 @@ namespace Application
             services.AddScoped<ICarPartServices, CarPartServices>();
             services.AddScoped<ICarOwnerHistoryServices, CarOwnerHistoryServices>();
             services.AddScoped<IRequestServices, RequestServices>();
+            services.AddScoped<ICarMaintainanceServices, CarMaintainanceServices>();
+            services.AddScoped<ICarRecallServices, CarRecallServices>();
+            services.ConfigureCarHistoryService();
             return services;
+        }
+
+        public static void ConfigureCarHistoryService(this IServiceCollection services)
+        {
+            services.AddScoped<ICarHistoryServices<CarServiceHistoryResponseDTO,
+                                             CarServiceHistoryParameter,
+                                             CarServiceHistoryCreateRequestDTO,
+                                             CarServiceHistoryUpdateRequestDTO>,
+                               CarHistoryServices<CarServiceHistory,
+                                             CarServiceHistoryResponseDTO,
+                                             CarServiceHistoryParameter,
+                                             CarServiceHistoryCreateRequestDTO,
+                                             CarServiceHistoryUpdateRequestDTO>>();
         }
     }
 }

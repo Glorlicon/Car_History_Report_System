@@ -56,7 +56,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Model</returns>
         [HttpGet("{modelId}", Name = "GetCarModel")]
         [ProducesResponseType(typeof(CarSpecificationResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarModelAsync(string modelId)
         {
             var carModel = await _carSpecService.GetCarModel(modelId, trackChange: false);
@@ -117,8 +117,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost(Name = "CreateCarModel")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarModelAsync([FromBody] CarSpecificationCreateRequestDTO request)
         {
             var result = await _carSpecService.CreateCarModel(request);
@@ -137,9 +137,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarModelAsync(string modelId, [FromBody] CarSpecificationUpdateRequestDTO request)
         {
             var result = await _carSpecService.UpdateCarModel(modelId, request);
@@ -158,9 +158,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpDelete("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCarModelAsync(string modelId)
         {
             var result = await _carSpecService.DeleteCarModel(modelId);

@@ -18,6 +18,9 @@ namespace Infrastructure.Repository
         private ICarSalesInfoRepository _carSalesInfoRepository;
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
+        private ICarMaintainanceRepository _carMaintainanceRepository;
+        private ICarRecallRepository _carRecallRepository;
+        private ICarRecallStatusRepository _carRecallStatusRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -27,7 +30,10 @@ namespace Infrastructure.Repository
             IDataProviderRepository dataProviderRepository,
             ICarSalesInfoRepository carSalesInfoRepository,
             ICarPartRepository carPartRepository,
-            ICarOwnerHistoryRepository carOwnerHistoryRepository)
+            ICarOwnerHistoryRepository carOwnerHistoryRepository,
+            ICarMaintainanceRepository carMaintainanceRepository,
+            ICarRecallRepository carRecallRepository,
+            ICarRecallStatusRepository carRecallStatusRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -37,6 +43,9 @@ namespace Infrastructure.Repository
             _carSalesInfoRepository = carSalesInfoRepository;
             _carPartRepository = carPartRepository;
             _carOwnerHistoryRepository = carOwnerHistoryRepository;
+            _carMaintainanceRepository = carMaintainanceRepository;
+            _carRecallRepository = carRecallRepository;
+            _carRecallStatusRepository = carRecallStatusRepository;
         }
 
         public ICarRepository CarRepository
@@ -72,6 +81,21 @@ namespace Infrastructure.Repository
         public ICarOwnerHistoryRepository CarOwnerHistoryRepository
         {
             get { return _carOwnerHistoryRepository; }
+        }
+
+        public ICarMaintainanceRepository CarMaintainanceRepository
+        {
+            get { return _carMaintainanceRepository;}
+        }
+
+        public ICarRecallRepository CarRecallRepository
+        {
+            get { return _carRecallRepository; }
+        }
+
+        public ICarRecallStatusRepository CarRecallStatusRepository
+        {
+            get { return _carRecallStatusRepository;}
         }
 
         public async Task SaveAsync()

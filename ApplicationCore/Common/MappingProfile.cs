@@ -1,7 +1,10 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.Car;
+using Application.DTO.CarMaintainance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
+using Application.DTO.CarRecall;
+using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.DTO.Request;
@@ -69,7 +72,21 @@ namespace Application.Common
             CreateMap<RequestUpdateRequestDTO, Request>();
             CreateMap<Request, RequestResponseRequestDTO>();
 
+            CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();
 
+            CreateMap<CarRecallCreateRequestDTO, CarRecall>();
+            CreateMap<CarRecallUpdateRequestDTO, CarRecall>();
+            CreateMap<CarRecall, CarRecallResponseDTO>();
+            CreateMap<CarRecallStatus, CarRecallStatusResponseDTO>()
+                .ForMember(c => c.Description, opt => opt.MapFrom(x => x.CarRecall.Description))
+                .ForMember(c => c.ModelId, opt => opt.MapFrom(x => x.CarRecall.ModelId))
+                .ForMember(c => c.RecallDate, opt => opt.MapFrom(x => x.CarRecall.RecallDate))
+                .ForMember(c => c.Status, opt => opt.MapFrom(x => x.Status.ToString()));
+
+            CreateMap<CarServiceHistory, CarServiceHistoryResponseDTO>()
+                .ForMember(c => c.ServicesName, opt => opt.MapFrom(x => x.Services.ToString()));
+            CreateMap<CarServiceHistoryCreateRequestDTO, CarServiceHistory>();
+            CreateMap<CarServiceHistoryUpdateRequestDTO, CarServiceHistory>();
         }
     }
 }
