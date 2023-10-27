@@ -12,11 +12,11 @@ namespace Application.Interfaces
 {
     public interface IRequestServices
     {
-        Task<PagedList<RequestResponseRequestDTO>> GetAllRequests(RequestParameter parameter, bool trackChange);
+        Task<PagedList<RequestResponsDTO>> GetAllRequests(RequestParameter parameter, bool trackChange);
 
-        Task<RequestResponseRequestDTO> GetRequest(int id, bool trackChange);
+        Task<RequestResponsDTO> GetRequest(int id, bool trackChange);
 
-        Task<PagedList<RequestResponseRequestDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange);
+        Task<PagedList<RequestResponsDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange);
 
         Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO);
 
