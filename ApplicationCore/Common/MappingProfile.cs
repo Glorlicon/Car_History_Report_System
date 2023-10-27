@@ -70,7 +70,7 @@ namespace Application.Common
 
             CreateMap<RequestCreateRequestDTO, Request>();
             CreateMap<RequestUpdateRequestDTO, Request>();
-            CreateMap<Request, RequestResponseRequestDTO>();
+            CreateMap<Request, RequestResponsDTO>();
 
             CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();
 

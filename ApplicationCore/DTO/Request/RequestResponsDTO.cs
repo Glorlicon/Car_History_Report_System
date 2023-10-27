@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.DTO.Request
 {
-    public class RequestResponseRequestDTO
+    public class RequestResponsDTO
     {
         public int Id { get; set; }
 
