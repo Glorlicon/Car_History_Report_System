@@ -52,6 +52,7 @@ namespace Infrastructure
             services.AddScoped<ICarRecallRepository, CarRecallRepository>();
             services.AddScoped<ICarRecallStatusRepository, CarRecallStatusRepository>();
             services.ConfigureCarHistoryRepository();
+            services.AddScoped<ICsvServices, CsvServices>();
             return services;
         }
 

@@ -60,11 +60,12 @@ namespace Application.DomainServices
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public virtual async Task CreateCarHistory(C request)
+        public virtual async Task<int> CreateCarHistory(C request)
         {
             var carHistory = _mapper.Map<T>(request);
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
+            return carHistory.Id;
         }
 
         public virtual async Task DeleteCarHistory(int id)
@@ -87,6 +88,21 @@ namespace Application.DomainServices
             }
             _mapper.Map(request, carHistory);
             await _carHistoryRepository.SaveAsync();
+        }
+
+        public async Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests)
+        {
+            if(requests is null)
+            {
+                throw new NullCollectionException();
+            }
+            var carHistorys = _mapper.Map<IEnumerable<T>>(requests);
+            foreach(var carHistory in carHistorys)
+            {
+                _carHistoryRepository.Create(carHistory);
+            }
+            await _carHistoryRepository.SaveAsync();
+            return carHistorys.Select(x => x.Id).ToList();
         }
     }
 }

@@ -18,10 +18,12 @@ namespace Application.Interfaces
 
         Task<PagedList<R>> GetCarHistoryByUserId(string userId, P parameter);
 
-        Task CreateCarHistory(C request);
+        Task<int> CreateCarHistory(C request);
 
         Task DeleteCarHistory(int id);
 
         Task UpdateCarHistory(int id, U request);
+
+        Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests);
     }
 }
