@@ -2,8 +2,10 @@
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
+using Application.Validation;
 using Application.Validation.Car;
 using Application.Validation.CarServiceHistory;
+using Domain.Entities;
 using Domain.Enum;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -22,13 +24,16 @@ namespace CarHistoryReportSystemAPI.Controllers
                                              CarServiceHistoryParameter,
                                              CarServiceHistoryCreateRequestDTO,
                                              CarServiceHistoryUpdateRequestDTO> _carServiceHistoryService;
+        private readonly ICsvServices _csvServices;
 
         public CarServiceHistoryController(ICarHistoryServices<CarServiceHistoryResponseDTO,
                                                              CarServiceHistoryParameter,
                                                              CarServiceHistoryCreateRequestDTO,
-                                                             CarServiceHistoryUpdateRequestDTO> carServiceHistoryService)
+                                                             CarServiceHistoryUpdateRequestDTO> carServiceHistoryService
+                                        , ICsvServices csvServices)
         {
             _carServiceHistoryService = carServiceHistoryService;
+            _csvServices = csvServices;
         }
 
         /// <summary>
@@ -119,6 +124,56 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             await _carServiceHistoryService.CreateCarHistory(request);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Create Car Service History collection
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <returns></returns>
+        /// <response code="204">Created Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Create Failed</response>
+        [HttpPost("collection")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateCarServiceHistoryCollectionAsync([FromBody] IEnumerable<CarServiceHistoryCreateRequestDTO> requests)
+        {
+            CarServiceHistoryCreateRequestDTOValidator validator = new CarServiceHistoryCreateRequestDTOValidator();
+            var errors = validator.ValidateList(requests);
+            if(errors.Error.Count > 0) return BadRequest(errors);
+            await _carServiceHistoryService.CreateCarHistoryCollection(requests);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Create Car Service History from csv file
+        /// </summary>
+        /// <param name="file">Only upload 1 file csv</param>
+        /// <returns></returns>
+        /// <response code="204">Created Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Create Failed</response>
+        [HttpPost("collection/from-csv")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateCarServiceHistoryCollectionFromCsvAsync([FromForm] IFormFileCollection file)
+        {
+            if(file.Count != 1)
+            {
+                return BadRequest(new ErrorDetails("You should upload 1 file only"));
+            }
+            var requests = _csvServices.ConvertToListObject<CarServiceHistoryCreateRequestDTO>(file[0].OpenReadStream());
+            //validate
+            CarServiceHistoryCreateRequestDTOValidator validator = new CarServiceHistoryCreateRequestDTOValidator();
+            var errors = validator.ValidateList(requests);
+            if (errors.Error.Count > 0) return BadRequest(errors);
+            await _carServiceHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
 
