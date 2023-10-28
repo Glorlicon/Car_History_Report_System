@@ -82,6 +82,27 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Requests Created by Current User
+        /// </summary>
+        /// <returns>Request List</returns>
+        [HttpGet("request", Name = nameof(GetAllRequestByCurrentUserAsync))]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllRequestByCurrentUserAsync([FromQuery] RequestParameter parameter)
+        {
+            RequestParameterValidator validator = new RequestParameterValidator();
+            var result = validator.Validate(parameter);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(ModelState);
+                return BadRequest(ModelState);
+            }
+            var requests = await _requestService.GetAllRequestByCurrentUser(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(requests.PagingData));
+            return Ok(requests);
+        }
+
+        /// <summary>
         /// Create request
         /// </summary>
         /// <param name="requestDTO"></param>

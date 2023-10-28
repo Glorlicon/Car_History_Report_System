@@ -18,10 +18,12 @@ namespace Application.DomainServices
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IMapper _mapper;
-        public RequestServices(IRequestRepository requestRepository, IMapper mapper)
+        private readonly IAuthenticationServices _authenticationServices;
+        public RequestServices(IRequestRepository requestRepository, IMapper mapper, IAuthenticationServices authenticationServices)
         {
             _requestRepository = requestRepository;
             _mapper = mapper;
+            _authenticationServices = authenticationServices;
         }
 
         public async Task<PagedList<RequestResponseDTO>> GetAllRequests(RequestParameter parameter, bool trackChange)
@@ -49,6 +51,15 @@ namespace Application.DomainServices
             var requests = await _requestRepository.GetAllRequestByUserId(userId, parameter, trackChange);
             var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
             var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == userId);
+            return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }       
+        
+        public async Task<PagedList<RequestResponseDTO>> GetAllRequestByCurrentUser(RequestParameter parameter, bool trackChange)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            var requests = await _requestRepository.GetAllRequestByUserId(user.Id, parameter, trackChange);
+            var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
+            var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == user.Id);
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
