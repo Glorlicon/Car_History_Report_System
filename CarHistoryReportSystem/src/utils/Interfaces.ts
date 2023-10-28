@@ -147,13 +147,13 @@ export interface Car {
     carImages?: CarImages[]
 }
 
-export interface UserRequest {
-    id: number
+export interface UsersRequest {
+    id?: number
     description: string
     response: string
     type: string
     status: string
-    createdTimed: Date
-    lastModified: Date
+    createdTimed?: Date
+    lastModified?: Date
 }
 

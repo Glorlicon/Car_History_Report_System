@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AddCar, EditCar, ListAdminCar } from '../../services/api/Car';
-import { GetUserRequest } from '../../services/api/Request';
-import { ListAdminCarModels } from '../../services/api/CarModel';
+import { AddRequest, GetUserRequest } from '../../services/api/Request';
 import { RootState } from '../../store/State';
-import { APIResponse, Car, CarModel, User } from '../../utils/Interfaces';
-import '../../styles/AdminCars.css'
+import { APIResponse, Car, CarModel, User, UsersRequest } from '../../utils/Interfaces';
+import '../../styles/Reqeuest.css'
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
 import CarCharacteristicPage from '../../components/forms/admin/Car/CarCharacteristicPage';
 import CarIdentificationPage from '../../components/forms/admin/Car/CarIdentificationPage';
+import RequestCharacteristicPage from '../../components/forms/admin/User/RequestCharacteristicPage';
 
 function UserRequest() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -19,139 +19,59 @@ function UserRequest() {
     const [loading, setLoading] = useState<boolean>(false);
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
-    const [RequestList, setRequestList] = useState<Request[]>([]);
-    const [newCar, setNewCar] = useState<Car>({
-        vinId: '',
-        licensePlateNumber: '',
-        color: 0,
-        currentOdometer: 0,
-        engineNumber: '',
-        isCommercialUse: false,
-        isModified: false,
-        modelId: ''
+    const [RequestList, setRequestList] = useState<UsersRequest[]>([]);
+
+    const [newRequest, setNewRequest] = useState<UsersRequest>({
+        description: '',
+        response: '',
+        type: '',
+        status: ''
     });
+
     const id = JWTDecoder(token).nameidentifier
-    const [user, setUser] = useState<User>({
-        id: '',
-        userName: '',
-        email: '',
-        firstName: '',
-        phoneNumber: '',
-        lastName: '',
-        maxReports: 0,
-        role: 1,
-        address: ''
-    });
-    const [editCar, setEditCar] = useState<Car | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const validateCar = (car: Car): boolean => {
-        if (!isValidVIN(car.vinId)) {
-            setAddError("VIN is invalid");
-            return false;
-        }
-        if (!isValidPlateNumber(car.licensePlateNumber)) {
-            setAddError("License Plate Number is invalid");
-            return false;
-        }
-        if (!car.vinId) {
-            setAddError("VIN must be filled out");
-            return false;
-        }
-        if (!car.licensePlateNumber) {
-            setAddError("License Plate Number must be filled out");
-            return false;
-        }
-        if (!car.modelId) {
-            setAddError("Model must be chosen");
-            return false;
-        }
-        if (!car.engineNumber) {
-            setAddError("Engine Number must be filled out");
-            return false;
-        }
-        return true;
-    };
-    const filteredCars = carList.filter((car: any) => {
-        const matchingQuery = car.vinId.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const filteredRequest = RequestList.filter((request: any) => {
+        const matchingQuery = RequestList
         return matchingQuery
     })
 
-    const handleNextPage = () => {
-        if (modalPage < 2) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editCar) handleEditCar();
-            else handleAddCar();
-        }
-    };
-
-    const handleAddCar = async () => {
-        if (validateCar(newCar)) {
+    const handleAddRequest = async () => {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AddCar(newCar, token);
+        const response: APIResponse = await AddRequest(newRequest, token);
             setAdding(false);
-            if (response.error) {
+        if (response.error) {
+            console.log(newRequest);
                 setAddError(response.error);
             } else {
                 setShowModal(false);
                 setModalPage(1);
                 fetchData();
             }
-        }
     }
-
-    const handleEditCar = async () => {
-        if (editCar != null && validateCar(editCar)) {
-            setAdding(true);
-            setAddError(null);
-            const response: APIResponse = await EditCar(editCar, token);
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
-            } else {
-                setShowModal(false);
-                setEditCar(null);
-                setModalPage(1);
-                fetchData();
-            }
-        }
-    }
-
-    const handlePreviousPage = () => {
-        if (modalPage > 1) {
-            setModalPage(prevPage => prevPage - 1);
-        }
-    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-        if (editCar) {
-            setEditCar({
-                ...editCar,
-                [e.target.name]: value
-            })
-        } else {
-            setNewCar({
-                ...newCar,
-                [e.target.name]: value,
-            });
-        }
+        setNewRequest({
+            ...newRequest,
+            [e.target.name]: value,
+         });
     };
 
 
     const fetchData = async () => {
             setLoading(true);
             setError(null);
-        const carListResponse: APIResponse = await GetUserRequest(id, token)
-            if (carListResponse.error) {
-                setError(carListResponse.error)
+        const RequestListResponse: APIResponse = await GetUserRequest(id, token)
+        if (RequestListResponse.error) {
+            setError(RequestListResponse.error)
             } else {
-                setCarList(carListResponse.data)
-                console.log(carListResponse)
+            setRequestList(RequestListResponse.data)
             }
+        /*console.log(RequestListResponse)*/
         setLoading(false)
     }
     const handleSearchParameters = () => {
@@ -185,9 +105,9 @@ function UserRequest() {
                         <th>Type</th>
                         <th>Description</th>
                         <th>Created Date</th>
-                        <th>Process Note</th>
-                        <th>Status</th>
                         <th>Changed Date</th>
+                        <th>Status</th>
+                        <th>Process Note</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -203,18 +123,21 @@ function UserRequest() {
                                 {error}
                                 <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
                             </td>
-                        </tr>
-                    ) : filteredCars.length > 0 ? (
-                        filteredCars.map((model: any, index: number) => (
+                            </tr>
+                        ) : filteredRequest.length > 0 ? (
+                                filteredRequest.map((model: any, index: number) => (
                             <tr key={index}>
-                                <td onClick={() => { setEditCar(model) }}>{model.vinId}</td>
-                                <td>{model.licensePlateNumber}</td>
-                                <td>{model.modelId}</td>
+                                        <td>{model.type}</td>
+                                        <td>{model.description}</td>
+                                        <td>{model.createdTimed}</td>
+                                        <td>{model.lastModified}</td>
+                                        <td>{model.status}</td>
+                                        <td>{model.response}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No cars found</td>
+                            <td colSpan={5}>No Request found</td>
                         </tr>
                     )}
                 </tbody>
@@ -222,63 +145,21 @@ function UserRequest() {
             {showModal && (
                 <div className="ad-car-modal">
                     <div className="ad-car-modal-content">
-                        <span className="ad-car-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
-                        <h2>Add Car</h2>
-                        {modalPage === 1 && (
-                            <CarCharacteristicPage
+                        <span className="ad-car-close-btn" onClick={() => { setShowModal(false)}}>&times;</span>
+                        <h2>Add Request</h2>
+                        {(
+                            <RequestCharacteristicPage
                                 action="Add"
-                                model={newCar}
+                                model={newRequest}
                                 handleInputChange={handleInputChange}
                             />
                         )}
-                        {modalPage === 2 && (
-                            <CarIdentificationPage
-                                action="Add"
-                                model={newCar}
-                                handleInputChange={handleInputChange}
-                                carModels={modelList}
-                            />
-                        )}
-                        <button onClick={handlePreviousPage} disabled={modalPage === 1} className="ad-car-prev-btn">
-                            Previous
-                        </button>
-                        <button onClick={handleNextPage} disabled={adding} className="ad-car-next-btn">
-                            {modalPage < 2 ? 'Next' : (adding ? (<div className="ad-car-inline-spinner"></div>) : 'Add')}
+
+                        <button onClick={handleAddRequest} className="ad-car-prev-btn">
+                            Add
                         </button>
                         {addError && (
                             <p className="ad-car-error">{addError}</p>
-                        )}
-                    </div>
-                </div>
-            )}
-            {editCar && (
-                <div className="ad-car-modal">
-                    <div className="ad-car-modal-content">
-                        <span className="ad-car-close-btn" onClick={() => { setEditCar(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Car</h2>
-                        {modalPage === 1 && (
-                            <CarCharacteristicPage
-                                action="Edit"
-                                model={editCar}
-                                handleInputChange={handleInputChange}
-                            />
-                        )}
-                        {modalPage === 2 && (
-                            <CarIdentificationPage
-                                action="Edit"
-                                model={editCar}
-                                handleInputChange={handleInputChange}
-                                carModels={modelList}
-                            />
-                        )}
-                        <button onClick={handlePreviousPage} disabled={modalPage === 1} className="ad-car-prev-btn">
-                            Previous
-                        </button>
-                        <button onClick={handleNextPage} disabled={adding} className="ad-car-model-next-btn">
-                            {modalPage < 2 ? 'Next' : (adding ? (<div className="ad-car-model-inline-spinner"></div>) : 'Update')}
-                        </button>
-                        {addError && (
-                            <p className="ad-car-model-error">{addError}</p>
                         )}
                     </div>
                 </div>
