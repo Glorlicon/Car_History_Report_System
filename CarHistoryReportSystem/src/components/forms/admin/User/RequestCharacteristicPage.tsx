@@ -30,8 +30,6 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicPage> = ({
                   <label>Description</label>
                   <input type="text" name="description" onChange={handleInputChange} className="TextField" />
               </div>
-              <input type="hidden" name="response" value=" "></input>
-              <input type="hidden" name="status" value="0"></input>
           </div>
           <div className="ad-car-form-columns">
               

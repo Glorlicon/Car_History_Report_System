@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AddCar, EditCar, ListAdminCar } from '../../services/api/Car';
 import { AddRequest, GetUserRequest } from '../../services/api/Request';
 import { RootState } from '../../store/State';
 import { APIResponse, Car, CarModel, User, UsersRequest } from '../../utils/Interfaces';
 import '../../styles/Reqeuest.css'
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
-import CarCharacteristicPage from '../../components/forms/admin/Car/CarCharacteristicPage';
-import CarIdentificationPage from '../../components/forms/admin/Car/CarIdentificationPage';
 import RequestCharacteristicPage from '../../components/forms/admin/User/RequestCharacteristicPage';
 
 function UserRequest() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    console.log(token)
     const [error, setError] = useState<string | null>(null);
-    const [carList, setCarList] = useState<Car[]>([]);
-    const [modelList, setModelList] = useState<CarModel[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);

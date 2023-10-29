@@ -28,6 +28,7 @@ import TestImage from '../pages/TestImage';
 import TestImage2 from '../pages/TestImage2';
 import CarMaintenance from '../pages/user/CarMaintenancePage';
 import UserProfile from '../pages/user/UserProfile';
+import RequestPage from '../pages/common/UserRequest';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
@@ -40,6 +41,7 @@ const CustomRoutes = () => {
                 <Route path="/" element={<UserLayout navItems={UserNavigation}> <HomePage /> </UserLayout>} />
                 <Route path="/sales" element={<UserLayout navItems={UserNavigation}> <CarSalesPage /> </UserLayout>} />
                 <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
+                <Route path="/request" element={<UserLayout navItems={UserNavigation}> <RequestPage /> </UserLayout>} />
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />

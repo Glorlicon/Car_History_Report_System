@@ -26,7 +26,6 @@ export async function AddRequest(data: UsersRequest, token: string): Promise<API
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Request`,
             {
                 ...data,
-                status: 0,
                 type: Number(data.type)
             },
             {
