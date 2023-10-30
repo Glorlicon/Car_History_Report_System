@@ -151,13 +151,20 @@ export interface CarMaintenance {
 }
 
 export interface UsersRequest {
-    id?: number
     description: string
     response: string
     type: string
     status: string
-    createdTimed?: Date
-    lastModified?: Date
+}
+
+export interface AdminRequest {
+    id?: number
+    description?: string
+    response: string
+    type?: string
+    status: string
+    createdByUserId?: string
+    modifiedByUserId?: string
 }
 
 

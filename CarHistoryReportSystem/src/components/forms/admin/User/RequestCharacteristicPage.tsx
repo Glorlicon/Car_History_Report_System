@@ -1,10 +1,10 @@
 import React from 'react';
 import { COLORS } from '../../../../utils/const/Colors';
-import { Car, UsersRequest } from '../../../../utils/Interfaces';
+import { AdminRequest, Car, UsersRequest } from '../../../../utils/Interfaces';
 
 interface RequestCharacteristicPage {
     action: "Add" | "Edit"
-    model: UsersRequest
+    model: AdminRequest | UsersRequest,
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
 const RequestCharacteristicPage: React.FC<RequestCharacteristicPage> = ({
@@ -12,7 +12,7 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicPage> = ({
     model,
     handleInputChange
 }) => {
-    const edit = action === "Edit"
+    const add = action === "Add"
   return (
       <>
           <div className="ad-car-form-columns">
@@ -41,5 +41,7 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicPage> = ({
       </>
   );
 }
+
+
 
 export default RequestCharacteristicPage;

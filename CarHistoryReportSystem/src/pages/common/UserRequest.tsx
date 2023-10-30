@@ -118,16 +118,16 @@ function UserRequest() {
                                 {error}
                                 <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
                             </td>
-                            </tr>
-                        ) : filteredRequest.length > 0 ? (
-                                filteredRequest.map((model: any, index: number) => (
+                        </tr>
+                    ) : filteredRequest.length > 0 ? (
+                        filteredRequest.map((model: any, index: number) => (
                             <tr key={index}>
-                                        <td>{model.type}</td>
-                                        <td>{model.description}</td>
-                                        <td>{model.createdTimed}</td>
-                                        <td>{model.lastModified}</td>
-                                        <td>{model.status}</td>
-                                        <td>{model.response}</td>
+                                <td>{model.type}</td>
+                                <td>{model.description}</td>
+                                <td>{model.createdTimed}</td>
+                                <td>{model.lastModified}</td>
+                                <td>{model.status}</td>
+                                <td>{model.response}</td>
                             </tr>
                         ))
                     ) : (
