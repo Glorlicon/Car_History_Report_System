@@ -49,7 +49,14 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(cs => cs.Id == id, trackChange)
                             .SingleOrDefaultAsync();
+        }        
+        
+        public async Task<Request> GetRequestByIdAndUserId(int id, string userId, bool trackChange)
+        {
+            return await FindByCondition(cs => cs.Id == id && cs.CreatedByUserId == userId, trackChange)
+                            .SingleOrDefaultAsync();
         }
+
         public async Task<IEnumerable<Request>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
         {
             return await FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
