@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -9,8 +10,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
-    public class OrderConfiguration
+    public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
-
+        public void Configure(EntityTypeBuilder<Order> builder)
+        {
+            builder.Property(x => x.TransactionId).HasMaxLength(20);
+        }
     }
 }

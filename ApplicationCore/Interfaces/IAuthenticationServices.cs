@@ -32,6 +32,8 @@ namespace Application.Interfaces
 
         Task<string> ResendConfirmEmailTokenAsync(EmailResendConfirmTokenRequestDTO request);
 
+        Task<string> ResendLoginTokenAsync();
+
         Task<bool> SuspendAccount(string userId);
 
         Task<bool> UnSuspendAccount(string userId);
