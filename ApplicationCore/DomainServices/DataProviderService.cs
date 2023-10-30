@@ -31,7 +31,7 @@ namespace Application.DomainServices
             _mapper = mapper;
             _identityServices = identityServices;
             _emailServices = emailServices;
-            _carRepository = carRepository;
+            _carRepository = carRepository;          
         }
 
         public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter)
@@ -65,7 +65,7 @@ namespace Application.DomainServices
             }
             var dataProviderResponse = _mapper.Map<DataProviderDetailsResponseDTO>(dataProvider);
             return dataProviderResponse;
-        }
+        }        
 
         public async Task<DataProviderDetailsResponseDTO> GetDataProviderByUserId(string userId)
         {
@@ -79,7 +79,7 @@ namespace Application.DomainServices
                 throw new DataProviderNotFoundException(user.DataProviderId);
             }
             return await GetDataProvider(user.DataProviderId.Value);
-        }
+        }         
         public async Task<DataProviderDetailsResponseDTO> CreateDataProvider(DataProviderCreateRequestDTO request)
         {
             var dataProvider = _mapper.Map<DataProvider>(request);

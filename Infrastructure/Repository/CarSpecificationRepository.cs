@@ -25,6 +25,7 @@ namespace Infrastructure.Repository
         {
             return await FindAll(trackChange)
                             .Include(x => x.Manufacturer)
+                            .Include(x => x.ModelOdometers)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
@@ -34,6 +35,7 @@ namespace Infrastructure.Repository
         {
             var carModels = await FindAll(trackChange)
                             .Include(x => x.Manufacturer)
+                            .Include(x => x.ModelOdometers)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
@@ -45,6 +47,7 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(cs => cs.ModelID == modelId, trackChange)
                             .Include(x => x.Manufacturer)
+                            .Include(x => x.ModelOdometers)
                             .SingleOrDefaultAsync();
         }
 
@@ -52,6 +55,7 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(cs => cs.ManufacturerId == manufacturerId, trackChange)
                             .Include(x => x.Manufacturer)
+                            .Include(x => x.ModelOdometers)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
@@ -61,16 +65,18 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
                             .Include(x => x.Manufacturer)
+                            .Include(x => x.ModelOdometers)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();
         }
 
-        public async Task<IEnumerable<CarSpecification>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter,bool trackChange)
+        public async Task<IEnumerable<CarSpecification>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter, bool trackChange)
         {
             return await FindAll(trackChange)
                             .Include(x => x.Manufacturer)
                             .Include(x => x.CreatedByUser)
+                            .Include(x => x.ModelOdometers)
                             .Where(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)

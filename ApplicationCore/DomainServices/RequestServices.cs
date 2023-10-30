@@ -1,16 +1,10 @@
 ﻿using Application.Common.Models;
-using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.DomainServices
 {
@@ -18,15 +12,30 @@ namespace Application.DomainServices
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IMapper _mapper;
-        public RequestServices(IRequestRepository requestRepository, IMapper mapper)
+        private readonly IAuthenticationServices _authenticationServices;
+        public RequestServices(IRequestRepository requestRepository, IMapper mapper, IAuthenticationServices authenticationServices)
         {
             _requestRepository = requestRepository;
             _mapper = mapper;
+            _authenticationServices = authenticationServices;
         }
 
         public async Task<PagedList<RequestResponseDTO>> GetAllRequests(RequestParameter parameter, bool trackChange)
         {
-            var requests = await _requestRepository.GetAllRequests(parameter, trackChange);
+            IEnumerable<Request> requests = null;
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user.Role == Role.Adminstrator)
+            {
+                requests = await _requestRepository.GetAllRequests(parameter, trackChange);
+            }
+            else if (Enum.IsDefined(typeof(Role), user.Role))
+            {
+                requests = await _requestRepository.GetAllRequestByUserId(user.Id, parameter, trackChange);
+            }
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
             var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
             var count = await _requestRepository.CountAll();
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
@@ -34,7 +43,20 @@ namespace Application.DomainServices
 
         public async Task<RequestResponseDTO> GetRequest(int id, bool trackChange)
         {
-            var request = await _requestRepository.GetRequestById(id, trackChange);
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            Request request = null;
+            if (user.Role == Role.Adminstrator)
+            {
+                request = await _requestRepository.GetRequestById(id, trackChange);
+            }
+            else if (Enum.IsDefined(typeof(Role), user.Role))
+            {
+                request = await _requestRepository.GetRequestByIdAndUserId(id, user.Id, trackChange);
+            }
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
             if (request is null)
             {
                 throw new RequestNotFoundException(id);
@@ -42,7 +64,7 @@ namespace Application.DomainServices
 
             var requestResponse = _mapper.Map<RequestResponseDTO>(request);
             return requestResponse;
-        }
+        }        
 
         public async Task<PagedList<RequestResponseDTO>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
         {
@@ -50,7 +72,7 @@ namespace Application.DomainServices
             var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
             var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == userId);
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
-        }
+        }       
 
         public async Task<bool> CreateRequest(RequestCreateRequestDTO requestDTO)
         {
