@@ -35,5 +35,7 @@ namespace Application.Interfaces
         Task<bool> SetSuspendAccount(string userId, bool isSuspend);
 
         Task<string> CreateConfirmEmailToken(string username, string password);
+
+        Task<string> RefreshToken(string userId, bool isVerified);
     }
 }

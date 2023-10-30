@@ -207,5 +207,11 @@ namespace Infrastructure.InfrastructureServices
             await _userManager.SetLockoutEnabledAsync(user, isSuspend);
             return true;
         }
+
+        public async Task<string> RefreshToken(string userId, bool isVerified)
+        {
+            _user = await GetUserAsync(userId);
+            return await CreateToken(isVerified);
+        }
     }
 }

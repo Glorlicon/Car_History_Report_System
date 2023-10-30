@@ -1,23 +1,21 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.DTO.Order
 {
-    public class Order
+    public class OrderResponseDTO
     {
-        [Key]
         public int Id { get; set; }
         public string? UserId { get; set; }
         public int OrderOptionId { get; set; }
         public string? TransactionId { get; set; }
-
-        public OrderOption OrderOption { get; set; }
-        public User? User { get; set; }
+        public DateOnly PurchaseDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModified { get; set; }
+        public OrderOptionResponseDTO OrderOption { get; set; }
     }
 }

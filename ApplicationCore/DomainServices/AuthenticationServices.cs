@@ -92,5 +92,11 @@ namespace Application.DomainServices
         {
             return await _identityServices.SetSuspendAccount(userId, false);
         }
+
+        public async Task<string> ResendLoginTokenAsync()
+        {
+            var currentUser = await GetCurrentUserAsync();
+            return await _identityServices.RefreshToken(currentUser.Id, isVerified: true);
+        }
     }
 }
