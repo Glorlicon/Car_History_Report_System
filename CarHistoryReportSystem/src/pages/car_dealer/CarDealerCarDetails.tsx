@@ -5,6 +5,7 @@ import { GetCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
 import { APIResponse, Car, CarImages } from '../../utils/Interfaces';
 import '../../styles/CarDealerCarDetails.css'
+import { GetImages } from '../../services/azure/Images';
 
 function CarDealerCarDetails() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -32,7 +33,7 @@ function CarDealerCarDetails() {
     const handlePrevImage = () => {
         if (!car || !car.carImages) {
             return
-        }//3 anh -> 0 1 2
+        }
         if (currentImageIndex === 0) {
             setCurrentImageIndex(car.carImages!.length - 1)
         } else {
@@ -43,7 +44,7 @@ function CarDealerCarDetails() {
     const handleNextImage = () => {
         if (!car || !car.carImages) {
             return
-        }//3 anh -> 0 1 2
+        }
         if (currentImageIndex === car.carImages!.length - 1) {
             setCurrentImageIndex(0)
         } else {
@@ -96,7 +97,7 @@ function CarDealerCarDetails() {
                             <h2 className="dealer-car-sales-details-header">Car Images</h2>
                             <div className="dealer-car-sales-details-images">
                                 <button className="dealer-car-sales-details-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
-                                <img src={car?.carImages?.at(currentImageIndex)?.imageLink} alt="Car" />
+                                <img src={GetImages(car?.carImages?.at(currentImageIndex)?.imageLink as string)} alt="Car" className="dealer-car-sales-details-image" />
                                 <button className="dealer-car-sales-details-images-arrow-right" onClick={handleNextImage}>&gt;</button>
                             </div>
 

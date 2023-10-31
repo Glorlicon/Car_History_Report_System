@@ -186,6 +186,7 @@ export async function GetCar(id: string, token: string) {
                 }
             }
         )
+        console.log("res: ", response.data)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
