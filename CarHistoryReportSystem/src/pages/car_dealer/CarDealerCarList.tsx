@@ -90,6 +90,7 @@ function CarDealerCarList() {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
+                setModalPage(1)
                 fetchData();
             }
         }
@@ -116,6 +117,7 @@ function CarDealerCarList() {
                 setAddError(response.error);
             } else {
                 setEditCarSales(null)
+                setModalPage(1)
                 fetchData();
             }
         }
@@ -336,7 +338,7 @@ function CarDealerCarList() {
           {showModal && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
-                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale) }}>&times;</span>
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale); setModalPage(1) }}>&times;</span>
                       <h2>Add Car</h2>
                       <h3>DevNote: add images later</h3>
                       {modalPage === 1 && (
@@ -357,12 +359,22 @@ function CarDealerCarList() {
                               handleRemoveImages={handleRemoveImage}
                           />
                       )}
-                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                          Previous
-                      </button>
-                      <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                          {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Add')}
-                      </button>
+                      {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
+                      {/*    Previous*/}
+                      {/*</button>*/}
+                      {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
+                      {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Add')}*/}
+                      {/*</button>*/}
+                      {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
+                          <>
+                              <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                  Previous
+                              </button>
+                              <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                  {modalPage < 2 ? 'Next' : 'Add'}
+                              </button>
+                          </>
+                      )}
                       {addError && (
                           <p className="dealer-car-sales-error">{addError}</p>
                       )}
@@ -372,7 +384,7 @@ function CarDealerCarList() {
           {editCarSales && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
-                      <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null) }}>&times;</span>
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null); setModalPage(1) }}>&times;</span>
                       <h2>Edit Car</h2>
                       <h3>DevNote: add images later</h3>
                       {modalPage === 1 && (
@@ -393,15 +405,22 @@ function CarDealerCarList() {
                               handleRemoveImages={handleRemoveImage}
                           />
                       )}
-                      {/*<button onClick={handleEditCarSales} disabled={adding} className="dealer-car-sales-add-btn">*/}
-                      {/*    {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit'}*/}
+                      {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
+                          <>
+                              <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                  Previous
+                              </button>
+                              <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                  {modalPage < 2 ? 'Next'  : 'Edit'}
+                              </button>
+                          </>
+                      )}
+                      {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
+                      {/*    Previous*/}
                       {/*</button>*/}
-                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                          Previous
-                      </button>
-                      <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                          {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}
-                      </button>
+                      {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
+                      {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
+                      {/*</button>*/}
                       {addError && (
                           <p className="dealer-car-sales-error">{addError}</p>
                       )}
