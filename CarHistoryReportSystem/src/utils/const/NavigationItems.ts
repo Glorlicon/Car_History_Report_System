@@ -8,11 +8,11 @@ export const UserNavigation = [
         ]
     },
     { label: 'Car Values', link: '/value' },
-    { label: 'Request', link: '/Request' }
+    { label: 'Request', link: '/request' }
 ]
 
 export const RequestNavigation = [
-    { label: 'My Request', link: '/Request' }
+    { label: 'My Request', link: '/request' }
 ]
 
 
@@ -30,10 +30,12 @@ export const ManufacturerNavigation = [
     { label: 'Car Model List', link: '/manufacturer/car-models' },
     { label: 'Car List', link: '/manufacturer/cars' },
     { label: 'Recall List', link: '/manufacturer/recalls' },
-    { label: 'Car History Report', link: '/manufacturer/reports' }
+    { label: 'Car History Report', link: '/manufacturer/reports' },
+    { label: 'Admin Request', link: '/manufacturer/requests' }
 ]
 
 export const CarDealerNavigation = [
     { label: 'Dealer Details', link: '/dealer/details' },
-    { label: 'Car List', link: '/dealer/cars' }
+    { label: 'Car List', link: '/dealer/cars' },
+    { label: 'Admin Request', link: '/dealer/requests' }
 ]
