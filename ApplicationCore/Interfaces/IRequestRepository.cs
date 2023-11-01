@@ -12,6 +12,7 @@ namespace Application.Interfaces
     public interface IRequestRepository : IBaseRepository<Request>
     {
         Task<Request> GetRequestById(int id, bool trackChange);
+        Task<Request> GetRequestByIdAndUserId(int id, string userId, bool trackChange);
 
         Task<IEnumerable<Request>> GetAllRequests(RequestParameter parameter, bool trackChange);
 

@@ -1,7 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
 using Application.DTO.DataProvider;
-using Application.DTO.DataProvider;
 using Application.DTO.Request;
 using Domain.Entities;
 using Domain.Enum;

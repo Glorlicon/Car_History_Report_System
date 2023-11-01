@@ -25,6 +25,10 @@ namespace Application.Interfaces
 
         ICarRecallStatusRepository CarRecallStatusRepository { get; }
 
+        IOrderRepository OrderRepository { get; }
+
+        IOrderOptionRepository OrderOptionRepository { get; }
+
         Task SaveAsync();
     }
 }

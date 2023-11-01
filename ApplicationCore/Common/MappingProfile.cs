@@ -7,6 +7,8 @@ using Application.DTO.CarRecall;
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
+using Application.DTO.ModelMaintainance;
+using Application.DTO.Order;
 using Application.DTO.Request;
 using Application.DTO.User;
 using AutoMapper;
@@ -28,6 +30,10 @@ namespace Application.Common
             CreateMap<CarSpecificationUpdateRequestDTO, CarSpecification>();
             CreateMap<CarSpecification, CarSpecificationResponseDTO>()
                 .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name));
+            CreateMap<ModelMaintainanceCreateRequestDTO, ModelMaintainance>();
+            CreateMap<ModelMaintainance, ModelMaintainanceResponseDTO>();
+
+
             CreateMap<User, UserResponseDTO>()
             .ForMember(urr => urr.IsSuspended, opt => opt.MapFrom(src => src.LockoutEnabled));
             CreateMap<User, CreateUserRequestDTO>();
@@ -87,6 +93,12 @@ namespace Application.Common
                 .ForMember(c => c.ServicesName, opt => opt.MapFrom(x => x.Services.ToString()));
             CreateMap<CarServiceHistoryCreateRequestDTO, CarServiceHistory>();
             CreateMap<CarServiceHistoryUpdateRequestDTO, CarServiceHistory>();
+
+            CreateMap<Order, OrderResponseDTO>();
+            CreateMap<OrderCreateRequestDTO, Order>();
+            CreateMap<OrderOption, OrderOptionResponseDTO>();
+            CreateMap<OrderOptionCreateRequestDTO, OrderOption>();
+            CreateMap<OrderOptionUpdateRequestDTO, OrderOption>();
         }
     }
 }

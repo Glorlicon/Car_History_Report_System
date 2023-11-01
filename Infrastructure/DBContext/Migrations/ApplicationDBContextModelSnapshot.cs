@@ -34,7 +34,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarsVinId");
 
-                    b.ToTable("CarCarPart", (string)null);
+                    b.ToTable("CarCarPart");
                 });
 
             modelBuilder.Entity("Domain.Entities.Car", b =>
@@ -91,7 +91,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("Cars", (string)null);
+                    b.ToTable("Cars");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarAccidentHistory", b =>
@@ -153,7 +153,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarAccidentsHistory", (string)null);
+                    b.ToTable("CarAccidentsHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarImages", b =>
@@ -177,7 +177,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarImages", (string)null);
+                    b.ToTable("CarImages");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInspectionHistory", b =>
@@ -230,7 +230,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarInspectionsHistory", (string)null);
+                    b.ToTable("CarInspectionsHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInspectionHistoryDetail", b =>
@@ -263,7 +263,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarInspectionHistoryId");
 
-                    b.ToTable("CarInspectionHistoryDetails", (string)null);
+                    b.ToTable("CarInspectionHistoryDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarInsurance", b =>
@@ -318,7 +318,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarInsurances", (string)null);
+                    b.ToTable("CarInsurances");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarMaintainance", b =>
@@ -336,7 +336,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarMaintainances", (string)null);
+                    b.ToTable("CarMaintainances");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarOwnerHistory", b =>
@@ -404,7 +404,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarOwnersHistory", (string)null);
+                    b.ToTable("CarOwnersHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarPart", b =>
@@ -447,7 +447,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarParts", (string)null);
+                    b.ToTable("CarParts");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarRecall", b =>
@@ -490,7 +490,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarRecalls", (string)null);
+                    b.ToTable("CarRecalls");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarRecallStatus", b =>
@@ -508,7 +508,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarRecallId");
 
-                    b.ToTable("CarRecallStatus", (string)null);
+                    b.ToTable("CarRecallStatus");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarReport", b =>
@@ -526,7 +526,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("CarReports", (string)null);
+                    b.ToTable("CarReports");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarSalesInfo", b =>
@@ -576,7 +576,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarSalesInfo", (string)null);
+                    b.ToTable("CarSalesInfo");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarServiceHistory", b =>
@@ -633,7 +633,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarServicesHistory", (string)null);
+                    b.ToTable("CarServicesHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarSpecification", b =>
@@ -722,7 +722,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarSpecification", (string)null);
+                    b.ToTable("CarSpecification");
                 });
 
             modelBuilder.Entity("Domain.Entities.CarStolenHistory", b =>
@@ -780,7 +780,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("CarStolenHistory", (string)null);
+                    b.ToTable("CarStolenHistory");
                 });
 
             modelBuilder.Entity("Domain.Entities.DataProvider", b =>
@@ -830,7 +830,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProviders", (string)null);
+                    b.ToTable("DataProviders");
                 });
 
             modelBuilder.Entity("Domain.Entities.ModelMaintainance", b =>
@@ -854,7 +854,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("ModelId", "MaintenancePart");
 
-                    b.ToTable("ModelMaintainances", (string)null);
+                    b.ToTable("ModelMaintainances");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -896,7 +896,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("RelatedUserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
@@ -916,8 +916,9 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<int>("OrderOptionId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("PurchaseDate")
-                        .HasColumnType("date");
+                    b.Property<string>("TransactionId")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -928,7 +929,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderOption", b =>
@@ -972,7 +973,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderOptions", (string)null);
+                    b.ToTable("OrderOptions");
                 });
 
             modelBuilder.Entity("Domain.Entities.Request", b =>
@@ -1018,7 +1019,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("ModifiedByUserId");
 
-                    b.ToTable("Requests", (string)null);
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -1043,7 +1044,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("DataProviderId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -1170,7 +1171,7 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("DataProviderId");
 
-                    b.ToTable("WorkingTimes", (string)null);
+                    b.ToTable("WorkingTimes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1202,57 +1203,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a23dc8a2-12d8-47f2-ab48-2e130ce63178",
-                            ConcurrencyStamp = "a86cf8f3-86dc-47a0-89da-b2644d96de5a",
+                            Id = "17c12d15-6846-4889-a375-9440bac2c9f0",
+                            ConcurrencyStamp = "4a0d3e13-602d-441e-a232-613fd4966160",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "7c1e9691-35e3-4e8e-8d73-bb5f27e449c5",
-                            ConcurrencyStamp = "2aa79934-5c64-4abe-8330-97c0eeeed37d",
+                            Id = "5eef6185-ed8a-472c-8d60-807ede4d1bed",
+                            ConcurrencyStamp = "504ba09c-7cb4-4bb3-9a1b-a855af857e4b",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "93d74e66-8973-41a1-a84d-2e28d972a53d",
-                            ConcurrencyStamp = "92c2f873-5f64-4711-9497-c3bcc77aa116",
+                            Id = "48087d20-78ba-444a-831e-de6a7f68760b",
+                            ConcurrencyStamp = "b60dd191-f07d-4763-abb4-984b878899d5",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "1c51ea19-ddab-4086-a909-cd3501ffd28c",
-                            ConcurrencyStamp = "25aaaaff-e0a7-4e3b-a339-0f1ff2a6c31c",
+                            Id = "b1ab2262-8613-41f2-ad5c-0ce4acd7bd3c",
+                            ConcurrencyStamp = "e7dba985-483c-44e7-8618-ce7c4fd463c3",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "d1c5ea54-84ca-47fd-90f3-7801c8c76d5c",
-                            ConcurrencyStamp = "9ede41d8-53d8-48d3-8eb7-e0b645cf1296",
+                            Id = "f29988a8-2570-4e58-9cc8-9dc462d945ea",
+                            ConcurrencyStamp = "4ecd6940-4f7f-4cb9-96d6-6e159026f2d8",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "86a02f12-691c-426c-83b3-9968d12cf14e",
-                            ConcurrencyStamp = "0351d6e3-0ace-49fe-978b-cfaaacc56b56",
+                            Id = "76e59fe4-1511-4575-88f6-614f963db435",
+                            ConcurrencyStamp = "3413b221-c122-427e-b715-fda23a613bc1",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "b3b2d2dc-bdab-4cc3-b459-d7a01da27743",
-                            ConcurrencyStamp = "d74cfc55-41e4-4d5c-a4f2-1277cad63dbd",
+                            Id = "e72d0cd2-9e59-4dd5-8ac4-e9b7df781bb1",
+                            ConcurrencyStamp = "b29d61e6-2c0a-4298-b9b3-a79405ce83e3",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "2c44f315-c000-4c33-8ec4-35a77846247e",
-                            ConcurrencyStamp = "c651810e-e174-4bf1-b76a-5f8ac0840461",
+                            Id = "61e2bf92-4c79-4717-9feb-a0ff142752d4",
+                            ConcurrencyStamp = "dfb17998-8b03-46a1-8f58-20ffa974097b",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });

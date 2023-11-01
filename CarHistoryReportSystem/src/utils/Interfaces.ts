@@ -112,7 +112,7 @@ export interface CarSalesInfo {
     carId?: string
     features: string[]
     price: number
-    carImages?: CarImages
+    carImages?: CarImages[]
 }
 
 export interface CarSaleDetails {
@@ -126,7 +126,7 @@ export interface CarSaleDetails {
 }
 
 export interface CarImages {
-    id: number
+    id?: number
     carId?: string
     imageLink: string
 }
