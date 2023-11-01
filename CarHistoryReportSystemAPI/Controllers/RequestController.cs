@@ -16,7 +16,6 @@ namespace CarHistoryReportSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class RequestController : ControllerBase
     {
         private readonly IRequestServices _requestService;
