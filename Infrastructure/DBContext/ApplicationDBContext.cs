@@ -72,6 +72,8 @@ namespace Infrastructure.DBContext
                     case EntityState.Added:
                         entry.Entity.CreatedTime = DateTime.Now;
                         entry.Entity.CreatedByUserId = _currentUserServices.GetCurrentUserId();
+                        entry.Entity.LastModified = DateTime.Now;
+                        entry.Entity.ModifiedByUserId = _currentUserServices.GetCurrentUserId();
                         break;
 
                     case EntityState.Modified:

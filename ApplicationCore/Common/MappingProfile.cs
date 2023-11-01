@@ -1,11 +1,16 @@
 ﻿using Application.DTO.Authentication;
 using Application.DTO.Car;
+using Application.DTO.CarAccidentHistory;
+using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarMaintainance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
 using Application.DTO.CarRecall;
+using Application.DTO.CarReport;
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
+using Application.DTO.CarStolenHistory;
 using Application.DTO.DataProvider;
 using Application.DTO.ModelMaintainance;
 using Application.DTO.Order;
@@ -99,6 +104,22 @@ namespace Application.Common
             CreateMap<OrderOption, OrderOptionResponseDTO>();
             CreateMap<OrderOptionCreateRequestDTO, OrderOption>();
             CreateMap<OrderOptionUpdateRequestDTO, OrderOption>();
+
+            CreateMap<CarReport, CarReportResponseDTO>();
+            CreateMap<Car, CarReportDataResponseDTO>()
+                .ForMember(c => c.NumberOfOpenRecalls, opt => opt.MapFrom(x => x.CarRecallStatuses.Count(s => s.Status == Domain.Enum.RecallStatus.Open)))
+                .ForMember(c => c.NumberOfStolenRecords, opt => opt.MapFrom(x => x.CarStolenHistories.Count))
+                .ForMember(c => c.NumberOfAccidentRecords, opt => opt.MapFrom(x => x.CarAccidentHistories.Count))
+                .ForMember(c => c.NumberOfOwners, opt => opt.MapFrom(x => x.CarOwnerHistories.Count))
+                .ForMember(c => c.NumberOfServiceHistoryRecords, opt => opt.MapFrom(x => x.CarServiceHistories.Count));
+
+            CreateMap<CarAccidentHistory, CarAccidentHistoryResponseDTO>();
+
+            CreateMap<CarInspectionHistory, CarInspectionHistoryResponseDTO>();
+
+            CreateMap<CarInsurance, CarInsuranceResponseDTO>();
+
+            CreateMap<CarStolenHistory, CarStolenHistoryResponseDTO>();
         }
     }
 }

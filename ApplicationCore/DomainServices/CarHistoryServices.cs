@@ -1,6 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
+using Application.Utility;
 using AutoMapper;
 using Domain.Common;
 using Domain.Entities;
@@ -8,6 +9,7 @@ using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +19,14 @@ namespace Application.DomainServices
                                                                                   where P : PagingParameters
     {
         private readonly ICarHistoryRepository<T,P> _carHistoryRepository;
+        private readonly ICarRepository _carRepository;
         private readonly IMapper _mapper;
 
-        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper)
+        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository)
         {
             _carHistoryRepository = carHistoryRepository;
             _mapper = mapper;
+            _carRepository = carRepository;
         }
 
         public async Task<PagedList<R>> GetAllCarHistorys(P parameter)
@@ -63,6 +67,17 @@ namespace Application.DomainServices
         public virtual async Task<int> CreateCarHistory(C request)
         {
             var carHistory = _mapper.Map<T>(request);
+            carHistory.ReportDate ??= DateOnly.FromDateTime(DateTime.Now);
+            var car = await _carRepository.GetCarById(carHistory.CarId, trackChange: true);
+            if(car is null)
+            {
+                throw new CarNotFoundException(carHistory.CarId);
+            }
+            if(carHistory.Odometer is not null)
+            {
+                if (car.CurrentOdometer < carHistory.Odometer.Value)
+                    car.CurrentOdometer = carHistory.Odometer.Value;
+            }
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
             return carHistory.Id;
@@ -86,7 +101,13 @@ namespace Application.DomainServices
             {
                 throw new CarHistoryRecordNotFoundException(id, nameof(T));
             }
+            var odometerBefore = carHistory.Odometer;
             _mapper.Map(request, carHistory);
+            if(odometerBefore != carHistory.Odometer)
+            {
+                var car = await _carRepository.GetCarWithHistoriesById(carHistory.CarId, trackChange: true);
+                car.CurrentOdometer = Math.Max(car.CurrentOdometer, CarUtility.GetMaxCarOdometer(car));
+            }
             await _carHistoryRepository.SaveAsync();
         }
 
@@ -99,6 +120,16 @@ namespace Application.DomainServices
             var carHistorys = _mapper.Map<IEnumerable<T>>(requests);
             foreach(var carHistory in carHistorys)
             {
+                var car = await _carRepository.GetCarById(carHistory.CarId, trackChange: true);
+                if (car is null)
+                {
+                    throw new CarNotFoundException(carHistory.CarId);
+                }
+                if (carHistory.Odometer is not null)
+                {
+                    if (car.CurrentOdometer < carHistory.Odometer.Value)
+                        car.CurrentOdometer = carHistory.Odometer.Value;
+                }
                 _carHistoryRepository.Create(carHistory);
             }
             await _carHistoryRepository.SaveAsync();
