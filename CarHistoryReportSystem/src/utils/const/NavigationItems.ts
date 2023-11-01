@@ -7,8 +7,14 @@ export const UserNavigation = [
             { label: 'Track My Car Maintenance', link: '/maintenance' }
         ]
     },
-    { label: 'Car Values', link: '/value' }
+    { label: 'Car Values', link: '/value' },
+    { label: 'Request', link: '/Request' }
 ]
+
+export const RequestNavigation = [
+    { label: 'My Request', link: '/Request' }
+]
+
 
 export const AdminNavigation = [
     { label: 'Users List', link: '/admin/users' },

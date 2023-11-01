@@ -1,7 +1,6 @@
 using Application;
 using Application.Interfaces;
 using CarHistoryReportSystemAPI;
-using CarHistoryReportSystemAPI.Extensions;
 using CarHistoryReportSystemAPI.Middlewares;
 using CarHistoryReportSystemAPI.Services;
 using CarHistoryReportSystemAPI.Utility;
@@ -32,7 +31,8 @@ builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-                });
+                })
+                .AddCustomCsvFormatter();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureCustomServices();

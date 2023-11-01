@@ -13,5 +13,5 @@ namespace Domain.Exceptions
         {
 
         }
-    }
+    }   
 }

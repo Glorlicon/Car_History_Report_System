@@ -12,9 +12,11 @@ namespace Domain.Entities
         [Key]
         public int Id { get; set; }
         public string? UserId { get; set; }
+        public int OrderOptionId { get; set; }
+        public string? TransactionId { get; set; }
+
         public OrderOption OrderOption { get; set; }
         public User? User { get; set; }
-        public DateOnly PurchaseDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModified { get; set; }
     }

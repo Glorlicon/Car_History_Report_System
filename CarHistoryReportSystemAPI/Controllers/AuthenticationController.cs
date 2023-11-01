@@ -1,4 +1,5 @@
-﻿using Application.DomainServices;
+﻿using Application.Common.Models;
+using Application.DomainServices;
 using Application.DTO.Authentication;
 using Application.DTO.User;
 using Application.Interfaces;
@@ -29,6 +30,11 @@ namespace CarHistoryReportSystemAPI.Controllers
             _cache = cache;
         }
 
+        /// <summary>
+        /// Register
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegistrationRequestDTO request)
         {
@@ -50,7 +56,16 @@ namespace CarHistoryReportSystemAPI.Controllers
             return StatusCode(201, new { userId = result.UserId , verifyToken = result.VerifyToken, code = verificationCode });
         }
 
+        /// <summary>
+        /// Login
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <response code="200">Login Successfully</response>
+        /// <response code="401">User Exist</response>
         [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResult),StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
             var result = await _authServices.Login(request);
@@ -135,6 +150,22 @@ namespace CarHistoryReportSystemAPI.Controllers
             var verificationCode = AuthenticationUtility.GenerateVerificationCode();
             _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));
             await _emailServices.SendEmailAsync(request.Email, "Your Verification Code", verificationCode);
+            return Ok(new { Token = result });
+        }
+
+        /// <summary>
+        /// Refresh login token
+        /// </summary>
+        /// <returns>New Login Token</returns>
+        /// <response code="200">Get refresh token successful</response>
+        /// <response code="401">User not logged in</response>
+        [HttpPost("refresh-token")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetRefreshToken()
+        {
+            var result = await _authServices.ResendLoginTokenAsync();
             return Ok(new { Token = result });
         }
 

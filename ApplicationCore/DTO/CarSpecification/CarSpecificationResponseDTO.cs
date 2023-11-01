@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.DTO.ModelMaintainance;
+using Domain.Entities;
 using Domain.Enum;
 using System;
 using System.Collections.Generic;
@@ -52,5 +53,8 @@ namespace Application.DTO.CarSpecification
         public DateTime CreatedTime { get; set; }
 
         public DateTime LastModified { get; set; }
+
+        public List<ModelMaintainanceResponseDTO>? ModelOdometers { get; set; }
+
     }
 }

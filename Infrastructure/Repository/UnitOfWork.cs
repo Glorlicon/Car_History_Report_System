@@ -19,6 +19,10 @@ namespace Infrastructure.Repository
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
         private ICarMaintainanceRepository _carMaintainanceRepository;
+        private ICarRecallRepository _carRecallRepository;
+        private ICarRecallStatusRepository _carRecallStatusRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderOptionRepository _orderOptionRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -29,7 +33,11 @@ namespace Infrastructure.Repository
             ICarSalesInfoRepository carSalesInfoRepository,
             ICarPartRepository carPartRepository,
             ICarOwnerHistoryRepository carOwnerHistoryRepository,
-            ICarMaintainanceRepository carMaintainanceRepository)
+            ICarMaintainanceRepository carMaintainanceRepository,
+            ICarRecallRepository carRecallRepository,
+            ICarRecallStatusRepository carRecallStatusRepository,
+            IOrderRepository orderRepository,
+            IOrderOptionRepository orderOptionRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -40,6 +48,10 @@ namespace Infrastructure.Repository
             _carPartRepository = carPartRepository;
             _carOwnerHistoryRepository = carOwnerHistoryRepository;
             _carMaintainanceRepository = carMaintainanceRepository;
+            _carRecallRepository = carRecallRepository;
+            _carRecallStatusRepository = carRecallStatusRepository;
+            _orderRepository = orderRepository;
+            _orderOptionRepository = orderOptionRepository;
         }
 
         public ICarRepository CarRepository
@@ -80,6 +92,26 @@ namespace Infrastructure.Repository
         public ICarMaintainanceRepository CarMaintainanceRepository
         {
             get { return _carMaintainanceRepository;}
+        }
+
+        public ICarRecallRepository CarRecallRepository
+        {
+            get { return _carRecallRepository; }
+        }
+
+        public ICarRecallStatusRepository CarRecallStatusRepository
+        {
+            get { return _carRecallStatusRepository;}
+        }
+
+        public IOrderRepository OrderRepository
+        {
+            get { return _orderRepository; }
+        }
+
+        public IOrderOptionRepository OrderOptionRepository
+        {
+            get { return _orderOptionRepository; }
         }
 
         public async Task SaveAsync()

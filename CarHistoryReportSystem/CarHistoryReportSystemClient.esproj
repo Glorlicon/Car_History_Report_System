@@ -12,15 +12,13 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' " >
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
     <FrameworkPathOverride>/usr/local/share/dotnet/shared/Microsoft.NETCore.App/7.0.5/mscorlib.dll</FrameworkPathOverride>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\footer\" />
-    <Folder Include="src\components\forms\admin\User\" />
     <Folder Include="src\components\forms\cardealer\" />
     <Folder Include="src\components\forms\register\" />
-    <Folder Include="src\components\layout\" />
     <Folder Include="src\pages\admin\car_model\" />
     <Folder Include="src\pages\admin\manufacturer\" />
     <Folder Include="src\pages\manufacturer\car\" />
@@ -30,7 +28,6 @@
     <Folder Include="src\pages\vehicle_registry\" />
     <Folder Include="src\pages\police\" />
     <Folder Include="src\pages\service_shop\" />
-    <Folder Include="src\pages\user\" />
     <Folder Include="src\services\azure\" />
   </ItemGroup>
 </Project>

@@ -3,8 +3,12 @@ using Application.DTO.Car;
 using Application.DTO.CarMaintainance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
+using Application.DTO.CarRecall;
+using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
+using Application.DTO.ModelMaintainance;
+using Application.DTO.Order;
 using Application.DTO.Request;
 using Application.DTO.User;
 using AutoMapper;
@@ -26,6 +30,10 @@ namespace Application.Common
             CreateMap<CarSpecificationUpdateRequestDTO, CarSpecification>();
             CreateMap<CarSpecification, CarSpecificationResponseDTO>()
                 .ForMember(csr => csr.ManufacturerName, opt => opt.MapFrom(x => x.Manufacturer.Name));
+            CreateMap<ModelMaintainanceCreateRequestDTO, ModelMaintainance>();
+            CreateMap<ModelMaintainance, ModelMaintainanceResponseDTO>();
+
+
             CreateMap<User, UserResponseDTO>()
             .ForMember(urr => urr.IsSuspended, opt => opt.MapFrom(src => src.LockoutEnabled));
             CreateMap<User, CreateUserRequestDTO>();
@@ -67,10 +75,30 @@ namespace Application.Common
                 .ForMember(c => c.DataSource, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
 
             CreateMap<RequestCreateRequestDTO, Request>();
-            CreateMap<Request, RequestUpdateRequestDTO>();
+            CreateMap<RequestUpdateRequestDTO, Request>();
             CreateMap<Request, RequestResponseDTO>();
 
             CreateMap<AddCarToTrackingListRequestDTO, CarMaintainance>();
+
+            CreateMap<CarRecallCreateRequestDTO, CarRecall>();
+            CreateMap<CarRecallUpdateRequestDTO, CarRecall>();
+            CreateMap<CarRecall, CarRecallResponseDTO>();
+            CreateMap<CarRecallStatus, CarRecallStatusResponseDTO>()
+                .ForMember(c => c.Description, opt => opt.MapFrom(x => x.CarRecall.Description))
+                .ForMember(c => c.ModelId, opt => opt.MapFrom(x => x.CarRecall.ModelId))
+                .ForMember(c => c.RecallDate, opt => opt.MapFrom(x => x.CarRecall.RecallDate))
+                .ForMember(c => c.Status, opt => opt.MapFrom(x => x.Status.ToString()));
+
+            CreateMap<CarServiceHistory, CarServiceHistoryResponseDTO>()
+                .ForMember(c => c.ServicesName, opt => opt.MapFrom(x => x.Services.ToString()));
+            CreateMap<CarServiceHistoryCreateRequestDTO, CarServiceHistory>();
+            CreateMap<CarServiceHistoryUpdateRequestDTO, CarServiceHistory>();
+
+            CreateMap<Order, OrderResponseDTO>();
+            CreateMap<OrderCreateRequestDTO, Order>();
+            CreateMap<OrderOption, OrderOptionResponseDTO>();
+            CreateMap<OrderOptionCreateRequestDTO, OrderOption>();
+            CreateMap<OrderOptionUpdateRequestDTO, OrderOption>();
         }
     }
 }

@@ -9,8 +9,16 @@ namespace Application.Common.Models
 {
     public class ErrorDetails
     {
-        public int StatusCode { get; set; }
-        public string Message { get; set; }
+        public ErrorDetails()
+        {
+        
+        }
+
+        public ErrorDetails(string errorMessage)
+        {
+            Error = new List<string> { errorMessage };
+        }
+        public List<string> Error { get; set; } = new List<string>();
         public override string ToString() => JsonSerializer.Serialize(this);
     }
 }

@@ -22,6 +22,41 @@
         background-color: #45a049;
     }
 
+
+.dealer-car-sales-prev-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+.dealer-car-sales-prev-btn:hover {
+    background-color: #2980b9;
+}
+
+.dealer-car-sales-next-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+    .dealer-car-sales-next-btn:hover {
+        background-color: #2980b9;
+    }
+
+
+
+
+
 .dealer-car-sales-search-filter-container {
     display: flex;
     align-items: center;
@@ -149,6 +184,78 @@
     gap: 20px;
     margin-left: 20px;
     margin-right: 20px;
+}
+
+.dealer-car-sales-form-image-columns {
+    display: inline-flex;
+    flex-direction: column;
+    max-width: fit-content;
+    min-width: 300px;
+}
+.dealer-car-sales-form-image-column label {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.dealer-car-sales-form-image-add-button {
+    border: none;
+    border-radius: 5px;
+    background-color: #11C942;
+    color: white;
+    padding: 3%;
+    margin-bottom: 1%;
+}
+.dealer-car-sales-form-image-add-button:hover {
+    background-color: #19AE41
+}
+.dealer-car-sales-form-image-column a {
+    margin-right: 1%;
+}
+.dealer-car-sales-form-image-remove-button {
+    border: none;
+    border-radius: 5px;
+    background-color: #FF0000;
+    color: white;
+    padding: 2%;
+    margin-left: 1%;
+}
+.dealer-car-sales-form-image-remove-button:hover{
+    background-color: #C60202
+}
+
+
+.dealer-car-sales-images {
+    position: relative;
+}
+.dealer-car-sales-images-arrow-left {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-90%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    left: 5%;
+}
+
+.dealer-car-sales-images-arrow-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-90%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    right: 5%;
+}
+
+.car-images-input{
+    display:none;
 }
 
 .dealer-car-sales-form-column {

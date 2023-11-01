@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using CarHistoryReportSystemAPI.Middlewares;
 using CarHistoryReportSystemAPI.Services;
+using CarHistoryReportSystemAPI.Utility;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,11 @@ namespace CarHistoryReportSystemAPI
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserServices, CurrentUserServices>();
             services.AddTransient<ExceptionHandlingMiddleware>();
+        }
+
+        public static void AddCustomCsvFormatter(this IMvcBuilder builder)
+        {
+            builder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
         }
     }
 }

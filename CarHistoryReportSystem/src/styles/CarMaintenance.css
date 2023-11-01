@@ -1,0 +1,163 @@
+.car-maintenance-page{
+    margin: 5% 20% 10% 20%;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+.car-maintenance-header {
+    display: flex;
+    align-items: center;
+}
+
+.car-maintenance-icon{
+    font-size: 30px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+}
+.car-maintenance-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px 0;
+    width: 175px;
+    height: 50px;
+}
+
+.car-maintenance-item:hover{
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.car-maintenance-retry-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .car-maintenance-retry-btn:hover {
+        background-color: #2980b9;
+    }
+
+.car-maintenance-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+.car-maintenance-load-error{
+    text-align: center
+}
+.car-maintenance-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.car-maintenance-modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    width: fit-content;
+    min-width: 300px;
+}
+.car-maintenance-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+.car-maintenance-form-columns {
+    display: inline-flex;
+    flex-direction: column;
+    max-width: 150px;
+    gap: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.car-maintenance-form-column {
+    flex: 1;
+}
+
+.car-maintenance-form-column label,
+.car-maintenance-form-column input,
+.car-maintenance-form-column select {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.car-maintenance-add-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.car-maintenance-add-btn:hover{
+    background-color: #2980b9;
+}
+.car-maintenance-inline-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+    display: inline-block;
+}
+.car-maintenance-error {
+    color: #d9534f;
+}
+
+.car-maintenance-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 20px 0;
+}
+
+.car-maintenance-card img {
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+}
+.car-maintenance-btn {
+    border: 1px solid red; /* red border */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* makes it a circle */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* center the X horizontally */
+    align-items: center; /* center the X vertically */
+    font-weight: bold;
+    font-size: 8px;
+    color: red; 
+}
+
+.car-maintenance-btn img{
+    width: 20px;
+    height: 20px;
+}
+.car-maintenance-btn:hover{
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.5);
+}

@@ -55,7 +55,24 @@ namespace UnitTests.Application.Tests
                 Country = "VN",
                 FuelType = Domain.Enum.FuelType.Gasoline,
                 BodyType = Domain.Enum.BodyType.Sedan,
-                CreatedByUserId = "User1"
+                CreatedByUserId = "User1",
+                ModelOdometers = new ModelMaintainance[]
+                {
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Engine",
+                        OdometerPerMaintainance = 20000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    },
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Tire",
+                        OdometerPerMaintainance = 10000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    } 
+                }
             });
             carModels.Add(new CarSpecification
             {
@@ -73,7 +90,24 @@ namespace UnitTests.Application.Tests
                 Country = "VN",
                 FuelType = Domain.Enum.FuelType.Gasoline,
                 BodyType = Domain.Enum.BodyType.Sedan,
-                CreatedByUserId = "User2"
+                CreatedByUserId = "User2",
+                ModelOdometers = new ModelMaintainance[]
+                {
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Engine",
+                        OdometerPerMaintainance = 20000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    },
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Tire",
+                        OdometerPerMaintainance = 10000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    }
+                }
             });
             carModels.Add(new CarSpecification
             {
@@ -91,7 +125,24 @@ namespace UnitTests.Application.Tests
                 Country = "VN",
                 FuelType = Domain.Enum.FuelType.Gasoline,
                 BodyType = Domain.Enum.BodyType.Sedan,
-                CreatedByUserId = "User1"
+                CreatedByUserId = "User1",
+                ModelOdometers = new ModelMaintainance[]
+                {
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Engine",
+                        OdometerPerMaintainance = 20000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    },
+                    new ModelMaintainance
+                    {
+                        MaintenancePart = "Tire",
+                        OdometerPerMaintainance = 10000,
+                        RecommendAction = "Check",
+                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                    }
+                }
             });
             return carModels;
         }

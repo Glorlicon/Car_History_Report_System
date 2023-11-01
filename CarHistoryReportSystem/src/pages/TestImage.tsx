@@ -10,8 +10,7 @@ const TestImage: React.FC = () => {
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
-            setImage(file);
-
+            setImage(file)
             // Create an object URL to display the image in the component
             const url = URL.createObjectURL(file);
             setImageUrl(url);
@@ -25,7 +24,7 @@ const TestImage: React.FC = () => {
     }
   return (
       <div>
-          <input type="file" onChange={onImageChange} />
+          <input type="file" onChange={onImageChange} multiple />
           <button onClick={onUpload}>Save to Azure Blob</button>
 
           {imageUrl && <img src={imageUrl} alt="Preview" style={{ maxWidth: '300px', marginTop: '20px' }} />}
