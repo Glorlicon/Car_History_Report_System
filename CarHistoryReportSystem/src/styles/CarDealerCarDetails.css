@@ -11,6 +11,10 @@
     animation: spin 2s linear infinite;
     margin: 0 auto;
 }
+.dealer-car-sales-details-image{
+    width: 400px;
+    height: 250px;
+}
 
 @keyframes spin {
     0% {
