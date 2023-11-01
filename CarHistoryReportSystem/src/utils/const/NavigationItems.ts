@@ -8,11 +8,11 @@ export const UserNavigation = [
         ]
     },
     { label: 'Car Values', link: '/value' },
-    { label: 'Request', link: '/Request' }
+    { label: 'Request', link: '/request' }
 ]
 
 export const RequestNavigation = [
-    { label: 'My Request', link: '/Request' }
+    { label: 'My Request', link: '/request' }
 ]
 
 
