@@ -150,4 +150,21 @@ export interface CarMaintenance {
     userId: string
 }
 
+export interface UsersRequest {
+    description: string
+    response: string
+    type: string
+    status: string
+}
+
+export interface AdminRequest {
+    id?: number
+    description?: string
+    response: string
+    type?: string
+    status: string
+    createdByUserId?: string
+    modifiedByUserId?: string
+}
+
 
