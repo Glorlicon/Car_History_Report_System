@@ -104,11 +104,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Created Successfully</response>
         /// <response code="400">Invalid Request</response>
+        /// <response code="404">Car not found</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCarServiceHistory")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarServiceHistoryAsync([FromBody] CarServiceHistoryCreateRequestDTO request)
         {

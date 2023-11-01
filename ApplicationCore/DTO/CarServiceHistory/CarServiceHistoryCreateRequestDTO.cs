@@ -18,6 +18,8 @@ namespace Application.DTO.CarServiceHistory
 
         public DateTime ServiceTime { get; set; }
 
+        public DateOnly? ReportDate { get; set; }
+
         public CarServiceType Services { get; set; }
     }
 }

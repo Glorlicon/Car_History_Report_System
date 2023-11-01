@@ -56,6 +56,7 @@ namespace Infrastructure
             services.AddScoped<IOrderOptionRepository, OrderOptionRepository>();
             services.AddScoped<ICsvServices, CsvServices>();
             services.AddScoped<IPaymentServices, VnpayPaymentServices>();
+            services.AddScoped<ICarReportRepository, CarReportRepository>();
             return services;
         }
 
