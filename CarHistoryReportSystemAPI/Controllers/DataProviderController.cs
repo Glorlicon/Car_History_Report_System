@@ -103,7 +103,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Get All Data Provider Of user with id UserId
+        /// Get Data Provider Of user with id UserId
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>Data Provider</returns>
@@ -114,7 +114,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var dataProvider = await _dataProviderService.GetDataProviderByUserId(userId);
             return Ok(dataProvider);
-        }
+        }             
 
         /// <summary>
         /// Create Data Provider

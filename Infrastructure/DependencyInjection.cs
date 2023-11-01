@@ -52,7 +52,10 @@ namespace Infrastructure
             services.AddScoped<ICarRecallRepository, CarRecallRepository>();
             services.AddScoped<ICarRecallStatusRepository, CarRecallStatusRepository>();
             services.ConfigureCarHistoryRepository();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderOptionRepository, OrderOptionRepository>();
             services.AddScoped<ICsvServices, CsvServices>();
+            services.AddScoped<IPaymentServices, VnpayPaymentServices>();
             return services;
         }
 

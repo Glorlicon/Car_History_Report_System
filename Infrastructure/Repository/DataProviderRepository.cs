@@ -29,6 +29,7 @@ namespace Infrastructure.Repository
                             .Include(dp => dp.WorkingTimes)
                             .Include(dp => dp.Reviews)
                             .Filter(parameter)
+                            .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();

@@ -21,6 +21,8 @@ namespace Infrastructure.Repository
         private ICarMaintainanceRepository _carMaintainanceRepository;
         private ICarRecallRepository _carRecallRepository;
         private ICarRecallStatusRepository _carRecallStatusRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderOptionRepository _orderOptionRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -33,7 +35,9 @@ namespace Infrastructure.Repository
             ICarOwnerHistoryRepository carOwnerHistoryRepository,
             ICarMaintainanceRepository carMaintainanceRepository,
             ICarRecallRepository carRecallRepository,
-            ICarRecallStatusRepository carRecallStatusRepository)
+            ICarRecallStatusRepository carRecallStatusRepository,
+            IOrderRepository orderRepository,
+            IOrderOptionRepository orderOptionRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -46,6 +50,8 @@ namespace Infrastructure.Repository
             _carMaintainanceRepository = carMaintainanceRepository;
             _carRecallRepository = carRecallRepository;
             _carRecallStatusRepository = carRecallStatusRepository;
+            _orderRepository = orderRepository;
+            _orderOptionRepository = orderOptionRepository;
         }
 
         public ICarRepository CarRepository
@@ -96,6 +102,16 @@ namespace Infrastructure.Repository
         public ICarRecallStatusRepository CarRecallStatusRepository
         {
             get { return _carRecallStatusRepository;}
+        }
+
+        public IOrderRepository OrderRepository
+        {
+            get { return _orderRepository; }
+        }
+
+        public IOrderOptionRepository OrderOptionRepository
+        {
+            get { return _orderOptionRepository; }
         }
 
         public async Task SaveAsync()
