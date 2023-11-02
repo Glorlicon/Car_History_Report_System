@@ -1,33 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { GetCarForSale } from '../../services/api/CarForSale';
+import { GetCarForSale, SendContactMail } from '../../services/api/CarForSale';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
-import { APIResponse, Car } from '../../utils/Interfaces';
+import { APIResponse, Car, ContactMail, UsersRequest } from '../../utils/Interfaces';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const data = useSelector((state: RootState) => state.auth.token);
-    console.log(data);
     type RouteParams = {
         id: string
     }
     const { id } = useParams<RouteParams>()
+    console.log(id)
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [addError, setAddError] = useState<string | null>(null);
+    const [adding, setAdding] = useState(false);
     const [car, setCar] = useState<Car | null>()
+    const [isExpanded, setIsExpanded] = useState(false);
     const fetchData = async () => {
         setLoading(true);
         setError(null);
         const carSalesResponse: APIResponse = await GetCarForSale(id as unknown as string)
         if (carSalesResponse.error) {
+            console.log("error")
             setError(carSalesResponse.error)
         } else {
             setCar(carSalesResponse.data)
+            console.log(carSalesResponse.data)
         }
+        
         setLoading(false)
     }
+
+    const handleMessageSend= async () => {
+        setAdding(true);
+        setAddError(null);
+        
+        const response: APIResponse = await SendContactMail(newEmail);
+        setAdding(false);
+        if (response.error) {
+            setAddError(response.error);
+        } else {
+            fetchData();
+        }
+    }
+
+    const [newEmail, setNewEmail] = useState<ContactMail>({
+        firstName: '',
+        lastName: '',
+        zipCode: '',
+        phoneNumber: '',
+        email: '',
+        vinId: id as string
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+        setNewEmail({
+            ...newEmail,
+            [e.target.name]: value,
+        });
+        console.log(newEmail);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
         <>
@@ -40,9 +81,17 @@ function CarSalesDetailPage() {
                         <div>
                         </div>
                         <div className="box">
-                            <p>Used (ModelName)</p>
-                            <p>[Price] | [Odometers]</p>
-                            <p>VIN: (VinNumber)</p>
+                            <div className="nameprice">
+                                <p>Used {car?.modelId}</p>
+                                <p>{car?.carSalesInfo?.price}$ | {car?.currentOdometer}</p>
+                            </div>
+                            <div>
+
+                            </div>
+                            <div className="vin">
+                                <p>VIN: {car?.vinId}</p>
+                            </div>
+                            
                         </div>
 
                         <div className="vehicle-highlights-box">
@@ -100,13 +149,32 @@ function CarSalesDetailPage() {
                                         <div className="tag">
                                             <p>Ambient Lighting</p>
                                         </div>
+                                        <div className="tag">
+                                            <p>Ambient Lighting</p>
+                                        </div>
+                                        <div className="tag">
+                                            <p>Ambient Lighting</p>
+                                        </div>
+                                        <div className="tag">
+                                            <p>Ambient Lighting</p>
+                                        </div>
+                                        <div className="tag">
+                                            <p>Ambient Lighting</p>
+                                        </div>
+                                    </div>
+                                    {/*Implement Later*/}
+                                    <div className="toggle_btn" onClick={() => setIsExpanded(!isExpanded)}>
+                                        <span className="toggle_text">{isExpanded ? 'Show Less' : 'Show More'}</span>
+                                        <span className="arrow">
+                                            <i className={`fas fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="sales-description">
                                     <p className="sales-description-header">Sale Description</p>
                                     <div>
                                         <p>
-                                        Description
+                                            {car?.carSalesInfo?.description}
                                         </p>
                                     </div>
                                 </div>
@@ -136,26 +204,30 @@ function CarSalesDetailPage() {
 
                                 <div className="contact-description">
                                     <p>Hi, I'm interested in this car!</p>
-                                    <h3>Used (ModelName)</h3>
-                                    <p>[Price] | [Odometers]</p>
+                                    <h3>Used {car?.modelId}</h3>
+                                    <p>{car?.carSalesInfo?.price} | {car?.currentOdometer}</p>
                                 </div>
                             </div>
                             
-                            <form className="contact-form">
+                            <div className="contact-form">
                                 <div className="name-input">
-                                    <input type="text" placeholder="First Name" />
-                                    <input type="text" placeholder="Last Name" />
+                                    <input onChange={handleInputChange} name="firstName" type="text" placeholder="First Name" />
+                                    <input onChange={handleInputChange} name="lastName" type="text" placeholder="Last Name" />
                                 </div>
                                 <div className="info-input">
-                                    <input type="text" placeholder="Zip Code" />
-                                    <input type="email" placeholder="Email" />
-                                    <input type="tel" placeholder="Phone Number" />
+                                    <input onChange={handleInputChange} name="zipCode" type="text" placeholder="Zip Code" />
+                                    <input onChange={handleInputChange} name="email" type="email" placeholder="Email" />
+                                    <input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder="Phone Number" />
+                                    <input type="hidden" value={car?.vinId} name="vinId"></input>
                                 </div>
                                 <div className="button-submit">
-                                    <button type="submit">Send Message</button>
+                                    <button onClick={handleMessageSend}>Send Message</button>
                                 </div>
+                                {addError && (
+                                    <p className="ad-car-error">{addError}</p>
+                                )}
                                     
-                            </form>
+                            </div>
                         </div>
                     </div>
 

@@ -109,7 +109,7 @@ function CarSalesPage() {
                         </tr>
                         ) : carList.length > 0 ? (
                                 carList.map((model: any, index: number) => (
-                                    <a className="carlink" href={`/sales/details?id=${model.vinId}`}><article className="car-card" key={index}>
+                                    <a className="carlink" href={`/sales/details/${model.vinId}`}><article className="car-card" key={index}>
                                         <div className="Car-header">
                                             <h3>Used {model.modelId}</h3>
                                             <img src="{model.CarSalesInfo.carImages.imageLink}" alt="Car Image" />

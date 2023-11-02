@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
 .availability-section {
     flex-basis: calc(40% - 10px);
     margin-left: 10px;
     width: 100%;
     border: 1px solid #e0e0e0;
     padding: 1rem;
-    margin-right:20px;
+    margin-left: 50px;
+    margin-right:50px;
     margin-bottom:500px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -114,11 +116,30 @@
     padding-top: 50px;
 }
 
+
 .tags-container .tag {
-    width: 100px;
+    max-width: 150px;
     display: flex;
-    border-style: dashed;
-    flex:1;
+    justify-content: center;
+    align-items: center;
+    background-color: #2596be;
+    color: white;
+    text-align: center;
+    border-radius: 40px;
+    padding: 0px 3px 0px 7px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.tags-container .tag a {
+        margin: 0 7px 3px;
+        display: inline-block;
+        cursor: pointer;
+}
+
+.tags-container {
+    display: flex;
+    width: 100px;
 }
 
 .sales-description .sales-description-header {
@@ -141,6 +162,7 @@
     background-color: #f4f4f4;
 }
 
+
 .info-header{
     display:flex;
     justify-content: space-between;
@@ -148,7 +170,7 @@
 
 .car-detail-main {
     height: 700px;
-    margin-left:20px;
+    margin-left:50px;
     flex-basis: calc(60% - 10px);
     margin-right: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -171,4 +193,29 @@
     padding-bottom: 500px;
     padding-top: 200px;
     background-color: #f4f4f4;
+}
+
+.nameprice {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
+
+* {
+    /*font-family: 'Montserrat', sans-serif;*/
+}
+
+.toggle_btn {
+    margin-top: 15px;
+    font-weight: 700;
+    color: #ff406c;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.arrow i {
+    margin-left: 10px;
 }

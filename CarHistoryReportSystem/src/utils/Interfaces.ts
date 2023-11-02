@@ -167,4 +167,11 @@ export interface AdminRequest {
     modifiedByUserId?: string
 }
 
-
+export interface ContactMail {
+    firstName: string
+    lastName: string
+    zipCode: string
+    phoneNumber: string
+    email: string
+    vinId: string
+}

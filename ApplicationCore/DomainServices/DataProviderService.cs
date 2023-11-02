@@ -126,7 +126,7 @@ namespace Application.DomainServices
             {
                 throw (new DataProviderNotFoundException(car.CreatedByUser.DataProviderId));
             }
-            await _emailServices.SendEmailAsync(car.CreatedByUser.DataProvider.Email + "", "User contact",
+            await _emailServices.SendEmailAsync("khoabk1234@gmail.com" + "", "User contact",
                "Hello " + car.CreatedByUser.DataProvider.Name + "\n" +
                "This user interested in this car with VinId : " + request.VinId + "\n" +
                "This is user contact: \n" +
