@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
@@ -29,6 +30,10 @@ namespace Application.Interfaces
         Task<bool> DeleteCarModel(string modelId);
 
         Task<bool> UpdateCarModel(string modelId, CarSpecificationUpdateRequestDTO request);
+
+        Task<PagedList<ModelMaintainanceResponseDTO>> GetModelMaintainancesByModelId(string modelId, ModelMaintainanceParameter parameter, bool trackChange);
+       
+        Task<PagedList<ModelMaintainanceResponseDTO>> GetModelMaintainances(ModelMaintainanceParameter parameter, bool trackChange);
 
     }
 }

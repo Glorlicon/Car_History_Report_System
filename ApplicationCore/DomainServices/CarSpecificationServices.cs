@@ -1,5 +1,7 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarMaintainance;
 using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -18,10 +20,12 @@ namespace Application.DomainServices
     {
         private readonly ICarSpecificationRepository _carSpecRepository;
         private readonly IMapper _mapper;
-        public CarSpecificationServices(ICarSpecificationRepository carSpecRepository, IMapper mapper)
+        private readonly IModelMaintainanceRepository _modelMaintainanceRepository;
+        public CarSpecificationServices(ICarSpecificationRepository carSpecRepository, IMapper mapper, IModelMaintainanceRepository modelMaintainanceRepository)
         {
             _carSpecRepository = carSpecRepository;
             _mapper = mapper;
+            _modelMaintainanceRepository = modelMaintainanceRepository;
         }
 
         public async Task<PagedList<CarSpecificationResponseDTO>> GetAllCarModels(CarSpecificationParameter parameter, bool trackChange)
@@ -107,6 +111,22 @@ namespace Application.DomainServices
             _mapper.Map(request, carSpec);
             await _carSpecRepository.SaveAsync();
             return true;
+        }
+
+        public async Task<PagedList<ModelMaintainanceResponseDTO>> GetModelMaintainances(ModelMaintainanceParameter parameter, bool trackChange)
+        {
+            var modelMaintainances = await _modelMaintainanceRepository.GetModelMaintainances(parameter, trackChange);
+            var modelMaintainancesResponse = _mapper.Map<List<ModelMaintainanceResponseDTO>>(modelMaintainances);
+            var count = await _modelMaintainanceRepository.CountAll();
+            return new PagedList<ModelMaintainanceResponseDTO>(modelMaintainancesResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<PagedList<ModelMaintainanceResponseDTO>> GetModelMaintainancesByModelId(string modelId, ModelMaintainanceParameter parameter, bool trackChange)
+        {
+            var modelMaintainances = await _modelMaintainanceRepository.GetModelMaintainancesByModelId(modelId, parameter, trackChange);
+            var modelMaintainancesResponse = _mapper.Map<List<ModelMaintainanceResponseDTO>>(modelMaintainances);
+            var count = await _modelMaintainanceRepository.CountByCondition(x => x.ModelId == modelId);
+            return new PagedList<ModelMaintainanceResponseDTO>(modelMaintainancesResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
     }

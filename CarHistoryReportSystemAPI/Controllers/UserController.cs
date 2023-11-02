@@ -6,6 +6,7 @@ using Application.DTO.User;
 using Application.Interfaces;
 using Application.Validation.Car;
 using Domain.Entities;
+using Domain.Enum;
 using Infrastructure.InfrastructureServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -144,7 +145,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet("get-roles")]
         public async Task<IActionResult> GetRoleList()
         {
-            var roles = await _userService.GetRoleList();
+            var roles = Enum.GetNames(typeof(Role));
             return Ok(roles);
         }
     }

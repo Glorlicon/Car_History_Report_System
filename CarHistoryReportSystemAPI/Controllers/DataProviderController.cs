@@ -56,7 +56,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Data Providers
         /// </summary>
         /// <returns>Data Provider List</returns>
-        [HttpGet("type/{type}/no-user",Name = "GetDataProvidersWithoutUser")]
+        [HttpGet("type/{type}/no-user", Name = "GetDataProvidersWithoutUser")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderParameter parameter, DataProviderType type)
@@ -69,7 +69,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Data Providers by type
         /// </summary>
         /// <returns>Data Provider List</returns>
-        [HttpGet("type/{type}",Name = "GetDataProvidersByType")]
+        [HttpGet("type/{type}", Name = "GetDataProvidersByType")]
         [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetDataProvidersByTypeAsync(DataProviderType type)
         {
@@ -83,7 +83,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="dataProviderId"></param>
         /// <returns>Data Provider</returns>
         [HttpGet("{dataProviderId}", Name = "GetDataProvider")]
-        [ProducesResponseType(typeof(DataProviderDetailsResponseDTO),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DataProviderDetailsResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDataProviderAsync(int dataProviderId)
         {
@@ -95,7 +95,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get All Data Provider Types
         /// </summary>
         /// <returns>Data Provider Type List</returns>
-        [HttpGet("types-list",Name = "GetDataProviderTypes")]
+        [HttpGet("types-list", Name = "GetDataProviderTypes")]
         public IActionResult GetDataProviderTypes()
         {
             var listTypes = Enum.GetNames(typeof(DataProviderType));
@@ -114,7 +114,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var dataProvider = await _dataProviderService.GetDataProviderByUserId(userId);
             return Ok(dataProvider);
-        }             
+        }
 
         /// <summary>
         /// Create Data Provider
@@ -226,6 +226,66 @@ namespace CarHistoryReportSystemAPI.Controllers
             var result = await _dataProviderService.ContactDataProvider(request);
             // Change Later
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Get All Review
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Review List</returns>
+        [HttpGet("{dataProviderId}/reviews", Name = "GetAllReview")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(typeof(IEnumerable<DataProviderReviewsResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllReview(int dataProviderId, [FromQuery] DataProviderReviewParameter parameter)
+        {
+            var reviews = await _dataProviderService.GetAllReview(dataProviderId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(reviews.PagingData));
+            return Ok(reviews);
+        }
+
+        /// <summary>
+        /// Get Review By DataProviderId and UserId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <param name="userId"></param>
+        /// <returns>Review</returns>
+        [HttpGet("{dataProviderId}/review/{userId}", Name = "GetReview")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetReview(string userId, int dataProviderId)
+        {
+            var dataProvider = await _dataProviderService.GetReview(userId, dataProviderId);
+            return Ok(dataProvider);
+        }
+
+        /// <summary>
+        /// Create Review Data Provider
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns></returns>
+        /// <response code="201">Reviewed Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Review Failed</response>
+        [HttpPost("{dataProviderId}/review", Name = "ReviewDataProvider")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ReviewDataProvider(int dataProviderId, [FromBody] DataProviderReviewCreateRequestDTO request)
+        {
+            //DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
+            //var validationResult = validator.Validate(request);
+            //if (!validationResult.IsValid)
+            //{
+            //    var errors = new ErrorDetails();
+            //    foreach (var error in validationResult.Errors)
+            //    {
+            //        errors.Error.Add(error.ErrorMessage);
+            //    }
+            //    return BadRequest(errors);
+            //}
+            var review = await _dataProviderService.ReviewDataProvider(dataProviderId, request);
+            return Ok(review);
         }
     }
 }
