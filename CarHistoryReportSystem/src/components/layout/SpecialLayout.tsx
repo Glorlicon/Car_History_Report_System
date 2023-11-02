@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { NavItem } from '../../utils/Interfaces';
+import TokenRefresher from '../../utils/TokenRefresher';
 import SideNavigator from '../navigator/SideNavigator';
 
 type SpecialLayoutProps = {
@@ -9,6 +10,7 @@ type SpecialLayoutProps = {
 const SpecialLayout: React.FC<SpecialLayoutProps> = ({ children, navItems }) => {
     return (
         <div className="App">
+            <TokenRefresher />
             <SideNavigator items={navItems} />
             <div className="special-page-content">
                 {children}
