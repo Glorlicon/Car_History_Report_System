@@ -13,7 +13,6 @@ function CarSalesDetailPage() {
         id: string
     }
     const { id } = useParams<RouteParams>()
-    console.log(id)
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [addError, setAddError] = useState<string | null>(null);
@@ -29,7 +28,7 @@ function CarSalesDetailPage() {
             setError(carSalesResponse.error)
         } else {
             setCar(carSalesResponse.data)
-            console.log(carSalesResponse.data)
+            console.log(carSalesResponse)
         }
         
         setLoading(false)
@@ -63,7 +62,6 @@ function CarSalesDetailPage() {
             ...newEmail,
             [e.target.name]: value,
         });
-        console.log(newEmail);
     };
 
     useEffect(() => {

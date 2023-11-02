@@ -31,6 +31,7 @@ export async function GetCarForSale(vinId: String): Promise<APIResponse> {
 
 export async function SendContactMail(data: ContactMail): Promise<APIResponse> {
     try {
+        //Bug Dataprovider tai khoan = null
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/contact`, data)
         console.log("Response: ", response.data)
         return { data: response.data }
