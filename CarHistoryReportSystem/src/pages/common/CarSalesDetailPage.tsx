@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { GetCarForSale } from '../../services/api/CarForSale';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
+import { APIResponse, Car } from '../../utils/Interfaces';
 
 function CarSalesDetailPage() {
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const data = useSelector((state: RootState) => state.auth.token);
     console.log(data);
+    type RouteParams = {
+        id: string
+    }
+    const { id } = useParams<RouteParams>()
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [car, setCar] = useState<Car | null>()
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        const carSalesResponse: APIResponse = await GetCarForSale(id as unknown as string)
+        if (carSalesResponse.error) {
+            setError(carSalesResponse.error)
+        } else {
+            setCar(carSalesResponse.data)
+        }
+        setLoading(false)
+    }
 
     return (
         <>
