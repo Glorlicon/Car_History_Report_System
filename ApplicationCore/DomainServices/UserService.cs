@@ -59,10 +59,9 @@ namespace Application.DomainServices
             var user = _mapper.Map<User>(request);
             user.EmailConfirmed = true;
             //password generate move to Helper
-            var password = UserUtility.GenerateRandomPassword(16);
+            var password = UserUtility.GenerateRandomPassword(20);
 
             var result = await _identityServices.RegisterAsync(user, password);
-
             //Gui mail password toi user
             await _emailServices.SendEmailAsync(request.Email, "Welcome to CarReportHistorySystem", "Hello!\n" +
                 "Your account has been created. Please login using the following credentials:\n" +
@@ -119,12 +118,5 @@ namespace Application.DomainServices
         //    await _userRepository.SaveAsync();
         //    return true;
         //}
-
-        public async Task<IEnumerable<string>> GetRoleList()
-        {
-            //List<string> roles = ((Role[])Enum.GetValues(typeof(Role))).Select(c => c.ToString()).ToList();
-            var listRoles = Enum.GetNames(typeof(Role));
-            return  listRoles;
-        }
     }
 }

@@ -5,6 +5,7 @@ using Application.DTO.DataProvider;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using Moq;
 using System;
@@ -23,6 +24,8 @@ namespace UnitTests.Application.Tests
         private Mock<IIdentityServices> mockService;
         private Mock<IEmailServices> mockEmailService;
         private Mock<ICarRepository> mockCarRepository;
+        private Mock<IAuthenticationServices> mockAuthenticationService;
+        private Mock<IReviewRepository> mockReviewRepository;
 
         public DataProviderServicesTests()
         {
@@ -34,6 +37,8 @@ namespace UnitTests.Application.Tests
             mockService = new Mock<IIdentityServices>();
             mockEmailService = new Mock<IEmailServices>();
             mockCarRepository = new Mock<ICarRepository>();
+            mockAuthenticationService = new Mock<IAuthenticationServices>();
+            mockReviewRepository = new Mock<IReviewRepository>();
         }
 
         private List<DataProvider> GetDataProviders()
@@ -48,7 +53,7 @@ namespace UnitTests.Application.Tests
                 Service = "This is test service 1",
                 PhoneNumber = "0981235762",
                 Email = "EmailTest1@gmailtest.com",
-                Type = Domain.Enum.DataProviderType.CarDealer,
+                Type = DataProviderType.CarDealer,
                 ImageLink = "image.jpg",
                 WorkingTimes = new WorkingTime[]
                 {
@@ -109,7 +114,7 @@ namespace UnitTests.Application.Tests
                         IsClosed = false
                     }
                 }
-            }); 
+            });
             dataProviders.Add(new DataProvider
             {
                 Id = 1002,
@@ -119,7 +124,7 @@ namespace UnitTests.Application.Tests
                 Service = "This is test service 2",
                 PhoneNumber = "09825233762",
                 Email = "EmailTest2@gmailtest.com",
-                Type = Domain.Enum.DataProviderType.VehicleRegistry,
+                Type = DataProviderType.VehicleRegistry,
                 ImageLink = "image2.jpg",
                 WorkingTimes = new WorkingTime[]
                 {
@@ -190,7 +195,7 @@ namespace UnitTests.Application.Tests
                 Service = "This is test service 3",
                 PhoneNumber = "09836683762",
                 Email = "EmailTest3@gmailtest.com",
-                Type = Domain.Enum.DataProviderType.ServiceShop,
+                Type = DataProviderType.ServiceShop,
                 ImageLink = "image.jpg",
                 WorkingTimes = new WorkingTime[]
                 {
@@ -251,7 +256,7 @@ namespace UnitTests.Application.Tests
                         IsClosed = false
                     }
                 }
-            });dataProviders.Add(new DataProvider
+            }); dataProviders.Add(new DataProvider
             {
                 Id = 1004,
                 Name = "Data Provider Test 04",
@@ -260,7 +265,7 @@ namespace UnitTests.Application.Tests
                 Service = "This is test service 4",
                 PhoneNumber = "09842363762",
                 Email = "EmailTest4@gmailtest.com",
-                Type = Domain.Enum.DataProviderType.PoliceOffice,
+                Type = DataProviderType.PoliceOffice,
                 ImageLink = "image.jpg",
                 WorkingTimes = new WorkingTime[]
                 {
@@ -331,7 +336,7 @@ namespace UnitTests.Application.Tests
                 Service = "This is test service 5",
                 PhoneNumber = "0952346762",
                 Email = "EmailTest5@gmailtest.com",
-                Type = Domain.Enum.DataProviderType.Manufacturer,
+                Type = DataProviderType.Manufacturer,
                 ImageLink = "image.jpg",
                 WorkingTimes = new WorkingTime[]
                 {
@@ -392,7 +397,7 @@ namespace UnitTests.Application.Tests
                         IsClosed = false
                     }
                 }
-            });         
+            });
             return dataProviders;
         }
 
@@ -406,7 +411,9 @@ namespace UnitTests.Application.Tests
                     .ReturnsAsync(dataProvidersTestData);
             mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
             // Act
             var result = await service.GetAllDataProviders(parameter);
             // Assert
@@ -425,7 +432,9 @@ namespace UnitTests.Application.Tests
                 .ReturnsAsync(dataProvidersTestData.First());
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
             // Act
             var result = await service.GetDataProvider(id);
             // Asserts
@@ -445,7 +454,9 @@ namespace UnitTests.Application.Tests
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Object);
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
             // Act
             Func<Task> act = () => service.GetDataProvider(id);
             // Assert
@@ -456,23 +467,52 @@ namespace UnitTests.Application.Tests
         public async Task UpdateDataProvider_ReturnsNotFoundException()
         {
             // Arrange
-            bool trackChange = false;
+            bool trackChange = true;
             int id = 1001;
             var request = new DataProviderUpdateRequestDTO();
             var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { DataProviderId = 1002, Role = Role.CarDealer });
             mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
-                    .ReturnsAsync(value: null);
-            mockRepo.Setup(repo => repo.SaveAsync());
+                                        .ReturnsAsync(value: null);
 
             //var mockUnitOfWork = new Mock<IUnitOfWork>();
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Object);
             //mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
             // Act
             Func<Task> act = () => service.UpdateDataProvider(id, request);
             // Assert
             await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task UpdateDataProvider_ReturnsUnauthorizedAccessException()
+        {
+            // Arrange
+            bool trackChange = true;
+            int id = 1001;
+            var request = new DataProviderUpdateRequestDTO();
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { DataProviderId = 1002, Role = Role.CarDealer });
+            mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
+                                        .ReturnsAsync(dataProvidersTestData.First());
+
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Object);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync());
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.UpdateDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(act);
         }
 
         [Fact]
@@ -489,7 +529,9 @@ namespace UnitTests.Application.Tests
             //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
             //              .Returns(mockRepo.Obje;ct);
             //mockUnitOfWork.Setup(uow => uow.SaveAsync())
-            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object, mockEmailService.Object, mockCarRepository.Object);
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
             // Act
             Func<Task> act = () => service.DeleteDataProvider(id);
             // Assert

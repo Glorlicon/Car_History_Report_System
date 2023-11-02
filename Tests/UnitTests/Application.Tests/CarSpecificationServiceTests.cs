@@ -13,6 +13,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Exceptions;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -25,6 +26,7 @@ namespace UnitTests.Application.Tests
         private IMapper mapper;
         private List<CarSpecification> carModelsTestData;
         private CarSpecificationParameter parameter;
+        private Mock<IModelMaintainanceRepository> mockIModelMaintainanceRepository;
 
         public CarSpecificationServiceTests()
         {
@@ -33,6 +35,7 @@ namespace UnitTests.Application.Tests
             mapper = new Mapper(configuration);
             carModelsTestData = GetCarModelsList();
             parameter = new CarSpecificationParameter();
+            mockIModelMaintainanceRepository = new Mock<IModelMaintainanceRepository>();
         }
 
 
@@ -71,7 +74,7 @@ namespace UnitTests.Application.Tests
                         OdometerPerMaintainance = 10000,
                         RecommendAction = "Check",
                         TimePerMaintainance = new DateTime(2023, 12, 14)
-                    } 
+                    }
                 }
             });
             carModels.Add(new CarSpecification
@@ -166,7 +169,7 @@ namespace UnitTests.Application.Tests
             mockRepo.Setup(repo => repo.GetAllCarModels(parameter, trackChange))
                     .ReturnsAsync(carModelsTestData);
             mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
             var result = await service.GetAllCarModels(parameter, trackChange);
             // Assert
@@ -183,7 +186,7 @@ namespace UnitTests.Application.Tests
             var mockRepo = new Mock<ICarSpecificationRepository>();
             mockRepo.Setup(repo => repo.GetCarModelById(modelId, trackChange))
                     .ReturnsAsync(carModelsTestData.First());
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
             var result = await service.GetCarModel(modelId, trackChange);
             // Assert
@@ -202,7 +205,7 @@ namespace UnitTests.Application.Tests
 
             mockRepo.Setup(repo => repo.GetCarModelById(modelId, trackChange))
                     .ReturnsAsync(value: null);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
 
             // Act
             Func<Task> act = () => service.GetCarModel(modelId, trackChange);
@@ -221,7 +224,7 @@ namespace UnitTests.Application.Tests
             mockRepo.Setup(repo => repo.GetCarModelByUserId(userId, parameter, trackChange))
                     .ReturnsAsync(GetCarModelsListByUserId(userId));
             mockRepo.Setup(repo => repo.CountByCondition(cs => cs.CreatedByUserId == userId)).ReturnsAsync(2);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
             var result = await service.GetCarModelByUserId(userId, parameter, trackChange);
             // Assert
@@ -240,7 +243,7 @@ namespace UnitTests.Application.Tests
             mockRepo.Setup(repo => repo.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange))
                     .ReturnsAsync(GetCarModelsListByManufacturerId(manufacturerId));
             mockRepo.Setup(repo => repo.CountByCondition(cs => cs.ManufacturerId == manufacturerId)).ReturnsAsync(2);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
             var result = await service.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange);
             // Assert
@@ -259,9 +262,9 @@ namespace UnitTests.Application.Tests
             var mockRepo = new Mock<ICarSpecificationRepository>();
             mockRepo.Setup(repo => repo.GetCarModelById(modelId, trackChange))
                     .ReturnsAsync(value: null);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
-            Func<Task> act = () => service.UpdateCarModel(modelId,request);
+            Func<Task> act = () => service.UpdateCarModel(modelId, request);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
             Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
@@ -276,7 +279,7 @@ namespace UnitTests.Application.Tests
             var mockRepo = new Mock<ICarSpecificationRepository>();
             mockRepo.Setup(repo => repo.GetCarModelById(modelId, trackChange))
                     .ReturnsAsync(value: null);
-            var service = new CarSpecificationServices(mockRepo.Object, mapper);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
             // Act
             Func<Task> act = () => service.DeleteCarModel(modelId);
             //Assert

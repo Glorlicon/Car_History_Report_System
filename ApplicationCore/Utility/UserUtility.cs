@@ -14,8 +14,8 @@ namespace Application.Utility
         public static string GenerateRandomPassword(int length)
         {
             string password = "";
-            const string lower = "abcdefghijklmnopqrstuvwxyz";
-            const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string lower = "abcdefghijkmnopqrstuvwxyz";
+            const string upper = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
             const string number = "1234567890";
             const string special = "!@#$%^&*_-=+";
             // Get cryptographically random sequence of bytes
