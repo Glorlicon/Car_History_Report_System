@@ -4,6 +4,7 @@ using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.DBContext.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231103140921_ChangeModelMaintainancePartSize")]
+    partial class ChangeModelMaintainancePartSize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -621,8 +623,10 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("ServiceTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Services")
-                        .HasColumnType("int");
+                    b.Property<string>("Services")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -1202,57 +1206,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "005ebeff-d999-43e3-bf35-d2b21bd42122",
-                            ConcurrencyStamp = "53628af0-8d71-4361-837f-e492fffed951",
+                            Id = "04cad02a-cf63-4907-81ad-faa048d4d102",
+                            ConcurrencyStamp = "cba550e6-102e-4f15-9bb7-3b758ba5bcf7",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "e8add7ed-5e9c-48cc-bff7-9fe662a05e9d",
-                            ConcurrencyStamp = "b57fa0a9-73b4-4db7-92b8-fb7c76f26a66",
+                            Id = "96d38e42-fd34-42e1-9d7d-5784fe8c91d8",
+                            ConcurrencyStamp = "9055ba6c-f9c8-48b8-a159-c5cd0a6dc270",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9a606d26-4d4f-4ea5-9580-ce8c019eb7b1",
-                            ConcurrencyStamp = "6ad41f64-a058-499b-ac4b-95e63c0c79d2",
+                            Id = "84ac956b-c0d3-470f-9122-542ea6ca25f5",
+                            ConcurrencyStamp = "c1ccff4e-a490-4a7c-91b4-283fc72a615b",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "13c87c57-785c-4fa7-857f-820f67e3b83f",
-                            ConcurrencyStamp = "b4fac866-99c9-4a2b-8864-edac218ce220",
+                            Id = "cd564395-68ae-49b4-a2e7-4bd4d1144e3c",
+                            ConcurrencyStamp = "35993a8b-bdf8-4501-9f50-dca25b09df6d",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "0706e9d8-8643-4ee0-9876-22ea1010ea3f",
-                            ConcurrencyStamp = "5baf6d37-2a2b-41a1-8608-4685ea146e16",
+                            Id = "93d6c213-4d77-405c-8dc4-58414a1981a7",
+                            ConcurrencyStamp = "e5887116-b98d-4a45-ac06-7805f5385bd0",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "81918f67-2b07-46ce-8866-7698a61674f3",
-                            ConcurrencyStamp = "2893f680-0240-4203-a47d-5506ef3efb0d",
+                            Id = "78372399-f257-4bff-ac9c-125db0d2617c",
+                            ConcurrencyStamp = "d3d62559-26c4-43f6-b3d3-d648a5961521",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "9a8d9aa5-17cb-481d-8cb1-0dc573997811",
-                            ConcurrencyStamp = "24127fc5-48da-4d77-999b-fd3c47d5ca5e",
+                            Id = "b30efb96-b35b-486f-bf01-0580b579c892",
+                            ConcurrencyStamp = "ad90f165-349f-4d4c-bff3-56df39ffcfab",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "d1390089-00d5-40ca-8fb0-ab64753d57b6",
-                            ConcurrencyStamp = "39005275-d5a2-4f36-a053-b873f00d4c15",
+                            Id = "d023e6f8-0856-42b5-b698-450cba704ef7",
+                            ConcurrencyStamp = "70e2a19c-288a-4def-af1c-07e449fc0035",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });

@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.DTO.CarServiceHistory;
+using Application.Interfaces;
+using Domain.Entities;
 using Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,8 @@ namespace Infrastructure.Repository
         private IOrderRepository _orderRepository;
         private IOrderOptionRepository _orderOptionRepository;
         private ICarReportRepository _carReportRepository;
+        private IModelMaintainanceRepository _modelMaintainanceRepository;
+        private ICarServiceHistoryRepository _carServiceHistoryRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -39,7 +43,9 @@ namespace Infrastructure.Repository
             ICarRecallStatusRepository carRecallStatusRepository,
             IOrderRepository orderRepository,
             IOrderOptionRepository orderOptionRepository,
-            ICarReportRepository carReportRepository)
+            ICarReportRepository carReportRepository,
+            ICarServiceHistoryRepository carServiceHistoryRepository,
+            IModelMaintainanceRepository modelMaintainanceRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -55,6 +61,8 @@ namespace Infrastructure.Repository
             _orderRepository = orderRepository;
             _orderOptionRepository = orderOptionRepository;
             _carReportRepository = carReportRepository;
+            _carServiceHistoryRepository = carServiceHistoryRepository;
+            _modelMaintainanceRepository = modelMaintainanceRepository;
         }
 
         public ICarRepository CarRepository
@@ -120,6 +128,16 @@ namespace Infrastructure.Repository
         public ICarReportRepository CarReportRepository
         {
             get { return _carReportRepository; }
+        }
+
+        public IModelMaintainanceRepository ModelMaintainanceRepository
+        {
+            get { return _modelMaintainanceRepository;}
+        }
+
+        public ICarServiceHistoryRepository CarServiceHistoryRepository
+        {
+            get { return _carServiceHistoryRepository; }
         }
 
         public async Task SaveAsync()

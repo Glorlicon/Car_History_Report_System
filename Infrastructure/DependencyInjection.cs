@@ -83,6 +83,7 @@ namespace Infrastructure
         public static void ConfigureCarHistoryRepository(this IServiceCollection services)
         {
             services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
+            services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
