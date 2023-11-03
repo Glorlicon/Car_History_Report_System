@@ -13,6 +13,8 @@ namespace Application.Interfaces
     public interface ICarRepository : IBaseRepository<Car>
     {
         Task<Car> GetCarById(string vinId, bool trackChange);
+        Task<Car> GetCarWithHistoriesById(string vinId, bool trackChange);
+        Task<Car> GetCarReportDataById(string vinId, bool trackChange);
 
         Task<IEnumerable<Car>> GetAllCar(CarParameter parameter, bool trackChange);
 

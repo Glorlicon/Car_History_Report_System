@@ -8,6 +8,8 @@ namespace Application.DTO.ModelMaintainance
 {
     public class ModelMaintainanceResponseDTO
     {
+        public string ModelId {  get; set; }
+
         public string MaintenancePart { get; set; }
 
         public int? OdometerPerMaintainance { get; set; }

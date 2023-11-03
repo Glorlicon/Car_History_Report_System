@@ -30,6 +30,7 @@ namespace Application
             services.AddScoped<ICarRecallServices, CarRecallServices>();
             services.ConfigureCarHistoryService();
             services.AddScoped<IOrderServices, OrderServices>();
+            services.AddScoped<ICarReportServices, CarReportServices>();
             return services;
         }
 

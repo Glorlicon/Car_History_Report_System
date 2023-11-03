@@ -25,13 +25,17 @@ namespace Application.DomainServices
         private readonly IMapper _mapper;
         private readonly IEmailServices _emailServices;
         private readonly ICarRepository _carRepository;
-        public DataProviderService(IDataProviderRepository dataProviderRepository, IMapper mapper, IIdentityServices identityServices, IEmailServices emailServices, ICarRepository carRepository)
+        private readonly IAuthenticationServices _authenticationServices;
+        private readonly IReviewRepository _reviewRepository;
+        public DataProviderService(IDataProviderRepository dataProviderRepository, IMapper mapper, IIdentityServices identityServices, IEmailServices emailServices, ICarRepository carRepository, IAuthenticationServices authenticationServices, IReviewRepository reviewRepository)
         {
             _dataProviderRepository = dataProviderRepository;
             _mapper = mapper;
             _identityServices = identityServices;
             _emailServices = emailServices;
-            _carRepository = carRepository;          
+            _carRepository = carRepository;
+            _authenticationServices = authenticationServices;
+            _reviewRepository = reviewRepository;
         }
 
         public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter)
@@ -65,7 +69,7 @@ namespace Application.DomainServices
             }
             var dataProviderResponse = _mapper.Map<DataProviderDetailsResponseDTO>(dataProvider);
             return dataProviderResponse;
-        }        
+        }
 
         public async Task<DataProviderDetailsResponseDTO> GetDataProviderByUserId(string userId)
         {
@@ -79,7 +83,8 @@ namespace Application.DomainServices
                 throw new DataProviderNotFoundException(user.DataProviderId);
             }
             return await GetDataProvider(user.DataProviderId.Value);
-        }         
+        }
+
         public async Task<DataProviderDetailsResponseDTO> CreateDataProvider(DataProviderCreateRequestDTO request)
         {
             var dataProvider = _mapper.Map<DataProvider>(request);
@@ -103,10 +108,24 @@ namespace Application.DomainServices
 
         public async Task<bool> UpdateDataProvider(int dataProviderId, DataProviderUpdateRequestDTO request)
         {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            if (user.DataProviderId is null)
+            {
+                throw new UnauthorizedAccessException();
+            }
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, true);
+
             if (dataProvider is null)
             {
                 throw new DataProviderNotFoundException(dataProviderId);
+            }
+            if(dataProvider.Id != user.DataProviderId && user.Role != Role.Adminstrator)
+            {
+                throw new UnauthorizedAccessException();
             }
             _mapper.Map(request, dataProvider);
             await _dataProviderRepository.SaveAsync();
@@ -136,6 +155,49 @@ namespace Application.DomainServices
                "ZipCode: " + request.ZipCode + "\n" +
                "PhoneNumber: " + request.PhoneNumber + "\n");
             return true;
+        }
+        public async Task<bool> ReviewDataProvider(int dataProviderId, DataProviderReviewCreateRequestDTO request)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, trackChange: false);
+            if (dataProvider is null)
+            {
+                throw new DataProviderNotFoundException(dataProviderId);
+            }
+            var oldReview = await _reviewRepository.GetReview(user.Id, dataProviderId, trackChange: false);
+            if (oldReview is not null)
+            {
+                throw new OldReviewExistException(user.Id, dataProviderId);
+            }
+            var review = _mapper.Map<Review>(request);
+            review.DataProviderId = dataProviderId;
+            review.UserId = user.Id;
+            _reviewRepository.Create(review);
+            await _dataProviderRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<PagedList<DataProviderReviewsResponseDTO>> GetAllReview(int dataProviderId, DataProviderReviewParameter parameter)
+        {
+            var reviews = await _reviewRepository.GetAllReview(dataProviderId, parameter, trackChange: false);
+            var reviewsResponse = _mapper.Map<List<DataProviderReviewsResponseDTO>>(reviews);
+            var count = await _reviewRepository.CountAll();
+            return new PagedList<DataProviderReviewsResponseDTO>(reviewsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<DataProviderReviewsResponseDTO> GetReview(string userId, int dataProviderId)
+        {
+            var review = await _reviewRepository.GetReview(userId, dataProviderId, trackChange: false);
+            if (review is null)
+            {
+                throw new ReviewNotFoundException(userId, dataProviderId);
+            }
+            var reviewsResponse = _mapper.Map<DataProviderReviewsResponseDTO>(review);
+            return reviewsResponse;
         }
     }
 }

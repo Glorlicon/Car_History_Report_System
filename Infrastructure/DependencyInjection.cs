@@ -51,11 +51,14 @@ namespace Infrastructure
             services.AddScoped<ICarMaintainanceRepository, CarMaintainanceRepository>();
             services.AddScoped<ICarRecallRepository, CarRecallRepository>();
             services.AddScoped<ICarRecallStatusRepository, CarRecallStatusRepository>();
+            services.AddScoped<IModelMaintainanceRepository, ModelMaintainanceRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
             services.ConfigureCarHistoryRepository();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderOptionRepository, OrderOptionRepository>();
             services.AddScoped<ICsvServices, CsvServices>();
             services.AddScoped<IPaymentServices, VnpayPaymentServices>();
+            services.AddScoped<ICarReportRepository, CarReportRepository>();
             return services;
         }
 
