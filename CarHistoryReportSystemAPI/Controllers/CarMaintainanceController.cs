@@ -37,6 +37,21 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get Car Model Maintanance
+        /// </summary>
+        /// <param name="carId"></param>
+        /// <returns></returns>
+        /// <response code="404">Car not found</response>
+        [HttpGet("{carId}")]
+        [ProducesResponseType(typeof(IEnumerable<CarModelMaintainanceResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCarModelMaintainance(string carId)
+        {
+            var carModelMaintainance = await _carMaintainanceServices.GetCarModelMaintainanceCarId(carId);
+            return Ok(carModelMaintainance);
+        }
+
+        /// <summary>
         /// Add Car To Maintainance TrackingList
         /// </summary>
         /// <param name="request"></param>

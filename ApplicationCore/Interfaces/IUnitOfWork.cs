@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Application.DTO.CarServiceHistory;
+using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +32,8 @@ namespace Application.Interfaces
         IOrderOptionRepository OrderOptionRepository { get; }
 
         ICarReportRepository CarReportRepository { get; }
+        IModelMaintainanceRepository ModelMaintainanceRepository { get; }
+        ICarServiceHistoryRepository CarServiceHistoryRepository { get; }
 
         Task SaveAsync();
     }
