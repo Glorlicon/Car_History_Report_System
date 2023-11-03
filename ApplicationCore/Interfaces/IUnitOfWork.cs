@@ -29,6 +29,8 @@ namespace Application.Interfaces
 
         IOrderOptionRepository OrderOptionRepository { get; }
 
+        ICarReportRepository CarReportRepository { get; }
+
         Task SaveAsync();
     }
 }

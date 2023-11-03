@@ -1,7 +1,9 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -165,6 +167,35 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var result = await _carSpecService.DeleteCarModel(modelId);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get All Model Maintainance
+        /// </summary>
+        /// <returns>Model Maintainance List</returns>
+        [HttpGet("model-maintainances", Name = "GetModelMaintainances")]
+        [ProducesResponseType(typeof(List<ModelMaintainanceResponseDTO>), StatusCodes.Status200OK)]
+        [Authorize(Roles = "Adminstrator")]
+        public async Task<IActionResult> GetModelMaintainances([FromQuery] ModelMaintainanceParameter parameter)
+        {
+            var carModels = await _carSpecService.GetModelMaintainances(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
+        }
+
+        /// <summary>
+        /// Get All Model Maintainance of modelid
+        /// </summary>
+        /// <param name="modelId"></param>
+        /// <returns>Model Maintainance List</returns>
+        [HttpGet("model-maintainances/{modelId}", Name = "GetModelMaintainancesByModelId")]
+        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(List<ModelMaintainanceResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetModelMaintainancesByModelId(string modelId, [FromQuery] ModelMaintainanceParameter parameter)
+        {
+            var carModels = await _carSpecService.GetModelMaintainancesByModelId(modelId, parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
         }
 
         /// <summary>

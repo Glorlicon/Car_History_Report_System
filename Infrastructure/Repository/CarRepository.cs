@@ -1,5 +1,6 @@
 ﻿using Application.DTO.Car;
 using Application.Interfaces;
+using Application.Utility;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Infrastructure.Repository.Extension;
@@ -58,9 +59,34 @@ namespace Infrastructure.Repository
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo)
                             .Include(c => c.CarImages)
-                            .Include(c => c.CarParts)
                             .SingleOrDefaultAsync();
             return car;
+        }
+
+        public async Task<Car> GetCarWithHistoriesById(string vinId, bool trackChange)
+        {
+            var car = await FindByCondition(c => c.VinId == vinId, trackChange)
+                            .Include(c => c.CarInsurances)
+                            .Include(c => c.CarAccidentHistories)
+                            .Include(c => c.CarInspectionHistories)
+                            .Include(c => c.CarOwnerHistories)
+                            .Include(c => c.CarServiceHistories)
+                            .Include(c => c.CarStolenHistories)
+                            .SingleOrDefaultAsync();
+            return car;
+        }
+
+        public async Task<int> GetMaxOdometerValueByCarId(string vinId, bool trackChange)
+        {
+            var car = await FindByCondition(c => c.VinId == vinId, trackChange)
+                            .Include(c => c.CarInsurances)
+                            .Include(c => c.CarAccidentHistories)
+                            .Include(c => c.CarInspectionHistories)
+                            .Include(c => c.CarOwnerHistories)
+                            .Include(c => c.CarServiceHistories)
+                            .Include(c => c.CarStolenHistories)
+                            .SingleOrDefaultAsync();
+            return CarUtility.GetMaxCarOdometer(car);
         }
 
         public async Task<IEnumerable<Car>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter, bool trackChange)
@@ -142,6 +168,22 @@ namespace Infrastructure.Repository
             return await FindByCondition(c => c.ModelId == modelId, trackChange)
                             .Select(x => x.VinId)
                             .ToListAsync();
+        }
+
+        public async Task<Car> GetCarReportDataById(string vinId, bool trackChange)
+        {
+            var car = await FindByCondition(c => c.VinId == vinId, trackChange)
+                            .Include(c => c.Model)
+                            .ThenInclude(c => c.Manufacturer)
+                            .Include(c => c.CarInsurances).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarAccidentHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarInspectionHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarOwnerHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarRecallStatuses).ThenInclude(x => x.CarRecall)
+                            .Include(c => c.CarServiceHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarStolenHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .SingleOrDefaultAsync();
+            return car;
         }
     }
 }
