@@ -135,30 +135,17 @@ function CarSalesDetailPage() {
                                         </div>
                                     </div>
                                 </div>
+                                
                                 <div className="top-features">
                                     <p className="top-features-header">Top Features</p>
                                     <div className="tags-container">
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
-                                        <div className="tag">
-                                            <p>Ambient Lighting</p>
-                                        </div>
+                                    {car?.carSalesInfo?.features.map((model: any, index: number) => (
+                                        
+                                            <div className="tag">
+                                                <p>{car.carSalesInfo?.features.at(index)}</p>
+                                            </div>
+                                    ))
+                                        }
                                     </div>
                                     {/*Implement Later*/}
                                     <div className="toggle_btn" onClick={() => setIsExpanded(!isExpanded)}>
