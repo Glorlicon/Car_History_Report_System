@@ -36,23 +36,26 @@
     color: #666;
 }
 
-.rating-favoured{
-    display:flex;
-    flex-direction:row;
-}
+    .favorites{
+        padding-left: 200px;
+    }
+
+    .rating-favoured {
+        display: flex;
+        flex-direction: row;
+    }
 
 .stars{
     display:flex;
     flex-direction: row;
-    padding-right: 200px;
 }
 
-    .stars p {
-        line-height: 14px;
-        margin-top: 4px;
-        vertical-align: middle;
-        padding-right: 10px;
-    }
+.rating-favoured p {
+    line-height: 14px;
+    margin-top: 4px;
+    vertical-align: middle;
+    padding-right: 10px;
+}
 
 .phone-info {
     display: flex;
@@ -332,25 +335,27 @@ span {
     text-align: left;
 }
 
-.stars {
-    position: relative;
-    white-space: nowrap;
-}
 
     .stars svg {
         width: 30px;
     }
 
-.overlay {
-    background: #fff;
-    height: 100%;
-    overflow: hidden;
-    mix-blend-mode: color;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
 
 svg {
     fill: gold;
+}
+
+.stars {
+    position: relative; /* Add this line */
+    display: flex;
+    flex-direction: row;
+}
+
+.overlay {
+    position: absolute; /* Absolutely position the overlay */
+    top: 0;
+    right: 0;
+    height: 100%; 
+    background-color: rgba(255, 255, 255, 0.5); 
+    z-index: 1;
 }

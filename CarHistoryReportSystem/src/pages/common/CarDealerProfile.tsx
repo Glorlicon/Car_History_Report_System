@@ -1,10 +1,20 @@
-﻿import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 
 function CarDealerProfile() {
     const data = useSelector((state: RootState) => state.auth.token)
+
+    const [overlayWidth, setOverlayWidth] = useState<string>('100%');
+
+    const value = 50;
+    const max = 100; 
+
+    useEffect(() => {
+        const percentage = Math.round((value / max) * 100);
+        setOverlayWidth(`${100 - percentage}%`);
+    }, [value, max]);
     return (
         <div className="car-dealer-profile">
 
@@ -19,8 +29,9 @@ function CarDealerProfile() {
                     <div className="dealer-info">
                         <h1>Name</h1>
                         <div className="rating-favoured">
+                            <p> num</p>
                             <div className="stars">
-                                <p> num</p>
+                                
                                 <svg width="20" height="20" viewBox="0 0 940.688 940.688">
                                     <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
                                 </svg>
@@ -36,7 +47,7 @@ function CarDealerProfile() {
                                 <svg width="20" height="20" viewBox="0 0 940.688 940.688">
                                     <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
                                 </svg>
-                                <div className="overlay"></div>
+                                <div className="overlay" style={{ width: overlayWidth }}></div>
                             </div>
                             <span className="favorites">
                                 favNum Favourited This Shop
