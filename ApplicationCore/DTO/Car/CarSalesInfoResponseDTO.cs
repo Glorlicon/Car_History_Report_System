@@ -14,5 +14,8 @@ namespace Application.DTO.Car
         public List<string> Features { get; set; }
 
         public decimal Price { get; set; }
+
+        public int? CarDealerId { get; set; }
+        public string? CarDealerName { get; set; }
     }
 }

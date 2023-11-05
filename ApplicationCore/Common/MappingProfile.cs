@@ -66,7 +66,9 @@ namespace Application.Common
                 .ForMember(c => c.ColorName, opt => opt.MapFrom(x => x.Color.ToString()));
             CreateMap<CarSalesInfoCreateRequestDTO, CarSalesInfo>();
             CreateMap<CarSalesInfoUpdateRequestDTO, CarSalesInfo>();
-            CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>();
+            CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>()
+                .ForMember(csi => csi.CarDealerId, opt => opt.MapFrom(x => x.CreatedByUser.DataProviderId))
+                .ForMember(csi => csi.CarDealerName, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider == null ? null : x.CreatedByUser.DataProvider.Name));
             CreateMap<CarImages, CarImagesResponseDTO>();
             CreateMap<CarImagesCreateDTO, CarImages>();
 
