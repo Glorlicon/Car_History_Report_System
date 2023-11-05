@@ -15,7 +15,7 @@ namespace Infrastructure.Configurations
         {
             builder.HasKey(x => new { x.ModelId, x.MaintenancePart });
             builder.Property(x => x.MaintenancePart)
-                .HasMaxLength(50);
+                .HasMaxLength(255);
         }
     }
 }

@@ -20,9 +20,6 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(500)
                 .IsRequired();
             builder.Property(x => x.Services)
-                .HasConversion(
-                    f => f.ToString(),
-                    f => (CarServiceType)Enum.Parse(typeof(CarServiceType), f))
                 .IsRequired();
         }
     }

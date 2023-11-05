@@ -16,5 +16,7 @@ namespace Application.Interfaces
         Task AddCarToTrackingList(AddCarToTrackingListRequestDTO request);
 
         Task RemoveCarFromTrackingList(string carId, string userId);
+
+        Task<IEnumerable<CarModelMaintainanceResponseDTO>> GetCarModelMaintainanceCarId(string carId);
     }
 }
