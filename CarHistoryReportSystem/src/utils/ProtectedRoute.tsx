@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Route } from 'react-router-dom';
 import { RootState } from '../store/State';
@@ -12,9 +12,14 @@ const ProtectedRoute: React.FC<AuthorizationProps> = ({
     children,
     roles
 }) => {
+    let authorized = false
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const decodedToken = JWTDecoder(token)
-    const authorized = roles.includes(decodedToken.roles)
+    if (token) {
+        const decodedToken = JWTDecoder(token)
+        authorized = roles.includes(decodedToken.roles)
+    } else {
+        authorized = false
+    }   
   return (
       <>
           {authorized ? (
