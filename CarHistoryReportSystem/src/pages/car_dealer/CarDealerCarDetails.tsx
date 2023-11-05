@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { GetCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
+import { ListCarForSale } from '../../services/api/CarForSale';
 import { APIResponse, Car, CarImages } from '../../utils/Interfaces';
 import '../../styles/CarDealerCarDetails.css'
 import { GetImages } from '../../services/azure/Images';

@@ -12,8 +12,10 @@ import CarDealerCarList from '../pages/car_dealer/CarDealerCarList';
 import CarDealerHomePage from '../pages/car_dealer/CarDealerHomePage';
 import CarDealerShopDetailsPage from '../pages/car_dealer/CarDealerShopDetailsPage';
 import CarSalesPage from '../pages/common/CarSalesPage';
+import CarSalesDetailPage from '../pages/common/CarSalesDetailPage';
 import HomePage from '../pages/common/HomePage';
 import LoginPage from '../pages/common/LoginPage';
+import CarDealerProfile from '../pages/common/CarDealerProfile';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
 import ManufacturerCarList from '../pages/manufacturer/car/ManufacturerCarList';
@@ -56,9 +58,12 @@ const CustomRoutes = () => {
                 <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
                 <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReport /> </UserLayout>} />
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
+                <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
+                <Route path="/dealer/:id" element={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/maintenance" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><CarMaintenance /></UserLayout>}></ProtectedRoute>} />
+                
                 {/*Admin*/}
                 <Route path="/admin" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>}></ProtectedRoute>} />
