@@ -167,6 +167,25 @@ export interface AdminRequest {
     createdByUserId?: string
     modifiedByUserId?: string
 }
+export interface ReportPackage {
+    title: string
+    price: number
+    pricePerReport: number
+    type: "STANDARD" | "GOOD DEAL" | "BEST DEAL"
+}
+
+export interface Order {
+    id?: number
+    userId?: string
+    orderOptionId: number
+    transactionId:  string
+}
+export interface AddReport {
+    userId: string
+    carId: string
+}
+
+export interface CarReport {
 
 export interface ContactMail {
     firstName: string
@@ -198,6 +217,7 @@ export interface workingTimes {
     startTime: string
     endTime: string
     isClosed: boolean
+}
 }
 
 export interface Reviews {

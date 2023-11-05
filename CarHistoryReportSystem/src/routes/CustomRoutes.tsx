@@ -37,6 +37,10 @@ import AdminRequestPage from '../pages/admin/request/AdminRequestList'
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
+import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
+import PaymentPage from '../pages/common/PaymentPage';
+import PaymentReturnPage from '../pages/common/PaymentReturnPage';
+import CarReport from '../pages/common/CarReport';
 
 const CustomRoutes = () => {
     return (
@@ -50,6 +54,10 @@ const CustomRoutes = () => {
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
+                <Route path="/report" element={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>} />
+                <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
+                <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReport /> </UserLayout>} />
+                <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
                 <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
                 <Route path="/dealer/:id" element={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>} />
                 {/*User*/}
@@ -63,9 +71,6 @@ const CustomRoutes = () => {
                 <Route path="/admin/car-models" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarModelList /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/cars" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarList /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminRequestPage /></SpecialLayout>}></ProtectedRoute>} />
-                {/*<ProtectedRoute roles={['Admin']} path="/admin/users" element={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>} />*/}
-                {/*<ProtectedRoute roles={['Admin']} path="/admin/manufacturers" element={<SpecialLayout navItems={AdminNavigation}><AdminManufacturerList /></SpecialLayout>} />*/}
-                {/*<ProtectedRoute roles={['Admin']} path="/admin/car-models" element={<SpecialLayout navItems={AdminNavigation}><AdminCarModelList /></SpecialLayout>} />*/}
 
                 {/*Service Shop*/}
                 <Route path="/service" element={<ServiceShopHomePage />} />

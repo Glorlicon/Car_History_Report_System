@@ -1,0 +1,91 @@
+.report-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    padding-top: 5%;
+}
+
+.report-container h2 {
+    font-size: 30px;
+    margin-bottom: 16px;
+}
+
+.report-search-section {
+    margin-bottom: 20px;
+}
+
+.report-search-section label {
+    display: flex;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    margin-left: 5%;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.report-search-section input {
+    width: 60%;
+    padding: 8px;
+    margin-right: 8px;
+}
+
+.report-search-section button {
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+}
+.report-search-section button:hover {
+    background-color: #239126;
+    text-decoration: underline;
+}
+.report-search-section button[disabled] {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.report-links-section p {
+    margin: 8px 0;
+}
+
+.report-links-section a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+    .report-links-section a:hover {
+        text-decoration: underline;
+    }
+.report-search-error {
+    display: flex;
+    color: red;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    margin-left: 5%;
+    font-size: 10px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.report-loading-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
