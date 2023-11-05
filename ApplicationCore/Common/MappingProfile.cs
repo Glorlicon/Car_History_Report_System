@@ -35,9 +35,9 @@ namespace Application.Common
 
             CreateMap<User, UserResponseDTO>()
             .ForMember(urr => urr.IsSuspended, opt => opt.MapFrom(src => src.LockoutEnabled));
-            CreateMap<User, CreateUserRequestDTO>();
             CreateMap<CreateUserRequestDTO, User>();
             CreateMap<UpdateUserRequestDTO, User>();
+            CreateMap<UpdateUserOwnProfileRequestDTO, User>();
 
             CreateMap<DataProvider, DataProviderDetailsResponseDTO>()
                 .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));

@@ -72,7 +72,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Return user list</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
-        //[Authorize(Roles = "Adminstrator")]
+        [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> ListAccountAsync([FromQuery] UserParameter parameter)
         {
             var users = await _userService.GetAllUsers(parameter, trackChange: false);
@@ -108,6 +108,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> UpdateUserAsync(string id, UpdateUserRequestDTO request)
         {
             var result = await _userService.UpdateUser(id, request);
+            if (result == true)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// User Update Own Profile
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <response code="204">Updated Successfully</response>
+        /// <response code="400">Updated failed</response>
+        /// <response code="404">User not found</response>
+        [HttpPut]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateUserProfileAsync(UpdateUserOwnProfileRequestDTO request)
+        {
+            var result = await _userService.UpdateUserOwnProfile(request);
             if (result == true)
             {
                 return Ok(result);
