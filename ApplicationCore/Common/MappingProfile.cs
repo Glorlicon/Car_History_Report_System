@@ -67,8 +67,7 @@ namespace Application.Common
             CreateMap<CarSalesInfoCreateRequestDTO, CarSalesInfo>();
             CreateMap<CarSalesInfoUpdateRequestDTO, CarSalesInfo>();
             CreateMap<CarSalesInfo, CarSalesInfoResponseDTO>()
-                .ForMember(csi => csi.CarDealerId, opt => opt.MapFrom(x => x.CreatedByUser.DataProviderId))
-                .ForMember(csi => csi.CarDealerName, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider == null ? null : x.CreatedByUser.DataProvider.Name));
+                .ForMember(csi => csi.DataProvider, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider));
             CreateMap<CarImages, CarImagesResponseDTO>();
             CreateMap<CarImagesCreateDTO, CarImages>();
 
