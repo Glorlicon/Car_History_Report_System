@@ -1,8 +1,10 @@
 ﻿using Application.DTO.Car;
 using Application.DTO.CarMaintainance;
+using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -51,6 +53,34 @@ namespace Application.DomainServices
             }
             _unitOfWork.CarMaintainanceRepository.Delete(carMaintainance);
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<IEnumerable<CarModelMaintainanceResponseDTO>> GetCarModelMaintainanceCarId(string carId)
+        {
+            var car = await _unitOfWork.CarRepository.GetCarById(carId, false);
+            if(car is null)
+            {
+                throw new CarNotFoundException(carId);
+            }
+            var modelMaintainances = await _unitOfWork.ModelMaintainanceRepository.GetModelMaintainancesByModelId(car.ModelId, new ModelMaintainanceParameter(), trackChange: false);
+            var carModelMaintainances = new List<CarModelMaintainanceResponseDTO>();
+
+            foreach (var modelMaintainance in modelMaintainances)
+            {
+                var result = Enum.TryParse(modelMaintainance.MaintenancePart, true, out CarServiceType service);
+                if (!result)
+                    continue;
+                var lastOdometer = await _unitOfWork.CarServiceHistoryRepository.GetLastCarOdometerByService(carId, service);
+                var lastTimeServiced = await _unitOfWork.CarServiceHistoryRepository.GetLastDateServicedByService(carId, service);
+                var carModelMaintainance = new CarModelMaintainanceResponseDTO
+                {
+                    ModelMaintainance = _mapper.Map<ModelMaintainanceResponseDTO>(modelMaintainance),
+                    LastOdometer = lastOdometer,
+                    LastServicedDate = lastTimeServiced
+                };
+                carModelMaintainances.Add(carModelMaintainance);
+            }
+            return carModelMaintainances;
         }
     }
 }
