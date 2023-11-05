@@ -187,6 +187,8 @@ export interface AddReport {
 
 export interface CarReport {
 
+}
+
 export interface ContactMail {
     firstName: string
     lastName: string
@@ -217,7 +219,6 @@ export interface workingTimes {
     startTime: string
     endTime: string
     isClosed: boolean
-}
 }
 
 export interface Reviews {
