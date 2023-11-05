@@ -129,6 +129,7 @@ export interface CarImages {
     id?: number
     carId?: string
     imageLink: string
+
 }
 export interface Car {
     vinId: string
@@ -174,4 +175,34 @@ export interface ContactMail {
     phoneNumber: string
     email: string
     vinId: string
+}
+
+export interface dealerdataprovider {
+    id: number;
+    name: string
+    description: string
+    address: string
+    websiteLink: string
+    service: string
+    phoneNumber: string
+    email: string
+    type: number
+    typeName: string
+    imagelink: string
+    workingTimes: workingTimes[]
+    Reviews: Reviews[]
+}
+
+export interface workingTimes {
+    dayOfWeek: number
+    startTime: string
+    endTime: string
+    isClosed: boolean
+}
+
+export interface Reviews {
+    userId: string
+    description: string
+    rating: number
+    createdTime: Date
 }

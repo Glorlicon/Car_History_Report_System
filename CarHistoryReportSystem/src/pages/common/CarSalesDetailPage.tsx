@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { GetCarForSale, SendContactMail } from '../../services/api/CarForSale';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
-import { APIResponse, Car, ContactMail, UsersRequest } from '../../utils/Interfaces';
+import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string

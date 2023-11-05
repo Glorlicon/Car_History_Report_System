@@ -124,7 +124,6 @@ function AdminCarList() {
   return (
       <div className="ad-car-list-page">
           <div className="ad-car-top-bar">
-              <button className="add-ad-car-btn" onClick={() => setShowModal(true)}>+ Add Car</button>
               <div className="ad-car-search-filter-container">
                   <input
                       type="text"
