@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { CreateCarForSale, EditCarForSale, ListCarDealerCarForSale, SaleCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
-import { APIResponse, Car, CarSaleDetails, CarSalesInfo } from '../../utils/Interfaces';
+import { APIResponse, Car, CarImages, CarSaleDetails, CarSalesInfo } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidNumber, isValidVIN } from '../../utils/Validators';
 import '../../styles/CarDealerCars.css'
 import { useNavigate } from 'react-router-dom';
+import CarForSaleDetailsPage from '../../components/forms/cardealer/CarForSaleDetailsPage';
+import CarForSaleImagesPage from '../../components/forms/cardealer/CarForSaleImagesPage';
+import { UploadMultipleImages } from '../../services/azure/Images';
 
 function CarDealerCarList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -15,6 +18,7 @@ function CarDealerCarList() {
     const [error, setError] = useState<string | null>(null);
     const [carList, setCarList] = useState<Car[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [modalPage, setModalPage] = useState(1);
     const basicCarSale = {
         carId: '',
         description: '',
@@ -22,9 +26,10 @@ function CarDealerCarList() {
         price: 0,
         carImages: [] as any
     }
+    const [newImages, setNewImages] = useState<File[]>([])
+    const [removedImages, setRemovedImages] = useState<string[]>([])
     const [newCarSales, setNewCarSales] = useState<CarSalesInfo>(basicCarSale);
     const [feature, setFeature] = useState<string>('');
-    const [images, setImages] = useState<File>();
     const [searchQuery, setSearchQuery] = useState('');
     const [editCarSales, setEditCarSales] = useState<CarSalesInfo|null>(null)
     const [adding, setAdding] = useState(false);
@@ -70,25 +75,22 @@ function CarDealerCarList() {
             features: newFeatures,
         });
     };
-    //TODO: add images later
-    const handleAddImage = () => {
-
-    }
-
-    const handleRemoveImage = (index: number) => {
-
-    }
 
     const handleAddCarSales = async () => {
         if (validateCarSales(newCarSales)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await CreateCarForSale(newCarSales, token);
+            const addImages = await UploadMultipleImages([], newImages)
+            const response: APIResponse = await CreateCarForSale({
+                ...newCarSales,
+                carImages: addImages.data
+            }, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
+                setModalPage(1)
                 fetchData();
             }
         }
@@ -98,16 +100,43 @@ function CarDealerCarList() {
         if (editCarSales != null && validateCarSales(editCarSales)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await EditCarForSale(editCarSales, token);
+            console.log("11", removedImages)
+            console.log("22", newImages)
+            const addImages = await UploadMultipleImages(removedImages, newImages)
+            const response: APIResponse = await EditCarForSale({
+                ...editCarSales,
+                carImages: [
+                    ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
+                    ... addImages.data
+                ]
+            }, token);
+            console.log("1", editCarSales.carImages)
+            console.log("2",addImages.data)
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
             } else {
                 setEditCarSales(null)
+                setModalPage(1)
                 fetchData();
             }
         }
     }
+
+    const handleNextPage = () => {
+        if (modalPage < 2) {
+            setModalPage(prevPage => prevPage + 1);
+        } else {
+            if (editCarSales) handleEditCarSales();
+            else handleAddCarSales();
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (modalPage > 1) {
+            setModalPage(prevPage => prevPage - 1);
+        }
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -153,6 +182,66 @@ function CarDealerCarList() {
         }
     }
 
+    const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const addedImages: CarImages[] = []
+        const imageFiles: File[] = []
+        if (event.target.files) {
+            for (var i = 0; i < event.target.files.length; i++) {
+                addedImages.push({
+                    id: -1,
+                    imageLink: URL.createObjectURL(event.target.files[i])
+                })
+                imageFiles.push(event.target.files[i])
+            }
+            setNewImages([...newImages, ...imageFiles])
+        }
+        if (editCarSales) {
+            console.log("Edit", [
+                ...editCarSales.carImages as CarImages[],
+                ...addedImages
+            ])
+            setEditCarSales({
+                ...editCarSales,
+                carImages: [
+                    ...editCarSales.carImages as CarImages[],
+                    ...addedImages
+                ]
+            })
+        } else {
+            setNewCarSales({
+                ...newCarSales,
+                carImages: [
+                    ...newCarSales.carImages as CarImages[],
+                    ...addedImages
+                ]
+            })
+        }
+    }
+
+    const handleRemoveImage = (index: number) => {
+        if (editCarSales) {
+            const currentImages: CarImages[] = [...editCarSales.carImages as CarImages[]]
+            console.log("Current", currentImages)
+            const removedImage = currentImages.splice(index, 1)
+            console.log("After", currentImages)
+            console.log("removedImage", removedImage)
+            setEditCarSales({
+                ...editCarSales,
+                carImages: currentImages
+            })
+            console.log("Test",[...removedImages, removedImage[0].imageLink])
+            if (removedImage[0].id != -1) setRemovedImages([...removedImages, removedImage[0].imageLink])
+            console.log("List page images:", currentImages)
+        } else {
+            const currentImages: CarImages[] = [...newCarSales.carImages as CarImages[]]
+            const removedImage = currentImages.splice(index, 1)
+            setNewCarSales({
+                ...newCarSales,
+                carImages: currentImages
+            })
+            if (removedImage[0].id != -1) setRemovedImages([...removedImages, removedImage[0].imageLink])
+        }
+    }
     const handleSalesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (saleDetails)
         setSaleDetails({
@@ -162,7 +251,6 @@ function CarDealerCarList() {
     }
 
     const validateSaleDetails = (d: CarSaleDetails) => {
-        console.log("Sale", d)
         if (!isValidNumber(d.phoneNumber)) {
             setAddError("Customer number is not valid");
             return false;
@@ -231,7 +319,7 @@ function CarDealerCarList() {
                   ) : carList.length > 0 ? (
                       carList.map((model: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditCarSales({ ...model.carSalesInfo, carId: model.vinId }) }}>{model.vinId}</td>
+                              <td onClick={() => { setEditCarSales({ ...model.carSalesInfo, carId: model.vinId, carImages: model.carImages }) }}>{model.vinId}</td>
                               <td>{model.modelId}</td>
                               <td>{model.carSalesInfo.price}</td>
                               <td>
@@ -250,41 +338,43 @@ function CarDealerCarList() {
           {showModal && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
-                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale) }}>&times;</span>
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale); setModalPage(1) }}>&times;</span>
                       <h2>Add Car</h2>
                       <h3>DevNote: add images later</h3>
-                      <div className="dealer-car-sales-form-columns">
-                          <div className="dealer-car-sales-form-column">
-                              <label>Description</label>
-                              <input type="text" name="description" value={newCarSales.description} onChange={handleInputChange}/>
-                          </div>
-                          <div className="dealer-car-sales-form-column">
-                              <label>Car VIN id</label>
-                              <input type="text" name="carId" value={newCarSales.carId} onChange={handleInputChange} />
-                          </div>
-                          <div className="dealer-car-sales-form-column">
-                              <label>Price</label>
-                              <input type="number" name="price" value={newCarSales.price} onChange={handleInputChange} min="0" />
-                          </div>
-                      </div>
-                      <div className="dealer-car-sales-form-columns">
-                          <div className="dealer-car-sales-form-column">
-                              <label>Features: </label>
-                              <input type="text" name="feature" value={feature} onChange={e => setFeature(e.target.value)} />
-                              <button className="dealer-car-sales-add-feature-btn" type="button" onClick={handleAddFeature}>+Add Feature</button>
-                              <ul className="dealer-car-sales-feature-list">
-                                  {newCarSales.features.map((f, index) => (
-                                      <li key={index} className="dealer-car-sales-feature-list-item">
-                                          <span style={{ marginRight: '10px' }}>{f}</span>
-                                          <button className="dealer-car-sales-remove-feature-btn" type="button" onClick={() => handleRemoveFeature(index)}>Remove Feature</button>
-                                      </li>
-                                  ))}
-                              </ul>
-                          </div>
-                      </div>
-                      <button onClick={handleAddCarSales} disabled={adding} className="dealer-car-sales-add-btn">
-                          {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Add'}
-                      </button>
+                      {modalPage === 1 && (
+                          <CarForSaleDetailsPage
+                              action="Add"
+                              model={newCarSales}
+                              feature={feature}
+                              setFeature={setFeature}
+                              handleAddFeature={handleAddFeature}
+                              handleRemoveFeature={handleRemoveFeature}
+                              handleInputChange={handleInputChange}
+                          />
+                      )}
+                      {modalPage === 2 && (
+                          <CarForSaleImagesPage
+                              model={newCarSales}
+                              handleAddImages={handleAddImages}
+                              handleRemoveImages={handleRemoveImage}
+                          />
+                      )}
+                      {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
+                      {/*    Previous*/}
+                      {/*</button>*/}
+                      {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
+                      {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Add')}*/}
+                      {/*</button>*/}
+                      {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
+                          <>
+                              <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                  Previous
+                              </button>
+                              <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                  {modalPage < 2 ? 'Next' : 'Add'}
+                              </button>
+                          </>
+                      )}
                       {addError && (
                           <p className="dealer-car-sales-error">{addError}</p>
                       )}
@@ -294,41 +384,43 @@ function CarDealerCarList() {
           {editCarSales && (
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content">
-                      <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null) }}>&times;</span>
+                      <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null); setModalPage(1) }}>&times;</span>
                       <h2>Edit Car</h2>
                       <h3>DevNote: add images later</h3>
-                      <div className="dealer-car-sales-form-columns">
-                          <div className="dealer-car-sales-form-column">
-                              <label>Description</label>
-                              <input type="text" name="description" value={editCarSales.description} onChange={handleInputChange} />
-                          </div>
-                          <div className="dealer-car-sales-form-column">
-                              <label>Car VIN id</label>
-                              <input type="text" name="carId" value={editCarSales.carId} onChange={handleInputChange} disabled/>
-                          </div>
-                          <div className="dealer-car-sales-form-column">
-                              <label>Price</label>
-                              <input type="number" name="price" value={editCarSales.price} onChange={handleInputChange} min="0" />
-                          </div>
-                      </div>
-                      <div className="dealer-car-sales-form-columns">
-                          <div className="dealer-car-sales-form-column">
-                              <label>Features: </label>
-                              <input type="text" name="feature" value={feature} onChange={e => { if (e.target.value != '') setFeature(e.target.value) }} />
-                              <button className="dealer-car-sales-add-feature-btn" type="button" onClick={handleAddFeature}>+Add Feature</button>
-                              <ul className="dealer-car-sales-feature-list">
-                                  {editCarSales.features.map((f, index) => (
-                                      <li key={index} className="dealer-car-sales-feature-list-item">
-                                          <span style={{ marginRight: '10px' }}>{f}</span>
-                                          <button className="dealer-car-sales-remove-feature-btn" type="button" onClick={() => handleRemoveFeature(index)}>Remove Feature</button>
-                                      </li>
-                                  ))}
-                              </ul>
-                          </div>
-                      </div>
-                      <button onClick={handleEditCarSales} disabled={adding} className="dealer-car-sales-add-btn">
-                          {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit'}
-                      </button>
+                      {modalPage === 1 && (
+                          <CarForSaleDetailsPage
+                              action="Edit"
+                              model={editCarSales}
+                              feature={feature}
+                              setFeature={setFeature}
+                              handleAddFeature={handleAddFeature}
+                              handleRemoveFeature={handleRemoveFeature}
+                              handleInputChange={handleInputChange}
+                          />
+                      )}
+                      {modalPage === 2 && (
+                          <CarForSaleImagesPage
+                              model={editCarSales}
+                              handleAddImages={handleAddImages}
+                              handleRemoveImages={handleRemoveImage}
+                          />
+                      )}
+                      {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
+                          <>
+                              <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                  Previous
+                              </button>
+                              <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                  {modalPage < 2 ? 'Next'  : 'Edit'}
+                              </button>
+                          </>
+                      )}
+                      {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
+                      {/*    Previous*/}
+                      {/*</button>*/}
+                      {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
+                      {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
+                      {/*</button>*/}
                       {addError && (
                           <p className="dealer-car-sales-error">{addError}</p>
                       )}

@@ -184,7 +184,7 @@ namespace Infrastructure.InfrastructureServices
             issuer: jwtSettings.GetSection("validIssuer").Value,
             audience: jwtSettings.GetSection("validAudience").Value,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("expires").Value)),
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("expires").Value)),
             signingCredentials: signingCredentials
             );
             return tokenOptions;
@@ -206,6 +206,12 @@ namespace Infrastructure.InfrastructureServices
                 throw new UserNotFoundException($"user id {userId} was not found");
             await _userManager.SetLockoutEnabledAsync(user, isSuspend);
             return true;
+        }
+
+        public async Task<string> RefreshToken(string userId, bool isVerified)
+        {
+            _user = await GetUserAsync(userId);
+            return await CreateToken(isVerified);
         }
     }
 }

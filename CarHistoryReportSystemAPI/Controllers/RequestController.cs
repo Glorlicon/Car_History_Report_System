@@ -1,4 +1,5 @@
-﻿using Application.DomainServices;
+﻿using Application.Common.Models;
+using Application.DomainServices;
 using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
@@ -27,9 +28,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get Requests
         /// </summary>
         /// <returns>Request list</returns>
+        /// <response code="401">Unauthorized Request</response> 
+        /// <response code="404">Requests Not Found</response> 
         [HttpGet(Name = "GetRequests")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
-        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         public async Task<IActionResult> GetRequestsAsync([FromQuery] RequestParameter parameter)
         {
             RequestParameterValidator validator = new RequestParameterValidator();
@@ -48,25 +52,31 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get Request by id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>Car Model</returns>
+        /// <returns>Request</returns>        
+        /// <response code="401">Unauthorized Request</response> 
+        /// <response code="404">Request Not Found</response> 
         [HttpGet("{id}", Name = "GetRequest")]
-        [ProducesResponseType(typeof(RequestResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails),StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
         public async Task<IActionResult> GetRequestAsync(int id)
         {
             var request = await _requestService.GetRequest(id, trackChange: false);
             return Ok(request);
         }
 
+
         /// <summary>
         /// Get All Requests Created by UserId
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>Request List</returns>
+        /// <returns>Request List</returns>        
+        /// <response code="401">Unauthorized Request</response> 
+        /// <response code="404">Request Not Found</response> 
         [HttpGet("user/{userId}", Name = nameof(GetAllRequestByUserIdAsync))]
         [Authorize(Roles = "Adminstrator,User,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice")]
-        [ProducesResponseType(typeof(IEnumerable<RequestResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAllRequestByUserIdAsync(string userId, [FromQuery] RequestParameter parameter)
         {
             RequestParameterValidator validator = new RequestParameterValidator();
@@ -106,8 +116,6 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest();
             }
         }
-
-
 
         /// <summary>
         /// Update Request

@@ -14,7 +14,7 @@ namespace Domain.Entities
 
         public string Description { get; set; }
 
-        public string Response { get; set; }
+        public string? Response { get; set; }
 
         public UserRequestType Type { get; set; }
 

@@ -14,7 +14,6 @@ interface GlobalNavigatorProps {
 
 const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const [username, setUsername] = useState('')
-    const [isAuthenticated, setAuthenticated] = useState(false)
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const token = useSelector((state: RootState) => state.auth.token)
@@ -23,7 +22,6 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
 
     useEffect(() => {
         if (token) {
-            setAuthenticated(true);
             const data = JWTDecoder(token)
             setUsername(data.name)
         }
@@ -32,7 +30,6 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     function Logout() {
         console.log("Logging out...");
         dispatch(logout())
-        setAuthenticated(false);
         navigate('/login')
         console.log("Should have navigated to /");
         return
@@ -73,7 +70,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     ))}
                 </ul>
             </div>
-            {isAuthenticated ? (
+            {token ? (
                 <div className="right-section">
                     <a href="/profile" className="nav-item">Hi, {username}</a>
                     <a className="nav-item" onClick={Logout}>Logout</a>

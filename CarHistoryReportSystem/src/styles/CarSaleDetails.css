@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+.availability-section {
+    flex-basis: calc(40% - 10px);
+    margin-left: 10px;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    margin-left: 50px;
+    margin-right:50px;
+    margin-bottom:500px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-highlights-box .box div {
+    display: flex;
+    flex-wrap: wrap;
+    width: 96.5%;
+}
+
+.vehicle-highlights-box, .dealer-details-box h2 {
+    text-align: left;
+    padding-top: 50px;
+}
+
+.first-section div:nth-child(n+1){
+    width: 25%;
+    flex-direction:column;
+}
+
+.first-section div p:nth-child(1) {
+    font-weight: bold;
+}
+
+.second-section div p:nth-child(1) {
+    font-weight: bold;
+}
+
+.first-section div p:nth-child(2){
+    
+}
+
+.second-section div:nth-child(n+1) {
+    width: 25%;
+    flex-direction: column;
+}
+
+.box {
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.phone-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.phone-icon {
+    margin-right: 10px;
+}
+
+.interest-section {
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.car-thumbnail {
+    background-color: #e0e0e0;
+    width: 100px;
+    height: 60px;
+    margin: 0 auto 1rem auto;
+}
+
+.contact-form input, .contact-form button {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.contact-form {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+}
+
+    .name-input {
+        width: 100%;
+        display:flex;
+        justify-content: space-between;
+    }
+
+    .info-input {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .button-submit{
+        width: 100%;
+        display:flex;
+        padding-top:20px;
+        justify-content:center;
+    }
+
+.name-input input:nth-child(n+1) {
+    width: 40%;
+}
+
+.top-features .top-features-header {
+    font-weight: bold;
+    padding-top: 50px;
+}
+
+
+.tags-container .tag {
+    max-width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2596be;
+    color: white;
+    text-align: center;
+    border-radius: 40px;
+    padding: 0px 3px 0px 7px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.tags-container .tag a {
+        margin: 0 7px 3px;
+        display: inline-block;
+        cursor: pointer;
+}
+
+.tags-container {
+    display: flex;
+    width: 100px;
+}
+
+.sales-description .sales-description-header {
+    font-weight: bold;
+    padding-top: 50px;
+}
+
+.contact-form button {
+    cursor: pointer;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+
+.info-header{
+    display:flex;
+    justify-content: space-between;
+}
+
+.car-detail-main {
+    height: 700px;
+    margin-left:50px;
+    flex-basis: calc(60% - 10px);
+    margin-right: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-context{
+    display:flex;
+    padding-top:20px;
+    padding-bottom: 10px;
+}
+.contact-image{
+    width: 40%;
+}
+
+.contact-description{
+    text-align:left;
+}
+
+.car-detail-container {
+    padding-bottom: 500px;
+    padding-top: 200px;
+    background-color: #f4f4f4;
+}
+
+.nameprice {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
+
+* {
+    /*font-family: 'Montserrat', sans-serif;*/
+}
+
+.toggle_btn {
+    margin-top: 15px;
+    font-weight: 700;
+    color: #ff406c;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.arrow i {
+    margin-left: 10px;
+}

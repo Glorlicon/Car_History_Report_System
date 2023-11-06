@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Application.DTO.ModelMaintainance;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,5 +39,8 @@ namespace Application.DTO.CarSpecification
         public int RPM { get; set; }
 
         public int TireNumber { get; set; }
+        public List<ModelMaintainanceCreateRequestDTO>? ModelOdometers { get; set; }
+
+
     }
 }

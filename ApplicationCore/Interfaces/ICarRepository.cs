@@ -13,12 +13,16 @@ namespace Application.Interfaces
     public interface ICarRepository : IBaseRepository<Car>
     {
         Task<Car> GetCarById(string vinId, bool trackChange);
+        Task<Car> GetCarWithHistoriesById(string vinId, bool trackChange);
+        Task<Car> GetCarReportDataById(string vinId, bool trackChange);
 
         Task<IEnumerable<Car>> GetAllCar(CarParameter parameter, bool trackChange);
 
         Task<IEnumerable<Car>> GetCarsByUserId(string userId, CarParameter parameter, bool trackChange);
 
         Task<IEnumerable<Car>> GetCarsByManufacturerId(int manufacturerId, CarParameter parameter, bool trackChange);
+
+        Task<IEnumerable<string>> GetCarIdsByModelId(string modelId, bool trackChange);
 
         Task<IEnumerable<Car>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter, bool trackChange);
 
@@ -29,5 +33,8 @@ namespace Application.Interfaces
         Task<int> CountCarByCondition(Expression<Func<Car, bool>> expression, CarParameter parameter);
 
         Task<int> CountCarAll(CarParameter parameter);
+
+        Task<Car> GetCarIncludeDataProviderFromVinId(string VinId, bool trackChange);
+
     }
 }

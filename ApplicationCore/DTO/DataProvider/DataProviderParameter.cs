@@ -10,6 +10,9 @@ namespace Application.DTO.DataProvider
 {
     public class DataProviderParameter : PagingParameters
     {
+        public string? Name {  get; set; }
         public DataProviderType? Type { get; set; }
+
+        public int SortByName { get; set; } = 0;
     }
 }

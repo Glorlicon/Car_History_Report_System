@@ -1,4 +1,5 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Configurations.EmailService;
@@ -47,6 +48,17 @@ namespace Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
+            services.AddScoped<ICarMaintainanceRepository, CarMaintainanceRepository>();
+            services.AddScoped<ICarRecallRepository, CarRecallRepository>();
+            services.AddScoped<ICarRecallStatusRepository, CarRecallStatusRepository>();
+            services.AddScoped<IModelMaintainanceRepository, ModelMaintainanceRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.ConfigureCarHistoryRepository();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderOptionRepository, OrderOptionRepository>();
+            services.AddScoped<ICsvServices, CsvServices>();
+            services.AddScoped<IPaymentServices, VnpayPaymentServices>();
+            services.AddScoped<ICarReportRepository, CarReportRepository>();
             return services;
         }
 
@@ -66,6 +78,12 @@ namespace Infrastructure
 
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<ApplicationDBContext>().AddDefaultTokenProviders();
+        }
+
+        public static void ConfigureCarHistoryRepository(this IServiceCollection services)
+        {
+            services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
+            services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

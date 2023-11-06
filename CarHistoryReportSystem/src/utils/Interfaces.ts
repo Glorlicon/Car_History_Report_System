@@ -112,7 +112,7 @@ export interface CarSalesInfo {
     carId?: string
     features: string[]
     price: number
-    carImages?: CarImages
+    carImages?: CarImages[]
 }
 
 export interface CarSaleDetails {
@@ -126,9 +126,10 @@ export interface CarSaleDetails {
 }
 
 export interface CarImages {
-    id: number
+    id?: number
     carId?: string
     imageLink: string
+
 }
 export interface Car {
     vinId: string
@@ -145,3 +146,84 @@ export interface Car {
     carImages?: CarImages[]
 }
 
+export interface CarMaintenance {
+    carId: string
+    userId: string
+}
+
+export interface UsersRequest {
+    description: string
+    response: string
+    type: string
+    status: string
+}
+
+export interface AdminRequest {
+    id?: number
+    description?: string
+    response: string
+    type?: string
+    status: string
+    createdByUserId?: string
+    modifiedByUserId?: string
+}
+export interface ReportPackage {
+    title: string
+    price: number
+    pricePerReport: number
+    type: "STANDARD" | "GOOD DEAL" | "BEST DEAL"
+}
+
+export interface Order {
+    id?: number
+    userId?: string
+    orderOptionId: number
+    transactionId:  string
+}
+export interface AddReport {
+    userId: string
+    carId: string
+}
+
+export interface CarReport {
+
+}
+
+export interface ContactMail {
+    firstName: string
+    lastName: string
+    zipCode: string
+    phoneNumber: string
+    email: string
+    vinId: string
+}
+
+export interface dealerdataprovider {
+    id: number;
+    name: string
+    description: string
+    address: string
+    websiteLink: string
+    service: string
+    phoneNumber: string
+    email: string
+    type: number
+    typeName: string
+    imagelink: string
+    workingTimes: workingTimes[]
+    Reviews: Reviews[]
+}
+
+export interface workingTimes {
+    dayOfWeek: number
+    startTime: string
+    endTime: string
+    isClosed: boolean
+}
+
+export interface Reviews {
+    userId: string
+    description: string
+    rating: number
+    //createdTime: Date
+}

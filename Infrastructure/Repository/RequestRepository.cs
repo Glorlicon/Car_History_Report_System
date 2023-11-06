@@ -47,12 +47,19 @@ namespace Infrastructure.Repository
 
         public async Task<Request> GetRequestById(int id, bool trackChange)
         {
-            return await FindByCondition(cs => cs.Id == id, trackChange)
+            return await FindByCondition(r => r.Id == id, trackChange)
+                            .SingleOrDefaultAsync();
+        }        
+        
+        public async Task<Request> GetRequestByIdAndUserId(int id, string userId, bool trackChange)
+        {
+            return await FindByCondition(r => r.Id == id && r.CreatedByUserId == userId, trackChange)
                             .SingleOrDefaultAsync();
         }
+
         public async Task<IEnumerable<Request>> GetAllRequestByUserId(string userId, RequestParameter parameter, bool trackChange)
         {
-            return await FindByCondition(cs => cs.CreatedByUserId == userId, trackChange)
+            return await FindByCondition(r => r.CreatedByUserId == userId, trackChange)
                             .Filter(parameter)
                             .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)

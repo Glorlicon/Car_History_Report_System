@@ -14,6 +14,8 @@ namespace Application.Interfaces
 
         Task<int> CountAll();
 
+        Task<bool> IsExist(Expression<Func<T, bool>> expression);
+
         Task<int> CountByCondition(Expression<Func<T, bool>> expression);
 
         IQueryable<T> FindAll(bool trackChanges);

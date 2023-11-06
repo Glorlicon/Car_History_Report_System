@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Application.Common.Models;
+using Domain.Exceptions;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Middlewares
@@ -26,11 +27,12 @@ namespace CarHistoryReportSystemAPI.Middlewares
             {
                 BadRequestException => StatusCodes.Status400BadRequest,
                 NotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
                 _ => StatusCodes.Status500InternalServerError
             };
-            var response = new
+            var response = new ErrorDetails
             {
-                error = exception.Message
+                Error = new List<string> { exception.Message }
             };
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

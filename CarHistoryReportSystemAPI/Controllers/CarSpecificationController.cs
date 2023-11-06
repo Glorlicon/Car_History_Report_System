@@ -1,7 +1,9 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +58,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Model</returns>
         [HttpGet("{modelId}", Name = "GetCarModel")]
         [ProducesResponseType(typeof(CarSpecificationResponseDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarModelAsync(string modelId)
         {
             var carModel = await _carSpecService.GetCarModel(modelId, trackChange: false);
@@ -117,8 +119,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPost(Name = "CreateCarModel")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCarModelAsync([FromBody] CarSpecificationCreateRequestDTO request)
         {
             var result = await _carSpecService.CreateCarModel(request);
@@ -137,9 +139,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateCarModelAsync(string modelId, [FromBody] CarSpecificationUpdateRequestDTO request)
         {
             var result = await _carSpecService.UpdateCarModel(modelId, request);
@@ -158,13 +160,42 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpDelete("{modelId}")]
         [Authorize(Roles = "Adminstrator,Manufacturer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCarModelAsync(string modelId)
         {
             var result = await _carSpecService.DeleteCarModel(modelId);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get All Model Maintainance
+        /// </summary>
+        /// <returns>Model Maintainance List</returns>
+        [HttpGet("model-maintainances", Name = "GetModelMaintainances")]
+        [ProducesResponseType(typeof(List<ModelMaintainanceResponseDTO>), StatusCodes.Status200OK)]
+        [Authorize(Roles = "Adminstrator")]
+        public async Task<IActionResult> GetModelMaintainances([FromQuery] ModelMaintainanceParameter parameter)
+        {
+            var carModels = await _carSpecService.GetModelMaintainances(parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
+        }
+
+        /// <summary>
+        /// Get All Model Maintainance of modelid
+        /// </summary>
+        /// <param name="modelId"></param>
+        /// <returns>Model Maintainance List</returns>
+        [HttpGet("model-maintainances/{modelId}", Name = "GetModelMaintainancesByModelId")]
+        [Authorize(Roles = "Adminstrator")]
+        [ProducesResponseType(typeof(List<ModelMaintainanceResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetModelMaintainancesByModelId(string modelId, [FromQuery] ModelMaintainanceParameter parameter)
+        {
+            var carModels = await _carSpecService.GetModelMaintainancesByModelId(modelId, parameter, trackChange: false);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
+            return Ok(carModels);
         }
 
         /// <summary>

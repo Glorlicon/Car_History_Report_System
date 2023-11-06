@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.DTO.CarServiceHistory;
+using Application.Interfaces;
+using Domain.Entities;
 using Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,14 @@ namespace Infrastructure.Repository
         private ICarSalesInfoRepository _carSalesInfoRepository;
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
+        private ICarMaintainanceRepository _carMaintainanceRepository;
+        private ICarRecallRepository _carRecallRepository;
+        private ICarRecallStatusRepository _carRecallStatusRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderOptionRepository _orderOptionRepository;
+        private ICarReportRepository _carReportRepository;
+        private IModelMaintainanceRepository _modelMaintainanceRepository;
+        private ICarServiceHistoryRepository _carServiceHistoryRepository;
 
         public UnitOfWork(
             ApplicationDBContext repositoryContext, 
@@ -27,7 +37,15 @@ namespace Infrastructure.Repository
             IDataProviderRepository dataProviderRepository,
             ICarSalesInfoRepository carSalesInfoRepository,
             ICarPartRepository carPartRepository,
-            ICarOwnerHistoryRepository carOwnerHistoryRepository)
+            ICarOwnerHistoryRepository carOwnerHistoryRepository,
+            ICarMaintainanceRepository carMaintainanceRepository,
+            ICarRecallRepository carRecallRepository,
+            ICarRecallStatusRepository carRecallStatusRepository,
+            IOrderRepository orderRepository,
+            IOrderOptionRepository orderOptionRepository,
+            ICarReportRepository carReportRepository,
+            ICarServiceHistoryRepository carServiceHistoryRepository,
+            IModelMaintainanceRepository modelMaintainanceRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -37,6 +55,14 @@ namespace Infrastructure.Repository
             _carSalesInfoRepository = carSalesInfoRepository;
             _carPartRepository = carPartRepository;
             _carOwnerHistoryRepository = carOwnerHistoryRepository;
+            _carMaintainanceRepository = carMaintainanceRepository;
+            _carRecallRepository = carRecallRepository;
+            _carRecallStatusRepository = carRecallStatusRepository;
+            _orderRepository = orderRepository;
+            _orderOptionRepository = orderOptionRepository;
+            _carReportRepository = carReportRepository;
+            _carServiceHistoryRepository = carServiceHistoryRepository;
+            _modelMaintainanceRepository = modelMaintainanceRepository;
         }
 
         public ICarRepository CarRepository
@@ -72,6 +98,46 @@ namespace Infrastructure.Repository
         public ICarOwnerHistoryRepository CarOwnerHistoryRepository
         {
             get { return _carOwnerHistoryRepository; }
+        }
+
+        public ICarMaintainanceRepository CarMaintainanceRepository
+        {
+            get { return _carMaintainanceRepository;}
+        }
+
+        public ICarRecallRepository CarRecallRepository
+        {
+            get { return _carRecallRepository; }
+        }
+
+        public ICarRecallStatusRepository CarRecallStatusRepository
+        {
+            get { return _carRecallStatusRepository;}
+        }
+
+        public IOrderRepository OrderRepository
+        {
+            get { return _orderRepository; }
+        }
+
+        public IOrderOptionRepository OrderOptionRepository
+        {
+            get { return _orderOptionRepository; }
+        }
+
+        public ICarReportRepository CarReportRepository
+        {
+            get { return _carReportRepository; }
+        }
+
+        public IModelMaintainanceRepository ModelMaintainanceRepository
+        {
+            get { return _modelMaintainanceRepository;}
+        }
+
+        public ICarServiceHistoryRepository CarServiceHistoryRepository
+        {
+            get { return _carServiceHistoryRepository; }
         }
 
         public async Task SaveAsync()
