@@ -184,7 +184,101 @@ export interface AddReport {
     carId: string
 }
 
-export interface CarReport {
-
+export interface CarRecallStatus {
+    carId: string,
+    carRecallId: number,
+    modelId: string,
+    description: string,
+    recallDate: string,
+    status: string
 }
+
+export interface CarReport {
+    vinId: string,
+    licensePlateNumber: string,
+    modelId: string,
+    colorName: string,
+    currentOdometer: number,
+    numberOfOpenRecalls: number,
+    numberOfAccidentRecords: number,
+    numberOfStolenRecords: number,
+    numberOfOwners: number,
+    numberOfServiceHistoryRecords: number,
+    engineNumber: string,
+    isModified: boolean,
+    isCommercialUse: boolean,
+    model: CarModel,
+    carRecallStatuses: CarRecallStatus[],
+    carHistoryDetails: CarHistoryDetail[]
+}
+
+export interface CarHistoryDetail {
+    startDate: string;
+    endDate: string;
+    carOwner: CarOwner;
+    carServiceHistories: CarServiceHistory[];
+    carAccidentHistories: CarAccidentHistory[];
+    carInspectionHistories: CarInspectionHistory[];
+    carInsurances: CarInsurance[];
+    carStolenHistories: CarStolenHistory[];
+    generalCarHistories: GeneralCarHistory[];
+}
+
+interface CarOwner {
+    id: string;
+    name: string;
+    phoneNumber: string;
+    address: string;
+    dob: string;
+    startDate: string;
+    endDate: string;
+    carId: string;
+    note: string;
+    dataSource: string;
+    createdByUserId: string;
+    modifiedByUserId: string;
+    createdTime: string;
+    lastModified: string;
+}
+
+export interface CarServiceHistory {
+    id: number;
+    carId: string;
+    otherServices: string;
+    serviceTime: string;
+    reportDate: string;
+    services: number;
+    servicesName: string;
+    note: string;
+    odometer: number;
+    createdByUserId: string;
+    modifiedByUserId: string;
+    createdTime: string;
+    lastModified: string;
+}
+
+interface CarAccidentHistory {
+    // Define properties for CarAccidentHistory here
+}
+
+interface CarInspectionHistory {
+    // Define properties for CarInspectionHistory here
+}
+
+interface CarInsurance {
+    // Define properties for CarInsurance here
+}
+
+interface CarStolenHistory {
+    // Define properties for CarStolenHistory here
+}
+
+interface GeneralCarHistory {
+    reportDate: string;
+    odometer: number;
+    historyType: string;
+    source: string;
+    note: string;
+}
+
 

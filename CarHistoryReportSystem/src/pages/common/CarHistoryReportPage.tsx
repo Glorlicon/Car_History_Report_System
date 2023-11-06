@@ -43,7 +43,7 @@ function CarHistoryReportPage() {
                         }
                         const addReportResponse: APIResponse = await AddUserReport(reportData, token)
                         if (addReportResponse.error) console.log("Failed to add report")
-                        else navigate(`/my-reports/${vin}`)
+                        else navigate(`/car-report/${vin}`)
                     }
                     else navigate(`/payment/${vin}`)//vin changed later
                 } 

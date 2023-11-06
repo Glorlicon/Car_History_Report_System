@@ -38,7 +38,7 @@ import ProtectedRoute from '../utils/ProtectedRoute';
 import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
 import PaymentPage from '../pages/common/PaymentPage';
 import PaymentReturnPage from '../pages/common/PaymentReturnPage';
-import CarReport from '../pages/common/CarReport';
+import CarReportPage from '../pages/common/CarReportPage';
 
 const CustomRoutes = () => {
     return (
@@ -54,7 +54,7 @@ const CustomRoutes = () => {
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 <Route path="/report" element={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>} />
                 <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
-                <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReport /> </UserLayout>} />
+                <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />

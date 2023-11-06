@@ -162,7 +162,7 @@ namespace Application.DomainServices
                 AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen Record");
                 generalCarHistories.OrderByDescending(x => x.ReportDate);
 
-                if (generalCarHistories.Count == 0) continue;
+                if (generalCarHistories.Count == 0 && timePeriod.CarOwner==null) continue;
 
                 var carHistoryDetail = new CarReportCarHistoryDetails
                 {
