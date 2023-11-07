@@ -18,6 +18,10 @@ namespace Infrastructure.Configurations
                 .IsRequired();
             builder.Property(ca => ca.Note)
                 .HasMaxLength(200);
+            builder.Property(x => x.InspectionNumber)
+                .HasMaxLength(50);
+            builder.HasIndex(x => x.InspectionNumber)
+                .IsUnique();
         }
     }
 }

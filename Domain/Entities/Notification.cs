@@ -26,5 +26,7 @@ namespace Domain.Entities
         public DateTime CreatedTime { get; set; }
 
         public string? RelatedLink { get; set; }
+
+        public NotificationType Type { get; set; }
     }
 }
