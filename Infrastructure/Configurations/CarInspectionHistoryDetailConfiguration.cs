@@ -13,7 +13,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CarInspectionHistoryDetail> builder)
         {
-            builder.Property(ca => ca.InspectionPart)
+            builder.Property(ca => ca.InspectionCategory)
                 .HasMaxLength(50)
                 .IsRequired();
             builder.Property(ca => ca.Note)

@@ -13,7 +13,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CarReport> builder)
         {
-            builder.HasKey(x => new { x.UserId, x.CarId });
+            builder.HasKey(x => new { x.UserId, x.CarId, x.CreatedDate });
         }
     }
 }

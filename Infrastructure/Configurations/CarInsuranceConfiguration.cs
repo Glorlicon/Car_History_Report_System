@@ -17,6 +17,10 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(2000);
             builder.Property(ca => ca.Note)
                 .HasMaxLength(200);
+            builder.Property(ca => ca.InsuranceNumber)
+                .HasMaxLength(200);
+            builder.HasIndex(ca => ca.InsuranceNumber)
+                .IsUnique();
         }
     }
 }

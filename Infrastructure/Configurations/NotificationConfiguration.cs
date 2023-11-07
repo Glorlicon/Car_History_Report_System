@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -20,6 +21,11 @@ namespace Infrastructure.Configurations
                 .HasMaxLength(2000);
             builder.Property(co => co.RelatedLink)
                 .HasMaxLength(100);
+            builder.Property(x => x.Type)
+                .HasConversion(
+                    f => f.ToString(),
+                    f => (NotificationType)Enum.Parse(typeof(NotificationType), f))
+                .IsRequired();
         }
     }
 }
