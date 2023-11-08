@@ -9,6 +9,8 @@ namespace Domain.Entities
 {
     public class CarInsurance : CarHistory
     {
+        public string InsuranceNumber { get; set; }
+
         public DateOnly StartDate { get; set; }
 
         public DateOnly EndDate { get; set; }

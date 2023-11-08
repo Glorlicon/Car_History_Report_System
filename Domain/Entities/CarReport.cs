@@ -17,6 +17,6 @@ namespace Domain.Entities
 
         public Car Car { get; set; }
 
-        public DateTime CreatedTime { get; set; }
+        public DateOnly CreatedDate { get; set; }
     }
 }

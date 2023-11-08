@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -10,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
-    public class OrderConfiguration : IEntityTypeConfiguration<Order>
+    public class CarTrackingConfiguration : IEntityTypeConfiguration<CarTracking>
     {
-        public void Configure(EntityTypeBuilder<Order> builder)
+        public void Configure(EntityTypeBuilder<CarTracking> builder)
         {
-            builder.Property(x => x.TransactionId).HasMaxLength(20);
-            builder.HasIndex(x => x.TransactionId).IsUnique();
+
+            builder.HasKey(x => new { x.UserId, x.CarId});
         }
     }
 }

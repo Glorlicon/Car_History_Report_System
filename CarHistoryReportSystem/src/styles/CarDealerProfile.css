@@ -1,0 +1,361 @@
+.car-dealer-profile {
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 100px;
+}
+
+.header-section {
+    height:200px;
+    align-items: center;
+    background-color: #f6f6f6;
+    padding: 20px;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    color: #888;
+    text-align:left;
+    margin-bottom:20px;
+}
+
+.dealer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .dealer-info h1 {
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+    }
+
+.rating, .favorites {
+    font-size: 14px;
+    color: #666;
+}
+
+    .favorites{
+        padding-left: 200px;
+    }
+
+    .rating-favoured {
+        display: flex;
+        flex-direction: row;
+    }
+
+.stars{
+    display:flex;
+    flex-direction: row;
+}
+
+.rating-favoured p {
+    line-height: 14px;
+    margin-top: 4px;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+.phone-info {
+    display: flex;
+    flex-direction: row;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    justify-content: space-between;
+    gap: 5px;
+    font-size:18
+}
+
+    .phone-info span {
+        width: 33.3%;
+    }
+
+.navigation {
+    display: flex;
+    gap: 20px;
+}
+
+    .navigation a {
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+        .navigation a:hover {
+            background-color: #e0e0e0;
+        }
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    float:right;
+    border-radius: 50%;
+    background-color: #ccc; /* Placeholder background */
+    background-size: cover;
+    background-position: center;
+}
+
+.cars-for-sale-section {
+    background-color: #e6e6e6;
+    padding: 20px;
+    margin: 100px 50px 50px 50px
+}
+
+.ratings-reviews-section {
+    background-color: #d6d6d6;
+    padding: 20px;
+}
+
+.about-us-section {
+    background-color: #c6c6c6;
+    padding: 20px;
+}
+
+.profile-container{
+    float:right;
+}
+
+.profile-information{
+    width:85%;
+    gap:20px;
+}
+
+.dealer-info{
+    text-align:left;
+}
+
+.listing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+}
+
+    .filters span {
+        color: #666;
+    }
+
+.vehicle-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.vehicle-card {
+    width: 30%;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.vehicle-image {
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    background-color: #ccc; /* Placeholder background */
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 10px;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-links {
+    display: flex;
+    gap: 10px;
+}
+
+    .page-links a {
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+        .page-links a:hover {
+            background-color: #e0e0e0;
+        }
+
+
+.ratings-reviews-section {
+    background-color: #d6d6d6;
+    padding: 20px;
+    gap: 20px;
+    margin: 100px 50px 50px 50px
+}
+
+    .ratings-reviews-section h1{
+        text-align:left;
+    }
+
+    .star-summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+    }
+
+.star-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.star-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.star-label, .star-percentage {
+    flex-shrink: 0;
+}
+
+.star-bar {
+    flex-grow: 1;
+    background-color: #e6e6e6;
+    height: 10px;
+}
+
+.star-summary{
+    padding-bottom: 20px;
+}
+
+.star-fill {
+    height: 100%;
+    background-color: #333; /* Color for filled star bar */
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width:80%;
+    padding-bottom:50px;
+}
+
+.review-card {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f6f6f6;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.review-content {
+    margin-top: 10px;
+}
+
+.review-pagination {
+    display: flex;
+    justify-content: right;
+    gap: 10px;
+}
+
+.pagination-button {
+    padding: 5px 10px;
+    background-color: #f6f6f6;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+    .pagination-button:hover {
+        background-color: #e0e0e0;
+    }
+
+
+.rating-comment{
+    display:flex;
+}
+
+.about-us-section {
+    background-color: #e9e9e9;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 100px 50px 50px 50px
+}
+
+.contact-section, .service-information {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+h2, h3, h4 {
+    margin-bottom: 20px;
+}
+
+.sales-information p, .operation-hours p {
+    margin-bottom: 10px;
+}
+
+span {
+    font-weight: bold;
+}
+
+.about-us-information{
+    display: flex;
+    flex-direction:row;
+}
+
+.about-us-section h2{
+    text-align: left;
+}
+
+.about-us-information h3, h4{
+    text-align: left;
+}
+
+
+    .stars svg {
+        width: 30px;
+    }
+
+
+svg {
+    fill: gold;
+}
+
+.stars {
+    position: relative; /* Add this line */
+    display: flex;
+    flex-direction: row;
+}
+
+.overlay {
+    position: absolute; /* Absolutely position the overlay */
+    top: 0;
+    right: 0;
+    height: 100%; 
+    background-color: rgba(255, 255, 255, 0.5); 
+    z-index: 1;
+}

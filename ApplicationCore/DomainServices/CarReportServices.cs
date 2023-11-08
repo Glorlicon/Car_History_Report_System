@@ -109,7 +109,7 @@ namespace Application.DomainServices
             {
                 CarId = request.CarId,
                 UserId = request.UserId,
-                CreatedTime = DateTime.Now
+                CreatedDate = DateOnly.FromDateTime(DateTime.Now)
             });
             await _unitOfWork.SaveAsync();
         }
