@@ -21,6 +21,8 @@ namespace UnitTests.Application.Tests.Validator
         private readonly DataProviderUpdateRequestDTOValidator _dataProviderUpdateRequestDTOValidator;        
         private readonly DataProviderWorkingTimesCreateRequestDTOValidator _dataProviderWorkingTimesCreateRequestDTOValidator;
         private readonly DataProviderWorkingTimesUpdateRequestDTOValidator _dataProviderWorkingTimesUpdateRequestDTOValidator;
+        private readonly DataProviderReviewParameterValidator _dataProviderReviewParameterValidator;
+
         public DataProviderValidatorTest()
         {
             _dataProviderParameterValidator = new DataProviderParameterValidator();
@@ -28,6 +30,7 @@ namespace UnitTests.Application.Tests.Validator
             _dataProviderUpdateRequestDTOValidator = new DataProviderUpdateRequestDTOValidator();
             _dataProviderWorkingTimesCreateRequestDTOValidator = new DataProviderWorkingTimesCreateRequestDTOValidator();
             _dataProviderWorkingTimesUpdateRequestDTOValidator = new DataProviderWorkingTimesUpdateRequestDTOValidator();
+            _dataProviderReviewParameterValidator = new DataProviderReviewParameterValidator();
         }
 
         [Fact]

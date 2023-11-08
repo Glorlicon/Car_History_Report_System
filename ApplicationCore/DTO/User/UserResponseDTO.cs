@@ -21,6 +21,7 @@ namespace Application.DTO.User
         public string? Address { get; set; }
         public int MaxReportNumber { get; set; } = 0;
         public Role Role { get; set; }
+        public string RoleName {  get; set; }
         public int DataProviderId { get; set; }
         public bool IsSuspended { get; set; }
         public string? AvatarImageLink { get; set; }

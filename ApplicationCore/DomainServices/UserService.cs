@@ -1,5 +1,4 @@
 ﻿using Application.Common.Models;
-using Application.DTO.CarSpecification;
 using Application.DTO.User;
 using Application.Interfaces;
 using Application.Utility;
@@ -27,16 +26,21 @@ namespace Application.DomainServices
         private readonly IUserRepository _userRepository;
         private readonly IEmailServices _emailServices;
         private readonly IIdentityServices _identityServices;
+        private readonly IAuthenticationServices _authenticationServices;
+        private readonly UserManager<User> _userManager;
 
 
         public UserService(IMapper mapper, IUserRepository userRepository, 
             IEmailServices emailServices, 
-            IIdentityServices identityServices)
+            IIdentityServices identityServices, IAuthenticationServices authenticationServices,
+            UserManager<User> userManager)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _emailServices = emailServices;
             _identityServices = identityServices;
+            _authenticationServices = authenticationServices;
+            _userManager = userManager;
         }
 
         // THEM ROLE CHO USER: _userManager.AddToRoleAsync(user, "ADMIN");
@@ -78,11 +82,10 @@ namespace Application.DomainServices
 
             var count = await _userRepository.CountAll();
 
-            //foreach (var user in userResponse)
-            //{
-            //user.Role = from role in 
-            //user.RoleString = _userManager.GetRolesAsync(users.Where(us => us.Id == user.Id).First()).Result.FirstOrDefault();
-            //}
+            foreach (var user in userResponse)
+            {
+                user.RoleName = user.Role.ToString();
+            }
 
             return new PagedList<UserResponseDTO>(userResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
@@ -91,12 +94,26 @@ namespace Application.DomainServices
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
             var userResponse = _mapper.Map<UserResponseDTO>(user);
+            userResponse.RoleName = user.Role.ToString();
             return userResponse;
         }
 
         public async Task<bool> UpdateUser(string id, UpdateUserRequestDTO request)
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: true);
+            if (user == null)
+            {
+                return false;
+            }
+            _mapper.Map(request, user);
+            //TODO: validate
+            await _userRepository.SaveAsync();
+            return true;
+        }        
+        
+        public async Task<bool> UpdateUserOwnProfile(UpdateUserOwnProfileRequestDTO request)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
             if (user == null)
             {
                 return false;

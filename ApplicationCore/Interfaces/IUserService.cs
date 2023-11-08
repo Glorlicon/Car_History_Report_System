@@ -21,6 +21,8 @@ namespace Application.Interfaces
         Task<UserResponseDTO> GetUser(string id);
 
         Task<bool> UpdateUser(string id, UpdateUserRequestDTO request);
+        Task<bool> UpdateUserOwnProfile(UpdateUserOwnProfileRequestDTO request);
+
 
         //Task<bool> DeleteUser(string id);
     }
