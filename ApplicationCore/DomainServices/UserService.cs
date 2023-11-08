@@ -82,10 +82,10 @@ namespace Application.DomainServices
 
             var count = await _userRepository.CountAll();
 
-            //foreach (var user in userResponse)
-            //{
-            //    user.RoleString = _userManager.GetRolesAsync(users.Where(u => u.Id == user.Id).FirstOrDefault()).Result.FirstOrDefault();
-            //}
+            foreach (var user in userResponse)
+            {
+                user.RoleName = user.Role.ToString();
+            }
 
             return new PagedList<UserResponseDTO>(userResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
@@ -94,6 +94,7 @@ namespace Application.DomainServices
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
             var userResponse = _mapper.Map<UserResponseDTO>(user);
+            userResponse.RoleName = user.Role.ToString();
             return userResponse;
         }
 

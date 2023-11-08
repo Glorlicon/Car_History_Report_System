@@ -15,6 +15,6 @@ namespace Application.Interfaces
     {
         Task<Review> GetReview(string userId, int dataProviderId, bool trackChange);
 
-        Task<IEnumerable<Review>> GetAllReview(int dataProviderId, DataProviderReviewParameter parameter, bool trackChange);
+        Task<IEnumerable<Review>> GetAllReview(DataProviderReviewParameter parameter, bool trackChange);
     }
 }
