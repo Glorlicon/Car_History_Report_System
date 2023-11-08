@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,6 +61,23 @@ namespace Infrastructure
             services.AddScoped<IPaymentServices, VnpayPaymentServices>();
             services.AddScoped<ICarReportRepository, CarReportRepository>();
             return services;
+        }
+
+        public static void ConfigureAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ReadCarReport", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        var dateToday = DateOnly.FromDateTime(DateTime.Now).ToString();
+                        return context.User.HasClaim(c => c.Type == ClaimTypes.Role) 
+                                || (context.User.HasClaim("DateCanReadReport", dateToday) &&
+                                    context.User.HasClaim(c => c.Type == "CarReportCanRead"));
+                    });
+                });
+            });
         }
 
         public static void ConfigureIdentity(this IServiceCollection services)

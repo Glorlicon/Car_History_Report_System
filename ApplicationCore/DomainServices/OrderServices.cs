@@ -18,12 +18,14 @@ namespace Application.DomainServices
     public class OrderServices : IOrderServices
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityServices _identityServices;
         private readonly IMapper _mapper;
 
-        public OrderServices(IUnitOfWork unitOfWork, IMapper mapper)
+        public OrderServices(IUnitOfWork unitOfWork, IMapper mapper, IIdentityServices identityServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _identityServices = identityServices;
         }
 
         public async Task<PagedList<OrderResponseDTO>> GetAllOrders(OrderParameter parameter)
@@ -52,7 +54,7 @@ namespace Application.DomainServices
             var count = await _unitOfWork.OrderRepository.CountByCondition(x => x.UserId == userId);
             return new PagedList<OrderResponseDTO>(ordersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
-        public async Task<int> CreateOrder(OrderCreateRequestDTO request)
+        public async Task<CreateOrderResult> CreateOrder(OrderCreateRequestDTO request)
         {
             var orderOption = await _unitOfWork.OrderOptionRepository.GetOrderOptionById(request.OrderOptionId, trackChange: false);
             if (orderOption is null)
@@ -79,7 +81,12 @@ namespace Application.DomainServices
             _unitOfWork.OrderRepository.Create(order);
             // do payment
             await _unitOfWork.SaveAsync();
-            return order.Id;
+            if(request.UserId is null)
+            {
+                var token = _identityServices.CreateTokenForGuest(request.CarId);
+                return new CreateOrderResult { Id = order.Id, Token = token };
+            }
+            return new CreateOrderResult { Id = order.Id, Token = null};
         }
 
         public async Task<IEnumerable<OrderOptionResponseDTO>> GetAllOrderOptions()
