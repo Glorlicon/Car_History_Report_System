@@ -186,8 +186,9 @@ namespace Application.DomainServices
             List<(DateOnly, DateOnly, CarOwnerHistory)> carHistoryTimelines = new List<(DateOnly, DateOnly, CarOwnerHistory)>();
             var beginDate = carReportData.Model.ReleasedDate;
             DateOnly curStartDate = date;
-            carReportData.CarOwnerHistories = carReportData.CarOwnerHistories.Where(x => x.StartDate <= date).ToList();
-            carReportData.CarOwnerHistories.OrderByDescending(x => x.StartDate);
+            carReportData.CarOwnerHistories = carReportData.CarOwnerHistories.Where(x => x.StartDate <= date)
+                                                                             .OrderByDescending(x => x.StartDate)
+                                                                             .ToList();
             foreach (var carOwner in carReportData.CarOwnerHistories)
             {
                 var startDate = carOwner.StartDate is null ? beginDate : carOwner.StartDate;
