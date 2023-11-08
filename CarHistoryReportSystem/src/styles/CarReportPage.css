@@ -1,0 +1,118 @@
+.car-report-details-page {
+    margin-top: 10%;
+}
+
+.car-report-details-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 15%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+.car-report-details-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+    align-self: center;
+}
+.car-report-general-information {
+    display: flex;
+    flex-direction: row;
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-bottom: 5%;
+}
+.car-report-general-information-details {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    padding: 1%;
+    width: 60%;
+    text-align: left;
+}
+
+.car-report-general-information-details a, .car-report-general-information-details h4 {
+    font-size: 20px;
+    padding: 1%;
+}
+.car-report-general-information-history {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 1%;
+    width: 40%;
+}
+.car-report-general-information-history a{
+    font-size: 20px;
+    padding-top: 10%;
+    text-align: left;
+}
+.car-report-recall-history {
+    margin-bottom: 5%;
+}
+.car-report-recall-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.car-report-recall-history-table, .car-report-recall-history-table th, .car-report-recall-history-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+    .car-report-recall-history-table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: deepskyblue;
+        color: white;
+    }
+
+    .car-report-recall-history-table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+
+
+.car-report-service-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+    .car-report-service-history-table, .car-report-service-history-table th, .car-report-service-history-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+        .car-report-service-history-table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: deepskyblue;
+            color: white;
+        }
+
+        .car-report-service-history-table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+.car-report-service-history-table-ownership-data{
+    display: flex;
+    flex-direction: column
+}
