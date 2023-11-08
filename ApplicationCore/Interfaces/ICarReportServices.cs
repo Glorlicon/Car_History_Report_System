@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface ICarReportServices
     {
-        Task<CarReportResponseDTO> GetCarReportById(string carId, string userId);
+        Task<CarReportResponseDTO> GetCarReportById(string carId, string userId, DateOnly date);
 
         Task<bool> IsCarReportExist(string carId, string userId);
 
@@ -17,7 +17,7 @@ namespace Application.Interfaces
 
         Task<IEnumerable<CarReportResponseDTO>> GetCarReportsByUserId(string userId);
 
-        Task<CarReportDataResponseDTO> GetCarReportDataByCarId(string carId);
+        Task<CarReportDataResponseDTO> GetCarReportDataByCarId(string carId, DateOnly date);
 
         Task AddCarReportToUserCarReportList(CarReportCreateRequestDTO request);
     }

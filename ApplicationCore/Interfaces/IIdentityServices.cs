@@ -37,5 +37,7 @@ namespace Application.Interfaces
         Task<string> CreateConfirmEmailToken(string username, string password);
 
         Task<string> RefreshToken(string userId, bool isVerified);
+
+        string CreateTokenForGuest(string? carId);
     }
 }

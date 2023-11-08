@@ -10,6 +10,6 @@ namespace Application.DTO.CarReport
     {
         public string UserId { get; set; }
         public string CarId { get; set; }
-        public DateTime CreatedTime { get; set; }
+        public DateOnly CreatedDate { get; set; }
     }
 }

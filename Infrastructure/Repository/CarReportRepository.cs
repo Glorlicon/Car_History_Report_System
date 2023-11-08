@@ -19,9 +19,9 @@ namespace Infrastructure.Repository
 
         }
 
-        public async Task<CarReport> GetById(string carId, string userId, bool trackChange)
+        public async Task<CarReport> GetById(string carId, string userId, DateOnly date, bool trackChange)
         {
-            return await FindByCondition(x => x.CarId == carId && x.UserId == userId, trackChange)
+            return await FindByCondition(x => x.CarId == carId && x.UserId == userId && x.CreatedDate == date, trackChange)
                             .SingleOrDefaultAsync();
         }
 

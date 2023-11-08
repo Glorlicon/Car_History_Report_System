@@ -157,6 +157,19 @@ namespace Infrastructure.InfrastructureServices
             var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
+
+        public string CreateTokenForGuest(string? carId)
+        {
+            var signingCredentials = GetSigningCredentials();
+            var claims = new List<Claim>
+            {
+                new Claim("CarReportCanRead",carId is null ? "none" : carId),
+                new Claim("DateCanReadReport",DateOnly.FromDateTime(DateTime.Now).ToString())
+            };
+            var tokenOptions = GenerateGuestTokenOptions(signingCredentials, claims);
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        }
+
         private SigningCredentials GetSigningCredentials()
         {
             var keyPlain = Environment.GetEnvironmentVariable("CAR_HISTORY_API_SECRET");
@@ -176,6 +189,21 @@ namespace Infrastructure.InfrastructureServices
             if (_user.DataProviderId != null) claims.Add(new Claim("dataprovider", _user.DataProviderId.ToString()));
             return claims;
         }
+
+        private JwtSecurityToken GenerateGuestTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var tokenOptions = new JwtSecurityToken
+            (
+            issuer: jwtSettings.GetSection("validIssuer").Value,
+            audience: jwtSettings.GetSection("validAudience").Value,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(60*24)),
+            signingCredentials: signingCredentials
+            );
+            return tokenOptions;
+        }
+
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
