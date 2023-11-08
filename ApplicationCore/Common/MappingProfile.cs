@@ -113,7 +113,8 @@ namespace Application.Common
                 .ForMember(c => c.NumberOfStolenRecords, opt => opt.MapFrom(x => x.CarStolenHistories.Count))
                 .ForMember(c => c.NumberOfAccidentRecords, opt => opt.MapFrom(x => x.CarAccidentHistories.Count))
                 .ForMember(c => c.NumberOfOwners, opt => opt.MapFrom(x => x.CarOwnerHistories.Count))
-                .ForMember(c => c.NumberOfServiceHistoryRecords, opt => opt.MapFrom(x => x.CarServiceHistories.Count));
+                .ForMember(c => c.NumberOfServiceHistoryRecords, opt => opt.MapFrom(x => x.CarServiceHistories.Count))
+                .ForMember(c => c.ColorName, opt => opt.MapFrom(x => x.Color.ToString()));
 
             CreateMap<CarAccidentHistory, CarAccidentHistoryResponseDTO>();
 

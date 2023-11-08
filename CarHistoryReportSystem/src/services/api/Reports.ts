@@ -16,6 +16,27 @@ export async function GetReport(vin: string): Promise<APIResponse> {
     }
 }
 
+export async function GetReportExcel(vin: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory`,
+            {
+                headers: {
+                    'Accept': 'text/csv'
+                }
+            })
+        console.log("Response", response)
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            console.log(axiosError)
+            return { error: (axiosError.response?.data as any).Error[0] }
+        }
+    }
+}
+
 export async function CreateOrder(data: Order): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Orders`, data)
