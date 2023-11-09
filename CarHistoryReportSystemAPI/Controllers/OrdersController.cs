@@ -83,8 +83,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateOrderAsync([FromBody] OrderCreateRequestDTO request)
         {
-            var id = await _orderService.CreateOrder(request);
-            return CreatedAtRoute("GetOrder", new { id = id }, null);
+            var result = await _orderService.CreateOrder(request);
+            return CreatedAtRoute("GetOrder", new { id = result.Id }, result);
         }
 
         /// <summary>

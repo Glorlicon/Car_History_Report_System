@@ -32,7 +32,7 @@ namespace Application.Interfaces
 
         Task<bool> ContactDataProvider(DataProviderContactCreateRequestDTO request);
 
-        Task<PagedList<DataProviderReviewsResponseDTO>> GetAllReview(int dataProviderId, DataProviderReviewParameter parameter);
+        Task<PagedList<DataProviderReviewsResponseDTO>> GetAllReview(DataProviderReviewParameter parameter);
 
         Task<DataProviderReviewsResponseDTO> GetReview(string userId, int dataProviderId);
 

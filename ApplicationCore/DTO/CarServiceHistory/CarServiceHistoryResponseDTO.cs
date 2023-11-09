@@ -10,6 +10,7 @@ namespace Application.DTO.CarServiceHistory
     public class CarServiceHistoryResponseDTO
     {
         public int Id { get; set; }
+        public string Source { get; set; }
 
         public string CarId { get; set; }
         public string OtherServices { get; set; }

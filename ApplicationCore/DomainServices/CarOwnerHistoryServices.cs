@@ -71,7 +71,7 @@ namespace Application.DomainServices
             if(currentCarOwner != null)
             {
                 if (currentCarOwner.EndDate == null)
-                    currentCarOwner.EndDate = request.StartDate;
+                    currentCarOwner.EndDate = request.StartDate.Value.AddDays(-1);
             }
             await _unitOfWork.SaveAsync();
             return true;

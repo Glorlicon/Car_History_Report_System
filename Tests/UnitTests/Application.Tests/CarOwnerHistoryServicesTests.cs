@@ -223,7 +223,7 @@ namespace UnitTests.Application.Tests
             // Act
             await service.CreateCarOwnerHistory(request);
             // Assert
-            Assert.Equal(currentOwner.EndDate, request.StartDate);
+            Assert.Equal(currentOwner.EndDate, request.StartDate.Value.AddDays(-1));
         }
     }
 }

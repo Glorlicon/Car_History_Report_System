@@ -26,11 +26,11 @@ namespace Infrastructure.Repository
             return await FindByCondition(r => r.DataProviderId == dataProviderId && r.UserId == userId, trackChange)
                             .SingleOrDefaultAsync();
         }
-        public async Task<IEnumerable<Review>> GetAllReview(int dataProviderId, DataProviderReviewParameter parameter, bool trackChange)
+        public async Task<IEnumerable<Review>> GetAllReview(DataProviderReviewParameter parameter, bool trackChange)
         {
-            return await FindByCondition(r => r.DataProviderId == dataProviderId, trackChange)
-                            //.Filter(parameter)
-                            //.Sort(parameter)
+            return await FindAll(trackChange)
+                            .Filter(parameter)
+                            .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();

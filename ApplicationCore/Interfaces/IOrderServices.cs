@@ -18,7 +18,7 @@ namespace Application.Interfaces
 
         Task<OrderResponseDTO> GetOrder(int id);
 
-        Task<int> CreateOrder(OrderCreateRequestDTO request);
+        Task<CreateOrderResult> CreateOrder(OrderCreateRequestDTO request);
 
         Task<IEnumerable<OrderOptionResponseDTO>> GetAllOrderOptions();
 
