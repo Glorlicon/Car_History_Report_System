@@ -12,5 +12,8 @@ namespace Application.DTO.CarMaintainance
         public ModelMaintainanceResponseDTO ModelMaintainance { get; set; }
         public int? LastOdometer { get; set; }
         public DateOnly? LastServicedDate { get; set; }
+
+        public int CurrentOdometer { get; set; }
+        public DateOnly? LastOwnerChangeDate { get; set; }
     }
 }
