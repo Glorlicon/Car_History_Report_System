@@ -14,7 +14,7 @@ namespace Application.DTO.ModelMaintainance
 
         public int? OdometerPerMaintainance { get; set; }
 
-        public DateTime? TimePerMaintainance { get; set; }
+        public int? DayPerMaintainance { get; set; }
 
         public string RecommendAction { get; set; }
     }
