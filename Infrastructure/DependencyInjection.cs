@@ -1,4 +1,5 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -102,6 +103,7 @@ namespace Infrastructure
         {
             services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

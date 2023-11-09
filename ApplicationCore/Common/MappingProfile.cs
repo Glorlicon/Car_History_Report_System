@@ -97,7 +97,8 @@ namespace Application.Common
                 .ForMember(c => c.Status, opt => opt.MapFrom(x => x.Status.ToString()));
 
             CreateMap<CarServiceHistory, CarServiceHistoryResponseDTO>()
-                .ForMember(c => c.ServicesName, opt => opt.MapFrom(x => x.Services.ToString()));
+                .ForMember(c => c.ServicesName, opt => opt.MapFrom(x => x.Services.ToString()))
+                .ForMember(c => c.Source, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
             CreateMap<CarServiceHistoryCreateRequestDTO, CarServiceHistory>();
             CreateMap<CarServiceHistoryUpdateRequestDTO, CarServiceHistory>();
 
@@ -123,6 +124,13 @@ namespace Application.Common
             CreateMap<CarInsurance, CarInsuranceResponseDTO>();
 
             CreateMap<CarStolenHistory, CarStolenHistoryResponseDTO>();
+
+            CreateMap<CarInspectionHistory, CarInspectionHistoryResponseDTO>()
+                .ForMember(c => c.Source, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
+            CreateMap<CarInspectionHistoryCreateRequestDTO, CarInspectionHistory>();
+            CreateMap<CarInspectionHistoryUpdateRequestDTO, CarInspectionHistory>();
+            CreateMap<CarInspectionHistoryDetailCreateRequestDTO, CarInspectionHistoryDetail>();
+            CreateMap<CarInspectionHistoryDetail, CarInspectionHistoryDetailResponseDTO>();
         }
     }
 }
