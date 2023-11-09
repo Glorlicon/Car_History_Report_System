@@ -43,9 +43,9 @@ namespace Application.DomainServices
             return carReportsResponse;
         }
 
-        public async Task<CarReportResponseDTO> GetCarReportById(string carId, string userId)
+        public async Task<CarReportResponseDTO> GetCarReportById(string carId, string userId, DateOnly date)
         {
-            var carReport = await _unitOfWork.CarReportRepository.GetById(carId,userId, trackChange: false);
+            var carReport = await _unitOfWork.CarReportRepository.GetById(carId,userId, date, trackChange: false);
             if (carReport is null)
             {
                 throw new CarReportNotFoundException(carId, userId);
@@ -54,7 +54,7 @@ namespace Application.DomainServices
             return carReportResponse;
         }
 
-        public async Task<CarReportDataResponseDTO> GetCarReportDataByCarId(string carId)
+        public async Task<CarReportDataResponseDTO> GetCarReportDataByCarId(string carId, DateOnly date)
         {
             // get car data
             var carReportData = await _unitOfWork.CarRepository.GetCarReportDataById(carId, trackChange: false);
@@ -65,10 +65,10 @@ namespace Application.DomainServices
             // get user that get car report
             var currentUserId = _currentUserServices.GetCurrentUserId();
             // check if user can access the report
-            await CheckAccessReport(carId, currentUserId, carReportData);
+            await CheckAccessReport(carId, currentUserId, date, carReportData);
 
             // turn car data to car history details for report
-            var carHistoryDetails = GetCarHistoryDetails(carReportData);
+            var carHistoryDetails = GetCarHistoryDetails(carReportData, date);
 
             // get response
             var carReportDataResponse = _mapper.Map<CarReportDataResponseDTO>(carReportData);
@@ -126,10 +126,10 @@ namespace Application.DomainServices
             }));
         }
 
-        private List<CarReportCarHistoryDetails> GetCarHistoryDetails(Car carReportData)
+        private List<CarReportCarHistoryDetails> GetCarHistoryDetails(Car carReportData, DateOnly date)
         {
             var carHistoryDetails = new List<CarReportCarHistoryDetails>();
-            List<(DateOnly StartDate, DateOnly EndDate, CarOwnerHistory CarOwner)> carHistoryTimelines = GetCarHistoryTimeLines(carReportData);
+            List<(DateOnly StartDate, DateOnly EndDate, CarOwnerHistory CarOwner)> carHistoryTimelines = GetCarHistoryTimeLines(carReportData, date);
             foreach (var timePeriod in carHistoryTimelines)
             {
                 var startDate = timePeriod.StartDate;
@@ -162,7 +162,7 @@ namespace Application.DomainServices
                 AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen Record");
                 generalCarHistories.OrderByDescending(x => x.ReportDate);
 
-                if (generalCarHistories.Count == 0 && timePeriod.CarOwner==null) continue;
+                if (generalCarHistories.Count == 0 && timePeriod.CarOwner == null) continue;
 
                 var carHistoryDetail = new CarReportCarHistoryDetails
                 {
@@ -181,19 +181,25 @@ namespace Application.DomainServices
             return carHistoryDetails;
         }
 
-        private List<(DateOnly, DateOnly, CarOwnerHistory)> GetCarHistoryTimeLines(Car carReportData)
+        private List<(DateOnly, DateOnly, CarOwnerHistory)> GetCarHistoryTimeLines(Car carReportData, DateOnly date)
         {
             List<(DateOnly, DateOnly, CarOwnerHistory)> carHistoryTimelines = new List<(DateOnly, DateOnly, CarOwnerHistory)>();
             var beginDate = carReportData.Model.ReleasedDate;
-            DateOnly curStartDate = DateOnly.FromDateTime(DateTime.Today);
-            carReportData.CarOwnerHistories.OrderByDescending(x => x.StartDate);
+            DateOnly curStartDate = date;
+            carReportData.CarOwnerHistories = carReportData.CarOwnerHistories.Where(x => x.StartDate <= date)
+                                                                             .OrderByDescending(x => x.StartDate)
+                                                                             .ToList();
             foreach (var carOwner in carReportData.CarOwnerHistories)
             {
                 var startDate = carOwner.StartDate is null ? beginDate : carOwner.StartDate;
-                var endDate = carOwner.EndDate is null ? DateOnly.FromDateTime(DateTime.Today) : carOwner.EndDate;
-                if (endDate < curStartDate)
+                var endDate = (carOwner.EndDate is null || carOwner.EndDate > date) ? date : carOwner.EndDate;
+                var dateBetween = curStartDate.DayNumber - endDate.Value.DayNumber;
+                if (dateBetween > 1)
                 {
-                    carHistoryTimelines.Add((endDate.Value, curStartDate, null));
+                    if(curStartDate != date)
+                        carHistoryTimelines.Add((endDate.Value.AddDays(1), curStartDate.AddDays(-1), null));
+                    else
+                        carHistoryTimelines.Add((endDate.Value.AddDays(1), curStartDate, null));
                 }
                 carHistoryTimelines.Add((startDate.Value, endDate.Value, carOwner));
                 curStartDate = startDate.Value;
@@ -203,7 +209,7 @@ namespace Application.DomainServices
             return carHistoryTimelines;
         }
 
-        private async Task CheckAccessReport(string carId, string currentUserId, Car carReportData)
+        private async Task CheckAccessReport(string carId, string currentUserId, DateOnly date, Car carReportData)
         {
             var user = await _unitOfWork.UserRepository.GetUserByUserId(currentUserId, trackChanges: true);
             // check if user can access the report
@@ -223,7 +229,7 @@ namespace Application.DomainServices
                         }
                         break;
                     case Role.User:
-                        var carReport = await _unitOfWork.CarReportRepository.GetById(carId, currentUserId, false);
+                        var carReport = await _unitOfWork.CarReportRepository.GetById(carId, currentUserId, date, false);
                         if (carReport is null)
                         {
                             if (user.MaxReportNumber <= 0)

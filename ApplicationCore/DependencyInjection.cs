@@ -1,4 +1,5 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -45,6 +46,15 @@ namespace Application
                                              CarServiceHistoryParameter,
                                              CarServiceHistoryCreateRequestDTO,
                                              CarServiceHistoryUpdateRequestDTO>>();
+            services.AddScoped<ICarHistoryServices<CarInspectionHistoryResponseDTO,
+                                             CarInspectionHistoryParameter,
+                                             CarInspectionHistoryCreateRequestDTO,
+                                             CarInspectionHistoryUpdateRequestDTO>,
+                               CarHistoryServices<CarInspectionHistory,
+                                             CarInspectionHistoryResponseDTO,
+                                             CarInspectionHistoryParameter,
+                                             CarInspectionHistoryCreateRequestDTO,
+                                             CarInspectionHistoryUpdateRequestDTO>>();
         }
     }
 }

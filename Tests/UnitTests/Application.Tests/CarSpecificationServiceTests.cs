@@ -66,14 +66,14 @@ namespace UnitTests.Application.Tests
                         MaintenancePart = "Engine",
                         OdometerPerMaintainance = 20000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     },
                     new ModelMaintainance
                     {
                         MaintenancePart = "Tire",
                         OdometerPerMaintainance = 10000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     }
                 }
             });
@@ -101,14 +101,14 @@ namespace UnitTests.Application.Tests
                         MaintenancePart = "Engine",
                         OdometerPerMaintainance = 20000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     },
                     new ModelMaintainance
                     {
                         MaintenancePart = "Tire",
                         OdometerPerMaintainance = 10000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     }
                 }
             });
@@ -136,14 +136,14 @@ namespace UnitTests.Application.Tests
                         MaintenancePart = "Engine",
                         OdometerPerMaintainance = 20000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     },
                     new ModelMaintainance
                     {
                         MaintenancePart = "Tire",
                         OdometerPerMaintainance = 10000,
                         RecommendAction = "Check",
-                        TimePerMaintainance = new DateTime(2023, 12, 14)
+                        DayPerMaintainance = 7
                     }
                 }
             });

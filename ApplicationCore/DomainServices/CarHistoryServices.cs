@@ -42,7 +42,7 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: false);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             var carHistoryResponse = _mapper.Map<R>(carHistory);
             return carHistoryResponse;
@@ -88,7 +88,7 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             _carHistoryRepository.Delete(carHistory);
             await _carHistoryRepository.SaveAsync();
@@ -99,7 +99,7 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             var odometerBefore = carHistory.Odometer;
             _mapper.Map(request, carHistory);

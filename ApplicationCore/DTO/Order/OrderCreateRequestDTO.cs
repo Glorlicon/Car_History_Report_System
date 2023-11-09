@@ -12,5 +12,6 @@ namespace Application.DTO.Order
         public string? UserId { get; set; }
         public string TransactionId { get; set; }
         public int OrderOptionId { get; set; }
+        public string? CarId { get; set; }
     }
 }

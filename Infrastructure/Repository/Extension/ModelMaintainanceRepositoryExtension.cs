@@ -30,8 +30,8 @@ namespace Infrastructure.Repository.Extension
             };            
             query = parameter.SortByTime switch
             {
-                1 => query.OrderBy(x => x.TimePerMaintainance),
-                -1 => query.OrderByDescending(x => x.TimePerMaintainance),
+                1 => query.OrderBy(x => x.DayPerMaintainance),
+                -1 => query.OrderByDescending(x => x.DayPerMaintainance),
                 _ => query
             };
             return query;

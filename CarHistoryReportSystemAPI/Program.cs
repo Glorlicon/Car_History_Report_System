@@ -41,6 +41,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthentication();
+builder.Services.ConfigureAuthorization();
 builder.Services.ConfigureIdentity();
 
 

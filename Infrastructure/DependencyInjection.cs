@@ -1,4 +1,5 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +64,23 @@ namespace Infrastructure
             return services;
         }
 
+        public static void ConfigureAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ReadCarReport", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        var dateToday = DateOnly.FromDateTime(DateTime.Now).ToString();
+                        return context.User.HasClaim(c => c.Type == ClaimTypes.Role) 
+                                || (context.User.HasClaim("DateCanReadReport", dateToday) &&
+                                    context.User.HasClaim(c => c.Type == "CarReportCanRead"));
+                    });
+                });
+            });
+        }
+
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<User>(o =>
@@ -84,6 +103,7 @@ namespace Infrastructure
         {
             services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
