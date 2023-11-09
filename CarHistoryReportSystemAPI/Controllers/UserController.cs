@@ -101,7 +101,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Updated failed</response>
         /// <response code="404">User not found</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Adminstrator,User")]
+        [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -144,13 +144,6 @@ namespace CarHistoryReportSystemAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Delete User
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <response code="204">Delete Successfully</response>
-        /// <response code="400">Delete failed</response>
         //[HttpDelete("{id}")]
         //[Authorize(Roles = "Adminstrator")]
         //[ProducesResponseType(StatusCodes.Status204NoContent)]

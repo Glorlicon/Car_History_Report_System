@@ -27,20 +27,19 @@ namespace Application.DomainServices
         private readonly IEmailServices _emailServices;
         private readonly IIdentityServices _identityServices;
         private readonly IAuthenticationServices _authenticationServices;
-        private readonly UserManager<User> _userManager;
 
 
-        public UserService(IMapper mapper, IUserRepository userRepository, 
+        public UserService(IMapper mapper, 
+            IUserRepository userRepository, 
             IEmailServices emailServices, 
-            IIdentityServices identityServices, IAuthenticationServices authenticationServices,
-            UserManager<User> userManager)
+            IIdentityServices identityServices, 
+            IAuthenticationServices authenticationServices)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _emailServices = emailServices;
             _identityServices = identityServices;
             _authenticationServices = authenticationServices;
-            _userManager = userManager;
         }
 
         // THEM ROLE CHO USER: _userManager.AddToRoleAsync(user, "ADMIN");
