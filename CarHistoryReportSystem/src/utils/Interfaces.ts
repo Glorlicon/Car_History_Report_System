@@ -323,7 +323,7 @@ export interface Reviews {
     //createdTime: Date
 }
 
-export interface ModelMaintainanceResponse {
+export interface ModelMaintainanceDetails {
     modelMaintainance: {
         modelId: string
         maintenancePart: string
@@ -333,4 +333,10 @@ export interface ModelMaintainanceResponse {
     },
     lastOdometer: number
     lastServicedDate:  string
+}
+
+export interface ModelMaintainanceResponse {
+    currentOdometer: number
+    lastOwnerChangeDate: string
+    modelMaintainanceDetails: ModelMaintainanceDetails[]
 }

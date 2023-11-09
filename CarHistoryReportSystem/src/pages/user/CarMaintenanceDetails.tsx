@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { GetMaintenanceDetails } from '../../services/api/CarMaintenance';
 import { RootState } from '../../store/State';
 import { APIResponse, ModelMaintainanceResponse } from '../../utils/Interfaces';
-
+import '../../styles/CarMaintenanceDetails.css'
 function CarMaintenanceDetails() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     type RouteParams = {
@@ -43,14 +43,23 @@ function CarMaintenanceDetails() {
                         <button onClick={fetchData} className="car-maintenance-details-retry-btn">Retry</button>
                     </div>
             ): (
-                <>
+                <div className="car-maintenance-details-main-page">
                 <div className="car-maintenance-details-navigator">
                     <a href="/maintenance">&#8592;Garage</a>
                     <a onClick={() => setSection(0)}>Dashboard</a>
                     <a onClick={() => setSection(1)}>Service History</a>
                     <a onClick={() => setSection(2)}>Maintenance Schedule</a>
                 </div>
-                </>
+                <div className="car-maintenance-details-section">
+                {section === 0 ? (
+                    <></>
+                ): section === 1 ? (
+                    <></>
+                ): section === 2 && (
+                    <></>
+                )}
+                </div>
+                </div>
             )}
       </div>
   );

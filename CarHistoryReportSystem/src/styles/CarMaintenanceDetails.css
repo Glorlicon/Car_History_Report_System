@@ -1,0 +1,30 @@
+.car-maintenance-details-page {
+    margin: 5% 20% 10% 20%;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.car-maintenance-details-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+.car-maintenance-details-load-error {
+    text-align: center
+}
+.car-maintenance-details-retry-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.car-maintenance-details-retry-btn:hover {
+    background-color: #2980b9;
+}
