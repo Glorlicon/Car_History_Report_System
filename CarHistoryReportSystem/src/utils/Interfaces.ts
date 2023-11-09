@@ -322,3 +322,15 @@ export interface Reviews {
     rating: number
     //createdTime: Date
 }
+
+export interface ModelMaintainanceResponse {
+    modelMaintainance: {
+        modelId: string
+        maintenancePart: string
+        odometerPerMaintainance: number,
+        daysPerMaintainance: number
+        recommendAction: string
+    },
+    lastOdometer: number
+    lastServicedDate:  string
+}
