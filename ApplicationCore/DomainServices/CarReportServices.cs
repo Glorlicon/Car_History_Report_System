@@ -160,7 +160,7 @@ namespace Application.DomainServices
                 AddGeneralCarHistories(generalCarHistories, carInspectionHistories.Cast<CarHistory>().ToList(), "Car Inspection History");
                 AddGeneralCarHistories(generalCarHistories, carInsurances.Cast<CarHistory>().ToList(), "Car Insurance History");
                 AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen Record");
-                generalCarHistories.OrderByDescending(x => x.ReportDate);
+                generalCarHistories = generalCarHistories.OrderByDescending(x => x.ReportDate).ToList();
 
                 if (generalCarHistories.Count == 0 && timePeriod.CarOwner == null) continue;
 

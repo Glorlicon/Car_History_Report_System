@@ -62,6 +62,8 @@ namespace Application.DomainServices
             {
                 throw new CarNotFoundException(carId);
             }
+            var currentOwner = await _unitOfWork.CarOwnerHistoryRepository.GetCurrentCarOwner(carId, false);
+            var lastOwnerChangeDate = currentOwner?.StartDate;
             var modelMaintainances = await _unitOfWork.ModelMaintainanceRepository.GetModelMaintainancesByModelId(car.ModelId, new ModelMaintainanceParameter(), trackChange: false);
             var carModelMaintainances = new List<CarModelMaintainanceResponseDTO>();
 
@@ -76,7 +78,9 @@ namespace Application.DomainServices
                 {
                     ModelMaintainance = _mapper.Map<ModelMaintainanceResponseDTO>(modelMaintainance),
                     LastOdometer = lastOdometer,
-                    LastServicedDate = lastTimeServiced
+                    LastServicedDate = lastTimeServiced,
+                    CurrentOdometer = car.CurrentOdometer,
+                    LastOwnerChangeDate = lastOwnerChangeDate
                 };
                 carModelMaintainances.Add(carModelMaintainance);
             }
