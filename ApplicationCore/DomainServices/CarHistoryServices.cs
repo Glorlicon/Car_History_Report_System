@@ -1,10 +1,12 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarOwnerHistory;
+using Application.DTO.Notification;
 using Application.Interfaces;
 using Application.Utility;
 using AutoMapper;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -20,13 +22,15 @@ namespace Application.DomainServices
     {
         private readonly ICarHistoryRepository<T,P> _carHistoryRepository;
         private readonly ICarRepository _carRepository;
+        private readonly INotificationServices _notificationServices;
         private readonly IMapper _mapper;
 
-        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository)
+        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices)
         {
             _carHistoryRepository = carHistoryRepository;
             _mapper = mapper;
             _carRepository = carRepository;
+            _notificationServices = notificationServices;
         }
 
         public async Task<PagedList<R>> GetAllCarHistorys(P parameter)
@@ -80,6 +84,17 @@ namespace Application.DomainServices
             }
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
+            // Send Notification to police
+            var policeAlertNotification = new NotificationCreateRequestDTO
+            {
+                Title = $"New Car History of car {carHistory.CarId} has beed added",
+                RelatedCarId = carHistory.CarId,
+                Description = $"Car {carHistory.CarId} have beed added new {typeof(T).Name}",
+                RelatedLink = $"/{carHistory.CarId}",
+                Type = NotificationType.PoliceAlert
+            };
+            await _notificationServices.CreateNotification(policeAlertNotification);
+            //
             return carHistory.Id;
         }
 

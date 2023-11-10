@@ -11,8 +11,10 @@ using Application.DTO.CarReport;
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
 using Application.DTO.CarStolenHistory;
+using Application.DTO.CarTracking;
 using Application.DTO.DataProvider;
 using Application.DTO.ModelMaintainance;
+using Application.DTO.Notification;
 using Application.DTO.Order;
 using Application.DTO.Request;
 using Application.DTO.User;
@@ -131,6 +133,14 @@ namespace Application.Common
             CreateMap<CarInspectionHistoryUpdateRequestDTO, CarInspectionHistory>();
             CreateMap<CarInspectionHistoryDetailCreateRequestDTO, CarInspectionHistoryDetail>();
             CreateMap<CarInspectionHistoryDetail, CarInspectionHistoryDetailResponseDTO>();
+
+            CreateMap<Notification, NotificationResponseDTO>();
+            CreateMap<NotificationCreateRequestDTO, Notification>();
+            CreateMap<UserNotification, UserNotificationResponseDTO>();
+
+            CreateMap<CarTracking, CarTrackingResponseDTO>();
+            CreateMap<CarTrackingCreateRequestDTO, CarTracking>();
+            CreateMap<CarTrackingUpdateRequestDTO, CarTracking>();
         }
     }
 }
