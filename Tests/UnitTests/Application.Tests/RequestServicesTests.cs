@@ -22,6 +22,7 @@ namespace UnitTests.Application.Tests
         private List<Request> requestsTestData;
         private RequestParameter parameter;
         private Mock<IAuthenticationServices> mockService;
+        private Mock<INotificationServices> mockNotificationService;
         private Mock<IEmailServices> mockEmailService;
         private Mock<IRequestRepository> mockRequestRepository;
 
@@ -36,6 +37,7 @@ namespace UnitTests.Application.Tests
             mockService = new Mock<IAuthenticationServices>();
             mockEmailService = new Mock<IEmailServices>();
             mockRequestRepository = new Mock<IRequestRepository>();
+            mockNotificationService = new Mock<INotificationServices>();
         }
 
         private List<Request> GetRequests()
@@ -90,7 +92,7 @@ namespace UnitTests.Application.Tests
             mockService.Setup(x => x.GetCurrentUserAsync())
                         .ReturnsAsync(new User { Role = Role.Adminstrator });
 
-            var service = new RequestServices(mockRepo.Object, mapper, mockService.Object);
+            var service = new RequestServices(mockRepo.Object, mapper, mockService.Object, mockNotificationService.Object);
             // Act            
             var result = await service.GetAllRequests(parameter, trackChange);
             // Assert
@@ -115,7 +117,7 @@ namespace UnitTests.Application.Tests
                     .ReturnsAsync(requestsTestData);
             mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
 
-            var service = new RequestServices(mockRepo.Object, mapper, mockService.Object);
+            var service = new RequestServices(mockRepo.Object, mapper, mockService.Object, mockNotificationService.Object);
             // Act            
             var result = await service.GetAllRequestByUserId(userId, parameter, trackChange);
             // Assert
