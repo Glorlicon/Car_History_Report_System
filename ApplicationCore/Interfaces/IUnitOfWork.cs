@@ -35,6 +35,12 @@ namespace Application.Interfaces
         IModelMaintainanceRepository ModelMaintainanceRepository { get; }
         ICarServiceHistoryRepository CarServiceHistoryRepository { get; }
 
+        INotificationRepository NotificationRepository { get; }
+
+        IUserNotificationRepository UserNotificationRepository { get; }
+
+        ICarTrackingRepository CarTrackingRepository { get; }
+
         Task SaveAsync();
     }
 }

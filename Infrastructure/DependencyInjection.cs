@@ -61,6 +61,9 @@ namespace Infrastructure
             services.AddScoped<ICsvServices, CsvServices>();
             services.AddScoped<IPaymentServices, VnpayPaymentServices>();
             services.AddScoped<ICarReportRepository, CarReportRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+            services.AddScoped<ICarTrackingRepository, CarTrackingRepository>();
             return services;
         }
 

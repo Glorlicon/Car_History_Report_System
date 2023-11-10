@@ -1,7 +1,9 @@
 ﻿using Application.Common.Models;
+using Application.DTO.Notification;
 using Application.DTO.Request;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Common;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
@@ -12,12 +14,14 @@ namespace Application.DomainServices
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationServices _notificationServices;
         private readonly IAuthenticationServices _authenticationServices;
-        public RequestServices(IRequestRepository requestRepository, IMapper mapper, IAuthenticationServices authenticationServices)
+        public RequestServices(IRequestRepository requestRepository, IMapper mapper, IAuthenticationServices authenticationServices, INotificationServices notificationServices)
         {
             _requestRepository = requestRepository;
             _mapper = mapper;
             _authenticationServices = authenticationServices;
+            _notificationServices = notificationServices;
         }
 
         public async Task<PagedList<RequestResponseDTO>> GetAllRequests(RequestParameter parameter, bool trackChange)
@@ -80,6 +84,15 @@ namespace Application.DomainServices
             request.Status = UserRequestStatus.Pending;
             _requestRepository.Create(request);
             await _requestRepository.SaveAsync();
+            // Send Notification to admin
+            var requestNotification = new NotificationCreateRequestDTO
+            {
+                Title = $"New {request.Type} request",
+                Description = $"New {request.Type} request have been sent Pending",
+                RelatedLink = $"/{request.Id}",
+                Type = NotificationType.Request
+            };
+            await _notificationServices.CreateNotification(requestNotification);
             return true;
         }
 
@@ -104,6 +117,16 @@ namespace Application.DomainServices
             }
             _mapper.Map(requestDTO, request);
             await _requestRepository.SaveAsync();
+            // Send Notification To User
+            var requestInfoUpdateNotification = new NotificationCreateRequestDTO
+            {
+                Title = $"Your {request.Type} request have updated information",
+                RelatedUserId = request.CreatedByUserId,
+                Description = $"Your {request.Type} request have updated information, Status: {request.Status}",
+                RelatedLink = $"/{request.Id}",
+                Type = NotificationType.RequestInfoUpdate
+            };
+            await _notificationServices.CreateNotification(requestInfoUpdateNotification);
             return true;
         }
     }

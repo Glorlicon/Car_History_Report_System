@@ -228,7 +228,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCar")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -299,7 +299,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car model not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{vinId}")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -331,7 +331,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{vinId}")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
