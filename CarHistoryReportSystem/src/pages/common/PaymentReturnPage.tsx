@@ -89,7 +89,6 @@ function PaymentReturnPage() {
                 navigate(`/car-report/${details[1]}`)
             }
         }
-        //navigate(`/car-report/${details[1]}`)
     }
     useEffect(() => {
         handleReport();

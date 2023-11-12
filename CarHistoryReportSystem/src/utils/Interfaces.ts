@@ -245,6 +245,7 @@ interface CarOwner {
 export interface CarServiceHistory {
     id: number;
     carId: string;
+    source: string;
     otherServices: string;
     serviceTime: string;
     reportDate: string;
@@ -328,15 +329,12 @@ export interface ModelMaintainanceDetails {
         modelId: string
         maintenancePart: string
         odometerPerMaintainance: number,
-        daysPerMaintainance: number
+        dayPerMaintainance: number
         recommendAction: string
     },
     lastOdometer: number
-    lastServicedDate:  string
-}
-
-export interface ModelMaintainanceResponse {
+    lastServicedDate: string
     currentOdometer: number
     lastOwnerChangeDate: string
-    modelMaintainanceDetails: ModelMaintainanceDetails[]
 }
+
