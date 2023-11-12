@@ -175,7 +175,7 @@ export interface ReportPackage {
 }
 
 export interface Order {
-    id?: number
+    carId?: string
     userId?: string
     orderOptionId: number
     transactionId:  string
@@ -245,6 +245,7 @@ interface CarOwner {
 export interface CarServiceHistory {
     id: number;
     carId: string;
+    source: string;
     otherServices: string;
     serviceTime: string;
     reportDate: string;
@@ -322,3 +323,18 @@ export interface Reviews {
     rating: number
     //createdTime: Date
 }
+
+export interface ModelMaintainanceDetails {
+    modelMaintainance: {
+        modelId: string
+        maintenancePart: string
+        odometerPerMaintainance: number,
+        dayPerMaintainance: number
+        recommendAction: string
+    },
+    lastOdometer: number
+    lastServicedDate: string
+    currentOdometer: number
+    lastOwnerChangeDate: string
+}
+

@@ -8,6 +8,7 @@ import carIcon from '../../car-icon.png'
 import deleteIcon from '../../delete.png'
 import '../../styles/CarMaintenance.css'
 import { isValidVIN } from '../../utils/Validators';
+import { useNavigate } from 'react-router-dom';
 
 function CarMaintenancePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -21,7 +22,7 @@ function CarMaintenancePage() {
     const [addError, setAddError] = useState<string | null>(null)
     const [vin, setVin] = useState('')
     const [currentVin, setCurrentVin] = useState('')
-
+    const navigate = useNavigate()
     const handleAddButton = () => {
         setShowModal(true)
     }
@@ -95,7 +96,7 @@ function CarMaintenancePage() {
         fetchData()
     },[])
     function handleCarMaintenanceDetails(vinId: any): void {
-        console.log(vinId)
+        navigate(`/maintenance/${vinId}`)
     }
 
   return (

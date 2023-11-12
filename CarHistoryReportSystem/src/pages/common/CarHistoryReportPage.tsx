@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { AddUserReport, GetReport } from '../../services/api/Reports';
+import { AddUserReport, CheckReportExist, GetReport } from '../../services/api/Reports';
 import { Get } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/CarHistoryReportPage.css'
@@ -25,27 +25,39 @@ function CarHistoryReportPage() {
         } else {
             setVinError(null);
             setIsLoading(true);
-            const response: APIResponse = await GetReport(vin);
-            setIsLoading(false);
-            if (response.error) {
-                setVinError(response.error)
-            } else {
-                if (!token) navigate(`/payment/${vin}`)
-                else {
-                    const id = JWTDecoder(token).nameidentifier
-                    const userResponse: APIResponse = await Get(id, token)
-                    console.log(userResponse.data)
-                    if (userResponse.data.maxReportNumber > 0) {
-                        let decodedToken = JWTDecoder(token)
-                        const reportData: AddReport = {
-                            userId: decodedToken.nameidentifier,
-                            carId: vin
-                        }
-                        const addReportResponse: APIResponse = await AddUserReport(reportData, token)
-                        if (addReportResponse.error) console.log("Failed to add report")
-                        else navigate(`/car-report/${vin}`)
+            if (!token) navigate(`/payment/${vin}`)
+            else {
+                const id = JWTDecoder(token).nameidentifier
+                const userResponse: APIResponse = await Get(id, token)
+                console.log(userResponse.data)
+                if (userResponse.data.maxReportNumber > 0) {
+                    let decodedToken = JWTDecoder(token)
+                    const reportData: AddReport = {
+                        userId: decodedToken.nameidentifier,
+                        carId: vin
                     }
-                    else navigate(`/payment/${vin}`)//vin changed later
+                    const checkReportExist: APIResponse = await CheckReportExist(reportData, token)
+                    if (checkReportExist.error) {
+                        setIsLoading(false);
+                        setVinError(checkReportExist.error)
+                    } else if (checkReportExist.data == "Success") {
+                        setIsLoading(false);
+                        navigate(`/car-report/${vin}`)
+                    } else {
+                        const addReportResponse: APIResponse = await AddUserReport(reportData, token)
+                        if (addReportResponse.error) {
+                            setIsLoading(false);
+                            setVinError(addReportResponse.error)
+                        }
+                        else {
+                            setIsLoading(false);
+                            navigate(`/car-report/${vin}`)
+                        } 
+                    }
+                }
+                else {
+                    setIsLoading(false);
+                    navigate(`/payment/${vin}`)
                 } 
             }
         }
