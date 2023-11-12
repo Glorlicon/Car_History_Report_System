@@ -36,5 +36,13 @@ namespace Infrastructure.Repository
                                 })
                             .ToListAsync();
         }
+
+        public async Task<IEnumerable<string>> GetUserIdsTrackingModelId(string modelId, bool trackChange)
+        {
+            return await FindByCondition(x => x.Car.ModelId == modelId, trackChange)
+                            .Select(x => x.UserId)
+                            .Distinct()
+                            .ToListAsync();
+        }
     }
 }

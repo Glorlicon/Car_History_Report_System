@@ -1,6 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
 using Application.DTO.CarRecall;
+using Application.DTO.Notification;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -18,12 +19,14 @@ namespace Application.DomainServices
     public class CarRecallServices : ICarRecallServices
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationServices _notificationServices;
         private readonly IMapper _mapper;
 
-        public CarRecallServices(IUnitOfWork unitOfWork, IMapper mapper)
+        public CarRecallServices(IUnitOfWork unitOfWork, IMapper mapper, INotificationServices notificationServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _notificationServices = notificationServices;
         }
 
         public async Task<CarRecallResponseDTO> GetCarRecall(int id)
@@ -83,7 +86,15 @@ namespace Application.DomainServices
             _unitOfWork.CarRecallRepository.Create(carRecall);
             await _unitOfWork.SaveAsync();
             //--- Push Notification here----
-            //
+            var carRecallNotification = new NotificationCreateRequestDTO
+            {
+                Title = "Your Car Models have new Recall",
+                Description = $"Manufacturer have released new recall for Car Model {carRecall.ModelId}",
+                ModelId = carRecall.ModelId,
+                RelatedLink = $"/CarRecalls/{carRecall.ID}",
+                Type = NotificationType.CarRecall
+            };
+            await _notificationServices.CreateNotification(carRecallNotification);
             //------------------------------
         }
 

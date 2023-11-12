@@ -39,5 +39,13 @@ namespace Infrastructure.Repository
             return await FindByCondition(u => u.Id == id, trackChanges)
                 .SingleOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<string>> GetAdminUserIds()
+        {
+            return await FindByCondition(x => x.Role == Domain.Enum.Role.Adminstrator, trackChanges: false)
+                            .Select(x => x.Id)
+                            .Distinct()
+                            .ToListAsync();
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace Application.Interfaces
     {
         Task<User> GetUserByUserId(string id, bool trackChanges);
         Task<IEnumerable<User>> GetAllUser(UserParameter parameter, bool trackChanges);
+        Task<IEnumerable<string>> GetAdminUserIds();
     }
 }
