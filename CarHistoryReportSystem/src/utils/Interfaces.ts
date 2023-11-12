@@ -175,7 +175,7 @@ export interface ReportPackage {
 }
 
 export interface Order {
-    id?: number
+    carId?: string
     userId?: string
     orderOptionId: number
     transactionId:  string

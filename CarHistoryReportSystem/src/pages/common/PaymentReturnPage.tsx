@@ -53,9 +53,10 @@ function PaymentReturnPage() {
     const vnp_OrderInfo = paymentParams.get("vnp_OrderInfo")
     const vnp_TransactionNo = paymentParams.get("vnp_TransactionNo") as string
     const details = vnp_OrderInfo?.split('-') as string[]
-    var order: Order = {
+    var order: any = {
         transactionId: vnp_TransactionNo,
-        orderOptionId: 0
+        orderOptionId: 0,
+        carId: details[1]
     }
     switch (details[0]) {
         case "1 CHRS Reports":
@@ -69,10 +70,9 @@ function PaymentReturnPage() {
             break;
     }
     const handleReport = async () => {
-        console.log("I'm here")
         if (token) {
             let decodedToken = JWTDecoder(token)
-            order.userId = decodedToken.nameidentifier
+            order['userId'] = decodedToken.nameidentifier
             const orderResponse: APIResponse = await CreateOrder(order)
             if (orderResponse.error) {
                 return
@@ -84,11 +84,15 @@ function PaymentReturnPage() {
             const addReportResponse: APIResponse = await AddUserReport(reportData, token)
             if (addReportResponse.data) {
                 navigate(`/car-report/${details[1]}`)
+            } else {
+                return
             }
         } else {
             const orderResponse: APIResponse = await CreateOrder(order)
             if (orderResponse.data) {
-                const verifyToken = dispatch(setVerifyToken(orderResponse.data.verifyToken))
+                console.log(orderResponse.data)
+                console.log(orderResponse.data.token)
+                const verifyToken = dispatch(setVerifyToken(orderResponse.data.token))
                 navigate(`/car-report/${details[1]}`)
             }
         }
