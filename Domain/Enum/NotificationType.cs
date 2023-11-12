@@ -11,6 +11,8 @@ namespace Domain.Enum
         CarRecall,
         PoliceAlert,
         SystemInformation,
-        Maintainance
+        Maintainance,
+        Request,
+        RequestInfoUpdate
     }
 }

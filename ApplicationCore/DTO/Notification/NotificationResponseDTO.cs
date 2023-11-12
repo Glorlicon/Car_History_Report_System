@@ -1,24 +1,19 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Common;
-using Domain.Enum;
 
-namespace Domain.Entities
+namespace Application.DTO.Notification
 {
-    public class Notification : BaseAuditableEntity
+    public class NotificationResponseDTO
     {
         public int Id { get; set; }
 
         public string? RelatedCarId { get; set; }
 
-        public Car? RelatedCar { get; set; }
-
         public string? RelatedUserId { get; set; }
-
-        public User? RelatedUser { get; set; }
 
         public string Title { get; set; }
 
@@ -27,5 +22,12 @@ namespace Domain.Entities
         public string? RelatedLink { get; set; }
 
         public NotificationType Type { get; set; }
+
+        public string? CreatedByUserId { get; set; }
+        public string? ModifiedByUserId { get; set; }
+
+        public DateTime CreatedTime { get; set; }
+
+        public DateTime LastModified { get; set; }
     }
 }
