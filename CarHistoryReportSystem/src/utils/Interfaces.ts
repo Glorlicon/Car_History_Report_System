@@ -113,6 +113,7 @@ export interface CarSalesInfo {
     features: string[]
     price: number
     carImages?: CarImages[]
+    dataProvider?: DataProvider;
 }
 
 export interface CarSaleDetails {
