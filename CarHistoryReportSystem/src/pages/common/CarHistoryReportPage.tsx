@@ -25,7 +25,7 @@ function CarHistoryReportPage() {
         } else {
             setVinError(null);
             setIsLoading(true);
-            const response: APIResponse = await GetReport(vin);
+            const response: APIResponse = await GetReport(vin, token);
             setIsLoading(false);
             if (response.error) {
                 setVinError(response.error)
@@ -41,6 +41,7 @@ function CarHistoryReportPage() {
                             userId: decodedToken.nameidentifier,
                             carId: vin
                         }
+                        console.log(reportData)
                         const addReportResponse: APIResponse = await AddUserReport(reportData, token)
                         if (addReportResponse.error) console.log("Failed to add report")
                         else navigate(`/car-report/${vin}`)

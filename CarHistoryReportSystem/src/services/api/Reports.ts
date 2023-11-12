@@ -1,9 +1,15 @@
 import axios, { AxiosError } from "axios";
 import { AddReport, APIResponse, Order } from "../../utils/Interfaces";
 
-export async function GetReport(vin: string): Promise<APIResponse> {
+export async function GetReport(vin: string, token: string): Promise<APIResponse> {
+    const date = new Date().toISOString().split('T')[0]
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarReport/${vin}`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarReport/${vin}/${date}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError

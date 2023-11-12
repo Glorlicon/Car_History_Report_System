@@ -4,10 +4,16 @@ import { GetReport, GetReportExcel } from '../../services/api/Reports';
 import { APIResponse, CarHistoryDetail, CarRecallStatus, CarReport, CarServiceHistory } from '../../utils/Interfaces';
 import '../../styles/CarReportPage.css'
 import generatePDF, { Resolution, Margin, Options} from 'react-to-pdf';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/State';
+import { clearVerifyToken } from '../../store/authSlice';
 function CarReportPage() {
     type RouteParams = {
         vin: string
     }
+    const verifyToken = useSelector((state: RootState) => state.auth.verifyToken) as unknown as string
+    const token = useSelector((state: RootState) => state.auth.token)
+    const dispatch = useDispatch()
     const { vin } = useParams<RouteParams>()
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -60,7 +66,13 @@ function CarReportPage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const response: APIResponse = await GetReport(vin as string)
+        let response: APIResponse
+        if (token) {
+            response = await GetReport(vin as string, token)
+        } else {
+            response = await GetReport(vin as string, verifyToken)
+            dispatch(clearVerifyToken())
+        }
         const responseCsv: APIResponse = await GetReportExcel(vin as string)
         setData(responseCsv.data)
         setLoading(false);

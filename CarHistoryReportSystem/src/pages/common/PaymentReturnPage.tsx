@@ -1,17 +1,19 @@
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
 import CryptoJS from 'crypto-js';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AddUserReport, CreateOrder } from '../../services/api/Reports';
 import { RootState } from '../../store/State';
 import { VNP_CONST } from '../../utils/const/VNPay';
 import { AddReport, APIResponse, Order } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
+import { setVerifyToken } from '../../store/authSlice';
 
 function PaymentReturnPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [paymentParams, setPaymentParams] = useSearchParams()
     let vnp_Params: any = {
         vnp_Amount: paymentParams.get("vnp_Amount"),
@@ -86,6 +88,7 @@ function PaymentReturnPage() {
         } else {
             const orderResponse: APIResponse = await CreateOrder(order)
             if (orderResponse.data) {
+                const verifyToken = dispatch(setVerifyToken(orderResponse.data.verifyToken))
                 navigate(`/car-report/${details[1]}`)
             }
         }
