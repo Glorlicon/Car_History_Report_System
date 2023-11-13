@@ -131,6 +131,7 @@ namespace Application.DomainServices
             }
             car.CarSalesInfo = null;
             car.CarImages = null;
+            car.LicensePlateNumber = null;
             await _carOwnerHistoryServices.CreateCarOwnerHistory(request);
             //await _unitOfWork.SaveAsync();
             return true;
