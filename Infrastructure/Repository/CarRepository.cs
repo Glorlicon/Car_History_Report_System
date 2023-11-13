@@ -72,6 +72,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarOwnerHistories)
                             .Include(c => c.CarServiceHistories)
                             .Include(c => c.CarStolenHistories)
+                            .Include(c => c.CarRegistrationHistories)
                             .SingleOrDefaultAsync();
             return car;
         }
@@ -85,6 +86,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarOwnerHistories)
                             .Include(c => c.CarServiceHistories)
                             .Include(c => c.CarStolenHistories)
+                            .Include(c => c.CarRegistrationHistories)
                             .SingleOrDefaultAsync();
             return CarUtility.GetMaxCarOdometer(car);
         }
@@ -182,6 +184,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarRecallStatuses).ThenInclude(x => x.CarRecall)
                             .Include(c => c.CarServiceHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarStolenHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarRegistrationHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .SingleOrDefaultAsync();
             return car;
         }

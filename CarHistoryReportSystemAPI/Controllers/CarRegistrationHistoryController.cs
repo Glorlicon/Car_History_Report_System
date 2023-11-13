@@ -1,9 +1,8 @@
 ﻿using Application.Common.Models;
-using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarRegistrationHistory;
 using Application.Interfaces;
 using Application.Validation;
-using Application.Validation.CarInspectionHistory;
-using Domain.Enum;
+using Application.Validation.CarRegistrationHistory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,87 +12,87 @@ namespace CarHistoryReportSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarInspectionHistoryController : ControllerBase
+    public class CarRegistrationHistoryController : ControllerBase
     {
-        private readonly ICarHistoryServices<CarInspectionHistoryResponseDTO,
-                                             CarInspectionHistoryParameter,
-                                             CarInspectionHistoryCreateRequestDTO,
-                                             CarInspectionHistoryUpdateRequestDTO> _carInspectionHistoryService;
+        private readonly ICarHistoryServices<CarRegistrationHistoryResponseDTO,
+                                             CarRegistrationHistoryParameter,
+                                             CarRegistrationHistoryCreateRequestDTO,
+                                             CarRegistrationHistoryUpdateRequestDTO> _carRegistrationHistoryService;
         private readonly ICsvServices _csvServices;
 
-        public CarInspectionHistoryController(ICarHistoryServices<CarInspectionHistoryResponseDTO,
-                                                             CarInspectionHistoryParameter,
-                                                             CarInspectionHistoryCreateRequestDTO,
-                                                             CarInspectionHistoryUpdateRequestDTO> carInspectionHistoryService
+        public CarRegistrationHistoryController(ICarHistoryServices<CarRegistrationHistoryResponseDTO,
+                                                             CarRegistrationHistoryParameter,
+                                                             CarRegistrationHistoryCreateRequestDTO,
+                                                             CarRegistrationHistoryUpdateRequestDTO> carRegistrationHistoryService
                                         , ICsvServices csvServices)
         {
-            _carInspectionHistoryService = carInspectionHistoryService;
+            _carRegistrationHistoryService = carRegistrationHistoryService;
             _csvServices = csvServices;
         }
 
         /// <summary>
-        /// Get All Car Inspection Historys
+        /// Get All Car Registration Historys
         /// </summary>
         /// <returns>Car Historys List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<CarInspectionHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CarRegistrationHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCarInspectionHistorysAsync([FromQuery] CarInspectionHistoryParameter parameter)
+        public async Task<IActionResult> GetCarRegistrationHistorysAsync([FromQuery] CarRegistrationHistoryParameter parameter)
         {
-            var carInspectionHistorys = await _carInspectionHistoryService.GetAllCarHistorys(parameter);
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
-            return Ok(carInspectionHistorys);
+            var carRegistrationHistorys = await _carRegistrationHistoryService.GetAllCarHistorys(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRegistrationHistorys.PagingData));
+            return Ok(carRegistrationHistorys);
         }
 
         /// <summary>
-        /// Get Car Inspection History By Id
+        /// Get Car Registration History By Id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>Car Inspection History</returns>
-        [HttpGet("{id}", Name = "GetCarInspectionHistory")]
-        [ProducesResponseType(typeof(CarInspectionHistoryResponseDTO), StatusCodes.Status200OK)]
+        /// <returns>Car Registration History</returns>
+        [HttpGet("{id}", Name = "GetCarRegistrationHistory")]
+        [ProducesResponseType(typeof(CarRegistrationHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCarInspectionHistoryAsync(int id)
+        public async Task<IActionResult> GetCarRegistrationHistoryAsync(int id)
         {
-            var carInspectionHistory = await _carInspectionHistoryService.GetCarHistory(id);
-            return Ok(carInspectionHistory);
+            var carRegistrationHistory = await _carRegistrationHistoryService.GetCarHistory(id);
+            return Ok(carRegistrationHistory);
         }
 
         /// <summary>
-        /// Get All Car Inspection Historys of Car Id
+        /// Get All Car Registration Historys of Car Id
         /// </summary>
         /// <param name="vinId"></param>
-        /// <returns>Car Inspection History List</returns>
+        /// <returns>Car Registration History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}")]
-        [ProducesResponseType(typeof(IEnumerable<CarInspectionHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CarRegistrationHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCarInspectionHistoryByCarIdAsync(string vinId, [FromQuery] CarInspectionHistoryParameter parameter)
+        public async Task<IActionResult> GetCarRegistrationHistoryByCarIdAsync(string vinId, [FromQuery] CarRegistrationHistoryParameter parameter)
         {
-            var carInspectionHistorys = await _carInspectionHistoryService.GetCarHistoryByCarId(vinId, parameter);
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
-            return Ok(carInspectionHistorys);
+            var carRegistrationHistorys = await _carRegistrationHistoryService.GetCarHistoryByCarId(vinId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRegistrationHistorys.PagingData));
+            return Ok(carRegistrationHistorys);
         }
 
         /// <summary>
-        /// Get All Car Inspection Historys created by userId
+        /// Get All Car Registration Historys created by userId
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>Car Inspection History List</returns>
+        /// <returns>Car Registration History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}")]
-        [ProducesResponseType(typeof(IEnumerable<CarInspectionHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CarRegistrationHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCarInspectionHistoryByUserIdAsync(string userId, [FromQuery] CarInspectionHistoryParameter parameter)
+        public async Task<IActionResult> GetCarRegistrationHistoryByUserIdAsync(string userId, [FromQuery] CarRegistrationHistoryParameter parameter)
         {
-            var carInspectionHistorys = await _carInspectionHistoryService.GetCarHistoryByUserId(userId, parameter);
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
-            return Ok(carInspectionHistorys);
+            var carRegistrationHistorys = await _carRegistrationHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRegistrationHistorys.PagingData));
+            return Ok(carRegistrationHistorys);
         }
 
         /// <summary>
-        /// Create Car Inspection History
+        /// Create Car Registration History
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -101,15 +100,15 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="404">Car not found</response>
         /// <response code="500">Create Failed</response>
-        [HttpPost(Name = "CreateCarInspectionHistory")]
+        [HttpPost(Name = "CreateCarRegistrationHistory")]
         [Authorize(Roles = "Adminstrator,VehicleRegistry")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCarInspectionHistoryAsync([FromBody] CarInspectionHistoryCreateRequestDTO request)
+        public async Task<IActionResult> CreateCarRegistrationHistoryAsync([FromBody] CarRegistrationHistoryCreateRequestDTO request)
         {
-            CarInspectionHistoryCreateRequestDTOValidator validator = new CarInspectionHistoryCreateRequestDTOValidator();
+            CarRegistrationHistoryCreateRequestDTOValidator validator = new CarRegistrationHistoryCreateRequestDTOValidator();
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
@@ -120,12 +119,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 }
                 return BadRequest(errors);
             }
-            await _carInspectionHistoryService.CreateCarHistory(request);
+            await _carRegistrationHistoryService.CreateCarHistory(request);
             return NoContent();
         }
 
         /// <summary>
-        /// Create Car Inspection History collection
+        /// Create Car Registration History collection
         /// </summary>
         /// <param name="requests"></param>
         /// <returns></returns>
@@ -137,17 +136,17 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCarInspectionHistoryCollectionAsync([FromBody] IEnumerable<CarInspectionHistoryCreateRequestDTO> requests)
+        public async Task<IActionResult> CreateCarRegistrationHistoryCollectionAsync([FromBody] IEnumerable<CarRegistrationHistoryCreateRequestDTO> requests)
         {
-            CarInspectionHistoryCreateRequestDTOValidator validator = new CarInspectionHistoryCreateRequestDTOValidator();
+            CarRegistrationHistoryCreateRequestDTOValidator validator = new CarRegistrationHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
             if (errors.Error.Count > 0) return BadRequest(errors);
-            await _carInspectionHistoryService.CreateCarHistoryCollection(requests);
+            await _carRegistrationHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
 
         /// <summary>
-        /// Create Car Inspection History from csv file
+        /// Create Car Registration History from csv file
         /// </summary>
         /// <param name="file">Only upload 1 file csv</param>
         /// <returns></returns>
@@ -159,18 +158,18 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCarInspectionHistoryCollectionFromCsvAsync([FromForm] IFormFileCollection file)
+        public async Task<IActionResult> CreateCarRegistrationHistoryCollectionFromCsvAsync([FromForm] IFormFileCollection file)
         {
             if (file.Count != 1)
             {
                 return BadRequest(new ErrorDetails("You should upload 1 file only"));
             }
-            var requests = _csvServices.ConvertToListObject<CarInspectionHistoryCreateRequestDTO>(file[0].OpenReadStream());
+            var requests = _csvServices.ConvertToListObject<CarRegistrationHistoryCreateRequestDTO>(file[0].OpenReadStream());
             //validate
-            CarInspectionHistoryCreateRequestDTOValidator validator = new CarInspectionHistoryCreateRequestDTOValidator();
+            CarRegistrationHistoryCreateRequestDTOValidator validator = new CarRegistrationHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
             if (errors.Error.Count > 0) return BadRequest(errors);
-            await _carInspectionHistoryService.CreateCarHistoryCollection(requests);
+            await _carRegistrationHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
 
@@ -184,14 +183,14 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Adminstrator,VehicleRegistry")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCarInspectionHistoryAsync(int id, [FromBody] CarInspectionHistoryUpdateRequestDTO request)
+        public async Task<IActionResult> UpdateCarRegistrationHistoryAsync(int id, [FromBody] CarRegistrationHistoryUpdateRequestDTO request)
         {
-            CarInspectionHistoryUpdateRequestDTOValidator validator = new CarInspectionHistoryUpdateRequestDTOValidator();
+            CarRegistrationHistoryUpdateRequestDTOValidator validator = new CarRegistrationHistoryUpdateRequestDTOValidator();
             var validationResult = validator.Validate(request);
             if (!validationResult.IsValid)
             {
@@ -202,7 +201,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 }
                 return BadRequest(errors);
             }
-            await _carInspectionHistoryService.UpdateCarHistory(id, request);
+            await _carRegistrationHistoryService.UpdateCarHistory(id, request);
             return NoContent();
         }
 
@@ -216,14 +215,14 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Adminstrator,VehicleRegistry")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCarHistoryAsync(int id)
         {
-            await _carInspectionHistoryService.DeleteCarHistory(id);
+            await _carRegistrationHistoryService.DeleteCarHistory(id);
             return NoContent();
         }
     }
