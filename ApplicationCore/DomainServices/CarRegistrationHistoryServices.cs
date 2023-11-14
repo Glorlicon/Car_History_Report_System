@@ -36,6 +36,7 @@ namespace Application.DomainServices
 
         public override async Task<int> CreateCarHistory(CarRegistrationHistoryCreateRequestDTO request)
         {
+            request.LicensePlateNumber = request.LicensePlateNumber.Replace(".",string.Empty); 
             var carHistory = _mapper.Map<CarRegistrationHistory>(request);
             carHistory.ReportDate ??= DateOnly.FromDateTime(DateTime.Now);
             var car = await _carRepository.GetCarById(carHistory.CarId, trackChange: true);
@@ -68,6 +69,7 @@ namespace Application.DomainServices
 
         public override async Task UpdateCarHistory(int id, CarRegistrationHistoryUpdateRequestDTO request)
         {
+            request.LicensePlateNumber = request.LicensePlateNumber.Replace(".", string.Empty);
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)
             {
@@ -95,6 +97,7 @@ namespace Application.DomainServices
             var carHistorys = _mapper.Map<IEnumerable<CarRegistrationHistory>>(requests);
             foreach (var carHistory in carHistorys)
             {
+                carHistory.LicensePlateNumber = carHistory.LicensePlateNumber.Replace(".", string.Empty);
                 var car = await _carRepository.GetCarById(carHistory.CarId, trackChange: true);
                 if (car is null)
                 {

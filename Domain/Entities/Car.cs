@@ -30,6 +30,8 @@ namespace Domain.Entities
 
         public CarSpecification Model { get; set; } = null!;
 
+        public int? CurrentDataProviderId { get; set; }
+
         public ICollection<CarServiceHistory> CarServiceHistories { get; set; } = new List<CarServiceHistory>();
 
         public ICollection<CarAccidentHistory> CarAccidentHistories { get; set; } = new List<CarAccidentHistory>();

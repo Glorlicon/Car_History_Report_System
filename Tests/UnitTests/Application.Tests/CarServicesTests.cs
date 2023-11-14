@@ -23,6 +23,7 @@ namespace UnitTests.Application.Tests
         private List<Car> carTestData;
         private CarParameter parameter;
         private Mock<ICarOwnerHistoryServices> mockService;
+        private Mock<ICurrentUserServices> mockcurrentUserService;
 
         public CarServicesTests()
         {
@@ -32,6 +33,7 @@ namespace UnitTests.Application.Tests
             carTestData = GetCarsList();
             parameter = new CarParameter();
             mockService = new Mock<ICarOwnerHistoryServices>();
+            mockcurrentUserService = new Mock<ICurrentUserServices>();
         }
 
         private List<Car> GetCarsList()
@@ -130,7 +132,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetAllCars(parameter);
             // Assert
@@ -152,7 +154,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetCarByManufacturerId(manufacturerId, parameter);
             // Assert
@@ -174,7 +176,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetCarCreatedByUserId(userId, parameter);
             // Assert
@@ -196,7 +198,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetCarsByCarDealerId(carDealerId, parameter);
             // Assert
@@ -217,7 +219,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetCarsCurrentlySelling(parameter);
             // Assert
@@ -237,7 +239,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             var result = await service.GetCar(vinId);
             // Assert
@@ -257,7 +259,7 @@ namespace UnitTests.Application.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.GetCar(vinId);
             // Assert
@@ -278,7 +280,7 @@ namespace UnitTests.Application.Tests
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
             mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.UpdateCar(vinId, request);
             // Assert
@@ -298,7 +300,7 @@ namespace UnitTests.Application.Tests
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
             mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.DeleteCar(vinId);
             // Assert
@@ -319,7 +321,7 @@ namespace UnitTests.Application.Tests
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
             mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.CreateCarSalesInfo(vinId, request);
             // Assert
@@ -340,7 +342,7 @@ namespace UnitTests.Application.Tests
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
             mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.UpdateCarSalesInfo(vinId, request);
             // Assert
@@ -361,7 +363,7 @@ namespace UnitTests.Application.Tests
             mockUnitOfWork.Setup(uow => uow.CarRepository)
                           .Returns(mockRepo.Object);
             mockUnitOfWork.Setup(uow => uow.SaveAsync());
-            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object);
+            var service = new CarServices(mockUnitOfWork.Object, mapper, mockService.Object, mockcurrentUserService.Object);
             // Act
             Func<Task> act = () => service.SoldCar(vinId, request);
             // Assert
