@@ -366,3 +366,8 @@ svg {
 .edit-Button{
     margin-top: 20px;
 }
+
+.dealer-schedule{
+    display:flex;
+    justify-content: space-evenly
+}

@@ -69,17 +69,19 @@ export interface Manufacturer {
 
 export interface CarDealer {
     name: string
+    userName: string
     description: string
     address?: string
     websiteLink?: string
     phoneNumber?: string
     workingTimes: workingTimes[]
     carDealerImage: CarDealerImage
+    dataProviderId?: number | null
 }
 
 export interface CarDealerImage {
     id?: string
-    avatarIamgeLink?: string
+    avatarImageLink?: string
 }
 
 export interface CarModel {

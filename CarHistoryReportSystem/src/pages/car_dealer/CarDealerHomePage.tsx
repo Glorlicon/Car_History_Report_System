@@ -19,7 +19,7 @@ function CarDealerHomePage() {
     const [carList, setCarList] = useState<Car[]>([]);
     const [newImages, setNewImages] = useState<File[]>([])
     const [editDealerProfile, setEditDealerProfile] = useState<CarDealer | null>(null)
-    const [User, setUser] = useState<User | null>()
+    const [User, setUser] = useState<CarDealer | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [removedImages, setRemovedImages] = useState<string[]>([]);
@@ -151,6 +151,7 @@ function CarDealerHomePage() {
             //    fetchData();
             //}
         }
+    }
 
         useEffect(() => {
             fetchData();
@@ -218,7 +219,7 @@ function CarDealerHomePage() {
                         <div className="profile-image">
                             {/* Add image here */}
                         </div>
-                        <button>Edit</button>
+                        <button onClick={() => { setEditDealerProfile({ ...User as CarDealer }) }}>Edit</button>
                     </div>
 
 
@@ -374,12 +375,11 @@ function CarDealerHomePage() {
                     <div className="dealer-car-sales-modal">
                         <div className="dealer-car-sales-modal-content">
                             <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                            <h2>Edit Car</h2>
-                            <h3>DevNote: add images later</h3>
+                            <h2>Edit Profile</h2>
                             {modalPage === 1 && (
                                 <CarDealerProfilePage
                                     action="Edit"
-                                    model={editDealerProfile}
+                                    User={editDealerProfile}
                                     handleInputChange={handleInputChange}
                                 />
                             )}
@@ -414,7 +414,6 @@ function CarDealerHomePage() {
                 )}
             </div>
         );
-    }
 }
 
 export default CarDealerHomePage;
