@@ -67,6 +67,21 @@ export interface Manufacturer {
     email?: string
 }
 
+export interface CarDealer {
+    name: string
+    description: string
+    address?: string
+    websiteLink?: string
+    phoneNumber?: string
+    workingTimes: workingTimes[]
+    carDealerImage: CarDealerImage
+}
+
+export interface CarDealerImage {
+    id?: string
+    avatarIamgeLink?: string
+}
+
 export interface CarModel {
     modelID: string,
     manufacturerId: number,
@@ -126,12 +141,12 @@ export interface CarSaleDetails {
     note: string
 }
 
-export interface CarImages {
-    id?: number
-    carId?: string
-    imageLink: string
+    export interface CarImages {
+        id?: number
+        carId?: string
+        imageLink: string
 
-}
+    }
 export interface Car {
     vinId: string
     licensePlateNumber: string
@@ -143,6 +158,7 @@ export interface Car {
     isModified: boolean
     isCommercialUse: boolean
     model?: CarModel
+    createdByUserId?: string;
     carSalesInfo?: CarSalesInfo
     carImages?: CarImages[]
 }

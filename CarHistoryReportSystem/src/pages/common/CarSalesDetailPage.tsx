@@ -169,7 +169,7 @@ function CarSalesDetailPage() {
                         <div className="dealer-details-box">
                             <h2>Dealer Details</h2>
                             <div className="box">
-                                <a href={`../dealer/id=${car?.carSalesInfo?.dataProvider?.id}`}>Dealer Profile</a>
+                                <a href={`../dealer/id=${car?.createdByUserId}`}>Dealer Profile</a>
                             </div>
                         </div>
                         

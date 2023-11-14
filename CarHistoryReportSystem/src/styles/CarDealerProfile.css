@@ -45,6 +45,10 @@
         flex-direction: row;
     }
 
+    .rating{
+        padding-right: 50px;
+    }
+
 .stars{
     display:flex;
     flex-direction: row;
@@ -92,7 +96,6 @@
 .profile-image {
     width: 100px;
     height: 100px;
-    float:right;
     border-radius: 50%;
     background-color: #ccc; /* Placeholder background */
     background-size: cover;
@@ -358,4 +361,8 @@ svg {
     height: 100%; 
     background-color: rgba(255, 255, 255, 0.5); 
     z-index: 1;
+}
+
+.edit-Button{
+    margin-top: 20px;
 }

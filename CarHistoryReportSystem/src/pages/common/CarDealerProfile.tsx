@@ -1,20 +1,84 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { GetCarForSaleBySellerID, GetDealerProfile, ListCarForSale } from '../../services/api/CarForSale';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
+import { APIResponse, Car , DataProvider, User } from '../../utils/Interfaces';
 
 function CarDealerProfile() {
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [carList, setCarList] = useState<Car[]>([]);
+    const [User, setUser] = useState<User | null>()
+    
     const data = useSelector((state: RootState) => state.auth.token)
-
+    type RouteParams = {
+        id: string
+    }
+    const { id } = useParams<RouteParams>()
     const [overlayWidth, setOverlayWidth] = useState<string>('100%');
+
+
+    const [editCarSales, setEditCarSales] = useState<DataProvider | null>(null)
 
     const value = 50;
     const max = 100; 
 
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        const dataProviderResponse: APIResponse = await GetDealerProfile(id as unknown as string, token)
+        if (dataProviderResponse.error) {
+            setError(dataProviderResponse.error)
+        } else {
+            setUser(dataProviderResponse.data)
+            console.log(dataProviderResponse.data)
+        }
+        console.log(User?.dataProviderId);
+
+        //Đổi lại trách nhiệm đăng bán xe sang cho car dealer và tìm car for sale theo id của dealer (hiện tại trong database đang là dataproviderID)
+        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.dataProviderId as unknown as string)
+        if (carListResponse.error) {
+            setError(carListResponse.error)
+        } else {
+            setCarList(carListResponse.data)
+            console.log(dataProviderResponse.data)
+        }
+
+        setLoading(false)
+    }
+
+    //const handleEditDealerProfile = async () => {
+    //    if (editCarSales != null) {
+    //        setAdding(true);
+    //        setAddError(null);
+    //        const response: APIResponse = await EditCarForSale({
+    //            ...editCarSales,
+    //            carImages: [
+    //                ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
+    //                ...addImages.data
+    //            ]
+    //        }, token);
+    //        console.log("1", editCarSales.carImages)
+    //        console.log("2", addImages.data)
+    //        setAdding(false);
+    //        if (response.error) {
+    //            setAddError(response.error);
+    //        } else {
+    //            setEditCarSales(null)
+    //            setModalPage(1)
+    //            fetchData();
+    //        }
+    //    }
+
     useEffect(() => {
+        fetchData();
         const percentage = Math.round((value / max) * 100);
         setOverlayWidth(`${100 - percentage}%`);
     }, [value, max]);
+
     return (
         <div className="car-dealer-profile">
 
@@ -27,7 +91,7 @@ function CarDealerProfile() {
 
                     {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
-                        <h1>Name</h1>
+                        <h1>{User?.userName}</h1>
                         <div className="rating-favoured">
                             <p> num</p>
                             <div className="stars">
@@ -59,16 +123,13 @@ function CarDealerProfile() {
 
                     {/* Contact Info */}
                     <div className="phone-info">
-                        <span>New Car Sale: Phonenum</span>
-                        <span>Used Car Sale: SaleNum</span>
-                        <span>Service: Service Num</span>
+                        <span>Phone Number: {User?.phoneNumber}</span>
                     </div>
 
                     {/* Navigation */}
                     <div className="navigation">
                         <a href="#cars-for-sale">Car For Sale</a>
                         <a href="#reviews">Reviews</a>
-                        <a href="#service">Service</a>
                         <a href="#about-us">About Us</a>
                     </div>
                 </div>
@@ -83,54 +144,43 @@ function CarDealerProfile() {
             </div>
             <div className="cars-for-sale-section">
                 <div className="listing-header">
-                    <h2>CarNu Used Vehicles for Sale at Name</h2>
+                    <h2>{carList.length} Used Vehicles for Sale at {User?.userName}</h2>
                     <div className="filters">
                         Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
                     </div>
                 </div>
+                
+
                 <div className="vehicle-grid">
-                        <div className="vehicle-card">
-                            <div className="vehicle-image"></div>
-                            <p>Used <span>ModelName</span></p>
-                            <p>Price: <span>Price</span></p>
-                            <p>Dealer: <span>CarDealerName</span></p>
-                            <a href="#">More Detail</a>
-                    </div>
-                    <div className="vehicle-card">
-                        <div className="vehicle-image"></div>
-                        <p>Used <span>ModelName</span></p>
-                        <p>Price: <span>Price</span></p>
-                        <p>Dealer: <span>CarDealerName</span></p>
-                        <a href="#">More Detail</a>
-                    </div>
-                    <div className="vehicle-card">
-                        <div className="vehicle-image"></div>
-                        <p>Used <span>ModelName</span></p>
-                        <p>Price: <span>Price</span></p>
-                        <p>Dealer: <span>CarDealerName</span></p>
-                        <a href="#">More Detail</a>
-                    </div>
-                    <div className="vehicle-card">
-                        <div className="vehicle-image"></div>
-                        <p>Used <span>ModelName</span></p>
-                        <p>Price: <span>Price</span></p>
-                        <p>Dealer: <span>CarDealerName</span></p>
-                        <a href="#">More Detail</a>
-                    </div>
-                    <div className="vehicle-card">
-                        <div className="vehicle-image"></div>
-                        <p>Used <span>ModelName</span></p>
-                        <p>Price: <span>Price</span></p>
-                        <p>Dealer: <span>CarDealerName</span></p>
-                        <a href="#">More Detail</a>
-                    </div>
-                    <div className="vehicle-card">
-                        <div className="vehicle-image"></div>
-                        <p>Used <span>ModelName</span></p>
-                        <p>Price: <span>Price</span></p>
-                        <p>Dealer: <span>CarDealerName</span></p>
-                        <a href="#">More Detail</a>
-                    </div>
+
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                <div className="ad-car-spinner"></div>
+                            </td>
+                        </tr>
+                    ) : error ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                {error}
+                                <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
+                            </td>
+                        </tr>
+                    ) : carList.length > 0 ? (
+                        carList.map((model: any, index: number) => (
+                                <div className="vehicle-card">
+                                    <div className="vehicle-image"></div>
+                                    <p>Used <span>{model.modelId}</span></p>
+                                    <p>Price: <span>{model.carSalesInfo.price}</span></p>
+                                    <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                                </div>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={5}>No cars found</td>
+                        </tr>
+                    )}
+                        
                 </div>
                 <div className="pagination">
                     1 - 6 Result on 9 Total Result
@@ -147,8 +197,7 @@ function CarDealerProfile() {
             </div>
 
             <div className="ratings-reviews-section">
-                <h1>Ratings & Reviews</h1>
-
+                <h1>Ratings & Reviews //Later stage</h1>
                 <div className="rating-comment">
 
                     <div className="rating">
