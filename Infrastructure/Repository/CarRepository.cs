@@ -104,6 +104,29 @@ namespace Infrastructure.Repository
                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<Car>> GetCarsByPartialPlate(string searchString, CarParameter parameter, bool trackChange)
+        {
+            return await FindAll(trackChange)
+                            .Include(c => c.Model)
+                            .SearchPlate(searchString)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Car>> GetCarsByCurrentDataProviderId(int? dataProviderId, CarParameter parameter, bool trackChange)
+        {
+            return await FindByCondition(c => c.CurrentDataProviderId == dataProviderId, trackChange)
+                            .Include(c => c.Model)
+                            .ThenInclude(c => c.Manufacturer)
+                            .Include(c => c.CarImages)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
+        }
+
         public async Task<IEnumerable<Car>> GetCarsByManufacturerId(int manufacturerId, CarParameter parameter, bool trackChange)
         {
             return await FindByCondition(c => c.Model.ManufacturerId == manufacturerId, trackChange)

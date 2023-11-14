@@ -26,7 +26,11 @@ namespace Application.Interfaces
 
         Task<IEnumerable<Car>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter, bool trackChange);
 
+        Task<IEnumerable<Car>> GetCarsByCurrentDataProviderId(int? dataProviderId, CarParameter parameter, bool trackChange);
+
         Task<IEnumerable<Car>> GetCarsByAdminstrator(CarParameter parameter, bool trackChange);
+
+        Task<IEnumerable<Car>> GetCarsByPartialPlate(string searchString, CarParameter parameter, bool trackChange);
 
         Task<IEnumerable<Car>> GetCarsCurrentlySelling(CarParameter parameter, bool trackChange);
 

@@ -31,6 +31,8 @@ namespace Application.DTO.Car
 
         public bool IsCommercialUse { get; set; } = false;
 
+        public int? CurrentDataProviderId { get; set; }
+
         public CarSpecificationResponseDTO Model { get; set; } = null!;
         public CarSalesInfoResponseDTO? CarSalesInfo { get; set; }
 
