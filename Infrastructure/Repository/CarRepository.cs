@@ -60,6 +60,7 @@ namespace Infrastructure.Repository
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarImages)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }
@@ -127,6 +128,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
