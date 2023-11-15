@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.Interfaces;
 using Domain.Exceptions;
 using System.Text.Json;
 
@@ -7,7 +8,12 @@ namespace CarHistoryReportSystemAPI.Middlewares
     internal sealed class ExceptionHandlingMiddleware : IMiddleware
     {
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) => _logger = logger;
+        private ILoggerService _loggerService;
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger, ILoggerService loggerService)
+        {
+            _logger = logger;
+            _loggerService = loggerService;
+        }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
@@ -17,6 +23,7 @@ namespace CarHistoryReportSystemAPI.Middlewares
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
+                _loggerService.LogError(e.Message);
                 await HandleExceptionAsync(context, e);
             }
         }
