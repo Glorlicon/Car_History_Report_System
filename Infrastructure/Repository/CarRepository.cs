@@ -49,6 +49,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -73,6 +74,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarServiceHistories)
                             .Include(c => c.CarStolenHistories)
                             .Include(c => c.CarRegistrationHistories)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }
@@ -101,6 +103,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -137,6 +140,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -150,6 +154,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -163,6 +168,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -177,6 +183,7 @@ namespace Infrastructure.Repository
                             .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -208,6 +215,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarServiceHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarStolenHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarRegistrationHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }

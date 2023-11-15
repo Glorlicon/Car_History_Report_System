@@ -14,9 +14,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +41,7 @@ namespace Infrastructure
             services.ConfigureIdentity();
             services.ConfigureJWT(configuration);
             services.ConfigureEmailService(configuration);
+            services.ConfigureLoggerService();
             services.AddScoped<IIdentityServices, IdentityServices>();
             services.AddScoped<ICarSpecificationRepository, CarSpecificationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -143,5 +146,11 @@ namespace Infrastructure
             services.AddScoped<IEmailServices, EmailServices>();
         }
 
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            LogManager.Setup().LoadConfigurationFromAssemblyResource(Assembly.GetAssembly(typeof(LoggerService)));
+            services.AddSingleton<ILoggerService, LoggerService>();
+        }
+            
     }
 }
