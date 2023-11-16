@@ -6,14 +6,12 @@ import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProf
 import { GetCarForSaleBySellerID, GetDealerProfileData } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, DataProvider, User, CarDealer, CarDealerImage } from '../../utils/Interfaces';
+import { APIResponse, Car, DataProvider, User, CarDealer, CarDealerImage, workingTimes } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    console.log(token)
-    const dealerId = JWTDecoder(token).nameidentifier
-    console.log(dealerId);  
+    const dealerId = JWTDecoder(token).nameidentifier 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);     
     const [carList, setCarList] = useState<Car[]>([]);
@@ -34,6 +32,24 @@ function CarDealerHomePage() {
         workingTimes: [] as any,
         avatarImageLink: ''
     }
+
+    const defaultSchedule = [
+        { dayOfWeek: 1, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 2, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 3, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 4, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 5, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 6, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 7, startTime: '', endTime: '', isClosed: false },
+    ];
+
+
+    const [workingTimes, setWorkingTimes] = useState<workingTimes[]>(
+        User?.workingTimes && User.workingTimes.length > 0 ? User.workingTimes : defaultSchedule
+
+    );
+
+    
 
     const handleNextPage = () => {
         if (modalPage < 2) {
@@ -87,6 +103,21 @@ function CarDealerHomePage() {
 
         setLoading(false)
     }
+
+    const handleScheduleChange = (index: number, field: string, value: string | boolean) => {
+        const updatedWorkingTimes = workingTimes.map((workingTime, i) =>
+            i === index ? { ...workingTime, [field]: value } : workingTime
+        );
+        setWorkingTimes(updatedWorkingTimes);
+
+        // Also update the User state if it's not null
+        if (User) {
+            setUser({
+                ...User,
+                workingTimes: updatedWorkingTimes
+            });
+        }
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -157,6 +188,17 @@ function CarDealerHomePage() {
             fetchData();
             const percentage = Math.round((value / max) * 100);
             setOverlayWidth(`${100 - percentage}%`);
+            if (User?.workingTimes) {
+                setWorkingTimes(User.workingTimes);
+            } else if (User) { // Make sure User is not null before setting default
+                setUser({
+                    ...User,
+                    workingTimes: defaultSchedule
+                });
+                setWorkingTimes(defaultSchedule);
+            }
+
+            console.log(User);
         }, [value, max]);
 
         return (
@@ -381,6 +423,7 @@ function CarDealerHomePage() {
                                     action="Edit"
                                     User={editDealerProfile}
                                     handleInputChange={handleInputChange}
+                                    handleScheduleChange={handleScheduleChange}
                                 />
                             )}
                             {modalPage === 2 && (
@@ -392,12 +435,14 @@ function CarDealerHomePage() {
                             )}
                             {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                                 <>
-                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                    <div>
+                                        <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
                                         Previous
-                                    </button>
-                                    <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
-                                    </button>
+                                        </button>
+                                        <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                            {modalPage < 2 ? 'Next' : 'Edit'}
+                                        </button>
+                                    </div>
                                 </>
                             )}
                             {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}

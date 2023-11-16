@@ -367,7 +367,46 @@ svg {
     margin-top: 20px;
 }
 
-.dealer-schedule{
-    display:flex;
-    justify-content: space-evenly
+.dealer-schedule {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dealer-schedule input[type="text"] {
+    /* Style your inputs as needed */
+}
+
+.schedule-separator {
+    margin: 0 10px; /* Adjust space as needed */
+    white-space: nowrap;
+}
+
+.dealer-schedule input[type="checkbox"] {
+    margin-left: 10px; /* Adjust space as needed */
+}
+
+.dealer-car-sales-modal-content {
+    margin-top:80px;
+    width:1000px;
+}
+
+.dealer-car-sales-form-columns {
+    width: 1000px;
+    max-width: 300px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+}
+
+.label{
+    margin-left: -240px;
+}
+
+.dealer-schedule-separator {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-bottom: 10px;
 }
