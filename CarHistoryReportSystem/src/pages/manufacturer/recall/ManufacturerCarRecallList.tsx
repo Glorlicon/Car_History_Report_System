@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import CarModelCapacityPage from '../../../components/forms/manufacturer/CarModel/CarModelCapacityPage';
-import CarModelModalEnginePage from '../../../components/forms/manufacturer/CarModel/CarModelModalEnginePage';
-import CarModelModalIdentificationPage from '../../../components/forms/manufacturer/CarModel/CarModelModalIdentificationPage';
-import CarModelModalPhysCharacteristicPage from '../../../components/forms/manufacturer/CarModel/CarModelModalPhysCharacteristicPage';
-import { AddCarModel, EditCarModel, ListManufaturerCarModels } from '../../../services/api/CarModel';
 import { RootState } from '../../../store/State';
-import { APIResponse, CarModel } from '../../../utils/Interfaces';
+import { APIResponse, CarModel, CarRecalls } from '../../../utils/Interfaces';
 import { JWTDecoder } from '../../../utils/JWTDecoder';
-import '../../../styles/ManufacturerCarModels.css'
 
-function ManufacturerCarModelList() {
+function ManufacturerCarRecallList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    console.log(token);
     const [carModels, setCarModels] = useState([])
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -21,33 +14,15 @@ function ManufacturerCarModelList() {
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
-    const [editModel, setEditModel] = useState<CarModel | null>(null)
+    const [editRecall, setEditRecall] = useState<CarRecalls | null>(null)
     const manufacturerId = JWTDecoder(token).dataprovider
-    const [newModel, setNewModel] = useState<CarModel>({
-        modelID: "",
-        manufacturerId: manufacturerId,
-        manufacturerName: "",
-        wheelFormula: "",
-        wheelTread: "",
-        dimension: "",
-        wheelBase: 0,
-        weight: 0,
-        releasedDate: "",
-        country: "",
-        fuelType: 0,
-        bodyType: 0,
-        ridingCapacity: 0,
-        personCarriedNumber: 0,
-        seatNumber: 0,
-        layingPlaceNumber: 0,
-        maximumOutput: 0,
-        engineDisplacement: 0,
-        rpm: 0,
-        tireNumber: 0
+    const [newRecall, setNewRecall] = useState<CarRecalls>({
+        modelId: "",
+        description: ""
     })
 
-    const validateCarModel = (model: CarModel): boolean => {
-        if (!model.modelID) {
+    const validateCarModel = (Recall: CarRecalls): boolean => {
+        if (!Recall.modelId) {
             setAddError("Model ID must be filled out");
             return false;
         }
@@ -65,14 +40,14 @@ function ManufacturerCarModelList() {
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        if (editModel) {
-            setEditModel({
-                ...editModel,
+        if (editRecall) {
+            setEditRecall({
+                ...editRecall,
                 [e.target.name]: e.target.value
             })
         } else {
-            setNewModel({
-                ...newModel,
+            setNewRecall({
+                ...newRecall,
                 [e.target.name]: e.target.value,
             });
         }
@@ -81,7 +56,7 @@ function ManufacturerCarModelList() {
         if (modalPage < 4) {
             setModalPage(prevPage => prevPage + 1);
         } else {
-            if (editModel) handleEditModel();
+            if (editRecall) handleEditModel();
             else handleAddModel();
         }
     };
@@ -93,10 +68,10 @@ function ManufacturerCarModelList() {
     };
 
     const handleAddModel = async () => {
-        if (validateCarModel(newModel)) {
+        if (validateCarModel(newRecall)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AddCarModel(newModel, token);
+            const response: APIResponse = await AddCarModel(newRecall, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -131,7 +106,7 @@ function ManufacturerCarModelList() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carModelResponse: APIResponse = await ListManufaturerCarModels(manufacturerId,token)
+        const carModelResponse: APIResponse = await ListManufaturerCarModels(manufacturerId, token)
         if (carModelResponse.error) {
             setError(carModelResponse.error)
         } else {
@@ -141,7 +116,7 @@ function ManufacturerCarModelList() {
     };
     useEffect(() => {
         fetchData()
-    },[])
+    }, [])
 
   return (
       <div className="manu-car-model-list-page">
@@ -183,7 +158,7 @@ function ManufacturerCarModelList() {
                   ) : filteredCarModels.length > 0 ? (
                       filteredCarModels.map((model: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditModel(model)}}>{model.modelID}</td>
+                              <td onClick={() => { setEditModel(model) }}>{model.modelID}</td>
                               <td>{model.releasedDate}</td>
                               <td>{model.country}</td>
                               <td>
@@ -287,4 +262,4 @@ function ManufacturerCarModelList() {
   );
 }
 
-export default ManufacturerCarModelList;
+export default ManufacturerCarRecallList;

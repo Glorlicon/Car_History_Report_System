@@ -338,3 +338,9 @@ export interface ModelMaintainanceDetails {
     lastOwnerChangeDate: string
 }
 
+export interface CarRecalls {
+    id?: number
+    modelId: string
+    description: string
+    recallDate?: Date
+}
