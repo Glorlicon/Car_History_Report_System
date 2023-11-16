@@ -123,15 +123,16 @@ namespace Application.DomainServices
             }
             var odometerBefore = carHistory.Odometer;
             _mapper.Map(request, carHistory);
-            if(odometerBefore != carHistory.Odometer)
+            await _carHistoryRepository.SaveAsync();
+            if (carHistory.Odometer is not null && odometerBefore != carHistory.Odometer)
             {
                 var car = await _carRepository.GetCarWithHistoriesById(carHistory.CarId, trackChange: true);
-                car.CurrentOdometer = Math.Max(car.CurrentOdometer, CarUtility.GetMaxCarOdometer(car));
+                car.CurrentOdometer = Math.Max(carHistory.Odometer.Value, CarUtility.GetMaxCarOdometer(car));
+                await _carRepository.SaveAsync();
             }
-            await _carHistoryRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests)
+        public virtual async Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests)
         {
             if(requests is null)
             {

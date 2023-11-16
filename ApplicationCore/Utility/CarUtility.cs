@@ -43,6 +43,11 @@ namespace Application.Utility
             odometer ??= 0;
             maxOdometer = Math.Max(maxOdometer, odometer.Value);
 
+            // Get max odometer of CarRegistrationHistories
+            odometer = car.CarRegistrationHistories.Max(c => c.Odometer);
+            odometer ??= 0;
+            maxOdometer = Math.Max(maxOdometer, odometer.Value);
+
             return maxOdometer;
         }
     }

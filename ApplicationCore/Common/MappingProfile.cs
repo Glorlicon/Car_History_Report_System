@@ -7,6 +7,7 @@ using Application.DTO.CarMaintainance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarPart;
 using Application.DTO.CarRecall;
+using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarReport;
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarSpecification;
@@ -149,6 +150,12 @@ namespace Application.Common
             CreateMap<CarTracking, CarTrackingResponseDTO>();
             CreateMap<CarTrackingCreateRequestDTO, CarTracking>();
             CreateMap<CarTrackingUpdateRequestDTO, CarTracking>();
+
+            CreateMap<CarRegistrationHistory, CarRegistrationHistoryResponseDTO>()
+                .ForMember(c => c.Source, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
+            CreateMap<CarRegistrationHistoryCreateRequestDTO, CarRegistrationHistory>();
+            CreateMap<CarRegistrationHistoryUpdateRequestDTO, CarRegistrationHistory>();
+
         }
     }
 }

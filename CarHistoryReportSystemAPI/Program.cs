@@ -7,6 +7,7 @@ using CarHistoryReportSystemAPI.Utility;
 using Infrastructure;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using NLog;
 using System.Reflection;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -23,6 +24,7 @@ builder.Services.AddCors(options =>
                                 .AllowAnyHeader();
                       });
 });
+
 
 
 // Add services to the container.

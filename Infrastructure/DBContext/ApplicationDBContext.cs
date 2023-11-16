@@ -58,6 +58,8 @@ namespace Infrastructure.DBContext
         public DbSet<CarImages> CarImages { get; set; }
         public DbSet<UserNotification> UserNotification { get; set; }
         public DbSet<CarTracking> CarTrackings { get; set; }
+
+        public DbSet<CarRegistrationHistory> CarRegistrationHistories { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

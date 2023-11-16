@@ -1,6 +1,7 @@
 ﻿using Application.DomainServices;
 using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarInsurance;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;

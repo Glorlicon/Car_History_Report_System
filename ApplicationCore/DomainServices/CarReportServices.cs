@@ -20,6 +20,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using Application.DTO.CarRegistrationHistory;
 
 namespace Application.DomainServices
 {
@@ -154,12 +155,17 @@ namespace Application.DomainServices
                                             .Where(x => x.ReportDate >= startDate
                                                     && x.ReportDate <= endDate)
                                             .OrderByDescending(x => x.ReportDate);
+                var carRegistrationHistories = carReportData.CarRegistrationHistories
+                                            .Where(x => x.ReportDate >= startDate
+                                                    && x.ReportDate <= endDate)
+                                            .OrderByDescending(x => x.ReportDate);
                 var generalCarHistories = new List<GeneralCarHistoryResponseDTO>();
                 AddGeneralCarHistories(generalCarHistories, carServiceHistories.Cast<CarHistory>().ToList(), "Car Service History");
                 AddGeneralCarHistories(generalCarHistories, carAccidentHistories.Cast<CarHistory>().ToList(), "Car Accident History");
                 AddGeneralCarHistories(generalCarHistories, carInspectionHistories.Cast<CarHistory>().ToList(), "Car Inspection History");
                 AddGeneralCarHistories(generalCarHistories, carInsurances.Cast<CarHistory>().ToList(), "Car Insurance History");
-                AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen Record");
+                AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen History");
+                AddGeneralCarHistories(generalCarHistories, carRegistrationHistories.Cast<CarHistory>().ToList(), "Car Registration History");
                 generalCarHistories = generalCarHistories.OrderByDescending(x => x.ReportDate).ToList();
 
                 if (generalCarHistories.Count == 0 && timePeriod.CarOwner == null) continue;
@@ -174,6 +180,7 @@ namespace Application.DomainServices
                     CarInspectionHistories = _mapper.Map<List<CarInspectionHistoryResponseDTO>>(carInspectionHistories),
                     CarInsurances = _mapper.Map<List<CarInsuranceHistoryResponseDTO>>(carInsurances),
                     CarStolenHistories = _mapper.Map<List<CarStolenHistoryResponseDTO>>(carStolenHistories),
+                    CarRegistrationHistories = _mapper.Map<List<CarRegistrationHistoryResponseDTO>>(carRegistrationHistories),
                     GeneralCarHistories = generalCarHistories
                 };
                 carHistoryDetails.Add(carHistoryDetail);
