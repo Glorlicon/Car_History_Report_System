@@ -38,6 +38,7 @@ namespace Infrastructure.Repository
         public async Task<User> GetUserByUserId(string id, bool trackChanges)
         {
             return await FindByCondition(u => u.Id == id, trackChanges)
+                .Include(u => u.DataProvider)
                 .SingleOrDefaultAsync();
         }
 
