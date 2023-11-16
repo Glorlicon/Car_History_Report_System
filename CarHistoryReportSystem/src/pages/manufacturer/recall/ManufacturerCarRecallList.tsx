@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { ListManufacturerRecalls } from '../../../services/api/Recall';
 import { RootState } from '../../../store/State';
 import { APIResponse, CarModel, CarRecalls } from '../../../utils/Interfaces';
 import { JWTDecoder } from '../../../utils/JWTDecoder';
 
 function ManufacturerCarRecallList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const dataProviderId = JWTDecoder(token).dataprovider 
     const [carModels, setCarModels] = useState([])
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -68,19 +70,19 @@ function ManufacturerCarRecallList() {
     };
 
     const handleAddModel = async () => {
-        if (validateCarModel(newRecall)) {
-            setAdding(true);
-            setAddError(null);
-            const response: APIResponse = await AddCarModel(newRecall, token);
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
-            } else {
-                setShowModal(false);
-                setModalPage(1);
-                fetchData();
-            }
-        }
+        //if (validateCarModel(newRecall)) {
+        //    setAdding(true);
+        //    setAddError(null);
+        //    const response: APIResponse = await AddCarModel(newRecall, token);
+        //    setAdding(false);
+        //    if (response.error) {
+        //        setAddError(response.error);
+        //    } else {
+        //        setShowModal(false);
+        //        setModalPage(1);
+        //        fetchData();
+        //    }
+        //}
     };
     //TODO: car recall
     function handleRecallClick(model: any): void {
@@ -88,25 +90,25 @@ function ManufacturerCarRecallList() {
     }
 
     const handleEditModel = async () => {
-        if (editModel != null && validateCarModel(editModel)) {
-            setAdding(true);
-            setAddError(null);
-            const response: APIResponse = await EditCarModel(editModel, token);
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
-            } else {
-                setShowModal(false);
-                setEditModel(null);
-                setModalPage(1);
-                fetchData();
-            }
-        }
+        //if (editRecall != null && validateCarModel(editRecall)) {
+        //    setAdding(true);
+        //    setAddError(null);
+        //    const response: APIResponse = await EditCarModel(editRecall, token);
+        //    setAdding(false);
+        //    if (response.error) {
+        //        setAddError(response.error);
+        //    } else {
+        //        setShowModal(false);
+        //        setEditModel(null);
+        //        setModalPage(1);
+        //        fetchData();
+        //    }
+        //}
     };
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carModelResponse: APIResponse = await ListManufaturerCarModels(manufacturerId, token)
+        const carModelResponse: APIResponse = await ListManufacturerRecalls(manufacturerId, token)
         if (carModelResponse.error) {
             setError(carModelResponse.error)
         } else {
@@ -136,9 +138,9 @@ function ManufacturerCarRecallList() {
               <thead>
                   <tr>
                       <th>ID</th>
-                      <th>Released Date</th>
-                      <th>Country</th>
-                      <th>Action</th>
+                      <th>ModelID</th>
+                      <th>Description</th>
+                      <th>Date</th>
                   </tr>
               </thead>
               <tbody>
@@ -158,106 +160,104 @@ function ManufacturerCarRecallList() {
                   ) : filteredCarModels.length > 0 ? (
                       filteredCarModels.map((model: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditModel(model) }}>{model.modelID}</td>
-                              <td>{model.releasedDate}</td>
-                              <td>{model.country}</td>
-                              <td>
-                                  <button className="manu-car-model-recall-btn" onClick={() => handleRecallClick(model)}>Create Recall</button>
-                              </td>
+                              <td onClick={() => { setEditRecall(model) }}>{model.id}</td>
+                              <td>{model.modelId}</td>
+                              <td>{model.description}</td>
+                              <td>{model.recallDate}</td>
                           </tr>
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>No car models found</td>
+                          <td colSpan={5}>No Recalls found</td>
                       </tr>
                   )}
               </tbody>
           </table>
           {/*Pop-up add window*/}
-          {showModal && (
-              <div className="manu-car-model-modal">
-                  <div className="manu-car-model-modal-content">
-                      <span className="manu-car-model-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
-                      <h2>Add Car Model</h2>
-                      {modalPage === 1 && (
-                          <CarModelModalIdentificationPage
-                              action="Add"
-                              model={newModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 2 && (
-                          <CarModelModalPhysCharacteristicPage
-                              model={newModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 3 && (
-                          <CarModelModalEnginePage
-                              model={newModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 4 && (
-                          <CarModelCapacityPage
-                              model={newModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="manu-car-model-prev-btn">
-                          Previous
-                      </button>
-                      <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">
-                          {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Add')}
-                      </button>
-                      {addError && (
-                          <p className="manu-car-model-error">{addError}</p>
-                      )}
-                  </div>
-              </div>
-          )}
-          {editModel && (
-              <div className="manu-car-model-modal">
-                  <div className="manu-car-model-modal-content">
-                      <span className="manu-car-model-close-btn" onClick={() => { setEditModel(null); setModalPage(1) }}>&times;</span>
-                      <h2>Edit Car Model</h2>
-                      {modalPage === 1 && (
-                          <CarModelModalIdentificationPage
-                              action="Edit"
-                              model={editModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 2 && (
-                          <CarModelModalPhysCharacteristicPage
-                              model={editModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 3 && (
-                          <CarModelModalEnginePage
-                              model={editModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      {modalPage === 4 && (
-                          <CarModelCapacityPage
-                              model={editModel}
-                              handleInputChange={handleInputChange}
-                          />
-                      )}
-                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="manu-car-model-prev-btn">
-                          Previous
-                      </button>
-                      <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">
-                          {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Update')}
-                      </button>
-                      {addError && (
-                          <p className="manu-car-model-error">{addError}</p>
-                      )}
-                  </div>
-              </div>
-          )}
+          {/*{showModal && (*/}
+          {/*    <div className="manu-car-model-modal">*/}
+          {/*        <div className="manu-car-model-modal-content">*/}
+          {/*            <span className="manu-car-model-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>*/}
+          {/*            <h2>Add Car Model</h2>*/}
+          {/*            {modalPage === 1 && (*/}
+          {/*                <CarModelModalIdentificationPage*/}
+          {/*                    action="Add"*/}
+          {/*                    model={newModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 2 && (*/}
+          {/*                <CarModelModalPhysCharacteristicPage*/}
+          {/*                    model={newModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 3 && (*/}
+          {/*                <CarModelModalEnginePage*/}
+          {/*                    model={newModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 4 && (*/}
+          {/*                <CarModelCapacityPage*/}
+          {/*                    model={newModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            <button onClick={handlePreviousPage} disabled={modalPage === 1} className="manu-car-model-prev-btn">*/}
+          {/*                Previous*/}
+          {/*            </button>*/}
+          {/*            <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">*/}
+          {/*                {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Add')}*/}
+          {/*            </button>*/}
+          {/*            {addError && (*/}
+          {/*                <p className="manu-car-model-error">{addError}</p>*/}
+          {/*            )}*/}
+          {/*        </div>*/}
+          {/*    </div>*/}
+          {/*)}*/}
+          {/*{editModel && (*/}
+          {/*    <div className="manu-car-model-modal">*/}
+          {/*        <div className="manu-car-model-modal-content">*/}
+          {/*            <span className="manu-car-model-close-btn" onClick={() => { setEditModel(null); setModalPage(1) }}>&times;</span>*/}
+          {/*            <h2>Edit Car Model</h2>*/}
+          {/*            {modalPage === 1 && (*/}
+          {/*                <CarModelModalIdentificationPage*/}
+          {/*                    action="Edit"*/}
+          {/*                    model={editModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 2 && (*/}
+          {/*                <CarModelModalPhysCharacteristicPage*/}
+          {/*                    model={editModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 3 && (*/}
+          {/*                <CarModelModalEnginePage*/}
+          {/*                    model={editModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            {modalPage === 4 && (*/}
+          {/*                <CarModelCapacityPage*/}
+          {/*                    model={editModel}*/}
+          {/*                    handleInputChange={handleInputChange}*/}
+          {/*                />*/}
+          {/*            )}*/}
+          {/*            <button onClick={handlePreviousPage} disabled={modalPage === 1} className="manu-car-model-prev-btn">*/}
+          {/*                Previous*/}
+          {/*            </button>*/}
+          {/*            <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">*/}
+          {/*                {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Update')}*/}
+          {/*            </button>*/}
+          {/*            {addError && (*/}
+          {/*                <p className="manu-car-model-error">{addError}</p>*/}
+          {/*            )}*/}
+          {/*        </div>*/}
+          {/*    </div>*/}
+          {/*)}*/}
       </div>
   );
 }

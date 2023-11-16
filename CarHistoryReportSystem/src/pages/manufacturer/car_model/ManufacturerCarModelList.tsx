@@ -6,9 +6,11 @@ import CarModelModalIdentificationPage from '../../../components/forms/manufactu
 import CarModelModalPhysCharacteristicPage from '../../../components/forms/manufacturer/CarModel/CarModelModalPhysCharacteristicPage';
 import { AddCarModel, EditCarModel, ListManufaturerCarModels } from '../../../services/api/CarModel';
 import { RootState } from '../../../store/State';
-import { APIResponse, CarModel } from '../../../utils/Interfaces';
+import { APIResponse, CarModel, CarRecalls } from '../../../utils/Interfaces';
 import { JWTDecoder } from '../../../utils/JWTDecoder';
 import '../../../styles/ManufacturerCarModels.css'
+import { AddCarRecall } from '../../../services/api/Recall';
+import CarRecallModal from '../../../components/forms/manufacturer/Recall/CarRecallModal';
 
 function ManufacturerCarModelList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -22,6 +24,7 @@ function ManufacturerCarModelList() {
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [editModel, setEditModel] = useState<CarModel | null>(null)
+    const [addRecalModel, setAddRecallModel] = useState<CarModel | null>(null)
     const manufacturerId = JWTDecoder(token).dataprovider
     const [newModel, setNewModel] = useState<CarModel>({
         modelID: "",
@@ -45,6 +48,10 @@ function ManufacturerCarModelList() {
         rpm: 0,
         tireNumber: 0
     })
+    const [newRecall, setNewRecall] = useState<CarRecalls>({
+        modelId: "",
+        description: ""
+    })
 
     const validateCarModel = (model: CarModel): boolean => {
         if (!model.modelID) {
@@ -54,6 +61,13 @@ function ManufacturerCarModelList() {
         return true;
     };
 
+    const validateCarRecall = (model: CarRecalls): boolean => {
+        if (!model.modelId) {
+            setAddError("Model ID must be filled out");
+            return false;
+        }
+        return true;
+    };
 
     const filteredCarModels = carModels.filter((models: any) => {
         const matchingQuery = models.modelID.toLowerCase().includes(searchQuery.toLowerCase())
@@ -70,7 +84,13 @@ function ManufacturerCarModelList() {
                 ...editModel,
                 [e.target.name]: e.target.value
             })
-        } else {
+        } else if (addRecalModel) {
+            setNewRecall({
+                ...newRecall,
+                [e.target.name]: e.target.value,
+            });
+        }
+        else {
             setNewModel({
                 ...newModel,
                 [e.target.name]: e.target.value,
@@ -82,6 +102,7 @@ function ManufacturerCarModelList() {
             setModalPage(prevPage => prevPage + 1);
         } else {
             if (editModel) handleEditModel();
+            else if (addRecalModel) handleRecallClick();
             else handleAddModel();
         }
     };
@@ -108,9 +129,21 @@ function ManufacturerCarModelList() {
         }
     };
     //TODO: car recall
-    function handleRecallClick(model: any): void {
-        throw new Error('Function not implemented.');
-    }
+    const handleRecallClick = async () => {
+        if (validateCarRecall(newRecall)) {
+            setAdding(true);
+            setAddError(null);
+            const response: APIResponse = await AddCarRecall(newRecall, token);
+            setAdding(false);
+            if (response.error) {
+                //setAddError(response.error);
+            } else {
+                //setShowModal(false);
+                setModalPage(1);
+                fetchData();
+            }
+        }
+    };
 
     const handleEditModel = async () => {
         if (editModel != null && validateCarModel(editModel)) {
@@ -187,7 +220,7 @@ function ManufacturerCarModelList() {
                               <td>{model.releasedDate}</td>
                               <td>{model.country}</td>
                               <td>
-                                  <button className="manu-car-model-recall-btn" onClick={() => handleRecallClick(model)}>Create Recall</button>
+                                  <button className="manu-car-model-recall-btn" onClick={() => setAddRecallModel(model)}>Create Recall</button>
                               </td>
                           </tr>
                       ))
@@ -276,6 +309,30 @@ function ManufacturerCarModelList() {
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">
                           {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Update')}
+                      </button>
+                      {addError && (
+                          <p className="manu-car-model-error">{addError}</p>
+                      )}
+                  </div>
+              </div>
+          )}
+          {addRecalModel && (
+              <div className="manu-car-model-modal">
+                  <div className="manu-car-model-modal-content">
+                      <span className="manu-car-model-close-btn" onClick={() => { setAddRecallModel(null); setModalPage(1) }}>&times;</span>
+                      <h2>Add Car Recall</h2>
+                      {modalPage === 1 && (
+                          <CarRecallModal
+                              action="Add"
+                              model={addRecalModel}
+                              handleInputChange={handleInputChange}
+                          />
+                      )}
+                      <button onClick={handlePreviousPage} disabled={modalPage === 1} className="manu-car-model-prev-btn">
+                          Previous
+                      </button>
+                      <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">
+                          {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Update')}
                       </button>
                       {addError && (
                           <p className="manu-car-model-error">{addError}</p>
