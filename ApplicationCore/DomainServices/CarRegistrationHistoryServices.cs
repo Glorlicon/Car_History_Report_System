@@ -24,14 +24,18 @@ namespace Application.DomainServices
         private readonly ICarRepository _carRepository;
         private readonly INotificationServices _notificationServices;
         private readonly IMapper _mapper;
+        private readonly IAuthenticationServices _authenticationServices;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CarRegistrationHistoryServices(ICarHistoryRepository<Domain.Entities.CarRegistrationHistory, CarRegistrationHistoryParameter> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices)
-            :base(carHistoryRepository, mapper, carRepository, notificationServices)
+        public CarRegistrationHistoryServices(ICarHistoryRepository<Domain.Entities.CarRegistrationHistory, CarRegistrationHistoryParameter> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices, IAuthenticationServices authenticationServices, IUnitOfWork unitOfWork)
+            : base(carHistoryRepository, mapper, carRepository, notificationServices, authenticationServices, unitOfWork)
         {
             _carHistoryRepository = carHistoryRepository;
             _mapper = mapper;
             _carRepository = carRepository;
             _notificationServices = notificationServices;
+            _authenticationServices = authenticationServices;
+            _unitOfWork = unitOfWork;
         }
 
         public override async Task<int> CreateCarHistory(CarRegistrationHistoryCreateRequestDTO request)
