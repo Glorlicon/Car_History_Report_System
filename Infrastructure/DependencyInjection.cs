@@ -1,5 +1,7 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -47,6 +49,7 @@ namespace Infrastructure
             services.AddScoped<ICarSalesInfoRepository, CarSalesInfoRepository>();
             services.AddScoped<ICarPartRepository, CarPartRepository>();
             services.AddScoped<ICarOwnerHistoryRepository, CarOwnerHistoryRepository>();
+            services.AddScoped<ICarStolenHistoryRepository, CarStolenHistoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
@@ -64,6 +67,7 @@ namespace Infrastructure
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
             services.AddScoped<ICarTrackingRepository, CarTrackingRepository>();
+            services.AddScoped<ICarInsuranceRepository, CarInsuranceRepository>();
             return services;
         }
 
@@ -105,8 +109,10 @@ namespace Infrastructure
         public static void ConfigureCarHistoryRepository(this IServiceCollection services)
         {
             services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarInsurance, CarInsuranceHistoryParameter>, CarInsuranceRepository>();
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarAccidentHistory, CarAccidentHistoryParameter>, CarAccidentHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

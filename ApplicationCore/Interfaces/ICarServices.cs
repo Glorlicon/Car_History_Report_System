@@ -1,6 +1,5 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
-using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
 using System;
 using System.Collections.Generic;

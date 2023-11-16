@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarOwnerHistory;
+using Application.DTO.CarStolenHistory;
 using Application.DTO.Notification;
 using Application.Interfaces;
 using Application.Utility;
@@ -24,13 +25,17 @@ namespace Application.DomainServices
         private readonly ICarRepository _carRepository;
         private readonly INotificationServices _notificationServices;
         private readonly IMapper _mapper;
+        private readonly IAuthenticationServices _authenticationServices;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices)
+        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices, IAuthenticationServices authenticationServices, IUnitOfWork unitOfWork)
         {
             _carHistoryRepository = carHistoryRepository;
             _mapper = mapper;
             _carRepository = carRepository;
             _notificationServices = notificationServices;
+            _authenticationServices = authenticationServices;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<R>> GetAllCarHistorys(P parameter)
@@ -149,6 +154,24 @@ namespace Application.DomainServices
             }
             await _carHistoryRepository.SaveAsync();
             return carHistorys.Select(x => x.Id).ToList();
+        }
+
+        public async Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user.DataProviderId == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
+            if (carIds == null)
+            {
+                throw new CarNotFoundException();
+            }
+            var carHistorys = await _carHistoryRepository.GetCarHistorysByOwnCompany(carIds, parameter, false);
+            var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
+            var count = await _unitOfWork.CarStolenHistoryRepository.CountAll();
+            return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
     }
 }
