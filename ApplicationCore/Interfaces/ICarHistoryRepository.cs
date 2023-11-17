@@ -27,5 +27,7 @@ namespace Application.Interfaces
         Task<IEnumerable<T>> GetCarHistorysByCarId(string vinId, P parameter, bool trackChange);
 
         Task<IEnumerable<T>> GetCarHistorysByUserId(string userId, P parameter, bool trackChange);
+
+        Task<IEnumerable<T>> GetCarHistorysByOwnCompany(List<string> carIds, P parameter, bool trackChange);
     }
 }
