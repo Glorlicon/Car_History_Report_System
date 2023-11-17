@@ -10,10 +10,10 @@ namespace Application.DTO.DataProvider
     public class DataProviderWorkingTimesCreateRequestDTO
     {
         public int DayOfWeek { get; set; }
-        public int StartHour { get; set; }
-        public int StartMinute { get; set; }
-        public int EndHour { get; set; }
-        public int EndMinute { get; set; }
-        public bool IsClosed { get; set; }
+        public int StartHour { get; set; } = 0;
+        public int StartMinute { get; set; } = 0;
+        public int EndHour { get; set; } = 0;
+        public int EndMinute { get; set; } = 0;
+        public bool IsClosed { get; set; } = true;
     }
 }

@@ -178,7 +178,7 @@ namespace Application.DomainServices
                     CarServiceHistories = _mapper.Map<List<CarServiceHistoryResponseDTO>>(carServiceHistories),
                     CarAccidentHistories = _mapper.Map<List<CarAccidentHistoryResponseDTO>>(carAccidentHistories),
                     CarInspectionHistories = _mapper.Map<List<CarInspectionHistoryResponseDTO>>(carInspectionHistories),
-                    CarInsurances = _mapper.Map<List<CarInsuranceResponseDTO>>(carInsurances),
+                    CarInsurances = _mapper.Map<List<CarInsuranceHistoryResponseDTO>>(carInsurances),
                     CarStolenHistories = _mapper.Map<List<CarStolenHistoryResponseDTO>>(carStolenHistories),
                     CarRegistrationHistories = _mapper.Map<List<CarRegistrationHistoryResponseDTO>>(carRegistrationHistories),
                     GeneralCarHistories = generalCarHistories

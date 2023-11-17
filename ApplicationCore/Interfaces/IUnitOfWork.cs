@@ -1,5 +1,6 @@
 ﻿using Application.DTO.CarServiceHistory;
 using Domain.Entities;
+using Infrastructure.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,9 @@ namespace Application.Interfaces
 
         ICarTrackingRepository CarTrackingRepository { get; }
 
+        ICarStolenHistoryRepository CarStolenHistoryRepository { get; }
+
+        ICarInsuranceRepository CarInsuranceRepository { get; }
         Task SaveAsync();
     }
 }

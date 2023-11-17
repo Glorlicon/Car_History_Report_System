@@ -25,7 +25,7 @@ namespace Application.DTO.CarReport
 
         public List<CarAccidentHistoryResponseDTO> CarAccidentHistories { get; set; }
         public List<CarInspectionHistoryResponseDTO> CarInspectionHistories { get; set; }
-        public List<CarInsuranceResponseDTO> CarInsurances { get; set; }
+        public List<CarInsuranceHistoryResponseDTO> CarInsurances { get; set; }
         public List<CarStolenHistoryResponseDTO> CarStolenHistories { get; set; }
 
         public List<CarRegistrationHistoryResponseDTO> CarRegistrationHistories { get; set; }

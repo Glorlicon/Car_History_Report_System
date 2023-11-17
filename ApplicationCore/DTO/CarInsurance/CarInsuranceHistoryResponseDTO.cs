@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTO.CarAccidentHistory
+namespace Application.DTO.CarInsurance
 {
-    public class CarAccidentHistoryResponseDTO
+    public class CarInsuranceHistoryResponseDTO
     {
         public int Id { get; set; }
         public string Source { get; set; }
-        public string? Location { get; set; }
-        public float Serverity { get; set; }
-        public AccidentDamageLocation DamageLocation { get; set; }
-        public DateOnly AccidentDate { get; set; }
+        public string InsuranceNumber { get; set; }
+        public string CarId { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
         public string? Description { get; set; }
         public string? Note { get; set; }
         public int? Odometer { get; set; }
@@ -23,5 +23,12 @@ namespace Application.DTO.CarAccidentHistory
         public string? ModifiedByUserId { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime LastModified { get; set; }
+        public bool Expired
+        {
+            get 
+            { 
+                return EndDate < DateOnly.FromDateTime(DateTime.Now); 
+            }
+        }
     }
 }
