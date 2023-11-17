@@ -344,3 +344,20 @@ export interface CarRecalls {
     description: string
     recallDate?: Date
 }
+
+export interface CarServices {
+    id?: number
+    source?: string
+    carId: string
+    otherServices: string
+    serviceTime: Date
+    reportDate: Date
+    services: number
+    servicesName?: string
+    note: string
+    odometer: number
+    createdByUserId?: string
+    modifiedByUserId?: string
+    createdTime?: Date
+    lastModified?: Date
+}

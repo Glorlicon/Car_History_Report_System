@@ -39,3 +39,9 @@ export const CarDealerNavigation = [
     { label: 'Car List', link: '/dealer/cars' },
     { label: 'Admin Request', link: '/dealer/requests' }
 ]
+
+export const ServiceShopNavigation = [
+    { label: 'Service Shop Details', link: '/service' },
+    { label: 'Car Maintainance List', link: '/service/car-service' },
+    { label: 'Recall List', link: '/service/recalls' },
+]

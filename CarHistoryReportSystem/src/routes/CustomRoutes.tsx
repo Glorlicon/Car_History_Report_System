@@ -35,7 +35,7 @@ import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
 import AdminRequestPage from '../pages/admin/request/AdminRequestList'
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, ServiceShopNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
 import PaymentPage from '../pages/common/PaymentPage';
@@ -43,6 +43,8 @@ import PaymentReturnPage from '../pages/common/PaymentReturnPage';
 import CarReportPage from '../pages/common/CarReportPage';
 import CarMaintenanceDetails from '../pages/user/CarMaintenanceDetails';
 import ManufacturerCarRecallList from '../pages/manufacturer/recall/ManufacturerCarRecallList'
+import ServiceShopHistory from '../pages/service_shop/ServiceShopHistory'
+import ServiceShopRecall from '../pages/service_shop/ServiceShopCarRecall'
 
 
 const CustomRoutes = () => {
@@ -76,7 +78,9 @@ const CustomRoutes = () => {
                 <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminRequestPage /></SpecialLayout>}></ProtectedRoute>} />
 
                 {/*Service Shop*/}
-                <Route path="/service" element={<ServiceShopHomePage />} />
+                <Route path="/service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/service/car-service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHistory /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/service/recalls" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopRecall /></UserLayout>}></ProtectedRoute>} />
                 {/*Insurance*/}
                 <Route path="/insurance" element={<InsuranceCompanyHomePage />} />
                 {/*Police*/}
