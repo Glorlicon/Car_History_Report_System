@@ -360,4 +360,10 @@ export interface CarServices {
     modifiedByUserId?: string
     createdTime?: Date
     lastModified?: Date
+    selectedServices: number[];
+}
+
+export interface Services {
+    name: string
+    value: number
 }

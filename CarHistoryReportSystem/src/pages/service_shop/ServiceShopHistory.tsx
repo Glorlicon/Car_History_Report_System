@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
-import { APIResponse, CarModel, CarRecalls, CarServices } from '../../utils/Interfaces';
+import { APIResponse, CarModel, CarRecalls, CarServices, Services } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import '../../styles/ManufacturerCarModels.css'
 import { AddCarRecall, EditCarRecall, ListManufacturerRecalls } from '../../services/api/Recall';
 import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
 import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { ListManufaturerCarModels } from '../../services/api/CarModel';
-import { ListServiceShopHistory } from '../../services/api/CarServiceHistory';
+import { ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
 import CarServiceAddModal from '../../components/forms/carservice/CarServiceAddModal';
 import { isValidVIN } from '../../utils/Validators';
 
 function ServiceShopHistory() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const [carServiceHistory, seCarServiceHistory] = useState([])
+    const [carServiceHistory, seCarServiceHistory] = useState([]);;
+    /*const [carList, setCarList] = useState<Car[]>([]);*/
+    const [services, setServices] = useState<Services[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [modelList, setModelList] = useState<CarModel[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [service, setService] = useState<string>('');
@@ -26,6 +27,7 @@ function ServiceShopHistory() {
     const [showModal, setShowModal] = useState(false);
     const [editRecalModel, setEditRecallModel] = useState<CarRecalls | null>(null)
     const serviceShopId = JWTDecoder(token).dataprovider
+    const [availableServices, setAvailableServices] = useState<Services[]>([])
     console.log(serviceShopId);
 
     const [newServiceHistory, setNewServiceHistory] = useState<CarServices>({
@@ -35,32 +37,39 @@ function ServiceShopHistory() {
         otherServices: "",
         serviceTime: new Date(),
         reportDate: new Date(),
-        services: 0
+        services: 0,
+        selectedServices:[]
     })
 
     const handleAddService = () => {
-        if (editRecalModel) {
-            setEditRecallModel({
-                ...editRecalModel,
-                /*features: [...editCarSales.features, feature],*/
-            });
-        } else {
-            setNewServiceHistory({
-                ...newServiceHistory,
-                services: newServiceHistory.services,
-            });
+        const serviceValue = parseInt(service);
+        if (service && !newServiceHistory?.selectedServices?.includes(serviceValue)) {
+            setNewServiceHistory(prevState => ({
+                ...prevState,
+                selectedServices: [...prevState.selectedServices, serviceValue]
+            }));
+            // Remove the added service from the available services list
+            setAvailableServices(prevServices => prevServices?.filter(s => s.value !== serviceValue));
         }
         setService('');
     };
 
-    const handleRemoveService = (index: number) => {
-        const newServices = newServiceHistory.services;
-        setNewServiceHistory({
-            ...newServiceHistory,
-            services: newServices,
-        });
+    const handleRemoveService = (serviceValue: number) => {
+        setNewServiceHistory(prevState => ({
+            ...prevState,
+            selectedServices: prevState.selectedServices.filter(s => s !== serviceValue)
+        }));
+        // Add the removed service back to the available services list and sort by value
+        const removedService = services.find(s => s.value === serviceValue);
+        if (removedService) {
+            setAvailableServices(prevServices => {
+                // Add the removed service back
+                const updatedServices = [...prevServices, removedService];
+                // Sort the updated services array by value
+                return updatedServices.sort((a, b) => a.value - b.value);
+            });
+        }
     };
-
     const validateCarService = (service: CarServices): boolean => {
         if (!isValidVIN(service.carId as unknown as string)) {
             setAddError("VIN is invalid");
@@ -99,6 +108,8 @@ function ServiceShopHistory() {
         }
     };
 
+
+
     //const handleAddModel = async () => {
     //    if (validateCarModel(newModel)) {
     //        setAdding(true);
@@ -117,17 +128,29 @@ function ServiceShopHistory() {
     ////TODO: car recall
     const handleServiceClick = async () => {
         if (newServiceHistory != null && validateCarService(newServiceHistory)) {
+            const totalServicesValue = newServiceHistory.selectedServices.reduce((total, currentValue) => {
+                return total + currentValue;
+            }, 0);
+
+            // Set the services total before submitting
+            const updatedServiceHistory = {
+                ...newServiceHistory,
+                services: totalServicesValue,
+            };
+
+            console.log("submited:", updatedServiceHistory);
+
             setAdding(true);
             setAddError(null);
-            //const response: APIResponse = await AddCar(newServiceHistory, token);
-            //setAdding(false);
-            //if (response.error) {
-            //    setAddError(response.error);
-            //} else {
-            //    setShowModal(false);
-            //    setModalPage(1);
-            //    fetchData();
-            //}
+            const response: APIResponse = await CreateServiceHistory(newServiceHistory, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setShowModal(false);
+                setModalPage(1);
+                fetchData();
+            }
         }
     };
 
@@ -151,11 +174,17 @@ function ServiceShopHistory() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carServiceReponse: APIResponse = await ListServiceShopHistory(serviceShopId, token)
-        if (carServiceReponse.error) {
-            setError(carServiceReponse.error)
+        const carServiceHistoryReponse: APIResponse = await ListServiceShopHistory()
+        const carServicesReponse: APIResponse = await ListServices()
+        if (carServiceHistoryReponse.error || carServicesReponse.error) {
+            if (carServiceHistoryReponse.error)
+                setError(carServiceHistoryReponse.error)
+            else if (carServicesReponse.error)
+                setError(carServicesReponse.error)
         } else {
-            seCarServiceHistory(carServiceReponse.data)
+            seCarServiceHistory(carServiceHistoryReponse.data)
+            setServices(carServicesReponse.data)
+            setAvailableServices(carServicesReponse.data);
         }
         setLoading(false)
     };
@@ -233,10 +262,11 @@ function ServiceShopHistory() {
                         {modalPage === 1 && (
                             <CarServiceAddModal
                                 action="Add"
-                                service={newServiceHistory}
-                                services={service}
+                                CarHistoryservice={newServiceHistory}
+                                services={services}
+                                availableServices={availableServices}
                                 setServices={setService}
-                                models={modelList}
+                                newServiceHistory={newServiceHistory}
                                 handleInputChange={handleInputChange}
                                 handleAddService={handleAddService}
                                 handleRemoveService={handleRemoveService }
