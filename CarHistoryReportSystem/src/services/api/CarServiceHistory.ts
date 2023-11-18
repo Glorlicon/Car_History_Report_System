@@ -29,7 +29,7 @@ export async function ListServices(): Promise<APIResponse> {
     }
 }
 
-export async function CreateServiceHistory(data: CarSalesInfo, token: string) {
+export async function CreateServiceHistory(data: CarServices, token: string) {
     console.log("New")
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory`, data,

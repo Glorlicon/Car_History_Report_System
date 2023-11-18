@@ -8,7 +8,7 @@ import { AddCarRecall, EditCarRecall, ListManufacturerRecalls } from '../../serv
 import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
 import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { ListManufaturerCarModels } from '../../services/api/CarModel';
-import { ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
+import { CreateServiceHistory, ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
 import CarServiceAddModal from '../../components/forms/carservice/CarServiceAddModal';
 import { isValidVIN } from '../../utils/Validators';
 
@@ -142,7 +142,7 @@ function ServiceShopHistory() {
 
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await CreateServiceHistory(newServiceHistory, token);
+            const response: APIResponse = await CreateServiceHistory(updatedServiceHistory, token);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
