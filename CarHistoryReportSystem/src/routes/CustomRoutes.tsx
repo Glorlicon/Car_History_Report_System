@@ -35,7 +35,7 @@ import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
 import AdminRequestPage from '../pages/admin/request/AdminRequestList'
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, PoliceNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
 import PaymentPage from '../pages/common/PaymentPage';
@@ -43,6 +43,7 @@ import PaymentReturnPage from '../pages/common/PaymentReturnPage';
 import CarReportPage from '../pages/common/CarReportPage';
 import CarMaintenanceDetails from '../pages/user/CarMaintenanceDetails';
 import CarDealerCarStorage from '../pages/car_dealer/CarDealerCarStorage';
+import PoliceStolenCarList from '../pages/police/PoliceStolenCarList';
 
 
 const CustomRoutes = () => {
@@ -80,7 +81,8 @@ const CustomRoutes = () => {
                 {/*Insurance*/}
                 <Route path="/insurance" element={<InsuranceCompanyHomePage />} />
                 {/*Police*/}
-                <Route path="/police" element={<PoliceHomePage />} />
+                <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<SpecialLayout navItems={PoliceNavigation}><PoliceHomePage /></SpecialLayout>}></ProtectedRoute>} />
+                <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<SpecialLayout navItems={PoliceNavigation}><PoliceStolenCarList /></SpecialLayout>}></ProtectedRoute>} />
                 {/*Manufacturer*/}
                 <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />

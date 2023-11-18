@@ -338,3 +338,18 @@ export interface ModelMaintainanceDetails {
     lastOwnerChangeDate: string
 }
 
+export interface CarStolen {
+    id?: number,
+    description?: string,
+    carId: string,
+    note?: string,
+    odometer: number,
+    reportDate: string,
+    status: number,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
