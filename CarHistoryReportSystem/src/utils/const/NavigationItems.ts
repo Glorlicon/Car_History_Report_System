@@ -47,3 +47,15 @@ export const PoliceNavigation = [
     { label: 'Car Stolen Reports', link: '/police/stolen' },
     { label: 'Admin Request', link: '/police/requests' }
 ]
+
+export const InsuranceNavigation = [
+    { label: 'Car Insurance', link: '/insurance/insurance-list' },
+    { label: 'Car Crash Reports', link: '/insurance/crash' },
+    { label: 'Car Stolen Reports', link: '/insurance/stolen' },
+]
+
+export const RegistryNavigation = [
+    { label: 'Car Inspection', link: '/registry/inspection' },
+    { label: 'Car Registration', link: '/registry/registration' },
+    { label: 'Car Reports', link: '/registry/car-reports' },
+]

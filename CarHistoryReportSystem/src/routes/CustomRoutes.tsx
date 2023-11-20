@@ -35,7 +35,7 @@ import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
 import AdminRequestPage from '../pages/admin/request/AdminRequestList'
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, PoliceNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, PoliceNavigation, RegistryNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
 import PaymentPage from '../pages/common/PaymentPage';
@@ -44,6 +44,8 @@ import CarReportPage from '../pages/common/CarReportPage';
 import CarMaintenanceDetails from '../pages/user/CarMaintenanceDetails';
 import CarDealerCarStorage from '../pages/car_dealer/CarDealerCarStorage';
 import PoliceStolenCarList from '../pages/police/PoliceStolenCarList';
+import RegistryInspectionList from '../pages/vehicle_registry/RegistryInspectionList';
+import RegistryRegistrationList from '../pages/vehicle_registry/RegistryRegistrationList';
 
 
 const CustomRoutes = () => {
@@ -96,7 +98,9 @@ const CustomRoutes = () => {
                 <Route path="/dealer/cars/:id" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerCarDetails /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/dealer/requests" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerRequest /></UserLayout>}></ProtectedRoute>} />
                 {/*Vehicle Registry*/}
-                <Route path="/vehicleregistry" element={<VehicleRegistryHomePage />} />
+                <Route path="/registry" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><VehicleRegistryHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/registry/inspection" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RegistryInspectionList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/registry/registration" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RegistryRegistrationList /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/test" element={<TestImage />} />
                 <Route path="/test2" element={<TestImage2 />} />
             </Routes>

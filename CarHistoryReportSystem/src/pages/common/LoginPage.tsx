@@ -45,6 +45,10 @@ function LoginPage() {
                     navigate('/dealer')
                 } else if (decodedData.roles === "PoliceOffice") {
                     navigate('/police')
+                } else if (decodedData.roles === "VehicleRegistry") {
+                    navigate('/registry')
+                } else if (decodedData.roles === "InsuranceCompany") {
+                    navigate('/insurance')
                 } else {
                     navigate('/')
                 }

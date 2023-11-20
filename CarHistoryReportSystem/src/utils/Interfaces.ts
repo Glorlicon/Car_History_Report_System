@@ -353,3 +353,37 @@ export interface CarStolen {
     lastModified?: string
 }
 
+export interface CarCrash {
+    id?: number,
+    source?: string,
+    location?: string,
+    carId: string,
+    serverity: number,
+    damageLocation: number,
+    accidentDate: string,
+    description?: string,
+    note?: string,
+    odometer?: number,
+    reportDate: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarRegistration {
+    carId: string,
+    ownerName: string,
+    registrationNumber: string,
+    expireDate: string,
+    licensePlateNumber: string,
+    note?: string,
+    odometer?: number,
+    reportDate?: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
