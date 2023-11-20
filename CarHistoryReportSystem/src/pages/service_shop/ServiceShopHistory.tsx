@@ -8,9 +8,10 @@ import { AddCarRecall, EditCarRecall, ListManufacturerRecalls } from '../../serv
 import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
 import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { ListManufaturerCarModels } from '../../services/api/CarModel';
-import { CreateServiceHistory, ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
+import { CreateServiceHistory, EditCarServices, ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
 import CarServiceAddModal from '../../components/forms/carservice/CarServiceAddModal';
 import { isValidVIN } from '../../utils/Validators';
+import CarServiceEditModal from '../../components/forms/carservice/CarServiceEditModal';
 
 function ServiceShopHistory() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -25,7 +26,7 @@ function ServiceShopHistory() {
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
-    const [editRecalModel, setEditRecallModel] = useState<CarRecalls | null>(null)
+    const [editCarService, setEditCarService] = useState<CarServices | null>(null)
     const serviceShopId = JWTDecoder(token).nameidentifier
     const [availableServices, setAvailableServices] = useState<Services[]>([])
     console.log(serviceShopId);
@@ -38,7 +39,7 @@ function ServiceShopHistory() {
         serviceTime: new Date(),
         reportDate: new Date(),
         services: 0,
-        selectedServices:[]
+        selectedServices: []
     })
 
     const handleAddService = () => {
@@ -92,12 +93,12 @@ function ServiceShopHistory() {
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        if (editRecalModel) {
-            setEditRecallModel({
-                ...editRecalModel,
+        if (editCarService) {
+            setEditCarService({
+                ...editCarService,
                 [e.target.name]: e.target.value,
             });
-            console.log(editRecalModel);
+            console.log(editCarService);
         }
         else {
             setNewServiceHistory({
@@ -154,23 +155,24 @@ function ServiceShopHistory() {
         }
     };
 
-    //const handleRecallEdit = async () => {
-    //    if (editRecalModel != null && validateCarService(editRecalModel)) {
-    //        setAdding(true);
-    //        setAddError(null);
-    //        console.log("submitted edit ", editRecalModel);
-    //        const response: APIResponse = await EditCarRecall(editRecalModel, token);
-    //        setAdding(false);
-    //        if (response.error) {
-    //            setAddError(response.error);
-    //        } else {
-    //            setShowModal(false);
-    //            setEditRecallModel(null);
-    //            setModalPage(1);
-    //            fetchData();
-    //        }
-    //    }
-    //};
+    const handleServiceEdit = async () => {
+        if (editCarService != null && validateCarService(editCarService)) {
+            setAdding(true);
+            setAddError(null);
+            console.log("submitted edit ", editCarService);
+            const response: APIResponse = await EditCarServices(editCarService, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setShowModal(false);
+                setEditCarService(null);
+                setModalPage(1);
+                fetchData();
+            }
+        }
+    };
+
     const fetchData = async () => {
         setLoading(true);
         setError(null);
@@ -189,9 +191,31 @@ function ServiceShopHistory() {
         }
         setLoading(false)
     };
+
     useEffect(() => {
-        fetchData()
-    }, [])
+        fetchData();
+    }, []);
+
+
+    useEffect(() => {
+        if (editCarService) {
+            // Set the services that are already selected
+            const selectedServiceValues = editCarService?.servicesName?.split(', ').map(name => {
+                const service = services.find(s => s.name === name);
+                return service ? service.value : undefined;
+            }).filter((v): v is number => v !== undefined) || [];
+
+            setNewServiceHistory({
+                ...editCarService,
+                selectedServices: selectedServiceValues
+            });
+
+            // Filter out the selected services from the available services
+            setAvailableServices(
+                services.filter(s => !selectedServiceValues.includes(s.value))
+            );
+        }
+    }, [editCarService, services]);
 
     return (
         <div className="manu-car-model-list-page">
@@ -236,7 +260,7 @@ function ServiceShopHistory() {
                     ) : filteredcarRecalls.length > 0 ? (
                         filteredcarRecalls.map((model: any, index: number) => (
                             <tr key={index}>
-                                <td onClick={() => { setEditRecallModel(model) }}>{model.carId}</td>
+                                <td onClick={() => { setEditCarService(model) }}>{model.carId}</td>
                                 <td>{model.servicesName}</td>
                                 <td>{model.otherServices}</td>
                                 <td>{model.serviceTime}</td>
@@ -287,27 +311,33 @@ function ServiceShopHistory() {
                     </div>
                 </div>
             )}
-            {/*{editRecalModel && (*/}
-            {/*    <div className="manu-car-model-modal">*/}
-            {/*        <div className="manu-car-model-modal-content">*/}
-            {/*            <span className="manu-car-model-close-btn" onClick={() => { setEditRecallModel(null); setModalPage(1) }}>&times;</span>*/}
-            {/*            <h2>Add Car Recall</h2>*/}
-            {/*            {modalPage === 1 && (*/}
-            {/*                <CarRecallEditModal*/}
-            {/*                    action="Edit"*/}
-            {/*                    model={editRecalModel}*/}
-            {/*                    handleInputChange={handleInputChange}*/}
-            {/*                />*/}
-            {/*            )}*/}
-            {/*            <button onClick={handleRecallEdit} disabled={adding} className="manu-car-model-next-btn">*/}
-            {/*                {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Create')}*/}
-            {/*            </button>*/}
-            {/*            {addError && (*/}
-            {/*                <p className="manu-car-model-error">{addError}</p>*/}
-            {/*            )}*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+            {editCarService && (
+                <div className="manu-car-model-modal">
+                    <div className="manu-car-model-modal-content">
+                        <span className="manu-car-model-close-btn" onClick={() => { setEditCarService(null); setModalPage(1) }}>&times;</span>
+                        <h2>Edit Car Service</h2>
+                        {modalPage === 1 && (
+                            <CarServiceEditModal
+                                action="Edit"
+                                CarHistoryservice={editCarService}
+                                services={services}
+                                availableServices={availableServices}
+                                setServices={setService}
+                                newServiceHistory={newServiceHistory}
+                                handleInputChange={handleInputChange}
+                                handleAddService={handleAddService}
+                                handleRemoveService={handleRemoveService}
+                            />
+                        )}
+                        <button onClick={handleServiceEdit} disabled={adding} className="manu-car-model-next-btn">
+                            {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Create')}
+                        </button>
+                        {addError && (
+                            <p className="manu-car-model-error">{addError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
       
   );
