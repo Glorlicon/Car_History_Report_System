@@ -267,13 +267,6 @@ function ServiceShopHistory() {
                                 <td>{model.reportDate}</td>
                                 <td>{model.odometer}</td>
                                 <td>{model.note}</td>
-                                <td>
-                                    {/*<button className="manu-car-model-recall-btn" onClick={() => setEditRecallModel({*/}
-                                    {/*    modelId: model.modelID,*/}
-                                    {/*    description: '',*/}
-                                    {/*    recallDate: new Date()*/}
-                                    {/*})}>Close Recall</button>*/}
-                                </td>
                             </tr>
                         ))
                     ) : (

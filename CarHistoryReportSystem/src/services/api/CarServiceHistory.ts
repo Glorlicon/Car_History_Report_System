@@ -55,7 +55,7 @@ export async function CreateServiceHistory(data: CarServices, token: string) {
 
 export async function EditCarServices(data: CarServices, token: string): Promise<APIResponse> {
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarRecall/${data.id}`,
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory/${data.id}`,
             {
                 ...data,
             },
