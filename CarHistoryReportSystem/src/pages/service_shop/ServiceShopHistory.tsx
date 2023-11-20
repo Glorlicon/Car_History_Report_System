@@ -26,7 +26,7 @@ function ServiceShopHistory() {
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [editRecalModel, setEditRecallModel] = useState<CarRecalls | null>(null)
-    const serviceShopId = JWTDecoder(token).dataprovider
+    const serviceShopId = JWTDecoder(token).nameidentifier
     const [availableServices, setAvailableServices] = useState<Services[]>([])
     console.log(serviceShopId);
 
@@ -174,7 +174,7 @@ function ServiceShopHistory() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carServiceHistoryReponse: APIResponse = await ListServiceShopHistory()
+        const carServiceHistoryReponse: APIResponse = await ListServiceShopHistory(serviceShopId)
         const carServicesReponse: APIResponse = await ListServices()
         if (carServiceHistoryReponse.error || carServicesReponse.error) {
             if (carServiceHistoryReponse.error)
@@ -185,6 +185,7 @@ function ServiceShopHistory() {
             seCarServiceHistory(carServiceHistoryReponse.data)
             setServices(carServicesReponse.data)
             setAvailableServices(carServicesReponse.data);
+            console.log("Service History", carServiceHistoryReponse.data);
         }
         setLoading(false)
     };
@@ -235,9 +236,13 @@ function ServiceShopHistory() {
                     ) : filteredcarRecalls.length > 0 ? (
                         filteredcarRecalls.map((model: any, index: number) => (
                             <tr key={index}>
-                                <td onClick={() => { setEditRecallModel(model) }}>{model.modelId}</td>
-                                <td>{model.description}</td>
-                                <td>{model.recallDate}</td>
+                                <td onClick={() => { setEditRecallModel(model) }}>{model.carId}</td>
+                                <td>{model.servicesName}</td>
+                                <td>{model.otherServices}</td>
+                                <td>{model.serviceTime}</td>
+                                <td>{model.reportDate}</td>
+                                <td>{model.odometer}</td>
+                                <td>{model.note}</td>
                                 <td>
                                     {/*<button className="manu-car-model-recall-btn" onClick={() => setEditRecallModel({*/}
                                     {/*    modelId: model.modelID,*/}

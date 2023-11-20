@@ -1,9 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { APIResponse, CarSalesInfo, CarServices } from "../../utils/Interfaces";
 
-export async function ListServiceShopHistory(): Promise<APIResponse> {
+export async function ListServiceShopHistory(UserID: string): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory`)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory/user/${UserID}`)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
