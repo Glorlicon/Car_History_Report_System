@@ -345,6 +345,19 @@ export interface CarRecalls {
     recallDate?: Date
 }
 
+export interface RecallStatus {
+    status: number
+}
+
+export interface ServiceCarRecalls {
+    carId: string
+    carRecallId: number
+    description: string
+    modelId: Date
+    recallDate: Date
+    status: string
+}
+
 export interface CarServices {
     id?: number
     source?: string

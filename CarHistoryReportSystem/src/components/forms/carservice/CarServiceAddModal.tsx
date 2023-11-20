@@ -49,10 +49,6 @@ const CarServiceAddModal: React.FC<CarServiceAddModalCapacityProps> = ({
                     <label>Odometer</label>
                     <input type="text" name="odometer" onChange={handleInputChange} min="0" />
                 </div>
-                <div className="ad-car-model-form-column">
-                    <label>Description</label>
-                    <input type="text" name="description" onChange={handleInputChange} min="0" />
-                </div>
                 <div className="dealer-car-sales-form-column">
                     <label>Services: </label>
                     <select name="service" onChange={e => setServices(e.target.value)}>

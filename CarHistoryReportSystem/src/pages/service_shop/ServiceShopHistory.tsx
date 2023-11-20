@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
-import { APIResponse, CarModel, CarRecalls, CarServices, Services } from '../../utils/Interfaces';
+import { APIResponse, CarModel, CarRecalls, CarServices, RecallStatus, ServiceCarRecalls, Services } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import '../../styles/ManufacturerCarModels.css'
 import { AddCarRecall, EditCarRecall, ListManufacturerRecalls } from '../../services/api/Recall';
 import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
 import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { ListManufaturerCarModels } from '../../services/api/CarModel';
-import { CreateServiceHistory, EditCarServices, ListServices, ListServiceShopHistory } from '../../services/api/CarServiceHistory';
+import { CreateServiceHistory, EditCarServices, GetCarRecalls, ListServices, ListServiceShopHistory, UpdateCarRecallStatus } from '../../services/api/CarServiceHistory';
 import CarServiceAddModal from '../../components/forms/carservice/CarServiceAddModal';
 import { isValidVIN } from '../../utils/Validators';
 import CarServiceEditModal from '../../components/forms/carservice/CarServiceEditModal';
+import CarServiceSearchCaRecall from '../../components/forms/carservice/CarServiceSearchCaRecall';
+import CarServiceRecallStatus from '../../components/forms/carservice/CarServiceRecallStatus';
 
 function ServiceShopHistory() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -26,6 +28,8 @@ function ServiceShopHistory() {
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
+    const [searchModal, setSearchModal] = useState(false);
+    const [recallModal, setRecallModal] = useState(false);
     const [editCarService, setEditCarService] = useState<CarServices | null>(null)
     const serviceShopId = JWTDecoder(token).nameidentifier
     const [availableServices, setAvailableServices] = useState<Services[]>([])
@@ -40,6 +44,19 @@ function ServiceShopHistory() {
         reportDate: new Date(),
         services: 0,
         selectedServices: []
+    })
+
+    const [newRecall, setNewRecall] = useState<ServiceCarRecalls[]>([{
+        carId: "",
+        carRecallId: 0,
+        description: "",
+        modelId: new Date(),
+        recallDate: new Date(),
+        status: ""
+    }]);
+
+    const [recallStatus, setRecallStatus] = useState<RecallStatus>({
+        status: 0
     })
 
     const handleAddService = () => {
@@ -71,6 +88,40 @@ function ServiceShopHistory() {
             });
         }
     };
+
+    const handleCloseRecall = async (Status: string, CarId: string, RecallId: number) => {
+        const newStatus = Status === 'Open' ? 1 : 0
+
+        const requestBody = {
+            status: newStatus
+        };
+
+        setAdding(true);
+
+        try {
+            const response = await UpdateCarRecallStatus(requestBody, CarId, RecallId, token);
+
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setRecallStatus({ status: newStatus });
+
+                setNewRecall(currentRecalls => currentRecalls.map(recall => {
+                    if (recall.carRecallId === RecallId) {
+                        return { ...recall, status: newStatus === 1 ? 'Closed' : 'Open' };
+                    }
+                    return recall;
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to update recall status:", error);
+            setAddError('An error occurred while updating the recall status.');
+        } finally {
+            setAdding(false);
+        }
+    };
+
+
     const validateCarService = (service: CarServices): boolean => {
         if (!isValidVIN(service.carId as unknown as string)) {
             setAddError("VIN is invalid");
@@ -90,6 +141,7 @@ function ServiceShopHistory() {
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
+        console.log(searchQuery);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -100,7 +152,7 @@ function ServiceShopHistory() {
             });
             console.log(editCarService);
         }
-        else {
+        else if (showModal) {
             setNewServiceHistory({
                 ...newServiceHistory,
                 [e.target.name]: e.target.value,
@@ -151,6 +203,24 @@ function ServiceShopHistory() {
                 setShowModal(false);
                 setModalPage(1);
                 fetchData();
+            }
+        }
+    };
+
+    const handleSearchClick = async () => {
+        if (searchQuery != null) {
+            setAdding(true);
+            setAddError(null);
+            const response: APIResponse = await GetCarRecalls(searchQuery, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setSearchModal(false);
+                setModalPage(1);
+                setNewRecall(response.data);
+                console.log(newRecall);
+                setRecallModal(true);
             }
         }
     };
@@ -230,6 +300,9 @@ function ServiceShopHistory() {
                         onChange={handleSearchChange}
                     />
                 </div>
+            </div>
+            <div className="manu-car-model-top-bar">
+                <button className="add-manu-car-model-btn" onClick={() => setSearchModal(true)}>+ Add Car Service History</button>
             </div>
             <table className="manu-car-model-table">
                 <thead>
@@ -325,6 +398,54 @@ function ServiceShopHistory() {
                         <button onClick={handleServiceEdit} disabled={adding} className="manu-car-model-next-btn">
                             {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Create')}
                         </button>
+                        {addError && (
+                            <p className="manu-car-model-error">{addError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+            {searchModal && (
+                <div className="manu-car-model-modal">
+                    <div className="manu-car-model-modal-content">
+                        <span className="manu-car-model-close-btn" onClick={() => { setSearchModal(false); setModalPage(1) }}>&times;</span>
+                        <h2>Search Car Recall</h2>
+                        {modalPage === 1 && (
+                            <CarServiceSearchCaRecall
+                                action="Add"
+                                searchQuery={searchQuery}
+                                handleSearchChange={handleSearchChange}
+
+                            />
+                        )}
+                        {/*{modalPage === 2 && (*/}
+
+                        {/*)}*/}
+                        <button onClick={handleSearchClick} disabled={adding} className="manu-car-model-next-btn">
+                            {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Search')}
+                        </button>
+                        {addError && (
+                            <p className="manu-car-model-error">{addError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+            {recallModal && (
+                <div className="manu-car-model-modal">
+                    <div className="manu-car-model-modal-content">
+                        <span className="manu-car-model-close-btn" onClick={() => { setRecallModal(false); setModalPage(1) }}>&times;</span>
+                        <h2>Car Recalls</h2>
+                        {modalPage === 1 && (
+                            <CarServiceRecallStatus
+                                action="Add"
+                                searchQuery={searchQuery}
+                                newRecall={newRecall}
+                                handleCloseRecall={handleCloseRecall}
+
+                            />
+                        )}
+                        {/*{modalPage === 2 && (*/}
+
+                        {/*)}*/}
                         {addError && (
                             <p className="manu-car-model-error">{addError}</p>
                         )}
