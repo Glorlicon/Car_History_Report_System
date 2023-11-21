@@ -25,5 +25,8 @@ namespace Application.Interfaces
         Task UpdateCarHistory(int id, U request);
 
         Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests);
+
+        Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter);
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.DTO.Car;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,13 @@ namespace Infrastructure.Repository.Extension
             query = query.Where(x => x.Model.ReleasedDate.Year >= parameter.YearStart && x.Model.ReleasedDate.Year <= parameter.YearEnd);
             query = query.Where(x => x.CurrentOdometer >= parameter.MileageMin && x.CurrentOdometer <= parameter.MileageMax);
             query = query.Where(x => x.CarSalesInfo == null ||  (x.CarSalesInfo.Price >= parameter.PriceMin && x.CarSalesInfo.Price <= parameter.PriceMax));
+            return query;
+        }
+
+        public static IQueryable<Car> SearchPlate(this IQueryable<Car> query, string searchString)
+        {
+            searchString = searchString.Replace('*', '_');
+            query = query.Where(x => EF.Functions.Like(x.LicensePlateNumber, searchString));
             return query;
         }
 

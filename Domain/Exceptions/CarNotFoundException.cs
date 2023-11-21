@@ -13,5 +13,10 @@ namespace Domain.Exceptions
         {
 
         }
+        public CarNotFoundException()
+            : base($"Car Not Found")
+        {
+
+        }
     }
 }

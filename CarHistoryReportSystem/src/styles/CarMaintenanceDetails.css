@@ -1,0 +1,208 @@
+.car-maintenance-details-page {
+    margin: 5% 10% 10% 10%;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.5);
+}
+
+.car-maintenance-details-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto;
+}
+.car-maintenance-details-load-error {
+    text-align: center
+}
+.car-maintenance-details-retry-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.car-maintenance-details-retry-btn:hover {
+    background-color: #2980b9;
+}
+.car-maintenance-details-main-page{
+    display: flex;
+    flex-direction: column;
+}
+.car-maintenance-details-navigator{
+    display: flex;
+    flex-direction: row;
+    background-color: deepskyblue;
+}
+.car-maintenance-details-navigator a{
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    width: 100%;
+    text-align: center;
+    border: 1px solid white;
+}
+.car-maintenance-details-navigator a:hover{
+    background-color: dodgerblue;
+}
+
+.car-maintenance-details-section{
+    padding-top: 2%;
+    display: flex;
+    flex-direction: row;
+}
+
+.car-maintenance-details-dashboard {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 40%;
+    font-size: 20px;
+    border: 1px solid black;
+    height: 100%;
+}
+.car-maintenance-details-dashboard a {
+    padding: 1.5%;
+    border: 1px solid black;
+}
+
+.car-maintenance-details-dashboard-details {
+    padding-left: 2%;
+    text-align: center;
+    width: 60%;
+    align-items: center;
+    justify-content: center;
+}
+
+.car-maintenance-details-dashboard-details-2 {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+}
+.car-maintenance-details-dashboard-details h3{
+    text-align: left;
+}
+.car-maintenance-details-dashboard-details progress {
+    display: block;
+    margin: auto;
+}
+.car-maintenance-details-dashboard-details-last {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    margin-left: 5%;
+    border-radius: 10px;
+    padding: 2%;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+
+.car-maintenance-details-dashboard-details-next {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    margin-right: 5%;
+    padding: 2%;
+    font-size: 20px;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+.car-maintenance-details-dashboard-details-next button {
+    margin-top: 50%;
+    padding: 3%;
+    border: none;
+    background-color: deepskyblue;
+    color: white;
+    font-size: 18px;
+    border-radius: 10px;
+}
+.car-maintenance-details-dashboard-details-next button:hover{
+    background-color: dodgerblue;
+}
+
+.car-maintenance-details-brief-service-history {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 40%;
+    border: 1px solid lightgray;
+    height: 100%;
+}
+.car-maintenance-details-brief-service-history thead{
+    font-weight: bold;
+}
+.car-maintenance-details-brief-service-history thead tr td:first-child{
+    width: 80%;
+}
+.car-maintenance-details-brief-service-history tbody tr td{
+    border-top: 1px solid gray;
+    padding: 2%;
+}
+.car-maintenance-details-detailed-service-history {
+    display: flex;
+    flex-direction: column;
+    padding-left: 2%;
+    text-align: center;
+    width: 60%;
+    align-items: center;
+    justify-content: center;
+}
+.car-maintenance-details-detailed-service-history div table {
+    border: 1px solid lightgray;
+    min-width: 80%;
+    border-radius: 5px;
+    margin-bottom: 3%;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+.car-maintenance-details-detailed-service-history div table thead{
+    text-align: left;
+    color: blue;
+    font-weight: bold;
+    font-size: 20px;
+}
+.car-maintenance-details-detailed-service-history thead tr td:first-child {
+    width: 70%;
+}
+.car-maintenance-details-detailed-service-history thead tr td{
+    padding: 5%;
+}
+
+.car-maintenance-details-maintenance-milestones {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 40%;
+    border: 1px solid lightgray;
+    height: 100%;
+}
+.car-maintenance-details-maintenance-milestones thead{
+    font-weight: bold;
+}
+.car-maintenance-details-maintenance-milestones thead tr td:first-child{
+    width: 80%;
+    padding-bottom: 5%;
+    padding-top: 5%;
+}
+.car-maintenance-details-maintenance-milestones tbody tr td{
+    border-top: 1px solid gray;
+    padding: 2%;
+}
+
+.car-maintenance-details-maintenance-milestone-details {
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    width: 60%;
+    padding: 2%;
+    margin: 2%;
+    height: 100%;
+}
+

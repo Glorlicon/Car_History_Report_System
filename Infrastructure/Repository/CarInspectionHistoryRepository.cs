@@ -1,5 +1,4 @@
 ﻿using Application.DTO.CarInspectionHistory;
-using Application.DTO.CarInspectionHistory;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
