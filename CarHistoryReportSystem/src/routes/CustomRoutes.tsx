@@ -35,7 +35,7 @@ import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
 import AdminRequestPage from '../pages/admin/request/AdminRequestList'
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
-import { AdminNavigation, CarDealerNavigation, ManufacturerNavigation, PoliceNavigation, RegistryNavigation, UserNavigation } from '../utils/const/NavigationItems';
+import { AdminNavigation, CarDealerNavigation, InsuranceNavigation, ManufacturerNavigation, PoliceNavigation, RegistryNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import CarHistoryReportPage from '../pages/common/CarHistoryReportPage';
 import PaymentPage from '../pages/common/PaymentPage';
@@ -46,6 +46,8 @@ import CarDealerCarStorage from '../pages/car_dealer/CarDealerCarStorage';
 import PoliceStolenCarList from '../pages/police/PoliceStolenCarList';
 import RegistryInspectionList from '../pages/vehicle_registry/RegistryInspectionList';
 import RegistryRegistrationList from '../pages/vehicle_registry/RegistryRegistrationList';
+import InsuranceCompanyInsuranceList from '../pages/insurance_company/InsuranceCompanyInsuranceList';
+import PoliceCarCrashList from '../pages/police/PoliceCarCrashList';
 
 
 const CustomRoutes = () => {
@@ -81,10 +83,12 @@ const CustomRoutes = () => {
                 {/*Service Shop*/}
                 <Route path="/service" element={<ServiceShopHomePage />} />
                 {/*Insurance*/}
-                <Route path="/insurance" element={<InsuranceCompanyHomePage />} />
+                <Route path="/insurance" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceCompanyHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/insurance/insurance-list" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceCompanyInsuranceList /></UserLayout>}></ProtectedRoute>} />
                 {/*Police*/}
-                <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<SpecialLayout navItems={PoliceNavigation}><PoliceHomePage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<SpecialLayout navItems={PoliceNavigation}><PoliceStolenCarList /></SpecialLayout>}></ProtectedRoute>} />
+                <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceStolenCarList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/crash" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceCarCrashList /></UserLayout>}></ProtectedRoute>} />
                 {/*Manufacturer*/}
                 <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />

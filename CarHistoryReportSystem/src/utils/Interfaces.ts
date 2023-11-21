@@ -268,7 +268,7 @@ interface CarInspectionHistory {
     // Define properties for CarInspectionHistory here
 }
 
-interface CarInsurance {
+interface CarInsuranceHistory {
     // Define properties for CarInsurance here
 }
 
@@ -356,13 +356,13 @@ export interface CarStolen {
 export interface CarCrash {
     id?: number,
     source?: string,
-    location?: string,
+    location: string,
     carId: string,
     serverity: number,
     damageLocation: number,
     accidentDate: string,
-    description?: string,
-    note?: string,
+    description: string,
+    note: string,
     odometer?: number,
     reportDate: string,
     createdByUserId?: string,
@@ -372,6 +372,7 @@ export interface CarCrash {
 }
 
 export interface CarRegistration {
+    id?: number,
     carId: string,
     ownerName: string,
     registrationNumber: string,
@@ -386,4 +387,23 @@ export interface CarRegistration {
     createdTime?: string,
     lastModified?: string
 }
+
+export interface CarInsurance {
+    id?: number,
+    insuranceNumber: string,
+    carId: string,
+    startDate: string,
+    endDate: string,
+    description: string,
+    note: string,
+    odometer: number,
+    reportDate: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+    expired?: boolean
+}
+
 

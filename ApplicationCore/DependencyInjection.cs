@@ -81,6 +81,11 @@ namespace Application
                                              CarAccidentHistoryParameter,
                                              CarAccidentHistoryCreateRequestDTO,
                                              CarAccidentHistoryUpdateRequestDTO>>();
+            services.AddScoped<ICarHistoryServices<CarRegistrationHistoryResponseDTO,
+                                 CarRegistrationHistoryParameter,
+                                 CarRegistrationHistoryCreateRequestDTO,
+                                 CarRegistrationHistoryUpdateRequestDTO>,
+                   CarRegistrationHistoryServices>();
         }
     }
 }

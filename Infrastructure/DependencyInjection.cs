@@ -117,6 +117,7 @@ namespace Infrastructure
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarAccidentHistory, CarAccidentHistoryParameter>, CarAccidentHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarRegistrationHistory, CarRegistrationHistoryParameter>, CarRegistrationHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

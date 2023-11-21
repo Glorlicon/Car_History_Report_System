@@ -52,16 +52,16 @@ function RegistryRegistrationList() {
             setAddError("Expire Date must be chosen");
             return false;
         }
-        if (!registration.expireDate) {
-            setAddError("Expire Date must be chosen");
-            return false;
-        }
         if (!registration.reportDate) {
             setAddError("Report Date must be chosen");
             return false;
         }
         if (!registration.registrationNumber) {
             setAddError("Registration Number must be chosen");
+            return false;
+        }
+        if (!registration.licensePlateNumber) {
+            setAddError("License Plate Number must be chosen");
             return false;
         }
         return true;
@@ -163,7 +163,7 @@ function RegistryRegistrationList() {
                         </tr>
                     ) : error ? (
                         <tr>
-                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                            <td colSpan={4} style={{ textAlign: 'center' }}>
                                 {error}
                                 <button onClick={fetchData} className="reg-reg-retry-btn">Retry</button>
                             </td>
@@ -179,7 +179,7 @@ function RegistryRegistrationList() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No car registrations found</td>
+                            <td colSpan={4}>No car registrations found</td>
                         </tr>
                     )}
                 </tbody>

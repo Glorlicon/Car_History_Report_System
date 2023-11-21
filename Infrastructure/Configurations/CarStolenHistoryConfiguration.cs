@@ -14,7 +14,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CarStolenHistory> builder)
         {
-            builder.Property(co => co.Descripton)
+            builder.Property(co => co.Description)
                 .HasMaxLength(2000);
             builder.Property(co => co.Note)
                 .HasMaxLength(200);
