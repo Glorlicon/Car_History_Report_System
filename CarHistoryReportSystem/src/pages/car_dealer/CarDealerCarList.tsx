@@ -96,7 +96,7 @@ function CarDealerCarList() {
         }
     }
 
-    const   = async () => {
+    const handleEditCarSales = async () => {
         if (editCarSales != null && validateCarSales(editCarSales)) {
             setAdding(true);
             setAddError(null);
