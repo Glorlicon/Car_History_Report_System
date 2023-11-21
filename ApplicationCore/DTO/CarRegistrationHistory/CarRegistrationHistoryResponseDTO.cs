@@ -8,6 +8,7 @@ namespace Application.DTO.CarRegistrationHistory
 {
     public class CarRegistrationHistoryResponseDTO
     {
+        public int Id { get; set; }
         public string CarId { get; set; }
         public string OwnerName { get; set; }
         public string RegistrationNumber { get; set; }

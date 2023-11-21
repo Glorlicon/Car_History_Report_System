@@ -9,9 +9,10 @@ namespace Domain.Enum
     [Flags]
     public enum AccidentDamageLocation
     {
-        Front,
-        Rear,
-        Left,
-        Right
+        None = 0,
+        Front = 1,
+        Rear = 2,
+        Left = 4,
+        Right = 8
     }
 }

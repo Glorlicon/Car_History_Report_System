@@ -268,7 +268,7 @@ interface CarInspectionHistory {
     // Define properties for CarInspectionHistory here
 }
 
-interface CarInsurance {
+interface CarInsuranceHistory {
     // Define properties for CarInsurance here
 }
 
@@ -380,3 +380,72 @@ export interface Services {
     name: string
     value: number
 }
+
+export interface CarStolen {
+    id?: number,
+    description?: string,
+    carId: string,
+    note?: string,
+    odometer: number,
+    reportDate: string,
+    status: number,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarCrash {
+    id?: number,
+    source?: string,
+    location: string,
+    carId: string,
+    serverity: number,
+    damageLocation: number,
+    accidentDate: string,
+    description: string,
+    note: string,
+    odometer?: number,
+    reportDate: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarRegistration {
+    id?: number,
+    carId: string,
+    ownerName: string,
+    registrationNumber: string,
+    expireDate: string,
+    licensePlateNumber: string,
+    note?: string,
+    odometer?: number,
+    reportDate?: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarInsurance {
+    id?: number,
+    insuranceNumber: string,
+    carId: string,
+    startDate: string,
+    endDate: string,
+    description: string,
+    note: string,
+    odometer: number,
+    reportDate: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+    expired?: boolean
+}
+

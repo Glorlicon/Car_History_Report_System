@@ -1,6 +1,8 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarRegistrationHistory;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -27,6 +29,7 @@ namespace Application
             services.AddScoped<ICarServices, CarServices>();
             services.AddScoped<ICarPartServices, CarPartServices>();
             services.AddScoped<ICarOwnerHistoryServices, CarOwnerHistoryServices>();
+            services.AddScoped<ICarStolenHistoryServices, CarStolenHistoryServices>();
             services.AddScoped<IRequestServices, RequestServices>();
             services.AddScoped<ICarMaintainanceServices, CarMaintainanceServices>();
             services.AddScoped<ICarRecallServices, CarRecallServices>();
@@ -48,6 +51,7 @@ namespace Application
                                              CarServiceHistoryParameter,
                                              CarServiceHistoryCreateRequestDTO,
                                              CarServiceHistoryUpdateRequestDTO>>();
+
             services.AddScoped<ICarHistoryServices<CarInspectionHistoryResponseDTO,
                                              CarInspectionHistoryParameter,
                                              CarInspectionHistoryCreateRequestDTO,
@@ -56,12 +60,32 @@ namespace Application
                                              CarInspectionHistoryResponseDTO,
                                              CarInspectionHistoryParameter,
                                              CarInspectionHistoryCreateRequestDTO,
-                                             CarInspectionHistoryUpdateRequestDTO>>();
+                                             CarInspectionHistoryUpdateRequestDTO>>();       
+            
+            services.AddScoped<ICarHistoryServices<CarInsuranceHistoryResponseDTO,
+                                             CarInsuranceHistoryParameter,
+                                             CarInsuranceHistoryCreateRequestDTO,
+                                             CarInsuranceHistoryUpdateRequestDTO>,
+                               CarHistoryServices<CarInsurance,
+                                             CarInsuranceHistoryResponseDTO,
+                                             CarInsuranceHistoryParameter,
+                                             CarInsuranceHistoryCreateRequestDTO,
+                                             CarInsuranceHistoryUpdateRequestDTO>>();
+            
+            services.AddScoped<ICarHistoryServices<CarAccidentHistoryResponseDTO,
+                                             CarAccidentHistoryParameter,
+                                             CarAccidentHistoryCreateRequestDTO,
+                                             CarAccidentHistoryUpdateRequestDTO>,
+                               CarHistoryServices<CarAccidentHistory,
+                                             CarAccidentHistoryResponseDTO,
+                                             CarAccidentHistoryParameter,
+                                             CarAccidentHistoryCreateRequestDTO,
+                                             CarAccidentHistoryUpdateRequestDTO>>();
             services.AddScoped<ICarHistoryServices<CarRegistrationHistoryResponseDTO,
-                                             CarRegistrationHistoryParameter,
-                                             CarRegistrationHistoryCreateRequestDTO,
-                                             CarRegistrationHistoryUpdateRequestDTO>,
-                               CarRegistrationHistoryServices>();
+                                 CarRegistrationHistoryParameter,
+                                 CarRegistrationHistoryCreateRequestDTO,
+                                 CarRegistrationHistoryUpdateRequestDTO>,
+                   CarRegistrationHistoryServices>();
         }
     }
 }
