@@ -18,6 +18,9 @@
   <ItemGroup>
     <Folder Include="src\components\footer\" />
     <Folder Include="src\components\forms\cardealer\" />
+    <Folder Include="src\components\forms\insurance\" />
+    <Folder Include="src\components\forms\registry\" />
+    <Folder Include="src\components\forms\police\" />
     <Folder Include="src\components\forms\register\" />
     <Folder Include="src\pages\admin\car_model\" />
     <Folder Include="src\pages\manufacturer\car\" />
