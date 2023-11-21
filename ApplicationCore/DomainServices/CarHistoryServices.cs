@@ -1,10 +1,13 @@
 ﻿using Application.Common.Models;
 using Application.DTO.CarOwnerHistory;
+using Application.DTO.CarStolenHistory;
+using Application.DTO.Notification;
 using Application.Interfaces;
 using Application.Utility;
 using AutoMapper;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -20,13 +23,19 @@ namespace Application.DomainServices
     {
         private readonly ICarHistoryRepository<T,P> _carHistoryRepository;
         private readonly ICarRepository _carRepository;
+        private readonly INotificationServices _notificationServices;
         private readonly IMapper _mapper;
+        private readonly IAuthenticationServices _authenticationServices;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository)
+        public CarHistoryServices(ICarHistoryRepository<T,P> carHistoryRepository, IMapper mapper, ICarRepository carRepository, INotificationServices notificationServices, IAuthenticationServices authenticationServices, IUnitOfWork unitOfWork)
         {
             _carHistoryRepository = carHistoryRepository;
             _mapper = mapper;
             _carRepository = carRepository;
+            _notificationServices = notificationServices;
+            _authenticationServices = authenticationServices;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<R>> GetAllCarHistorys(P parameter)
@@ -42,7 +51,7 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: false);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             var carHistoryResponse = _mapper.Map<R>(carHistory);
             return carHistoryResponse;
@@ -80,6 +89,17 @@ namespace Application.DomainServices
             }
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
+            // Send Notification to police
+            var policeAlertNotification = new NotificationCreateRequestDTO
+            {
+                Title = $"New Car History of car {carHistory.CarId} has beed added",
+                RelatedCarId = carHistory.CarId,
+                Description = $"Car {carHistory.CarId} have beed added new {typeof(T).Name}",
+                RelatedLink = $"/{carHistory.CarId}",
+                Type = NotificationType.PoliceAlert
+            };
+            await _notificationServices.CreateNotification(policeAlertNotification);
+            //
             return carHistory.Id;
         }
 
@@ -88,7 +108,7 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             _carHistoryRepository.Delete(carHistory);
             await _carHistoryRepository.SaveAsync();
@@ -99,19 +119,20 @@ namespace Application.DomainServices
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)
             {
-                throw new CarHistoryRecordNotFoundException(id, nameof(T));
+                throw new CarHistoryRecordNotFoundException(id, typeof(T).Name);
             }
             var odometerBefore = carHistory.Odometer;
             _mapper.Map(request, carHistory);
-            if(odometerBefore != carHistory.Odometer)
+            await _carHistoryRepository.SaveAsync();
+            if (carHistory.Odometer is not null && odometerBefore != carHistory.Odometer)
             {
                 var car = await _carRepository.GetCarWithHistoriesById(carHistory.CarId, trackChange: true);
-                car.CurrentOdometer = Math.Max(car.CurrentOdometer, CarUtility.GetMaxCarOdometer(car));
+                car.CurrentOdometer = Math.Max(carHistory.Odometer.Value, CarUtility.GetMaxCarOdometer(car));
+                await _carRepository.SaveAsync();
             }
-            await _carHistoryRepository.SaveAsync();
         }
 
-        public async Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests)
+        public virtual async Task<IEnumerable<int>> CreateCarHistoryCollection(IEnumerable<C> requests)
         {
             if(requests is null)
             {
@@ -134,6 +155,24 @@ namespace Application.DomainServices
             }
             await _carHistoryRepository.SaveAsync();
             return carHistorys.Select(x => x.Id).ToList();
+        }
+
+        public async Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user.DataProviderId == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
+            if (carIds == null)
+            {
+                throw new CarNotFoundException();
+            }
+            var carHistorys = await _carHistoryRepository.GetCarHistorysByOwnCompany(carIds, parameter, false);
+            var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
+            var count = await _unitOfWork.CarStolenHistoryRepository.CountAll();
+            return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
     }
 }

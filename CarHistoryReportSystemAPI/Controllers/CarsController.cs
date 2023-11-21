@@ -166,6 +166,33 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Cars in storage of current data provider
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("storage", Name = "GetCarsByCurrentDataProviderId")]
+        [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarsByCurrentDataProviderIdAsync([FromQuery] CarParameter parameter)
+        {
+            CarParameterValidator validator = new CarParameterValidator();
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
+            {
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
+            }
+            var cars = await _carService.GetCarsByCurrentDataProviderId(parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
+            return Ok(cars);
+        }
+
+        /// <summary>
         /// Get All Cars Created by adminstrator
         /// </summary>
         /// <param name="parameter"></param>
@@ -228,7 +255,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCar")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -290,6 +317,27 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Add Car To Storage
+        /// </summary>
+        /// <param name="vinId"></param>
+        /// <returns></returns>
+        /// <response code="204">Add Successfully</response>
+        /// <response code="400">Car already exist in other data provider</response>
+        /// <response code="404">Car model not found</response>
+        /// <response code="500">Add Failed</response>
+        [HttpPut("storage/{vinId}")]
+        [Authorize(Roles = "Adminstrator,CarDealer")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddToStorageAsync(string vinId, [FromBody] CarCurrentDataProviderUpdateRequestDTO request)
+        {
+            await _carService.UpdateCarCurrentDataProvider(vinId, request);
+            return NoContent();
+        }
+
+        /// <summary>
         /// Update Car
         /// </summary>
         /// <param name="vinId"></param>
@@ -299,7 +347,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car model not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{vinId}")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -331,7 +379,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{vinId}")]
-        [Authorize(Roles = "Adminstrator,Manufacturer")]
+        [Authorize(Roles = "Adminstrator,Manufacturer,CarDealer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -383,6 +431,38 @@ namespace CarHistoryReportSystemAPI.Controllers
             }
             var result = await _carService.SoldCar(vinId, request);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get All Cars By Partial Plate Search
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns>Car List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("partial-plate-search")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarsByPlateSearchAsync([FromQuery] string searchString, [FromQuery] CarParameter parameter)
+        {
+            CarParameterValidator validator = new CarParameterValidator();
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
+            {
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
+            }
+            var validateSearchStringResult = LicensePlateValidator.Validate(searchString);
+            if (!validateSearchStringResult)
+            {
+                return BadRequest(new ErrorDetails("Wrong search string format, should only use * as wildcard and no more than 2 wildcard character"));
+            }
+            var cars = await _carService.GetCarByPartialPlate(searchString, parameter);
+            return Ok(cars);
         }
     }
 }

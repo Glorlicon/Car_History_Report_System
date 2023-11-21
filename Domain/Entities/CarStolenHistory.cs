@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,8 @@ namespace Domain.Entities
 {
     public class CarStolenHistory : CarHistory
     {
+        public string? Description { get; set; }
 
-        public string? Descripton { get; set; }
-    
-        public DateTime ReportedDate { get; set; }
-
-        public DateOnly? StartDate { get; set; }
-
-        public DateOnly? EndDate { get; set; }
+        public CarStolenStatus Status { get; set; }
     }
 }

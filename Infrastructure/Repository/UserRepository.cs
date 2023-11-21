@@ -4,6 +4,7 @@ using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ObjectPool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,22 @@ namespace Infrastructure.Repository
         public async Task<User> GetUserByUserId(string id, bool trackChanges)
         {
             return await FindByCondition(u => u.Id == id, trackChanges)
+                .Include(u => u.DataProvider)
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<int?> GetDataProviderId(string id)
+        {
+            return await FindByCondition(u => u.Id == id, trackChanges: false)
+                            .Select(u => u.DataProviderId).SingleOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetAdminUserIds()
+        {
+            return await FindByCondition(x => x.Role == Domain.Enum.Role.Adminstrator, trackChanges: false)
+                            .Select(x => x.Id)
+                            .Distinct()
+                            .ToListAsync();
         }
     }
 }

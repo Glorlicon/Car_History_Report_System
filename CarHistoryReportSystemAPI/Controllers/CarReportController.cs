@@ -4,6 +4,8 @@ using Application.DTO.Car;
 using Application.DTO.CarReport;
 using Application.Interfaces;
 using Application.Validation.Car;
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -52,19 +54,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// Get Car Report Data
         /// </summary>
         /// <param name="carId">car vin id</param>
+        /// <param name="dateString">yyyy-mm-dd</param>
         /// <returns>Car Report Data</returns>
         /// <response code="200">Get Successfully</response>
         /// <response code="400">User dont buy enough car report</response>
         /// <response code="401">User is not authorized to access car report</response>
         /// <response code="404">User not found, car not found, car report not found</response>
-        [HttpGet("{carId}")]
+        [HttpGet("{carId}/{dateString}")]
+        [Authorize(Policy = "ReadCarReport")]
         [ProducesResponseType(typeof(CarReportDataResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCarReportAsync(string carId)
+        public async Task<IActionResult> GetCarReportAsync(string carId,string dateString)
         {
-            var carReport = await _carReportService.GetCarReportDataByCarId(carId);
+            var result = DateOnly.TryParse(dateString, out DateOnly date);
+            if(!result)
+            {
+                return BadRequest(new ErrorDetails("Wrong date format"));
+            }
+            // Check if a guest can access this car report
+            var carIdClaim = HttpContext.User.Claims.Where(x => x.Type == "CarReportCanRead").FirstOrDefault();
+            if(carIdClaim is not null && carIdClaim.Value != carId)
+            {
+                throw new CarReportAccessUnauthorized(carId);
+            }
+            var carReport = await _carReportService.GetCarReportDataByCarId(carId, date);
             return Ok(carReport);
         }
 
@@ -92,15 +107,21 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// </summary>
         /// <param name="carId">car vin id</param>
         /// <param name="userId">userId</param>
+        /// <param name="dateString">yyyy-mm-dd</param>
         /// <returns>car report record</returns>
         /// <response code="404">Car report not found</response>
-        [HttpGet("{carId}/{userId}")]
+        [HttpGet("{carId}/{userId}/{dateString}")]
         [ProducesResponseType(typeof(CarReportResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCarReportsByIdAsync(string carId, string userId)
+        public async Task<IActionResult> GetCarReportsByIdAsync(string carId, string userId, string dateString)
         {
-            var isExist = await _carReportService.GetCarReportById(carId, userId);
-            return Ok(isExist);
+            var result = DateOnly.TryParse(dateString, out DateOnly date);
+            if (!result)
+            {
+                return BadRequest(new ErrorDetails("Wrong date format"));
+            }
+            var carReport = await _carReportService.GetCarReportById(carId, userId, date);
+            return Ok(carReport);
         }
     }
 }

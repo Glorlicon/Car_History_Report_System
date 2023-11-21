@@ -49,6 +49,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -59,6 +60,7 @@ namespace Infrastructure.Repository
                             .ThenInclude(c => c.Manufacturer)
                             .Include(c => c.CarSalesInfo).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarImages)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }
@@ -72,6 +74,8 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarOwnerHistories)
                             .Include(c => c.CarServiceHistories)
                             .Include(c => c.CarStolenHistories)
+                            .Include(c => c.CarRegistrationHistories)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }
@@ -85,6 +89,7 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarOwnerHistories)
                             .Include(c => c.CarServiceHistories)
                             .Include(c => c.CarStolenHistories)
+                            .Include(c => c.CarRegistrationHistories)
                             .SingleOrDefaultAsync();
             return CarUtility.GetMaxCarOdometer(car);
         }
@@ -99,6 +104,31 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
+                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Car>> GetCarsByPartialPlate(string searchString, CarParameter parameter, bool trackChange)
+        {
+            return await FindAll(trackChange)
+                            .Include(c => c.Model)
+                            .SearchPlate(searchString)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Car>> GetCarsByCurrentDataProviderId(int? dataProviderId, CarParameter parameter, bool trackChange)
+        {
+            return await FindByCondition(c => c.CurrentDataProviderId == dataProviderId, trackChange)
+                            .Include(c => c.Model)
+                            .ThenInclude(c => c.Manufacturer)
+                            .Include(c => c.CarImages)
+                            .Filter(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -112,6 +142,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -125,6 +156,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -138,6 +170,7 @@ namespace Infrastructure.Repository
                             .Filter(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -152,6 +185,7 @@ namespace Infrastructure.Repository
                             .Sort(parameter)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
+                            .AsSplitQuery()
                             .ToListAsync();
         }
 
@@ -182,6 +216,8 @@ namespace Infrastructure.Repository
                             .Include(c => c.CarRecallStatuses).ThenInclude(x => x.CarRecall)
                             .Include(c => c.CarServiceHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
                             .Include(c => c.CarStolenHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .Include(c => c.CarRegistrationHistories).ThenInclude(x => x.CreatedByUser).ThenInclude(x => x.DataProvider)
+                            .AsSplitQuery()
                             .SingleOrDefaultAsync();
             return car;
         }

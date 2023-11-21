@@ -3,6 +3,7 @@ using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarInsurance;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarRecall;
+using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarServiceHistory;
 using Application.DTO.CarStolenHistory;
 using Domain.Entities;
@@ -24,8 +25,10 @@ namespace Application.DTO.CarReport
 
         public List<CarAccidentHistoryResponseDTO> CarAccidentHistories { get; set; }
         public List<CarInspectionHistoryResponseDTO> CarInspectionHistories { get; set; }
-        public List<CarInsuranceResponseDTO> CarInsurances { get; set; }
+        public List<CarInsuranceHistoryResponseDTO> CarInsurances { get; set; }
         public List<CarStolenHistoryResponseDTO> CarStolenHistories { get; set; }
+
+        public List<CarRegistrationHistoryResponseDTO> CarRegistrationHistories { get; set; }
         public List<GeneralCarHistoryResponseDTO> GeneralCarHistories { get; set; }
     }
 }

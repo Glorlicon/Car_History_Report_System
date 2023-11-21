@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,10 +14,15 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<CarStolenHistory> builder)
         {
-            builder.Property(co => co.Descripton)
+            builder.Property(co => co.Description)
                 .HasMaxLength(2000);
             builder.Property(co => co.Note)
                 .HasMaxLength(200);
+            builder.Property(x => x.Status)
+                .HasConversion(
+                    f => f.ToString(),
+                    f => (CarStolenStatus)Enum.Parse(typeof(CarStolenStatus), f))
+                .IsRequired();
         }
     }
 }

@@ -9,10 +9,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repository
 {
-    public class CarHistoryRepository<T,P> : BaseRepository<T>, ICarHistoryRepository<T,P> where T : CarHistory
+    public class CarHistoryRepository<T, P> : BaseRepository<T>, ICarHistoryRepository<T, P> where T : CarHistory
                                                                                            where P : PagingParameters
     {
         protected ApplicationDBContext repositoryContext;
@@ -62,9 +63,21 @@ namespace Infrastructure.Repository
                               .ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetCarHistorysByUserId(string userId, P parameter, bool trackChange)
+        public virtual async Task<IEnumerable<T>> GetCarHistorysByUserId(string userId, P parameter, bool trackChange)
         {
             var query = FindByCondition(x => x.CreatedByUserId == userId, trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
+        public virtual async Task<IEnumerable<T>> GetCarHistorysByOwnCompany(List<string> carIds, P parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);
             query = Filter(query, parameter);
             query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)

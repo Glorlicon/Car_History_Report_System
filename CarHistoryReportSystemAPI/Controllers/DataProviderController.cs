@@ -232,14 +232,26 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <summary>
         /// Get All Review
         /// </summary>
-        /// <param name="dataProviderId"></param>
         /// <returns>Review List</returns>
-        [HttpGet("{dataProviderId}/reviews", Name = "GetAllReview")]
-        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
-        [ProducesResponseType(typeof(IEnumerable<DataProviderReviewsResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllReview(int dataProviderId, [FromQuery] DataProviderReviewParameter parameter)
+        [HttpGet("reviews", Name = "GetAllReview")]
+        //[Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllReview([FromQuery] DataProviderReviewParameter parameter)
         {
-            var reviews = await _dataProviderService.GetAllReview(dataProviderId, parameter);
+            DataProviderReviewParameterValidator validator = new DataProviderReviewParameterValidator();
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
+            {
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(error.ErrorMessage);
+                }
+                return BadRequest(errors);
+            }
+            var reviews = await _dataProviderService.GetAllReview(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(reviews.PagingData));
             return Ok(reviews);
         }

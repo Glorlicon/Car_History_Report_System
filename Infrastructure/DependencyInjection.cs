@@ -1,4 +1,8 @@
 ﻿using Application.DomainServices;
+using Application.DTO.CarAccidentHistory;
+using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarInsurance;
+using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarServiceHistory;
 using Application.Interfaces;
 using Domain.Entities;
@@ -12,9 +16,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +43,7 @@ namespace Infrastructure
             services.ConfigureIdentity();
             services.ConfigureJWT(configuration);
             services.ConfigureEmailService(configuration);
+            services.ConfigureLoggerService();
             services.AddScoped<IIdentityServices, IdentityServices>();
             services.AddScoped<ICarSpecificationRepository, CarSpecificationRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -45,6 +53,7 @@ namespace Infrastructure
             services.AddScoped<ICarSalesInfoRepository, CarSalesInfoRepository>();
             services.AddScoped<ICarPartRepository, CarPartRepository>();
             services.AddScoped<ICarOwnerHistoryRepository, CarOwnerHistoryRepository>();
+            services.AddScoped<ICarStolenHistoryRepository, CarStolenHistoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
@@ -59,7 +68,28 @@ namespace Infrastructure
             services.AddScoped<ICsvServices, CsvServices>();
             services.AddScoped<IPaymentServices, VnpayPaymentServices>();
             services.AddScoped<ICarReportRepository, CarReportRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+            services.AddScoped<ICarTrackingRepository, CarTrackingRepository>();
+            services.AddScoped<ICarInsuranceRepository, CarInsuranceRepository>();
             return services;
+        }
+
+        public static void ConfigureAuthorization(this IServiceCollection services)
+        {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ReadCarReport", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        var dateToday = DateOnly.FromDateTime(DateTime.Now).ToString();
+                        return context.User.HasClaim(c => c.Type == ClaimTypes.Role) 
+                                || (context.User.HasClaim("DateCanReadReport", dateToday) &&
+                                    context.User.HasClaim(c => c.Type == "CarReportCanRead"));
+                    });
+                });
+            });
         }
 
         public static void ConfigureIdentity(this IServiceCollection services)
@@ -83,7 +113,11 @@ namespace Infrastructure
         public static void ConfigureCarHistoryRepository(this IServiceCollection services)
         {
             services.AddScoped<ICarHistoryRepository<CarServiceHistory, CarServiceHistoryParameter>, CarServiceHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarInsurance, CarInsuranceHistoryParameter>, CarInsuranceRepository>();
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarAccidentHistory, CarAccidentHistoryParameter>, CarAccidentHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarRegistrationHistory, CarRegistrationHistoryParameter>, CarRegistrationHistoryRepository>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
@@ -118,5 +152,11 @@ namespace Infrastructure
             services.AddScoped<IEmailServices, EmailServices>();
         }
 
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            LogManager.Setup().LoadConfigurationFromAssemblyResource(Assembly.GetAssembly(typeof(LoggerService)));
+            services.AddSingleton<ILoggerService, LoggerService>();
+        }
+            
     }
 }

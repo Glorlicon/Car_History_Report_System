@@ -11,6 +11,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace Infrastructure.DBContext
 {
@@ -55,6 +56,10 @@ namespace Infrastructure.DBContext
         public DbSet<WorkingTime> WorkingTimes { get; set; }
 
         public DbSet<CarImages> CarImages { get; set; }
+        public DbSet<UserNotification> UserNotification { get; set; }
+        public DbSet<CarTracking> CarTrackings { get; set; }
+
+        public DbSet<CarRegistrationHistory> CarRegistrationHistories { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,19 +70,20 @@ namespace Infrastructure.DBContext
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            var Now = DateTime.Now;
             foreach (var entry in ChangeTracker.Entries<BaseAuditableEntity>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedTime = DateTime.Now;
+                        entry.Entity.CreatedTime = Now;
                         entry.Entity.CreatedByUserId = _currentUserServices.GetCurrentUserId();
-                        entry.Entity.LastModified = DateTime.Now;
+                        entry.Entity.LastModified = Now;
                         entry.Entity.ModifiedByUserId = _currentUserServices.GetCurrentUserId();
                         break;
 
                     case EntityState.Modified:
-                        entry.Entity.LastModified = DateTime.Now;
+                        entry.Entity.LastModified = Now;
                         entry.Entity.ModifiedByUserId = _currentUserServices.GetCurrentUserId();
                         break;
                 }

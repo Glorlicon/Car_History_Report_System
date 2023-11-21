@@ -1,6 +1,5 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
-using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
 using Application.DTO.CarSpecification;
 using Application.Interfaces;
@@ -20,12 +19,14 @@ namespace Application.DomainServices
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICarOwnerHistoryServices _carOwnerHistoryServices;
+        private readonly ICurrentUserServices _currentUserServices;
 
-        public CarServices(IUnitOfWork unitOfWork, IMapper mapper, ICarOwnerHistoryServices carOwnerHistoryServices)
+        public CarServices(IUnitOfWork unitOfWork, IMapper mapper, ICarOwnerHistoryServices carOwnerHistoryServices, ICurrentUserServices currentUserServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _carOwnerHistoryServices = carOwnerHistoryServices;
+            _currentUserServices = currentUserServices;
         }
 
         public async Task<PagedList<CarResponseDTO>> GetAllCars(CarParameter parameter)
@@ -57,6 +58,16 @@ namespace Application.DomainServices
             var cars = await _unitOfWork.CarRepository.GetCarsByCarDealerId(carDealerId, parameter, false);
             var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
             var count = await _unitOfWork.CarRepository.CountCarByCondition(c => c.CreatedByUser.DataProviderId == carDealerId, parameter);
+            return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<PagedList<CarResponseDTO>> GetCarsByCurrentDataProviderId(CarParameter parameter)
+        {
+            var userId = _currentUserServices.GetCurrentUserId();
+            var currentDataProviderId = await _unitOfWork.UserRepository.GetDataProviderId(userId);
+            var cars = await _unitOfWork.CarRepository.GetCarsByCurrentDataProviderId(currentDataProviderId, parameter, false);
+            var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
+            var count = await _unitOfWork.CarRepository.CountCarByCondition(c => c.CurrentDataProviderId == currentDataProviderId, parameter);
             return new PagedList<CarResponseDTO>(carsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -131,6 +142,8 @@ namespace Application.DomainServices
             }
             car.CarSalesInfo = null;
             car.CarImages = null;
+            car.LicensePlateNumber = null;
+            car.CurrentDataProviderId = null;
             await _carOwnerHistoryServices.CreateCarOwnerHistory(request);
             //await _unitOfWork.SaveAsync();
             return true;
@@ -162,6 +175,33 @@ namespace Application.DomainServices
             _mapper.Map(request.CarImages, car.CarImages);
             await _unitOfWork.SaveAsync();
             return true;
+        }
+
+        public async Task UpdateCarCurrentDataProvider(string vinId, CarCurrentDataProviderUpdateRequestDTO request)
+        {
+            var car = await _unitOfWork.CarRepository.GetCarById(vinId, trackChange: true);
+            if (car is null)
+            {
+                throw new CarNotFoundException(vinId);
+            }
+            if(car.CurrentDataProviderId is not null)
+            {
+                throw new CarCurrentDataProviderExist(vinId);
+            }
+            var isDataProviderExist = await _unitOfWork.DataProviderRepository.IsExist(x => x.Id == request.DataProviderId);
+            if(!isDataProviderExist)
+            {
+                throw new DataProviderNotFoundException(request.DataProviderId);
+            }
+            car.CurrentDataProviderId = request.DataProviderId;
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<IEnumerable<CarResponseDTO>> GetCarByPartialPlate(string searchString, CarParameter parameter)
+        {
+            var cars = await _unitOfWork.CarRepository.GetCarsByPartialPlate(searchString, parameter, false);
+            var carsResponse = _mapper.Map<List<CarResponseDTO>>(cars);
+            return carsResponse;
         }
     }
 }

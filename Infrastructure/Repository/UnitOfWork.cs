@@ -20,6 +20,7 @@ namespace Infrastructure.Repository
         private ICarSalesInfoRepository _carSalesInfoRepository;
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
+        private ICarStolenHistoryRepository _carStolenHistoryRepository;
         private ICarMaintainanceRepository _carMaintainanceRepository;
         private ICarRecallRepository _carRecallRepository;
         private ICarRecallStatusRepository _carRecallStatusRepository;
@@ -28,9 +29,13 @@ namespace Infrastructure.Repository
         private ICarReportRepository _carReportRepository;
         private IModelMaintainanceRepository _modelMaintainanceRepository;
         private ICarServiceHistoryRepository _carServiceHistoryRepository;
+        private INotificationRepository _notificationRepository;
+        private IUserNotificationRepository _userNotificationRepository;
+        private ICarTrackingRepository _carTrackingRepository;
+        private ICarInsuranceRepository _carInsuranceRepository;
 
         public UnitOfWork(
-            ApplicationDBContext repositoryContext, 
+            ApplicationDBContext repositoryContext,
             ICarRepository carRepository,
             ICarSpecificationRepository carSpecificationRepository,
             IUserRepository userRepository,
@@ -45,7 +50,12 @@ namespace Infrastructure.Repository
             IOrderOptionRepository orderOptionRepository,
             ICarReportRepository carReportRepository,
             ICarServiceHistoryRepository carServiceHistoryRepository,
-            IModelMaintainanceRepository modelMaintainanceRepository)
+            IModelMaintainanceRepository modelMaintainanceRepository,
+            INotificationRepository notificationRepository,
+            IUserNotificationRepository userNotificationRepository,
+            ICarTrackingRepository carTrackingRepository,
+            ICarStolenHistoryRepository carStolenHistoryRepository,
+            ICarInsuranceRepository carInsuranceRepository)
         {
             _repositoryContext = repositoryContext;
             _carRepository = carRepository;
@@ -63,6 +73,11 @@ namespace Infrastructure.Repository
             _carReportRepository = carReportRepository;
             _carServiceHistoryRepository = carServiceHistoryRepository;
             _modelMaintainanceRepository = modelMaintainanceRepository;
+            _notificationRepository = notificationRepository;
+            _userNotificationRepository = userNotificationRepository;
+            _carTrackingRepository = carTrackingRepository;
+            _carStolenHistoryRepository = carStolenHistoryRepository;
+            _carInsuranceRepository = carInsuranceRepository;
         }
 
         public ICarRepository CarRepository
@@ -98,11 +113,16 @@ namespace Infrastructure.Repository
         public ICarOwnerHistoryRepository CarOwnerHistoryRepository
         {
             get { return _carOwnerHistoryRepository; }
+        }        
+        
+        public ICarStolenHistoryRepository CarStolenHistoryRepository
+        {
+            get { return _carStolenHistoryRepository; }
         }
 
         public ICarMaintainanceRepository CarMaintainanceRepository
         {
-            get { return _carMaintainanceRepository;}
+            get { return _carMaintainanceRepository; }
         }
 
         public ICarRecallRepository CarRecallRepository
@@ -112,7 +132,7 @@ namespace Infrastructure.Repository
 
         public ICarRecallStatusRepository CarRecallStatusRepository
         {
-            get { return _carRecallStatusRepository;}
+            get { return _carRecallStatusRepository; }
         }
 
         public IOrderRepository OrderRepository
@@ -132,12 +152,32 @@ namespace Infrastructure.Repository
 
         public IModelMaintainanceRepository ModelMaintainanceRepository
         {
-            get { return _modelMaintainanceRepository;}
+            get { return _modelMaintainanceRepository; }
         }
 
         public ICarServiceHistoryRepository CarServiceHistoryRepository
         {
             get { return _carServiceHistoryRepository; }
+        }
+
+        public INotificationRepository NotificationRepository
+        {
+            get { return _notificationRepository; }
+        }
+
+        public IUserNotificationRepository UserNotificationRepository
+        {
+            get { return _userNotificationRepository; }
+        }
+
+        public ICarTrackingRepository CarTrackingRepository
+        {
+            get { return _carTrackingRepository; }
+        }        
+        
+        public ICarInsuranceRepository CarInsuranceRepository
+        {
+            get { return _carInsuranceRepository; }
         }
 
         public async Task SaveAsync()

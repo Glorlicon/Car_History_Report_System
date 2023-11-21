@@ -11,8 +11,6 @@ namespace Application.DTO.User
     public class UpdateUserRequestDTO
     {
         public string FirstName { get; set; }
-        [Required(ErrorMessage = "Phone Number is required")]
-        [Phone(ErrorMessage = "Invalid Phone Number")]
         public string PhoneNumber { get; set; }
         public string LastName { get; set; }
         public string? Address { get; set; }

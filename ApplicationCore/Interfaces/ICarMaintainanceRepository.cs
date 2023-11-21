@@ -12,5 +12,6 @@ namespace Application.Interfaces
     {
         Task<CarMaintainance> GetCarMaintainanceById(string carId, string userId, bool trackChange);
         Task<IEnumerable<CarMaintainanceTrackingResponseDTO>> GetCarMaintainanceTrackingListByUserId(string userId, bool trackChange);
+        Task<IEnumerable<string>> GetUserIdsTrackingModelId(string modelId, bool trackChange);
     }
 }

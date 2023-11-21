@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTO.CarInsurance
+namespace Domain.Enum
 {
-    public class CarInsuranceResponseDTO
+    public enum CarStolenStatus
     {
+        Stolen,
+        Found
     }
 }

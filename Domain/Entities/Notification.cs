@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Common;
 using Domain.Enum;
 
 namespace Domain.Entities
 {
-    public class Notification
+    public class Notification : BaseAuditableEntity
     {
         public int Id { get; set; }
 
-        public int? RelatedCarId { get; set; }
+        public string? RelatedCarId { get; set; }
 
         public Car? RelatedCar { get; set; }
 
@@ -23,8 +24,8 @@ namespace Domain.Entities
 
         public string? Description { get; set; }
 
-        public DateTime CreatedTime { get; set; }
-
         public string? RelatedLink { get; set; }
+
+        public NotificationType Type { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Infrastructure.Repository
 
         public override IQueryable<CarServiceHistory> Sort(IQueryable<CarServiceHistory> query, CarServiceHistoryParameter parameter)
         {
-            return query.OrderByDescending(x => x.ServiceTime);
+            return query.OrderByDescending(x => x.ReportDate);
         }
     }
 }

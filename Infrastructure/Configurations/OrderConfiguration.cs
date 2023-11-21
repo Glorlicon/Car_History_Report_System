@@ -15,6 +15,7 @@ namespace Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.Property(x => x.TransactionId).HasMaxLength(20);
+            builder.HasIndex(x => x.TransactionId).IsUnique();
         }
     }
 }

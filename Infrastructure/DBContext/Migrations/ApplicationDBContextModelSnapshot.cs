@@ -53,6 +53,9 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CurrentDataProviderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CurrentOdometer")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -206,6 +209,11 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateOnly>("InspectDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("InspectionNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -228,6 +236,9 @@ namespace Infrastructure.DBContext.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
+                    b.HasIndex("InspectionNumber")
+                        .IsUnique();
+
                     b.HasIndex("ModifiedByUserId");
 
                     b.ToTable("CarInspectionsHistory");
@@ -244,10 +255,7 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<int>("CarInspectionHistoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HistoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InspectionPart")
+                    b.Property<string>("InspectionCategory")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -291,6 +299,11 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("InsuranceNumber")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -315,6 +328,9 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasIndex("CarId");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("InsuranceNumber")
+                        .IsUnique();
 
                     b.HasIndex("ModifiedByUserId");
 
@@ -511,6 +527,72 @@ namespace Infrastructure.DBContext.Migrations
                     b.ToTable("CarRecallStatus");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CarRegistrationHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CarId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(18)");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("ExpireDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LicensePlateNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ModifiedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("Odometer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("ModifiedByUserId");
+
+                    b.HasIndex("RegistrationNumber")
+                        .IsUnique();
+
+                    b.ToTable("CarRegistrationHistories");
+                });
+
             modelBuilder.Entity("Domain.Entities.CarReport", b =>
                 {
                     b.Property<string>("UserId")
@@ -519,10 +601,10 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<string>("CarId")
                         .HasColumnType("nvarchar(18)");
 
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("CreatedDate")
+                        .HasColumnType("date");
 
-                    b.HasKey("UserId", "CarId");
+                    b.HasKey("UserId", "CarId", "CreatedDate");
 
                     b.HasIndex("CarId");
 
@@ -742,12 +824,9 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Descripton")
+                    b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
@@ -765,11 +844,9 @@ namespace Infrastructure.DBContext.Migrations
                     b.Property<DateOnly?>("ReportDate")
                         .HasColumnType("date");
 
-                    b.Property<DateTime>("ReportedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -780,6 +857,27 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasIndex("ModifiedByUserId");
 
                     b.ToTable("CarStolenHistory");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CarTracking", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CarId")
+                        .HasColumnType("nvarchar(18)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsFollowing")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "CarId");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarTrackings");
                 });
 
             modelBuilder.Entity("Domain.Entities.DataProvider", b =>
@@ -841,15 +939,15 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int?>("DayPerMaintainance")
+                        .HasColumnType("int");
+
                     b.Property<int?>("OdometerPerMaintainance")
                         .HasColumnType("int");
 
                     b.Property<string>("RecommendAction")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TimePerMaintainance")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("ModelId", "MaintenancePart");
 
@@ -864,6 +962,9 @@ namespace Infrastructure.DBContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
@@ -871,10 +972,13 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<int?>("RelatedCarId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("RelatedCarVinId")
+                    b.Property<string>("ModifiedByUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RelatedCarId")
                         .HasColumnType("nvarchar(18)");
 
                     b.Property<string>("RelatedLink")
@@ -889,9 +993,17 @@ namespace Infrastructure.DBContext.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("RelatedCarVinId");
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("ModifiedByUserId");
+
+                    b.HasIndex("RelatedCarId");
 
                     b.HasIndex("RelatedUserId");
 
@@ -925,6 +1037,10 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderOptionId");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique()
+                        .HasFilter("[TransactionId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -1141,6 +1257,26 @@ namespace Infrastructure.DBContext.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserNotification", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("UserId", "NotificationId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("UserNotification");
+                });
+
             modelBuilder.Entity("Domain.Entities.WorkingTime", b =>
                 {
                     b.Property<int>("Id")
@@ -1202,57 +1338,57 @@ namespace Infrastructure.DBContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "005ebeff-d999-43e3-bf35-d2b21bd42122",
-                            ConcurrencyStamp = "53628af0-8d71-4361-837f-e492fffed951",
+                            Id = "e1181037-bc70-430c-b1c2-a7b702aae12a",
+                            ConcurrencyStamp = "be25ce9f-6c6d-468a-8690-80db49047bc1",
                             Name = "Adminstrator",
                             NormalizedName = "ADMINSTRATOR"
                         },
                         new
                         {
-                            Id = "e8add7ed-5e9c-48cc-bff7-9fe662a05e9d",
-                            ConcurrencyStamp = "b57fa0a9-73b4-4db7-92b8-fb7c76f26a66",
+                            Id = "1eabfe02-a13c-4d4f-ba33-2341e5a8f2d9",
+                            ConcurrencyStamp = "084149db-044a-46bb-8cf8-d79e19edf3a1",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9a606d26-4d4f-4ea5-9580-ce8c019eb7b1",
-                            ConcurrencyStamp = "6ad41f64-a058-499b-ac4b-95e63c0c79d2",
+                            Id = "9db98916-ad21-4519-8938-a94e6a764736",
+                            ConcurrencyStamp = "4a4609b8-fcfa-4771-a798-bf03746ac04d",
                             Name = "CarDealer",
                             NormalizedName = "CARDEALER"
                         },
                         new
                         {
-                            Id = "13c87c57-785c-4fa7-857f-820f67e3b83f",
-                            ConcurrencyStamp = "b4fac866-99c9-4a2b-8864-edac218ce220",
+                            Id = "24aa2e63-058d-4642-904d-0248c03bff14",
+                            ConcurrencyStamp = "1cba4d63-eee4-41e4-a5a3-e8b46d75d58f",
                             Name = "InsuranceCompany",
                             NormalizedName = "INSURANCECOMPANY"
                         },
                         new
                         {
-                            Id = "0706e9d8-8643-4ee0-9876-22ea1010ea3f",
-                            ConcurrencyStamp = "5baf6d37-2a2b-41a1-8608-4685ea146e16",
+                            Id = "13157624-1b78-48ee-9846-ca9fe7aec09d",
+                            ConcurrencyStamp = "f9611e17-2df9-4860-8486-6b94c679ee49",
                             Name = "ServiceShop",
                             NormalizedName = "SERVICESHOP"
                         },
                         new
                         {
-                            Id = "81918f67-2b07-46ce-8866-7698a61674f3",
-                            ConcurrencyStamp = "2893f680-0240-4203-a47d-5506ef3efb0d",
+                            Id = "e5f28176-46de-4797-bfc5-1b1354c36dbd",
+                            ConcurrencyStamp = "cf6c62b0-ac17-4e0d-b617-c9a4d54d06c0",
                             Name = "Manufacturer",
                             NormalizedName = "MANUFACTURER"
                         },
                         new
                         {
-                            Id = "9a8d9aa5-17cb-481d-8cb1-0dc573997811",
-                            ConcurrencyStamp = "24127fc5-48da-4d77-999b-fd3c47d5ca5e",
+                            Id = "400caef9-6771-4558-bd8d-1106c7d91fb6",
+                            ConcurrencyStamp = "c0e17b50-d324-4a87-bfe9-3d0f927c0738",
                             Name = "VehicleRegistry",
                             NormalizedName = "VEHICLEREGISTRY"
                         },
                         new
                         {
-                            Id = "d1390089-00d5-40ca-8fb0-ab64753d57b6",
-                            ConcurrencyStamp = "39005275-d5a2-4f36-a053-b873f00d4c15",
+                            Id = "c37c9a17-8d92-40bf-90fd-24e863a3557c",
+                            ConcurrencyStamp = "c37d594a-7a01-4440-a783-f0f2bb3708ec",
                             Name = "PoliceOffice",
                             NormalizedName = "POLICEOFFICE"
                         });
@@ -1598,6 +1734,29 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("CarRecall");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CarRegistrationHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Car", "Car")
+                        .WithMany("CarRegistrationHistories")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("Domain.Entities.User", "ModifiedByUser")
+                        .WithMany()
+                        .HasForeignKey("ModifiedByUserId");
+
+                    b.Navigation("Car");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ModifiedByUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.CarReport", b =>
                 {
                     b.HasOne("Domain.Entities.Car", "Car")
@@ -1707,6 +1866,25 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("ModifiedByUser");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CarTracking", b =>
+                {
+                    b.HasOne("Domain.Entities.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.ModelMaintainance", b =>
                 {
                     b.HasOne("Domain.Entities.CarSpecification", "Model")
@@ -1720,13 +1898,25 @@ namespace Infrastructure.DBContext.Migrations
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
                 {
+                    b.HasOne("Domain.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.HasOne("Domain.Entities.User", "ModifiedByUser")
+                        .WithMany()
+                        .HasForeignKey("ModifiedByUserId");
+
                     b.HasOne("Domain.Entities.Car", "RelatedCar")
                         .WithMany()
-                        .HasForeignKey("RelatedCarVinId");
+                        .HasForeignKey("RelatedCarId");
 
                     b.HasOne("Domain.Entities.User", "RelatedUser")
                         .WithMany()
                         .HasForeignKey("RelatedUserId");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ModifiedByUser");
 
                     b.Navigation("RelatedCar");
 
@@ -1792,6 +1982,25 @@ namespace Infrastructure.DBContext.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("DataProvider");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserNotification", b =>
+                {
+                    b.HasOne("Domain.Entities.Notification", "Notification")
+                        .WithMany()
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkingTime", b =>
@@ -1871,6 +2080,8 @@ namespace Infrastructure.DBContext.Migrations
                     b.Navigation("CarOwnerHistories");
 
                     b.Navigation("CarRecallStatuses");
+
+                    b.Navigation("CarRegistrationHistories");
 
                     b.Navigation("CarSalesInfo");
 

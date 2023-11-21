@@ -6,9 +6,11 @@ import CarModelModalIdentificationPage from '../../../components/forms/manufactu
 import CarModelModalPhysCharacteristicPage from '../../../components/forms/manufacturer/CarModel/CarModelModalPhysCharacteristicPage';
 import { AddCarModel, EditCarModel, ListManufaturerCarModels } from '../../../services/api/CarModel';
 import { RootState } from '../../../store/State';
-import { APIResponse, CarModel } from '../../../utils/Interfaces';
+import { APIResponse, CarModel, CarRecalls } from '../../../utils/Interfaces';
 import { JWTDecoder } from '../../../utils/JWTDecoder';
 import '../../../styles/ManufacturerCarModels.css'
+import { AddCarRecall } from '../../../services/api/Recall';
+import CarRecallEditModal from '../../../components/forms/manufacturer/Recall/CarRecallEditModal';
 
 function ManufacturerCarModelList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -21,6 +23,7 @@ function ManufacturerCarModelList() {
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [editModel, setEditModel] = useState<CarModel | null>(null)
+    const [addRecalModel, setAddRecallModel] = useState<CarRecalls | null>(null)
     const manufacturerId = JWTDecoder(token).dataprovider
     const [newModel, setNewModel] = useState<CarModel>({
         modelID: "",
@@ -44,6 +47,11 @@ function ManufacturerCarModelList() {
         rpm: 0,
         tireNumber: 0
     })
+    const [newRecall, setNewRecall] = useState<CarRecalls>({
+        modelId: "",
+        description: "",
+        recallDate: new Date()
+    })
 
     const validateCarModel = (model: CarModel): boolean => {
         if (!model.modelID) {
@@ -53,6 +61,13 @@ function ManufacturerCarModelList() {
         return true;
     };
 
+    const validateCarRecall = (model: CarRecalls | null): boolean => {
+        if (!model?.modelId) {
+            setAddError("Model ID must be filled out");
+            return false;
+        }
+        return true;
+    };
 
     const filteredCarModels = carModels.filter((models: any) => {
         const matchingQuery = models.modelID.toLowerCase().includes(searchQuery.toLowerCase())
@@ -67,9 +82,17 @@ function ManufacturerCarModelList() {
         if (editModel) {
             setEditModel({
                 ...editModel,
-                [e.target.name]: e.target.value
+                [e.target.name]: e.target.value,
             })
-        } else {
+            console.log(editModel);
+        } else if (addRecalModel) {
+            setAddRecallModel({
+                ...addRecalModel,
+                [e.target.name]: e.target.value,
+            });
+            console.log(addRecalModel);
+        }
+        else {
             setNewModel({
                 ...newModel,
                 [e.target.name]: e.target.value,
@@ -81,6 +104,7 @@ function ManufacturerCarModelList() {
             setModalPage(prevPage => prevPage + 1);
         } else {
             if (editModel) handleEditModel();
+            else if (addRecalModel) handleRecallClick();
             else handleAddModel();
         }
     };
@@ -107,9 +131,23 @@ function ManufacturerCarModelList() {
         }
     };
     //TODO: car recall
-    function handleRecallClick(model: any): void {
-        throw new Error('Function not implemented.');
-    }
+    const handleRecallClick = async () => {
+        if (addRecalModel != null && validateCarRecall(addRecalModel)) {
+            setAdding(true);
+            setAddError(null);
+            console.log("submitted:", addRecalModel);
+            const response: APIResponse = await AddCarRecall(addRecalModel, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setShowModal(false);
+                setAddRecallModel(null);
+                setModalPage(1);
+                fetchData();
+            }
+        }
+    };
 
     const handleEditModel = async () => {
         if (editModel != null && validateCarModel(editModel)) {
@@ -186,7 +224,11 @@ function ManufacturerCarModelList() {
                               <td>{model.releasedDate}</td>
                               <td>{model.country}</td>
                               <td>
-                                  <button className="manu-car-model-recall-btn" onClick={() => handleRecallClick(model)}>Create Recall</button>
+                                  <button className="manu-car-model-recall-btn" onClick={() => setAddRecallModel({
+                                      modelId: model.modelID,
+                                      description: '',
+                                      recallDate: new Date()
+                                  })}>Create Recall</button>
                               </td>
                           </tr>
                       ))
@@ -275,6 +317,27 @@ function ManufacturerCarModelList() {
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="manu-car-model-next-btn">
                           {modalPage < 4 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Update')}
+                      </button>
+                      {addError && (
+                          <p className="manu-car-model-error">{addError}</p>
+                      )}
+                  </div>
+              </div>
+          )}
+          {addRecalModel && (
+              <div className="manu-car-model-modal">
+                  <div className="manu-car-model-modal-content">
+                      <span className="manu-car-model-close-btn" onClick={() => { setAddRecallModel(null); setModalPage(1) }}>&times;</span>
+                      <h2>Add Car Recall</h2>
+                      {modalPage === 1 && (
+                          <CarRecallEditModal
+                              action="Add"
+                              model={addRecalModel}
+                              handleInputChange={handleInputChange}
+                          />
+                      )}
+                      <button onClick={handleRecallClick} disabled={adding} className="manu-car-model-next-btn">
+                          {modalPage < 1 ? 'Next' : (adding ? (<div className="manu-car-model-inline-spinner"></div>) : 'Create')}
                       </button>
                       {addError && (
                           <p className="manu-car-model-error">{addError}</p>

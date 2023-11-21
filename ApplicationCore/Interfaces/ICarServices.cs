@@ -1,7 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
-using Application.DTO.Car;
 using Application.DTO.CarOwnerHistory;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +22,13 @@ namespace Application.Interfaces
 
         Task<PagedList<CarResponseDTO>> GetCarsByCarDealerId(int carDealerId, CarParameter parameter);
 
+        Task<PagedList<CarResponseDTO>> GetCarsByCurrentDataProviderId(CarParameter parameter);
+
         Task<PagedList<CarResponseDTO>> GetCarsByAdminstrator(CarParameter parameter);
 
         Task<PagedList<CarResponseDTO>> GetCarsCurrentlySelling(CarParameter parameter);
+
+        Task<IEnumerable<CarResponseDTO>> GetCarByPartialPlate(string searchString, CarParameter parameter);
 
         Task<bool> SoldCar(string vinID, CarOwnerHistoryCreateRequestDTO request);
 
@@ -37,5 +41,7 @@ namespace Application.Interfaces
         Task<bool> DeleteCar(string vinId);
 
         Task<bool> UpdateCar(string vinId, CarUpdateRequestDTO request);
+
+        Task UpdateCarCurrentDataProvider(string vinId, CarCurrentDataProviderUpdateRequestDTO request);
     }
 }

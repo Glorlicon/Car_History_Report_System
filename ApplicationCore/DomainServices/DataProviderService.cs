@@ -88,6 +88,14 @@ namespace Application.DomainServices
         public async Task<DataProviderDetailsResponseDTO> CreateDataProvider(DataProviderCreateRequestDTO request)
         {
             var dataProvider = _mapper.Map<DataProvider>(request);
+            foreach (WorkingTime wkt in dataProvider.WorkingTimes)
+            {
+                if (wkt.IsClosed == true)
+                {
+                    wkt.StartTime = new TimeOnly(0, 0);
+                    wkt.EndTime = new TimeOnly(0, 0);
+                }
+            }
             _dataProviderRepository.Create(dataProvider);
             await _dataProviderRepository.SaveAsync();
             var result = _mapper.Map<DataProviderDetailsResponseDTO>(dataProvider);
@@ -123,7 +131,7 @@ namespace Application.DomainServices
             {
                 throw new DataProviderNotFoundException(dataProviderId);
             }
-            if(dataProvider.Id != user.DataProviderId && user.Role != Role.Adminstrator)
+            if (dataProvider.Id != user.DataProviderId && user.Role != Role.Adminstrator)
             {
                 throw new UnauthorizedAccessException();
             }
@@ -181,9 +189,9 @@ namespace Application.DomainServices
             return true;
         }
 
-        public async Task<PagedList<DataProviderReviewsResponseDTO>> GetAllReview(int dataProviderId, DataProviderReviewParameter parameter)
+        public async Task<PagedList<DataProviderReviewsResponseDTO>> GetAllReview(DataProviderReviewParameter parameter)
         {
-            var reviews = await _reviewRepository.GetAllReview(dataProviderId, parameter, trackChange: false);
+            var reviews = await _reviewRepository.GetAllReview(parameter, trackChange: false);
             var reviewsResponse = _mapper.Map<List<DataProviderReviewsResponseDTO>>(reviews);
             var count = await _reviewRepository.CountAll();
             return new PagedList<DataProviderReviewsResponseDTO>(reviewsResponse, count: count, parameter.PageNumber, parameter.PageSize);

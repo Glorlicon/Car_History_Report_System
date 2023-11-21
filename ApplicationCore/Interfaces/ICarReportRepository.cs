@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface ICarReportRepository : IBaseRepository<CarReport>
     {
-        Task<CarReport> GetById(string carId, string userId, bool trackChange);
+        Task<CarReport> GetById(string carId, string userId, DateOnly date, bool trackChange);
         Task<IEnumerable<CarReport>> GetByUserId(string userId, bool trackChange);
     }
 }
