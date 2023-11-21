@@ -338,6 +338,49 @@ export interface ModelMaintainanceDetails {
     lastOwnerChangeDate: string
 }
 
+export interface CarRecalls {
+    id?: number
+    modelId: string
+    description: string
+    recallDate?: Date
+}
+
+export interface RecallStatus {
+    status: number
+}
+
+export interface ServiceCarRecalls {
+    carId: string
+    carRecallId: number
+    description: string
+    modelId: Date
+    recallDate: Date
+    status: string
+}
+
+export interface CarServices {
+    id?: number
+    source?: string
+    carId: string
+    otherServices: string
+    serviceTime: Date
+    reportDate: Date
+    services: number
+    servicesName?: string
+    note: string
+    odometer: number
+    createdByUserId?: string
+    modifiedByUserId?: string
+    createdTime?: Date
+    lastModified?: Date
+    selectedServices: number[];
+}
+
+export interface Services {
+    name: string
+    value: number
+}
+
 export interface CarStolen {
     id?: number,
     description?: string,
@@ -405,5 +448,4 @@ export interface CarInsurance {
     lastModified?: string
     expired?: boolean
 }
-
 

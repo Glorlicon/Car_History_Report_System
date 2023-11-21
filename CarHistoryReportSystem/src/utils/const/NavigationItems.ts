@@ -40,6 +40,12 @@ export const CarDealerNavigation = [
     { label: 'Admin Request', link: '/dealer/requests' }
 ]
 
+export const ServiceShopNavigation = [
+    { label: 'Service Shop Details', link: '/service' },
+    { label: 'Car Maintainance List', link: '/service/car-service' },
+    { label: 'Recall List', link: '/service/recalls' },
+]
+
 export const PoliceNavigation = [
     { label: 'Partitial Plate Search', link: '/police/plate-search' },
     { label: 'VIN Alert', link: '/police/vin-alert' },
@@ -59,3 +65,4 @@ export const RegistryNavigation = [
     { label: 'Car Registration', link: '/registry/registration' },
     { label: 'Car Reports', link: '/registry/car-reports' },
 ]
+
