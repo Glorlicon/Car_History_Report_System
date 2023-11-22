@@ -15,10 +15,12 @@ namespace Application.Validation.DataProvider
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .NotNull();
+                .NotNull()
+                .WithMessage("Name should not be empty");
             RuleFor(x => x.Description)
                 .NotEmpty()
-                .NotNull();
+                .NotNull()
+                .WithMessage("Description should not be empty");
             RuleFor(x => x.Type)
                 .IsInEnum();
             RuleFor(x => x.Email)

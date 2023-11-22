@@ -36,7 +36,7 @@ const CarIdentificationPage: React.FC<CarIdentificationPageProps> = ({
                   <label>Model</label>
                   <select disabled={edit} name="modelId" value={model.modelId} onChange={handleInputChange}>
                       {carModels.map((m: any, index: number) => (
-                          <option key={index} value={m.modelID}>{m.modelID}</option>
+                          <option key={index} value={m.modelID}>{m.modelID} {m.manufacturerName}</option>
                       ))}
                   </select>
               </div>

@@ -10,7 +10,7 @@ namespace Domain.Entities
 {
     public class CarStolenHistory : CarHistory
     {
-        public string? Descripton { get; set; }
+        public string? Description { get; set; }
 
         public CarStolenStatus Status { get; set; }
     }

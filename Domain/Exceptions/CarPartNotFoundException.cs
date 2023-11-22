@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarPartNotFoundException : NotFoundException
     {
         public CarPartNotFoundException(int id)
-            : base($"Car Part with id {id} Not Found")
+            : base($"Car Part Not Found")
         {
 
         }

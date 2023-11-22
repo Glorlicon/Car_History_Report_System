@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarTrackingNotFoundException : NotFoundException
     {
         public CarTrackingNotFoundException(string userId, string carId)
-            : base($"User with id {userId} dont track car with id {carId}")
+            : base($"User currently not tracking this car")
         {
 
         }

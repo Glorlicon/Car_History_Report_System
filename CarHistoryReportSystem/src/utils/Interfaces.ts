@@ -268,7 +268,7 @@ interface CarInspectionHistory {
     // Define properties for CarInspectionHistory here
 }
 
-interface CarInsurance {
+interface CarInsuranceHistory {
     // Define properties for CarInsurance here
 }
 
@@ -336,5 +336,116 @@ export interface ModelMaintainanceDetails {
     lastServicedDate: string
     currentOdometer: number
     lastOwnerChangeDate: string
+}
+
+export interface CarRecalls {
+    id?: number
+    modelId: string
+    description: string
+    recallDate?: Date
+}
+
+export interface RecallStatus {
+    status: number
+}
+
+export interface ServiceCarRecalls {
+    carId: string
+    carRecallId: number
+    description: string
+    modelId: Date
+    recallDate: Date
+    status: string
+}
+
+export interface CarServices {
+    id?: number
+    source?: string
+    carId: string
+    otherServices: string
+    serviceTime: Date
+    reportDate: Date
+    services: number
+    servicesName?: string
+    note: string
+    odometer: number
+    createdByUserId?: string
+    modifiedByUserId?: string
+    createdTime?: Date
+    lastModified?: Date
+    selectedServices: number[];
+}
+
+export interface Services {
+    name: string
+    value: number
+}
+
+export interface CarStolen {
+    id?: number,
+    description?: string,
+    carId: string,
+    note?: string,
+    odometer: number,
+    reportDate: string,
+    status: number,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarCrash {
+    id?: number,
+    source?: string,
+    location: string,
+    carId: string,
+    serverity: number,
+    damageLocation: number,
+    accidentDate: string,
+    description: string,
+    note: string,
+    odometer?: number,
+    reportDate: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarRegistration {
+    id?: number,
+    carId: string,
+    ownerName: string,
+    registrationNumber: string,
+    expireDate: string,
+    licensePlateNumber: string,
+    note?: string,
+    odometer?: number,
+    reportDate?: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+}
+
+export interface CarInsurance {
+    id?: number,
+    insuranceNumber: string,
+    carId: string,
+    startDate: string,
+    endDate: string,
+    description: string,
+    note: string,
+    odometer: number,
+    reportDate: string,
+    source?: string,
+    createdByUserId?: string,
+    modifiedByUserId?: string,
+    createdTime?: string,
+    lastModified?: string
+    expired?: boolean
 }
 

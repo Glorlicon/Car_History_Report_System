@@ -3,9 +3,11 @@ using Application.DTO.CarRegistrationHistory;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarRegistrationHistory;
+using CarHistoryReportSystemAPI.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -19,15 +21,18 @@ namespace CarHistoryReportSystemAPI.Controllers
                                              CarRegistrationHistoryCreateRequestDTO,
                                              CarRegistrationHistoryUpdateRequestDTO> _carRegistrationHistoryService;
         private readonly ICsvServices _csvServices;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
         public CarRegistrationHistoryController(ICarHistoryServices<CarRegistrationHistoryResponseDTO,
                                                              CarRegistrationHistoryParameter,
                                                              CarRegistrationHistoryCreateRequestDTO,
                                                              CarRegistrationHistoryUpdateRequestDTO> carRegistrationHistoryService
-                                        , ICsvServices csvServices)
+                                        , ICsvServices csvServices
+                                        , IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carRegistrationHistoryService = carRegistrationHistoryService;
             _csvServices = csvServices;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -115,7 +120,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -162,7 +167,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             if (file.Count != 1)
             {
-                return BadRequest(new ErrorDetails("You should upload 1 file only"));
+                return BadRequest(new ErrorDetails(_sharedLocalizer["You should upload 1 file only"]));
             }
             var requests = _csvServices.ConvertToListObject<CarRegistrationHistoryCreateRequestDTO>(file[0].OpenReadStream());
             //validate
@@ -197,7 +202,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

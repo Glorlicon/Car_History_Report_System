@@ -90,7 +90,7 @@ namespace Application.Common
                 .ForMember(c => c.Source, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));            
             
             CreateMap<CarAccidentHistoryCreateRequestDTO, CarAccidentHistory>();
-            CreateMap<CarAccidentHistoryUpdateRequestDTO, CarStolenHistory>();
+            CreateMap<CarAccidentHistoryUpdateRequestDTO, CarAccidentHistory>();
             CreateMap<CarAccidentHistory, CarAccidentHistoryResponseDTO>()
                 .ForMember(c => c.Source, opt => opt.MapFrom(x => x.CreatedByUser.DataProvider.Name));
 

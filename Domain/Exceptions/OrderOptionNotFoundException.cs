@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class OrderOptionNotFoundException : NotFoundException
     {
         public OrderOptionNotFoundException(int id)
-            : base($"Order Option with id {id} not found")
+            : base($"Order Option not found")
         {
 
         }
