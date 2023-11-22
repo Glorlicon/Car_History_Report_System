@@ -3,10 +3,12 @@ using Application.DTO.CarSpecification;
 using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Entities;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,11 +20,13 @@ namespace CarHistoryReportSystemAPI.Controllers
     {
         private readonly ICarSpecificationService _carSpecService;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public CarSpecificationController(ICarSpecificationService carSpecService, IMapper mapper)
+        public CarSpecificationController(ICarSpecificationService carSpecService, IMapper mapper, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carSpecService = carSpecService;
             _mapper = mapper;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class UserNotificationNotFoundException : NotFoundException
     {
         public UserNotificationNotFoundException(string userId, int notificationId)
-            : base($"User with id {userId} dont have notification with id {notificationId}")
+            : base($"User dont have this notification")
         {
 
         }

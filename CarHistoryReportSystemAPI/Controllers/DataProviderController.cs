@@ -13,6 +13,8 @@ using System.Text.Json;
 using Application.Validation.DataProvider;
 using Domain.Entities;
 using Application.Common.Models;
+using CarHistoryReportSystemAPI.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace CarHistoryReportSystemAPI.Controllers
 {
@@ -21,10 +23,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class DataProviderController : ControllerBase
     {
         private readonly IDataProviderService _dataProviderService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public DataProviderController(IDataProviderService dataProviderService)
+        public DataProviderController(IDataProviderService dataProviderService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _dataProviderService = dataProviderService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -43,7 +47,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -138,7 +142,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -171,7 +175,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -247,7 +251,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

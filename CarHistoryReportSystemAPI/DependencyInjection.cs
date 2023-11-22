@@ -5,8 +5,10 @@ using CarHistoryReportSystemAPI.Utility;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
 using System.Reflection;
 
 namespace CarHistoryReportSystemAPI
@@ -63,6 +65,23 @@ namespace CarHistoryReportSystemAPI
         public static void AddCustomCsvFormatter(this IMvcBuilder builder)
         {
             builder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
+        }
+
+        public static void ConfigureLocaliazation(this IServiceCollection services)
+        {
+            services.AddLocalization(options => options.ResourcesPath = "");
+            const string defaultCulture = "en-US";
+            var supportedCultures = new[]
+            {
+                new CultureInfo(defaultCulture),
+                new CultureInfo("vi-VN")
+            };
+            services.Configure<RequestLocalizationOptions>(options => {
+                options.DefaultRequestCulture = new RequestCulture("vi-VN");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.ApplyCurrentCultureToResponseHeaders = true;
+            });
         }
 
     }

@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarSpecificationNotFoundException : NotFoundException
     {
         public CarSpecificationNotFoundException(string modelId)
-            : base($"Car Model with id {modelId} was not found")
+            : base($"Car Model not found")
         {
 
         }

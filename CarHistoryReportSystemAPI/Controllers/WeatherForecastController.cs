@@ -1,11 +1,13 @@
 using Application.Interfaces;
 using Application.Validation.WeatherForecast;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure.Configurations.EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MimeKit.Cryptography;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -22,12 +24,14 @@ namespace CarHistoryReportSystemAPI.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailServices _emailServices;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IEmailServices emailServices, IUnitOfWork unitOfWork)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IEmailServices emailServices, IUnitOfWork unitOfWork, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _logger = logger;
             _emailServices = emailServices;
             _unitOfWork = unitOfWork;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         [Authorize]
@@ -93,6 +97,20 @@ namespace CarHistoryReportSystemAPI.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("localized")]
+        public async Task<IActionResult> TestLocalize(string test)
+        {
+            var carId = "abc";
+            var input = $"Car Model with id {carId} was not found";
+            var list = _sharedLocalizer.GetAllStrings();
+            foreach (var er in list)
+            {
+                Console.WriteLine(er.Name);
+                Console.WriteLine(er.Value);
+            }
+            return Ok(_sharedLocalizer["Car Model with id {0} was not found",123]);
         }
 
         [HttpPost]
