@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarRecallNotFoundException : NotFoundException
     {
         public CarRecallNotFoundException(int id)
-            : base($"Car Recall with id {id} Not Found")
+            : base($"Car Recall Not Found")
         {
 
         }

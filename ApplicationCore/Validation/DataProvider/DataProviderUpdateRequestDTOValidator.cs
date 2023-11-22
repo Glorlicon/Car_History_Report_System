@@ -13,12 +13,8 @@ namespace Application.Validation.DataProvider
     {
         public DataProviderUpdateRequestDTOValidator()
         {
-            RuleFor(x => x.Name)
-                .NotEmpty()
-                .NotNull();
-            RuleFor(x => x.Description)
-                .NotEmpty()
-                .NotNull();
+            RuleFor(x => x.Name).NotEmpty().NotNull().WithMessage("Name should not be empty");
+            RuleFor(x => x.Description).NotEmpty().NotNull().WithMessage("Description should not be empty");
             RuleFor(x => x.Type)
                 .IsInEnum();
             RuleFor(x => x.Email)

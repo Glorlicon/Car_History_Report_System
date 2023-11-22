@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class ExistException : BadRequestException
     {
         public ExistException(string objectName, string Id)
-            : base($"{objectName} {Id} already exist in list")
+            : base($"object already exist in list")
         {
 
         }

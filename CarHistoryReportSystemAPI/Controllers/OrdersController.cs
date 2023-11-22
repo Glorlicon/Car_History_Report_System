@@ -4,9 +4,11 @@ using Application.DTO.Car;
 using Application.DTO.Order;
 using Application.Interfaces;
 using Application.Validation.Car;
+using CarHistoryReportSystemAPI.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -16,10 +18,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderServices _orderService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public OrdersController(IOrderServices orderService)
+        public OrdersController(IOrderServices orderService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _orderService = orderService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>

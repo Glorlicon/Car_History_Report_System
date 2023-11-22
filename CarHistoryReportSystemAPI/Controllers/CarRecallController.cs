@@ -5,6 +5,7 @@ using Application.DTO.CarRecall;
 using Application.Interfaces;
 using Application.Validation.Car;
 using Application.Validation.CarRecall;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Entities;
 using Domain.Enum;
 using FluentValidation;
@@ -12,6 +13,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -21,10 +23,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class CarRecallController : ControllerBase
     {
         private readonly ICarRecallServices _carRecallService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public CarRecallController(ICarRecallServices carRecallService)
+        public CarRecallController(ICarRecallServices carRecallService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carRecallService = carRecallService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -174,7 +178,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

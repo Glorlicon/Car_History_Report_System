@@ -18,8 +18,9 @@ namespace Application.Validation.CarRegistrationHistory
             RuleFor(x => x.LicensePlateNumber)
                 .Matches(StringUtility.LICENSE_PLATE_NUMBER_REGEX)
                 .WithMessage("License Plate Number should be in correct format Ex: 12A-12345");
-            RuleFor(x => x.ReportDate).LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now));
-            RuleFor(x => x.RegistrationNumber).NotEmpty();
+            RuleFor(x => x.ReportDate).LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now))
+                .WithMessage("Report Date cannot be in the future");
+            RuleFor(x => x.RegistrationNumber).NotEmpty().WithMessage("Registration Number cannot be empty");
         }
     }
 }

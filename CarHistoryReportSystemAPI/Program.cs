@@ -5,6 +5,7 @@ using CarHistoryReportSystemAPI.Middlewares;
 using CarHistoryReportSystemAPI.Services;
 using CarHistoryReportSystemAPI.Utility;
 using Infrastructure;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using NLog;
@@ -28,7 +29,7 @@ builder.Services.AddCors(options =>
 
 
 // Add services to the container.
-
+builder.Services.ConfigureLocaliazation();
 builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -38,7 +39,6 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureCustomServices();
-
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMemoryCache();
@@ -55,6 +55,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
