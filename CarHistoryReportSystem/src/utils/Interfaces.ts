@@ -68,15 +68,9 @@ export interface Manufacturer {
 }
 
 export interface CarDealer {
-    name: string
+    id: number
     userName: string
-    description: string
-    address?: string
-    websiteLink?: string
-    phoneNumber?: string
-    workingTimes: workingTimes[]
-    carDealerImage: CarDealerImage
-    dataProviderId?: number | null
+    dataProvider: DataProvider
 }
 
 export interface CarDealerImage {
@@ -122,6 +116,8 @@ export interface DataProvider {
     email?: string
     type: number
     typeName: string
+    imagelink?: string
+    workingTimes?: workingTimes[]
 }
 
 export interface CarSalesInfo {
@@ -355,6 +351,4 @@ export interface ModelMaintainanceDetails {
     lastServicedDate: string
     currentOdometer: number
     lastOwnerChangeDate: string
-}
-
 }

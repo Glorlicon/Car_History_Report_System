@@ -4,7 +4,7 @@ import { APIResponse, Car, CarSaleDetails, CarSalesInfo } from "../../utils/Inte
 export async function GetDealerProfileData(Id: String, token: string) {
     console.log("New")
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/User/${Id}`,
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${Id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

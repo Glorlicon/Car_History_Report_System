@@ -11,13 +11,13 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const dealerId = JWTDecoder(token).nameidentifier 
+    const dealerId = JWTDecoder(token).dataprovider 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);     
     const [carList, setCarList] = useState<Car[]>([]);
     const [newImages, setNewImages] = useState<File[]>([])
-    const [editDealerProfile, setEditDealerProfile] = useState<CarDealer | null>(null)
-    const [User, setUser] = useState<CarDealer | null>(null)
+    const [editDealerProfile, setEditDealerProfile] = useState<DataProvider | null>(null)
+    const [User, setUser] = useState<DataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [removedImages, setRemovedImages] = useState<string[]>([]);
@@ -32,6 +32,27 @@ function CarDealerHomePage() {
         workingTimes: [] as any,
         avatarImageLink: ''
     }
+
+    const defaultDataProvider: DataProvider = {
+        id: 0,
+        name: '',
+        description: '',
+        address: '',
+        websiteLink: '',
+        service: '',
+        phoneNumber: '',
+        email: '',
+        type: 0,
+        typeName: '',
+        imagelink: '',
+        workingTimes: [],
+    };
+
+    const [newUserDetails, setNewUserDetails] = useState<CarDealer>({
+        id: 0,
+        userName: '',
+        dataProvider: defaultDataProvider,
+    });
 
     const defaultSchedule = [
         { dayOfWeek: 1, startTime: '', endTime: '', isClosed: false },
@@ -90,10 +111,10 @@ function CarDealerHomePage() {
             setUser(dataProviderResponse.data)
             console.log(dataProviderResponse.data)
         }
-        console.log(User?.dataProviderId);
+        console.log(User?.id);
 
         //Đổi lại trách nhiệm đăng bán xe sang cho car dealer và tìm car for sale theo id của dealer (hiện tại trong database đang là dataproviderID)
-        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.dataProviderId as unknown as string)
+        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.id as unknown as string)
         if (carListResponse.error) {
             setError(carListResponse.error)
         } else {
@@ -104,60 +125,72 @@ function CarDealerHomePage() {
         setLoading(false)
     }
 
-    const handleScheduleChange = (index: number, field: string, value: string | boolean) => {
-        const updatedWorkingTimes = workingTimes.map((workingTime, i) =>
-            i === index ? { ...workingTime, [field]: value } : workingTime
-        );
-        setWorkingTimes(updatedWorkingTimes);
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index?: number, field?: string) => {
+        const { name, value, type } = e.target;
 
-        // Also update the User state if it's not null
-        if (User) {
-            setUser({
-                ...User,
-                workingTimes: updatedWorkingTimes
+        let actualValue: string | boolean = value;
+        if (type === 'checkbox') {
+            actualValue = (e.target as HTMLInputElement).checked; // Type assertion for HTMLInputElement
+        }
+
+        if (index !== undefined && field) {
+            // Handle working times update+
+            setUser(prevUser => {
+                if (!prevUser) return null; // If prevUser is null, just return null
+
+                const updatedWorkingTimes = prevUser.workingTimes?.map((workingTime, i) =>
+                    i === index ? { ...workingTime, [field]: actualValue } : workingTime
+                );
+
+                return { ...prevUser, workingTimes: updatedWorkingTimes };
+            });
+        } else {
+            // Handle other field updates
+            setUser(prevUser => {
+                if (!prevUser) return null; // If prevUser is null, just return null
+
+                return { ...prevUser, [name]: actualValue };
             });
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-        if (editDealerProfile) {
-            setEditDealerProfile({
-                ...editDealerProfile,
-                [e.target.name]: value
-            })
-        }
-    };
+
+
+
+
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const addedImage = {
                 id: '-1', // Temporary ID for the new image
-                avatarImageLink: URL.createObjectURL(event.target.files[0]) // Corrected the typo in property name
+                avatarImageLink: URL.createObjectURL(event.target.files[0]) // Create a URL for the file
             };
 
-            if (editDealerProfile) {
-                setEditDealerProfile({
-                    ...editDealerProfile,
-                    carDealerImage: addedImage // Set the new image
-                });
-            }
-        }
-    }
+            setEditDealerProfile(prevProfile => {
+                if (!prevProfile) return null;
 
-
-    const handleRemoveImage = () => {
-        if (editDealerProfile && editDealerProfile.carDealerImage) {
-            const removedImageId = editDealerProfile.carDealerImage.id;
-            if (removedImageId && removedImageId !== '-1') {
-                setRemovedImages(prevRemovedImages => [...prevRemovedImages, removedImageId]);
-            }
-            setEditDealerProfile({
-                ...editDealerProfile,
-                carDealerImage: {} // or null
+                return {
+                    ...prevProfile,
+                    imagelink: addedImage.avatarImageLink // Update the imagelink directly
+                };
             });
         }
-    }
+    };
+
+
+    //const handleRemoveImage = () => {
+    //    if (editDealerProfile && editDealerProfile.dataProvider.imagelink) {
+    //        const removedImageId = editDealerProfile.carDealerImage.id;
+    //        if (removedImageId && removedImageId !== '-1') { // Check if the ID is valid and not the temporary one
+    //            setRemovedImages(prevRemovedImages => [...prevRemovedImages, removedImageId]);
+    //        }
+    //        setEditDealerProfile({
+    //            ...editDealerProfile,
+    //            carDealerImage: null // Set to null if your type allows it
+    //        });
+    //    }
+    //}
+
 
     const handleEditDealerProfile = async () => {
         if (editDealerProfile != null) {
@@ -184,22 +217,34 @@ function CarDealerHomePage() {
         }
     }
 
-        useEffect(() => {
-            fetchData();
-            const percentage = Math.round((value / max) * 100);
-            setOverlayWidth(`${100 - percentage}%`);
-            if (User?.workingTimes) {
-                setWorkingTimes(User.workingTimes);
-            } else if (User) { // Make sure User is not null before setting default
-                setUser({
-                    ...User,
-                    workingTimes: defaultSchedule
-                });
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const percentage = Math.round((value / max) * 100);
+        setOverlayWidth(`${100 - percentage}%`);
+
+        setUser((currentUser) => {
+            if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
+                const updatedUser = {
+                    ...currentUser,
+                    dataProvider: {
+                        ...currentUser,
+                        workingTimes: defaultSchedule
+                    }
+                };
                 setWorkingTimes(defaultSchedule);
+                return updatedUser;
+            } else if (currentUser?.workingTimes) {
+                setWorkingTimes(currentUser.workingTimes);
             }
 
-            console.log(User);
-        }, [value, max]);
+            return currentUser;
+        });
+        console.log("User", User);
+    }, [value, max, User, defaultSchedule]);
+
 
         return (
             <div className="car-dealer-profile">
@@ -213,7 +258,7 @@ function CarDealerHomePage() {
 
                         {/* Dealer Name and Ratings */}
                         <div className="dealer-info">
-                            <h1>{User?.userName}</h1>
+                            <h1>{User?.name}</h1>
                             <div className="rating-favoured">
                                 <p> num</p>
                                 <div className="stars">
@@ -261,7 +306,7 @@ function CarDealerHomePage() {
                         <div className="profile-image">
                             {/* Add image here */}
                         </div>
-                        <button onClick={() => { setEditDealerProfile({ ...User as CarDealer }) }}>Edit</button>
+                        <button onClick={() => { setEditDealerProfile({ ...User as DataProvider }) }}>Edit</button>
                     </div>
 
 
@@ -270,7 +315,7 @@ function CarDealerHomePage() {
                 </div>
                 <div className="cars-for-sale-section">
                     <div className="listing-header">
-                        <h2>{carList.length} Used Vehicles for Sale at {User?.userName}</h2>
+                        <h2>{carList.length} Used Vehicles for Sale at {User?.name}</h2>
                         <div className="filters">
                             Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
                         </div>
@@ -423,16 +468,15 @@ function CarDealerHomePage() {
                                     action="Edit"
                                     User={editDealerProfile}
                                     handleInputChange={handleInputChange}
-                                    handleScheduleChange={handleScheduleChange}
                                 />
                             )}
-                            {modalPage === 2 && (
-                                <CarDealerProfileImage
-                                    model={editDealerProfile}
-                                    handleAddImages={handleAddImages}
-                                    handleRemoveImages={handleRemoveImage}
-                                />
-                            )}
+                            {/*{modalPage === 2 && (*/}
+                            {/*    <CarDealerProfileImage*/}
+                            {/*        model={editDealerProfile}*/}
+                            {/*        handleAddImages={handleAddImages}*/}
+                            {/*        handleRemoveImages={handleRemoveImage}*/}
+                            {/*    />*/}
+                            {/*)}*/}
                             {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                                 <>
                                     <div>
