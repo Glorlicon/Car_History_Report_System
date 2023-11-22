@@ -101,6 +101,7 @@ namespace Application.DomainServices
             await _notificationServices.CreateNotification(policeAlertNotification);
             //
             return carHistory.Id;
+
         }
 
         public virtual async Task DeleteCarHistory(int id)
@@ -167,7 +168,7 @@ namespace Application.DomainServices
             }
             var carHistorys = await _carHistoryRepository.GetCarHistorysByOwnCompany(carIds, parameter, false);
             var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
-            var count = await _unitOfWork.CarStolenHistoryRepository.CountAll();
+            var count = await _carHistoryRepository.CountAll();
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 

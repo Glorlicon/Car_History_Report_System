@@ -14,7 +14,6 @@ namespace Application.DTO.CarAccidentHistory
         public string Source { get; set; }
         public string? Location { get; set; }
         public float Serverity { get; set; }
-        public string CarId { get; set; }
         public AccidentDamageLocation DamageLocation { get; set; }
         public DateOnly AccidentDate { get; set; }
         public string? Description { get; set; }
