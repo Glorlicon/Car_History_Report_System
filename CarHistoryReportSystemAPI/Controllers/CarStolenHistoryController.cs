@@ -25,6 +25,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Stolen Historys List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet(Name = "GetCarStolenHistorys")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarStolenHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarStolenHistorysAsync([FromQuery] CarStolenHistoryParameter parameter)
@@ -40,6 +41,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Stolen History</returns>
         [HttpGet("{id}", Name = "GetCarStolenHistory")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(CarStolenHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarStolenHistoryAsync(int id)
@@ -54,6 +56,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="vinId"></param>
         /// <returns>Car Stolen History</returns>
         [HttpGet("car/{vinId}/current", Name = "GetCurrentCarStolen")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(CarStolenHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCurrentCarStolenHistoryAsync(string vinId)
@@ -69,6 +72,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}", Name = "GetCarStolenHistoryByCarId")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarStolenHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarStolenHistoryByCarIdAsync(string vinId, [FromQuery] CarStolenHistoryParameter parameter)
@@ -87,7 +91,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCarStolenHistory")]
-        [Authorize(Roles = "PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -118,7 +122,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car Stolen History not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -150,7 +154,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car Stolen History not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "PoliceOffice")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -167,7 +171,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("insurance-own", Name = "GetCarStolenHistorysByOwnInsuranceCompany")]
-        [Authorize(Roles = "InsuranceCompany")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(IEnumerable<CarStolenHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarStolenHistorysByOwnInsuranceCompany([FromQuery] CarStolenHistoryParameter parameter)
@@ -183,7 +187,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Stolen History</returns>
         [HttpGet("insurance-own/{id}", Name = "GetCarStolenHistoryByOwnInsuranceCompany")]
-        [Authorize(Roles = "InsuranceCompany")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(CarStolenHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarStolenHistoryByOwnInsuranceCompany(int id)

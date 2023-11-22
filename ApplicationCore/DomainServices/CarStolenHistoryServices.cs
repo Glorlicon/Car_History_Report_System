@@ -132,6 +132,10 @@ namespace Application.DomainServices
                 throw new CarNotFoundException();
             }
             var carStolenHistory = await _unitOfWork.CarStolenHistoryRepository.GetCarStolenHistoryById(id, false);
+            if(carStolenHistory == null)
+            {
+                throw new CarHistoryRecordNotFoundException(id);
+            }
             if (!carIds.Contains(carStolenHistory.CarId))
             {
                 throw new UnauthorizedAccessException();

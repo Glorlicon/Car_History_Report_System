@@ -168,7 +168,6 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <summary>
         /// Get All Cars in storage of current data provider
         /// </summary>
-        /// <param name="dataProviderId"></param>
         /// <returns>Car List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("storage", Name = "GetCarsByCurrentDataProviderId")]
