@@ -120,6 +120,27 @@ export interface DataProvider {
     workingTimes?: workingTimes[]
 }
 
+export interface EditDataProvider {
+    name: string
+    description?: string
+    address?: string
+    websiteLink?: string
+    service?: string
+    phoneNumber?: string
+    email?: string
+    type: number
+    typeName: string
+    imagelink?: string
+    workingTimes: {
+        dayOfWeek: number,
+        startHour: number,
+        startMinute: number,
+        endHour: number,
+        endMinute: number,
+        isClosed: boolean
+        }[]
+}
+
 export interface CarSalesInfo {
     description: string
     carId?: string

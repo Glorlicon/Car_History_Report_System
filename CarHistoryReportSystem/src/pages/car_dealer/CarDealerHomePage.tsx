@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import { GetCarForSaleBySellerID, GetDealerProfileData } from '../../services/api/Profile';
+import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, DataProvider, User, CarDealer, CarDealerImage, workingTimes } from '../../utils/Interfaces';
+import { APIResponse, Car, DataProvider, User, CarDealer, CarDealerImage, workingTimes, EditDataProvider } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function CarDealerHomePage() {
@@ -16,43 +16,50 @@ function CarDealerHomePage() {
     const [loading, setLoading] = useState<boolean>(false);     
     const [carList, setCarList] = useState<Car[]>([]);
     const [newImages, setNewImages] = useState<File[]>([])
-    const [editDealerProfile, setEditDealerProfile] = useState<DataProvider | null>(null)
-    const [User, setUser] = useState<DataProvider | null>(null)
+    const [User, setUser] = useState<DataProvider | null>(null) //EditDataProvider
+    const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [adding, setAdding] = useState(false);
 
-    const userDetails = {
+    const [userDetails, setUserDetails] = useState({
         name: '',
         description: '',
         address: '',
         websiteLink: '',
-        phoneNumber: '',
-        workingTimes: [] as any,
-        avatarImageLink: ''
-    }
-
-    const defaultDataProvider: DataProvider = {
-        id: 0,
-        name: '',
-        description: '',
-        address: '',
-        websiteLink: '',
-        service: '',
         phoneNumber: '',
         email: '',
         type: 0,
-        typeName: '',
         imagelink: '',
-        workingTimes: [],
-    };
-
-    const [newUserDetails, setNewUserDetails] = useState<CarDealer>({
-        id: 0,
-        userName: '',
-        dataProvider: defaultDataProvider,
+        workingTimes: Array(7).fill({
+            dayOfWeek: 0,
+            startHour: 0,
+            startMinute: 0,
+            endHour: 0,
+            endMinute: 0,
+            isClosed: true
+        })
     });
+
+    interface TransformedWorkingTime {
+        dayOfWeek: number;
+        startHour: number;
+        startMinute: number;
+        endHour: number;
+        endMinute: number;
+        isClosed: boolean;
+    }
+
+    interface OriginalWorkingTime {
+        dayOfWeek: number;
+        startTime: string;
+        endTime: string;
+        isClosed: boolean;
+    }
+
+
 
     const defaultSchedule = [
         { dayOfWeek: 1, startTime: '', endTime: '', isClosed: false },
@@ -104,118 +111,122 @@ function CarDealerHomePage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string, token)
+
+        const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string, token);
         if (dataProviderResponse.error) {
-            setError(dataProviderResponse.error)
+            setError(dataProviderResponse.error);
         } else {
-            setUser(dataProviderResponse.data)
-            console.log(dataProviderResponse.data)
-        }
-        console.log(User?.id);
+            let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
 
-        //Đổi lại trách nhiệm đăng bán xe sang cho car dealer và tìm car for sale theo id của dealer (hiện tại trong database đang là dataproviderID)
-        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.id as unknown as string)
+            if (Array.isArray(dataProviderResponse.data.workingTimes)) {
+                transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
+                    const [startHour, startMinute] = time.startTime.split(':').map(Number);
+                    const [endHour, endMinute] = time.endTime.split(':').map(Number);
+
+                    return {
+                        dayOfWeek: time.dayOfWeek,
+                        startHour,
+                        startMinute,
+                        endHour,
+                        endMinute,
+                        isClosed: time.isClosed
+                    };
+                });
+            }
+
+            setUserDetails({
+                ...dataProviderResponse.data,
+                workingTimes: transformedWorkingTimes
+            });
+
+            console.log("Transformed Data:", userDetails);
+        }
+
+        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.id as unknown as string);
         if (carListResponse.error) {
-            setError(carListResponse.error)
+            setError(carListResponse.error);
         } else {
-            setCarList(carListResponse.data)
-            console.log(dataProviderResponse.data)
+            setCarList(carListResponse.data);
+            console.log("Car List Data:", carListResponse.data);
         }
 
-        setLoading(false)
-    }
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index?: number, field?: string) => {
-        const { name, value, type } = e.target;
-
-        let actualValue: string | boolean = value;
-        if (type === 'checkbox') {
-            actualValue = (e.target as HTMLInputElement).checked; // Type assertion for HTMLInputElement
-        }
-
-        if (index !== undefined && field) {
-            // Handle working times update+
-            setUser(prevUser => {
-                if (!prevUser) return null; // If prevUser is null, just return null
-
-                const updatedWorkingTimes = prevUser.workingTimes?.map((workingTime, i) =>
-                    i === index ? { ...workingTime, [field]: actualValue } : workingTime
-                );
-
-                return { ...prevUser, workingTimes: updatedWorkingTimes };
-            });
-        } else {
-            // Handle other field updates
-            setUser(prevUser => {
-                if (!prevUser) return null; // If prevUser is null, just return null
-
-                return { ...prevUser, [name]: actualValue };
-            });
-        }
+        setLoading(false);
     };
 
 
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index?: number, field?: string) => {
+        //const { name, value, type } = e.target;
+        //let actualValue = type === 'checkbox' ? e.target.checked : value;
 
+        //if (index !== undefined && field) {
+        //    setUserDetails(prevDetails => {
+        //        const updatedTimes = prevDetails.workingTimes.map((time, i) =>
+        //            i === index ? { ...time, [field]: actualValue } : time
+        //        );
+
+        //        if (type === 'checkbox') {
+        //            updatedTimes[index] = { ...updatedTimes[index], startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 };
+        //        }
+
+        //        return { ...prevDetails, workingTimes: updatedTimes };
+        //    });
+        //} else {
+        //    setUserDetails(prevDetails => ({ ...prevDetails, [name]: actualValue }));
+        //}
+    };
 
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            const addedImage = {
-                id: '-1', // Temporary ID for the new image
-                avatarImageLink: URL.createObjectURL(event.target.files[0]) // Create a URL for the file
-            };
+            const addedImageUrl = URL.createObjectURL(event.target.files[0]); // Create a URL for the file
 
             setEditDealerProfile(prevProfile => {
+                // Ensure prevProfile is not null
                 if (!prevProfile) return null;
 
                 return {
                     ...prevProfile,
-                    imagelink: addedImage.avatarImageLink // Update the imagelink directly
+                    imagelink: addedImageUrl // Update the imagelink directly
+                };
+            });
+        }
+    };
+
+    const handleRemoveImage = () => {
+        if (editDealerProfile && editDealerProfile.imagelink) {
+            setEditDealerProfile(prevProfile => {
+                // Ensure prevProfile is not null
+                if (!prevProfile) return null;
+
+                return {
+                    ...prevProfile,
+                    imagelink: "" // Clearing the imagelink
                 };
             });
         }
     };
 
 
-    //const handleRemoveImage = () => {
-    //    if (editDealerProfile && editDealerProfile.dataProvider.imagelink) {
-    //        const removedImageId = editDealerProfile.carDealerImage.id;
-    //        if (removedImageId && removedImageId !== '-1') { // Check if the ID is valid and not the temporary one
-    //            setRemovedImages(prevRemovedImages => [...prevRemovedImages, removedImageId]);
-    //        }
-    //        setEditDealerProfile({
-    //            ...editDealerProfile,
-    //            carDealerImage: null // Set to null if your type allows it
-    //        });
-    //    }
-    //}
-
-
     const handleEditDealerProfile = async () => {
         if (editDealerProfile != null) {
             setAdding(true);
             setAddError(null);
-            //function
-            //const response: APIResponse = await EditCarForSale({
-            //    ...editCarSales,
-            //    carImages: [
-            //        ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
-            //        ...addImages.data
-            //    ]
-            //}, token);
-            //console.log("1", editCarSales.carImages)
-            //console.log("2", addImages.data)
+
+            const response: APIResponse = await EditProfile(editDealerProfile, token);
+            console.log("Submitted Data", editDealerProfile);
+
             setAdding(false);
-            //if (response.error) {
-            //    setAddError(response.error);
-            //} else {
-            //    setEditCarSales(null)
-            //    setModalPage(1)
-            //    fetchData();
-            //}
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setEditDealerProfile(null); // Resetting the edit state
+                setModalPage(1);
+                fetchData(); // Fetching the latest data and updating state
+            }
         }
-    }
+    };
+
 
     useEffect(() => {
         fetchData();
@@ -226,24 +237,25 @@ function CarDealerHomePage() {
         setOverlayWidth(`${100 - percentage}%`);
 
         setUser((currentUser) => {
+            // Check if currentUser exists and if workingTimes needs to be set
             if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
                 const updatedUser = {
                     ...currentUser,
-                    dataProvider: {
-                        ...currentUser,
-                        workingTimes: defaultSchedule
-                    }
+                    workingTimes: defaultSchedule // Set workingTimes directly on currentUser
                 };
                 setWorkingTimes(defaultSchedule);
                 return updatedUser;
             } else if (currentUser?.workingTimes) {
+                // If workingTimes already exists, just update the workingTimes state
                 setWorkingTimes(currentUser.workingTimes);
             }
 
-            return currentUser;
+            return currentUser; // Return the currentUser as is if no updates are needed
         });
+
         console.log("User", User);
     }, [value, max, User, defaultSchedule]);
+
 
 
         return (
@@ -306,7 +318,7 @@ function CarDealerHomePage() {
                         <div className="profile-image">
                             {/* Add image here */}
                         </div>
-                        <button onClick={() => { setEditDealerProfile({ ...User as DataProvider }) }}>Edit</button>
+                        {/*<button onClick={() => { setEditDealerProfile({ ...User as EditDataProvider }) }}>Edit</button>*/}
                     </div>
 
 
@@ -430,32 +442,20 @@ function CarDealerHomePage() {
                         <h2>About Us</h2>
                     </div>
 
-                    <div className="about-us-information">
-                        <div className="contact-section">
-                            <h3>Get In Touch</h3>
-                            <div className="sales-information">
-                                <h4>Sales Information</h4>
-                                <p>New Car Sales: <span>Phonenum</span></p>
-                            </div>
+                    <div className="about-us-section">
+                        {/* ... other parts of the section ... */}
 
-                            <div className="operation-hours">
-                                <p>Sunday: Closed</p>
-                                <p>Monday: Open - Close</p>
-                                <p>Tuesday: Open - Close</p>
-                                <p>Wednesday: Open - Close</p>
-                                <p>Thursday: Open - Close</p>
-                                <p>Friday: Open - Close</p>
-                                <p>Saturday: Open - Close</p>
-                            </div>
-
-                            <p>Location: <span>Address</span></p>
+                        <div className="operation-hours">
+                            {User?.workingTimes && User.workingTimes.some(day => day.startTime !== "" && day.endTime !== "") ? (
+                                User.workingTimes.map((day, index) => (
+                                    <p key={index}>{daysOfWeek[day.dayOfWeek - 1]}: {day.isClosed ? 'Closed' : `${day.startTime} - ${day.endTime}`}</p>
+                                ))
+                            ) : (
+                                <p>No work schedule present</p>
+                            )}
                         </div>
 
-                        {/*<div className="service-information">*/}
-                        {/*    <h3>Service Information</h3>*/}
-                        {/*    <p>Service: <span>ServiceNum</span></p>*/}
-                        {/*    <p>Location: <span>Address</span></p>*/}
-                        {/*</div>*/}
+                        {/* ... other parts of the section ... */}
                     </div>
                 </div>
                 {editDealerProfile && (
@@ -463,13 +463,13 @@ function CarDealerHomePage() {
                         <div className="dealer-car-sales-modal-content">
                             <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
                             <h2>Edit Profile</h2>
-                            {modalPage === 1 && (
-                                <CarDealerProfilePage
-                                    action="Edit"
-                                    User={editDealerProfile}
-                                    handleInputChange={handleInputChange}
-                                />
-                            )}
+                            {/*{modalPage === 1 && (*/}
+                            {/*    <CarDealerProfilePage*/}
+                            {/*        action="Edit"*/}
+                            {/*        User={editDealerProfile}*/}
+                            {/*        handleInputChange={handleInputChange}*/}
+                            {/*    />*/}
+                            {/*)}*/}
                             {/*{modalPage === 2 && (*/}
                             {/*    <CarDealerProfileImage*/}
                             {/*        model={editDealerProfile}*/}
