@@ -1,6 +1,4 @@
 ﻿using Application.DTO.CarInsurance;
-using Application.DTO.CarServiceHistory;
-using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +53,18 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByUserId(string userId, CarInsuranceHistoryParameter parameter, bool trackChange)
         {
             var query = FindByCondition(x => x.CreatedByUserId == userId, trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
+        public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByOwnCompany(List<string> carIds, CarInsuranceHistoryParameter parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);
             query = Filter(query, parameter);
             query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)
