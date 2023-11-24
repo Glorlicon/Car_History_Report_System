@@ -13,6 +13,7 @@ namespace Application.Validation.CarRegistrationHistory
     {
         public CarRegistrationHistoryCreateRequestDTOValidator()
         {
+            RuleFor(x => x.Odometer).GreaterThanOrEqualTo(0).When(x => x.Odometer != null).WithMessage("Odometer value must be equal or greater than 0");
             RuleFor(x => x.OwnerName).NotEmpty();
             RuleFor(x => x.LicensePlateNumber)
                 .Matches(StringUtility.LICENSE_PLATE_NUMBER_REGEX)

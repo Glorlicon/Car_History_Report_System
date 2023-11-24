@@ -1,8 +1,10 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarInsurance;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarInsuranceHistory;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -227,6 +229,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             await _carInsuranceHistoryService.DeleteCarHistory(id);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarInsuranceHistoryCreateRequestDTO>
+            {
+                new CarInsuranceHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    EndDate = DateOnly.FromDateTime(DateTime.Now),
+                    Description = "None",
+                    InsuranceNumber = "A12345",
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }

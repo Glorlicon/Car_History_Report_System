@@ -12,7 +12,7 @@ namespace Application.Validation.CarAccidentHistory
     {
         public CarAccidentHistoryUpdateRequestDTOValidator()
         {
-
+            RuleFor(x => x.Odometer).GreaterThanOrEqualTo(0).When(x => x.Odometer != null).WithMessage("Odometer value must be equal or greater than 0");
         }
     }
 }
