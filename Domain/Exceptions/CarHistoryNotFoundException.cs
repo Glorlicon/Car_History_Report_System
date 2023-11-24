@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarHistoryNotFoundException : NotFoundException
     {
         public CarHistoryNotFoundException(string vinId, string carHistoryType)
-            : base($"{carHistoryType} of car with vinId {vinId} Not Found")
+            : base($"history record of car not found")
         {
 
         }

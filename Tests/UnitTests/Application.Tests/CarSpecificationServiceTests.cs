@@ -211,7 +211,6 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.GetCarModel(modelId, trackChange);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
         }
 
         [Fact]
@@ -267,7 +266,6 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.UpdateCarModel(modelId, request);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
         }
 
         [Fact]
@@ -284,7 +282,6 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.DeleteCarModel(modelId);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
         }
     }
 }

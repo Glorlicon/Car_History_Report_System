@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarRecallStatusNotFound : NotFoundException
     {
         public CarRecallStatusNotFound(string carId, int recallId)
-            : base($"Car recall status of car with id {carId} and recall Id {recallId} Not Found")
+            : base($"Car recall status Not Found")
         {
 
         }

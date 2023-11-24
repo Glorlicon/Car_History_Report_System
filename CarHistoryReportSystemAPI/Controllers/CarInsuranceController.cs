@@ -35,6 +35,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Historys List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(IEnumerable<CarInsuranceHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarInsuranceHistorysAsync([FromQuery] CarInsuranceHistoryParameter parameter)
@@ -50,6 +51,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Service History</returns>
         [HttpGet("{id}", Name = "GetCarInsuranceHistory")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(CarInsuranceHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarInsuranceHistoryAsync(int id)
@@ -65,6 +67,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Service History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(IEnumerable<CarInsuranceHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarInsuranceHistoryByCarIdAsync(string vinId, [FromQuery] CarInsuranceHistoryParameter parameter)
@@ -81,6 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Service History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(typeof(IEnumerable<CarInsuranceHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarInsuranceHistoryByUserIdAsync(string userId, [FromQuery] CarInsuranceHistoryParameter parameter)
@@ -100,7 +104,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car not found</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCarInsuranceHistory")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -131,7 +135,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -153,7 +157,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection/from-csv")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -182,7 +186,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -214,7 +218,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]

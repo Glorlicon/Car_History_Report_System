@@ -101,6 +101,7 @@ namespace Application.DomainServices
             await _notificationServices.CreateNotification(policeAlertNotification);
             //
             return carHistory.Id;
+
         }
 
         public virtual async Task DeleteCarHistory(int id)
@@ -160,10 +161,6 @@ namespace Application.DomainServices
         public async Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter)
         {
             var user = await _authenticationServices.GetCurrentUserAsync();
-            if (user.DataProviderId == null)
-            {
-                throw new UnauthorizedAccessException();
-            }
             var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
             if (carIds == null)
             {
@@ -171,8 +168,29 @@ namespace Application.DomainServices
             }
             var carHistorys = await _carHistoryRepository.GetCarHistorysByOwnCompany(carIds, parameter, false);
             var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
-            var count = await _unitOfWork.CarStolenHistoryRepository.CountAll();
+            var count = await _carHistoryRepository.CountAll();
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<R> InsuranceCompanyGetOwnCarHistoryDetail(int id)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
+            if (carIds == null || carIds.Count == 0)
+            {
+                throw new CarNotFoundException();
+            }
+            var carHistory = await _carHistoryRepository.GetCarHistoryById(id, false);
+            if(carHistory == null)
+            {
+                throw new CarHistoryRecordNotFoundException(id);
+            }
+            if (!carIds.Contains(carHistory.CarId))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var carHistoryResponse = _mapper.Map<R>(carHistory);
+            return carHistoryResponse;
         }
     }
 }

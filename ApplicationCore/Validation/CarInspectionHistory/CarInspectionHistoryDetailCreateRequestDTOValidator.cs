@@ -12,7 +12,7 @@ namespace Application.Validation.CarInspectionHistory
     {
         public CarInspectionHistoryDetailCreateRequestDTOValidator()
         {
-            RuleFor(x => x.InspectionCategory).NotEmpty();
+            RuleFor(x => x.InspectionCategory).NotEmpty().WithMessage("InspectionCategory should not be empty");
         }
     }
 }

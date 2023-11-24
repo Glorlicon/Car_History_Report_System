@@ -37,6 +37,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Historys List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistorysAsync([FromQuery] CarAccidentHistoryParameter parameter)
@@ -52,6 +53,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Accident History</returns>
         [HttpGet("{id}", Name = "GetCarAccidentHistory")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(CarAccidentHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarAccidentHistoryAsync(int id)
@@ -67,6 +69,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Accident History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistoryByCarIdAsync(string vinId, [FromQuery] CarAccidentHistoryParameter parameter)
@@ -83,6 +86,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Accident History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistoryByUserIdAsync(string userId, [FromQuery] CarAccidentHistoryParameter parameter)
@@ -102,7 +106,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car not found</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCarAccidentHistory")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -133,7 +137,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -155,7 +159,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection/from-csv")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -184,7 +188,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -216,7 +220,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -241,6 +245,22 @@ namespace CarHistoryReportSystemAPI.Controllers
             var carAccidentHistorys = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistories(parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
+        }
+
+        /// <summary>
+        /// Get Car Accident History detail by own insurance company
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Car Accident History Detail</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("insurance-own/{id}")]
+        [Authorize(Roles = "InsuranceCompany")]
+        [ProducesResponseType(typeof(CarAccidentHistoryResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarAccidentHistoryByIdAsync(int id)
+        {
+            var carAccidentHistory = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistoryDetail(id);
+            return Ok(carAccidentHistory);
         }
     }
 }

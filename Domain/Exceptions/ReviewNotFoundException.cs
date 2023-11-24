@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class ReviewNotFoundException : NotFoundException
     {
         public ReviewNotFoundException(string userId, int dataProviderId)
-            : base($"Review with userid {userId} and dataProviderId {dataProviderId} was not found")
+            : base($"Review for this data provider was not found")
         {
 
         }

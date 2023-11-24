@@ -15,6 +15,6 @@ namespace Application.DTO.CarInsurance
         public string? Note { get; set; }
         public int? Odometer { get; set; }
         public DateOnly? ReportDate { get; set; }
-        public string InspectionNumber { get; set; }
+        public string InsuranceNumber { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace Application.DTO.CarAccidentHistory
     public class CarAccidentHistoryResponseDTO
     {
         public int Id { get; set; }
+        public string CarId { get; set; }
         public string Source { get; set; }
         public string? Location { get; set; }
         public float Serverity { get; set; }
