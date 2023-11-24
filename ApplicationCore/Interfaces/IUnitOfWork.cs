@@ -42,8 +42,6 @@ namespace Application.Interfaces
 
         ICarTrackingRepository CarTrackingRepository { get; }
 
-        ICarStolenHistoryRepository CarStolenHistoryRepository { get; }
-
         ICarInsuranceRepository CarInsuranceRepository { get; }
         Task SaveAsync();
     }

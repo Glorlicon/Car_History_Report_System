@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarCurrentDataProviderExist : BadRequestException
     {
         public CarCurrentDataProviderExist(string vinId)
-            :base($"car with id {vinId} in haven't been sold from other data provider")
+            :base($"car haven't been sold from other data provider")
         {
 
         }

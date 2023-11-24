@@ -73,6 +73,7 @@ namespace Application.DomainServices
 
         public override async Task UpdateCarHistory(int id, CarRegistrationHistoryUpdateRequestDTO request)
         {
+            var user = await _authenticationServices.GetCurrentUserAsync();
             request.LicensePlateNumber = request.LicensePlateNumber.Replace(".", string.Empty);
             var carHistory = await _carHistoryRepository.GetCarHistoryById(id, trackChange: true);
             if (carHistory is null)

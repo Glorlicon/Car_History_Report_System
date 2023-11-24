@@ -28,5 +28,6 @@ namespace Application.Interfaces
 
         Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter);
 
+        Task<R> InsuranceCompanyGetOwnCarHistoryDetail(int id);
     }
 }

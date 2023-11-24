@@ -4,6 +4,7 @@ using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarInsurance;
 using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarServiceHistory;
+using Application.DTO.CarStolenHistory;
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Configurations.EmailService;
@@ -53,7 +54,6 @@ namespace Infrastructure
             services.AddScoped<ICarSalesInfoRepository, CarSalesInfoRepository>();
             services.AddScoped<ICarPartRepository, CarPartRepository>();
             services.AddScoped<ICarOwnerHistoryRepository, CarOwnerHistoryRepository>();
-            services.AddScoped<ICarStolenHistoryRepository, CarStolenHistoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IRequestServices, RequestServices>();
@@ -117,6 +117,7 @@ namespace Infrastructure
             services.AddScoped<ICarServiceHistoryRepository, CarServiceHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarInspectionHistory, CarInspectionHistoryParameter>, CarInspectionHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarAccidentHistory, CarAccidentHistoryParameter>, CarAccidentHistoryRepository>();
+            services.AddScoped<ICarHistoryRepository<CarStolenHistory, CarStolenHistoryParameter>, CarStolenHistoryRepository>();
             services.AddScoped<ICarHistoryRepository<CarRegistrationHistory, CarRegistrationHistoryParameter>, CarRegistrationHistoryRepository>();
         }
 
