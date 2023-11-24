@@ -57,6 +57,31 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get Car Service Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,ServiceShop")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carServiceHistorys = new List<CarServiceHistoryCreateRequestDTO>
+            {
+                new CarServiceHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    OtherServices = "None",
+                    ServiceTime = DateTime.Now,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    Services = CarServiceType.TireRotation
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carServiceHistorys);
+        }
+
+        /// <summary>
         /// Get Car Service History By Id
         /// </summary>
         /// <param name="id"></param>

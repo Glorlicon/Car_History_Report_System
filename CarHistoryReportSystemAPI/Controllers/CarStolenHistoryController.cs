@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarStolenHistory;
 using Application.DTO.CarStolenHistory;
 using Application.Interfaces;
@@ -261,6 +262,29 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var carStolenHistory = await _carStolenHistoryService.InsuranceCompanyGetOwnCarHistoryDetail(id);
             return Ok(carStolenHistory);
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarStolenHistoryCreateRequestDTO>
+            {
+                new CarStolenHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    Description = "None",
+                    Status = Domain.Enum.CarStolenStatus.Stolen
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }
