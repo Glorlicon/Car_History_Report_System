@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { GetImages } from '../../../services/azure/Images';
-import { CarDealer, DataProvider } from '../../../utils/Interfaces';
+import { CarDealer, DataProvider, EditDataProvider } from '../../../utils/Interfaces';
 
 interface CarDealerProfileImageProps {
-    model: DataProvider
+    model: EditDataProvider
     handleAddImages: (event: React.ChangeEvent<HTMLInputElement>) => void
     handleRemoveImages: () => void
 }

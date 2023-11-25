@@ -1,83 +1,244 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { GetCarForSaleBySellerID, GetDealerProfile, ListCarForSale } from '../../services/api/CarForSale';
+import { AddReview, EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car , DataProvider, User } from '../../utils/Interfaces';
-
-function CarDealerProfile() {
+import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews, UserDataproviderId } from '../../utils/Interfaces';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
+function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carList, setCarList] = useState<Car[]>([]);
-    const [User, setUser] = useState<User | null>()
-    
-    const data = useSelector((state: RootState) => state.auth.token)
+    const [userDataprovider, setUserDataprovider] = useState < UserDataproviderId>()
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const [ratingValue, setRatingValue] = useState<number | null>(null);
+    const [comment, setComment] = useState('');
+    const [adding, setAdding] = useState(false);
+    const [addError, setAddError] = useState<string | null>(null);
+    const [review, setReview] = useState<Reviews[]>([]);
+    const [averageRating, setAverageRating] = useState(0);
+    const [starCounts, setStarCounts] = useState({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
+    const [userDetails, setUserDetails] = useState({
+        id: 0,
+        name: '',
+        description: '',
+        address: '',
+        websiteLink: '',
+        phoneNumber: '',
+        email: '',
+        type: 0,
+        imagelink: '',
+        workingTimes: Array(7).fill({
+            dayOfWeek: 0,
+            startHour: 0,
+            startMinute: 0,
+            endHour: 0,
+            endMinute: 0,
+            isClosed: true
+        })
+    });
+
+    interface TransformedWorkingTime {
+        dayOfWeek: number;
+        startHour: number;
+        startMinute: number;
+        endHour: number;
+        endMinute: number;
+        isClosed: boolean;
+    }
+
+    interface OriginalWorkingTime {
+        dayOfWeek: number;
+        startTime: string;
+        endTime: string;
+        isClosed: boolean;
+    }
+
+
+
+    const defaultSchedule = [
+        { dayOfWeek: 0, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 1, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 2, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 3, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 4, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 5, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 6, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+    ];
+
+    const isDefaultSchedule = (schedule: editWorkingTime[]) => {
+        return schedule.every(day =>
+            day.startHour === 0 &&
+            day.startMinute === 0 &&
+            day.endHour === 0 &&
+            day.endMinute === 0 &&
+            !day.isClosed
+        );
+    };
+
+    const [workingTimes, setWorkingTimes] = useState<editWorkingTime[]>(
+        userDetails?.workingTimes && userDetails.workingTimes.length > 0 ? userDetails.workingTimes : defaultSchedule
+    );
     type RouteParams = {
         id: string
     }
     const { id } = useParams<RouteParams>()
     const [overlayWidth, setOverlayWidth] = useState<string>('100%');
-
-
-    const [editCarSales, setEditCarSales] = useState<DataProvider | null>(null)
-
     const value = 50;
-    const max = 100; 
+    const max = 100;
+
+    // Handler for the rating change
+    const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
+        setRatingValue(newValue);
+        console.log("Rating", newValue);
+    };
+
+    // Handler for the comment change
+    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setComment(event.target.value);
+    };
+
+    const handleSubmitReview = async () => {
+        const actualId = id?.replace('id=', '');
+        const newReview: Reviews = {
+            userId: actualId,
+            description: comment,
+            rating: ratingValue || 0,
+            createdTime: new Date()
+        };
+        setReview(prevReviews => [...prevReviews, newReview]);
+        if (review != null) {
+        console.log("Submitted review:", newReview);
+        console.log("Target DataProvider", userDetails.id)
+            setAdding(true);
+            setAddError(null);
+            const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
+            setAdding(false);
+            if (reviewResponse.error) {
+                setAddError(reviewResponse.error);
+            } else {
+                fetchData()
+            }
+        }
+    };
+
+    useEffect(() => {
+        console.log("4")
+        fetchData();
+    }, []);
 
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const dataProviderResponse: APIResponse = await GetDealerProfile(id as unknown as string, token)
-        if (dataProviderResponse.error) {
-            setError(dataProviderResponse.error)
+        console.log("1")
+        const UserResponse: APIResponse = await GetUserById(id as string);
+        if (UserResponse.error) {
+            setError(UserResponse.error)
         } else {
-            setUser(dataProviderResponse.data)
-            console.log(dataProviderResponse.data)
+            setUserDataprovider(UserResponse.data)
+            const dataProviderResponse: APIResponse = await GetDealerProfileData(UserResponse.data.dataProviderId as unknown as string, token);
+            if (dataProviderResponse.error) {
+                setError(dataProviderResponse.error);
+            } else {
+                let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
+
+                if (Array.isArray(dataProviderResponse.data.workingTimes)) {
+                    transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
+                        const [startHour, startMinute] = time.startTime.split(':').map(Number);
+                        const [endHour, endMinute] = time.endTime.split(':').map(Number);
+
+                        return {
+                            dayOfWeek: time.dayOfWeek,
+                            startHour,
+                            startMinute,
+                            endHour,
+                            endMinute,
+                            isClosed: time.isClosed
+                        };
+                    });
+                }
+
+                setUserDetails({
+                    ...dataProviderResponse.data,
+                    workingTimes: transformedWorkingTimes
+                });
+                console.log("Detail", userDetails)
+                const carListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string);
+                if (carListResponse.error) {
+                    setError(carListResponse.error);
+                } else {
+                    setCarList(carListResponse.data);
+                }
+
+                const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+                if (reviewListResponse.error) {
+                    setError(reviewListResponse.error);
+                } else {
+                    setReview(reviewListResponse.data);
+                }
+
+                setLoading(false);
+            }
         }
-        console.log(User?.dataProviderId);
-
-        //Đổi lại trách nhiệm đăng bán xe sang cho car dealer và tìm car for sale theo id của dealer (hiện tại trong database đang là dataproviderID)
-        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.dataProviderId as unknown as string)
-        if (carListResponse.error) {
-            setError(carListResponse.error)
-        } else {
-            setCarList(carListResponse.data)
-            console.log(dataProviderResponse.data)
-        }
-
-        setLoading(false)
-    }
-
-    //const handleEditDealerProfile = async () => {
-    //    if (editCarSales != null) {
-    //        setAdding(true);
-    //        setAddError(null);
-    //        const response: APIResponse = await EditCarForSale({
-    //            ...editCarSales,
-    //            carImages: [
-    //                ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
-    //                ...addImages.data
-    //            ]
-    //        }, token);
-    //        console.log("1", editCarSales.carImages)
-    //        console.log("2", addImages.data)
-    //        setAdding(false);
-    //        if (response.error) {
-    //            setAddError(response.error);
-    //        } else {
-    //            setEditCarSales(null)
-    //            setModalPage(1)
-    //            fetchData();
-    //        }
-    //    }
+    };
 
     useEffect(() => {
-        fetchData();
+        console.log("2")
+        let totalRating = 0;
+        // Initialize counts with all required keys
+        let counts: { [key: string]: number } = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
+
+        review.forEach(review => {
+            if (review.rating >= 1 && review.rating <= 5) {
+                totalRating += review.rating;
+                const ratingKey = review.rating.toString();
+                // Assert that ratingKey is a key of counts
+                if (ratingKey in counts) {
+                    counts[ratingKey as keyof typeof counts]++;
+                }
+            }
+        });
+
+        const calculatedAverage = review.length > 0 ? totalRating / review.length : 0;
+        setAverageRating(calculatedAverage);
+        // Assert that counts matches the expected type for setStarCounts
+        setStarCounts(counts as { '1': number, '2': number, '3': number, '4': number, '5': number });
+    }, [review]);
+
+
+    useEffect(() => {
+        console.log("3")
         const percentage = Math.round((value / max) * 100);
         setOverlayWidth(`${100 - percentage}%`);
-    }, [value, max]);
+
+        setUserDetails((currentUser) => {
+            // Check if currentUser exists and if workingTimes needs to be set
+            if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
+                const updatedUser = {
+                    ...currentUser,
+                    workingTimes: defaultSchedule // Set workingTimes directly on currentUser
+                };
+                setWorkingTimes(defaultSchedule);
+                return updatedUser;
+            } else if (currentUser?.workingTimes) {
+                // If workingTimes already exists, just update the workingTimes state
+                setWorkingTimes(currentUser.workingTimes);
+            }
+
+            return currentUser; // Return the currentUser as is if no updates are needed
+        });
+
+    }, [value, max, userDetails, defaultSchedule]);
+
+    
+
+    
+
+
 
     return (
         <div className="car-dealer-profile">
@@ -91,39 +252,18 @@ function CarDealerProfile() {
 
                     {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
-                        <h1>{User?.userName}</h1>
+                        <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
-                            <p> num</p>
-                            <div className="stars">
-                                
-                                <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                    <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                </svg>
-                                <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                    <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                </svg>
-                                <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                    <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                </svg>
-                                <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                    <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                </svg>
-                                <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                    <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                </svg>
-                                <div className="overlay" style={{ width: overlayWidth }}></div>
-                            </div>
-                            <span className="favorites">
-                                favNum Favourited This Shop
-                            </span>
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             <div className="overlay"></div>
                         </div>
-                        
+
                     </div>
 
                     {/* Contact Info */}
                     <div className="phone-info">
-                        <span>Phone Number: {User?.phoneNumber}</span>
+                        <span>Phone Number: {userDetails?.phoneNumber}</span>
                     </div>
 
                     {/* Navigation */}
@@ -135,21 +275,24 @@ function CarDealerProfile() {
                 </div>
 
                 {/* Profile Image (This could be a user or dealer profile) */}
+                <div>
                     <div className="profile-image">
                         {/* Add image here */}
                     </div>
-                
+                </div>
 
-                
+
+
+
             </div>
             <div className="cars-for-sale-section">
                 <div className="listing-header">
-                    <h2>{carList.length} Used Vehicles for Sale at {User?.userName}</h2>
+                    <h2>{carList.length} Used Vehicles for Sale at {userDetails?.name}</h2>
                     <div className="filters">
                         Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
                     </div>
                 </div>
-                
+
 
                 <div className="vehicle-grid">
 
@@ -168,19 +311,19 @@ function CarDealerProfile() {
                         </tr>
                     ) : carList.length > 0 ? (
                         carList.map((model: any, index: number) => (
-                                <div className="vehicle-card">
-                                    <div className="vehicle-image"></div>
-                                    <p>Used <span>{model.modelId}</span></p>
-                                    <p>Price: <span>{model.carSalesInfo.price}</span></p>
-                                    <a href={`/sales/details/${model.vinId}`}>More Detail</a>
-                                </div>
+                            <div className="vehicle-card">
+                                <div className="vehicle-image"></div>
+                                <p>Used <span>{model.modelId}</span></p>
+                                <p>Price: <span>{model.carSalesInfo.price}</span></p>
+                                <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                            </div>
                         ))
                     ) : (
                         <tr>
                             <td colSpan={5}>No cars found</td>
                         </tr>
                     )}
-                        
+
                 </div>
                 <div className="pagination">
                     1 - 6 Result on 9 Total Result
@@ -197,49 +340,62 @@ function CarDealerProfile() {
             </div>
 
             <div className="ratings-reviews-section">
-                <h1>Ratings & Reviews //Later stage</h1>
+                <h1>Ratings & Reviews</h1>
                 <div className="rating-comment">
 
                     <div className="rating">
                         <div className="star-summary">
-                            <div className="star-rating">
-                                <span className="star-count">(Star)</span>
-                                <span className="star-icons">★★★★★</span>
-                            </div>
-                            <div className="star-search">
-                                <input type="text" placeholder="Search Reviews" />
-                            </div>
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
-
                         <div className="star-details">
-                            {["5 Stars", "4 Stars", "3 Stars", "2 Stars", "1 Stars"].map((star, index) => (
-                                <div className="star-row" key={index}>
-                                    <span className="star-label">{star}</span>
-                                    <div className="star-bar">
-                                        <div className="star-fill" style={{ width: "85%" }}></div> {/* Modify width based on the percentage */}
-                                    </div>
-                                    <span className="star-percentage">85%</span> {/* Modify percentage accordingly */}
-                                </div>
-                            ))}
+                            {Object.keys(starCounts)
+                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                .map((star, index) => {
+                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                    return (
+                                        <div className="star-row" key={index}>
+                                            <span className="star-label">{star} Stars</span>
+                                            <div className="star-bar">
+                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The filled portion of the bar */}
+                                                </div>
+                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The empty portion of the bar */}
+                                                </div>
+                                            </div>
+                                            <span className="star-percentage">{percentage}%</span>
+                                        </div>
+                                    );
+                                })}
                         </div>
                     </div>
 
 
                     <div className="reviews-list">
-                        {[1, 2, 3, 4, 5].map((review, index) => (
-                            <div className="review-card" key={index}>
-                                <div className="review-header">
-                                    <span className="review-stars">★★★★★</span>
-                                    <span className="review-user">by [Username] on [Date]</span>
+                        {review.length > 0 ? (
+                            review.map((reviewItem, index) => (
+                                <div className="review-card" key={index}>
+                                    <div className="review-header">
+                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
+                                        <Rating name="read-only" value={reviewItem.rating} readOnly />
+                                        {/* You might want to fetch the username using reviewItem.userId */}
+                                        <span className="review-user">
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                        </span>
+                                    </div>
+                                    <p className="review-content">
+                                        {reviewItem.description}
+                                    </p>
                                 </div>
-                                <p className="review-content">
-                                    Lorem ipsum dolor sit amet...
-                                </p>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p>No reviews available</p>
+                        )}
                     </div>
 
-                    
+
 
                 </div>
                 <div className="review-pagination">
@@ -249,46 +405,37 @@ function CarDealerProfile() {
                     ))}
                     <button className="pagination-button">Next</button>
                 </div>
-                
+
             </div>
 
 
             <div className="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>About Us</h2>
+                    <h2>Working Schedule</h2>
                 </div>
-                
-                <div className="about-us-information">
-                    <div className="contact-section">
-                        <h3>Get In Touch</h3>
-                        <div className="sales-information">
-                            <h4>Sales Information</h4>
-                            <p>New Car Sales: <span>Phonenum</span></p>
-                        </div>
 
-                        <div className="operation-hours">
-                            <p>Sunday: Closed</p>
-                            <p>Monday: Open - Close</p>
-                            <p>Tuesday: Open - Close</p>
-                            <p>Wednesday: Open - Close</p>
-                            <p>Thursday: Open - Close</p>
-                            <p>Friday: Open - Close</p>
-                            <p>Saturday: Open - Close</p>
-                        </div>
+                <div className="about-us-section">
+                    {/* ... other parts of the section ... */}
 
-                        <p>Location: <span>Address</span></p>
+                    <div className="operation-hours">
+                        {isDefaultSchedule(userDetails.workingTimes) ? (
+                            <p>No work schedule present</p>
+                        ) : (
+                            userDetails.workingTimes.map((day, index) => (
+                                <p key={index}>
+                                    {daysOfWeek[day.dayOfWeek]}:
+                                    {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                </p>
+                            ))
+                        )}
                     </div>
 
-                    {/*<div className="service-information">*/}
-                    {/*    <h3>Service Information</h3>*/}
-                    {/*    <p>Service: <span>ServiceNum</span></p>*/}
-                    {/*    <p>Location: <span>Address</span></p>*/}
-                    {/*</div>*/}
+                    {/* ... other parts of the section ... */}
                 </div>
             </div>
         </div>
     );
 }
 
-export default CarDealerProfile;
+export default CarDealerHomePage;

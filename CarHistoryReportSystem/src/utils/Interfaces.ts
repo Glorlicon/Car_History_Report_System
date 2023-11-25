@@ -45,17 +45,14 @@ export interface User {
     isSuspended?: boolean
     dataProviderId?: number | null
     avatarImageLink?: string
-    dataProvider?: {
-        name: string
-        description?: string
-        address?: string
-        websiteLink?: string
-        service?: string
-        phoneNumber?: string
-        email?: string
-        type: number
-    }
+    dataProvider?: DataProvider
 }
+
+export interface UserDataproviderId {
+    id: string
+    dataProviderId?: number | null
+}
+
 
 export interface Manufacturer {
     id: number
@@ -121,6 +118,7 @@ export interface DataProvider {
 }
 
 export interface EditDataProvider {
+    id: number
     name: string
     description?: string
     address?: string
@@ -353,11 +351,20 @@ export interface workingTimes {
     isClosed: boolean
 }
 
+export interface editWorkingTime {
+    dayOfWeek: number
+    startHour: number
+    startMinute: number
+    endHour: number
+    endMinute: number
+    isClosed: boolean
+}
+
 export interface Reviews {
-    userId: string
+    userId?: string
     description: string
     rating: number
-    //createdTime: Date
+    createdTime?: Date
 }
 
 export interface ModelMaintainanceDetails {

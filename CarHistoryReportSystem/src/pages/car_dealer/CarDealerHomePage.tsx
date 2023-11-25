@@ -1,12 +1,14 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData } from '../../services/api/Profile';
+import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, DataProvider, User, CarDealer, CarDealerImage, workingTimes, EditDataProvider } from '../../utils/Interfaces';
+import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function CarDealerHomePage() {
@@ -23,8 +25,12 @@ function CarDealerHomePage() {
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [adding, setAdding] = useState(false);
+    const [review, setReview] = useState<Reviews[]>([]);
+    const [averageRating, setAverageRating] = useState<number>(0);
+    const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
 
     const [userDetails, setUserDetails] = useState({
+        id:0,
         name: '',
         description: '',
         address: '',
@@ -62,20 +68,29 @@ function CarDealerHomePage() {
 
 
     const defaultSchedule = [
-        { dayOfWeek: 1, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 2, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 3, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 4, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 5, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 6, startTime: '', endTime: '', isClosed: false },
-        { dayOfWeek: 7, startTime: '', endTime: '', isClosed: false },
+        { dayOfWeek: 0, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 1, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 2, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 3, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 4, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 5, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
+        { dayOfWeek: 6, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
     ];
 
+    const isDefaultSchedule = (schedule: editWorkingTime[]) => {
+        return schedule.every(day =>
+            day.startHour === 0 &&
+            day.startMinute === 0 &&
+            day.endHour === 0 &&
+            day.endMinute === 0 &&
+            !day.isClosed
+        );
+    };
 
-    const [workingTimes, setWorkingTimes] = useState<workingTimes[]>(
-        User?.workingTimes && User.workingTimes.length > 0 ? User.workingTimes : defaultSchedule
-
+    const [workingTimes, setWorkingTimes] = useState<editWorkingTime[]>(
+        userDetails?.workingTimes && userDetails.workingTimes.length > 0 ? userDetails.workingTimes : defaultSchedule
     );
+
 
     
 
@@ -140,41 +155,96 @@ function CarDealerHomePage() {
             });
 
             console.log("Transformed Data:", userDetails);
+
+            const carListResponse: APIResponse = await GetCarForSaleBySellerID(userDetails?.id as unknown as string);
+            if (carListResponse.error) {
+                setError(carListResponse.error);
+            } else {
+                setCarList(carListResponse.data);
+                console.log("Car List Data:", carListResponse.data);
+            }
+
+            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+            if (reviewListResponse.error) {
+                setError(reviewListResponse.error);
+            } else {
+                setReview(reviewListResponse.data);
+            }
+
+            setLoading(false);
         }
 
-        const carListResponse: APIResponse = await GetCarForSaleBySellerID(User?.id as unknown as string);
-        if (carListResponse.error) {
-            setError(carListResponse.error);
-        } else {
-            setCarList(carListResponse.data);
-            console.log("Car List Data:", carListResponse.data);
-        }
+        
 
         setLoading(false);
     };
 
+    useEffect(() => {
+        console.log("2")
+        let totalRating = 0;
+        // Initialize counts with all required keys
+        let counts: { [key: string]: number } = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
+
+        review.forEach(review => {
+            if (review.rating >= 1 && review.rating <= 5) {
+                totalRating += review.rating;
+                const ratingKey = review.rating.toString();
+                // Assert that ratingKey is a key of counts
+                if (ratingKey in counts) {
+                    counts[ratingKey as keyof typeof counts]++;
+                }
+            }
+        });
+
+        const calculatedAverage = review.length > 0 ? totalRating / review.length : 0;
+        setAverageRating(calculatedAverage);
+        // Assert that counts matches the expected type for setStarCounts
+        setStarCounts(counts as { '1': number, '2': number, '3': number, '4': number, '5': number });
+    }, [review]);
 
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index?: number, field?: string) => {
-        //const { name, value, type } = e.target;
-        //let actualValue = type === 'checkbox' ? e.target.checked : value;
 
-        //if (index !== undefined && field) {
-        //    setUserDetails(prevDetails => {
-        //        const updatedTimes = prevDetails.workingTimes.map((time, i) =>
-        //            i === index ? { ...time, [field]: actualValue } : time
-        //        );
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
+        const { name, value, type } = e.target;
 
-        //        if (type === 'checkbox') {
-        //            updatedTimes[index] = { ...updatedTimes[index], startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 };
-        //        }
+        setEditDealerProfile(prevProfile => {
+            if (!prevProfile) return null;
 
-        //        return { ...prevDetails, workingTimes: updatedTimes };
-        //    });
-        //} else {
-        //    setUserDetails(prevDetails => ({ ...prevDetails, [name]: actualValue }));
-        //}
+            // If the change is related to working times
+            if (index !== undefined && field) {
+                let updatedTimes = [...prevProfile.workingTimes];
+
+                if (type === 'time') {
+                    const [hours, minutes] = value.split(':').map(Number);
+
+                    updatedTimes = updatedTimes.map((time, i) => {
+                        if (i === index) {
+                            if (field === 'startHour') {
+                                return { ...time, startHour: hours, startMinute: minutes };
+                            } else if (field === 'endHour') {
+                                return { ...time, endHour: hours, endMinute: minutes };
+                            }
+                        }
+                        return time;
+                    });
+                } else if (type === 'checkbox' && field === 'isClosed') {
+                    // Handle isClosed separately
+                    updatedTimes = updatedTimes.map((time, i) =>
+                        i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
+                    );
+                }
+
+                return { ...prevProfile, workingTimes: updatedTimes };
+            } else {
+                // For changes outside of working times
+                return { ...prevProfile, [name]: value };
+            }
+        });
+        console.log("updated user:", editDealerProfile)
     };
+
+
+
 
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -236,7 +306,7 @@ function CarDealerHomePage() {
         const percentage = Math.round((value / max) * 100);
         setOverlayWidth(`${100 - percentage}%`);
 
-        setUser((currentUser) => {
+        setUserDetails((currentUser) => {
             // Check if currentUser exists and if workingTimes needs to be set
             if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
                 const updatedUser = {
@@ -253,8 +323,8 @@ function CarDealerHomePage() {
             return currentUser; // Return the currentUser as is if no updates are needed
         });
 
-        console.log("User", User);
-    }, [value, max, User, defaultSchedule]);
+        console.log("User", userDetails);
+    }, [value, max, userDetails, defaultSchedule]);
 
 
 
@@ -270,27 +340,11 @@ function CarDealerHomePage() {
 
                         {/* Dealer Name and Ratings */}
                         <div className="dealer-info">
-                            <h1>{User?.name}</h1>
+                            <h1>{userDetails?.name}</h1>
                             <div className="rating-favoured">
-                                <p> num</p>
-                                <div className="stars">
-
-                                    <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                        <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                    </svg>
-                                    <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                        <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                    </svg>
-                                    <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                        <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                    </svg>
-                                    <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                        <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                    </svg>
-                                    <svg width="20" height="20" viewBox="0 0 940.688 940.688">
-                                        <path d="M885.344,319.071l-258-3.8l-102.7-264.399c-19.8-48.801-88.899-48.801-108.6,0l-102.7,264.399l-258,3.8 c-53.4,3.101-75.1,70.2-33.7,103.9l209.2,181.4l-71.3,247.7c-14,50.899,41.1,92.899,86.5,65.899l224.3-122.7l224.3,122.601 c45.4,27,100.5-15,86.5-65.9l-71.3-247.7l209.2-181.399C960.443,389.172,938.744,322.071,885.344,319.071z" />
-                                    </svg>
-                                    <div className="overlay" style={{ width: overlayWidth }}></div>
+                                <div className="star-summary">
+                                    <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                    <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                                 </div>
                                 <span className="favorites">
                                     favNum Favourited This Shop
@@ -302,7 +356,7 @@ function CarDealerHomePage() {
 
                         {/* Contact Info */}
                         <div className="phone-info">
-                            <span>Phone Number: {User?.phoneNumber}</span>
+                            <span>Phone Number: {userDetails?.phoneNumber}</span>
                         </div>
 
                         {/* Navigation */}
@@ -318,7 +372,7 @@ function CarDealerHomePage() {
                         <div className="profile-image">
                             {/* Add image here */}
                         </div>
-                        {/*<button onClick={() => { setEditDealerProfile({ ...User as EditDataProvider }) }}>Edit</button>*/}
+                        <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                     </div>
 
 
@@ -327,7 +381,7 @@ function CarDealerHomePage() {
                 </div>
                 <div className="cars-for-sale-section">
                     <div className="listing-header">
-                        <h2>{carList.length} Used Vehicles for Sale at {User?.name}</h2>
+                        <h2>{carList.length} Used Vehicles for Sale at {userDetails?.name}</h2>
                         <div className="filters">
                             Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
                         </div>
@@ -380,46 +434,59 @@ function CarDealerHomePage() {
                 </div>
 
                 <div className="ratings-reviews-section">
-                    <h1>Ratings & Reviews //Later stage</h1>
+                    <h1>Ratings & Reviews</h1>
                     <div className="rating-comment">
 
                         <div className="rating">
                             <div className="star-summary">
-                                <div className="star-rating">
-                                    <span className="star-count">(Star)</span>
-                                    <span className="star-icons">★★★★★</span>
-                                </div>
-                                <div className="star-search">
-                                    <input type="text" placeholder="Search Reviews" />
-                                </div>
+                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
-
                             <div className="star-details">
-                                {["5 Stars", "4 Stars", "3 Stars", "2 Stars", "1 Stars"].map((star, index) => (
-                                    <div className="star-row" key={index}>
-                                        <span className="star-label">{star}</span>
-                                        <div className="star-bar">
-                                            <div className="star-fill" style={{ width: "85%" }}></div> {/* Modify width based on the percentage */}
-                                        </div>
-                                        <span className="star-percentage">85%</span> {/* Modify percentage accordingly */}
-                                    </div>
-                                ))}
+                                {Object.keys(starCounts)
+                                    .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                    .map((star, index) => {
+                                        const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                        const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                        return (
+                                            <div className="star-row" key={index}>
+                                                <span className="star-label">{star} Stars</span>
+                                                <div className="star-bar">
+                                                    <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                        {/* The filled portion of the bar */}
+                                                    </div>
+                                                    <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                        {/* The empty portion of the bar */}
+                                                    </div>
+                                                </div>
+                                                <span className="star-percentage">{percentage}%</span>
+                                            </div>
+                                        );
+                                    })}
                             </div>
                         </div>
 
 
                         <div className="reviews-list">
-                            {[1, 2, 3, 4, 5].map((review, index) => (
-                                <div className="review-card" key={index}>
-                                    <div className="review-header">
-                                        <span className="review-stars">★★★★★</span>
-                                        <span className="review-user">by [Username] on [Date]</span>
+                            {review.length > 0 ? (
+                                review.map((reviewItem, index) => (
+                                    <div className="review-card" key={index}>
+                                        <div className="review-header">
+                                            {/* Display the stars based on the rating. This assumes a rating out of 5 */}
+                                            <Rating name="read-only" value={reviewItem.rating} readOnly />
+                                            {/* You might want to fetch the username using reviewItem.userId */}
+                                            <span className="review-user">
+                                                by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            </span>
+                                        </div>
+                                        <p className="review-content">
+                                            {reviewItem.description}
+                                        </p>
                                     </div>
-                                    <p className="review-content">
-                                        Lorem ipsum dolor sit amet...
-                                    </p>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p>No reviews available</p>
+                            )}
                         </div>
 
 
@@ -439,19 +506,22 @@ function CarDealerHomePage() {
                 <div className="about-us-section">
 
                     <div className="about-us-title">
-                        <h2>About Us</h2>
+                        <h2>Working Schedule</h2>
                     </div>
 
                     <div className="about-us-section">
                         {/* ... other parts of the section ... */}
 
                         <div className="operation-hours">
-                            {User?.workingTimes && User.workingTimes.some(day => day.startTime !== "" && day.endTime !== "") ? (
-                                User.workingTimes.map((day, index) => (
-                                    <p key={index}>{daysOfWeek[day.dayOfWeek - 1]}: {day.isClosed ? 'Closed' : `${day.startTime} - ${day.endTime}`}</p>
-                                ))
-                            ) : (
+                            {isDefaultSchedule(userDetails.workingTimes) ? (
                                 <p>No work schedule present</p>
+                            ) : (
+                                userDetails.workingTimes.map((day, index) => (
+                                    <p key={index}>
+                                        {daysOfWeek[day.dayOfWeek]}:
+                                        {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                    </p>
+                                ))
                             )}
                         </div>
 
@@ -463,20 +533,20 @@ function CarDealerHomePage() {
                         <div className="dealer-car-sales-modal-content">
                             <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
                             <h2>Edit Profile</h2>
-                            {/*{modalPage === 1 && (*/}
-                            {/*    <CarDealerProfilePage*/}
-                            {/*        action="Edit"*/}
-                            {/*        User={editDealerProfile}*/}
-                            {/*        handleInputChange={handleInputChange}*/}
-                            {/*    />*/}
-                            {/*)}*/}
-                            {/*{modalPage === 2 && (*/}
-                            {/*    <CarDealerProfileImage*/}
-                            {/*        model={editDealerProfile}*/}
-                            {/*        handleAddImages={handleAddImages}*/}
-                            {/*        handleRemoveImages={handleRemoveImage}*/}
-                            {/*    />*/}
-                            {/*)}*/}
+                            {modalPage === 1 && (
+                                <CarDealerProfilePage
+                                    action="Edit"
+                                    userDetails={editDealerProfile}
+                                    handleInputChange={handleInputChange}
+                                />
+                            )}
+                            {modalPage === 2 && (
+                                <CarDealerProfileImage
+                                    model={editDealerProfile}
+                                    handleAddImages={handleAddImages}
+                                    handleRemoveImages={handleRemoveImage}
+                                />
+                            )}
                             {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                                 <>
                                     <div>
