@@ -38,5 +38,8 @@ namespace Application.Interfaces
 
         Task<bool> ReviewDataProvider(int dataProviderId, DataProviderReviewCreateRequestDTO request);
 
+        Task<bool> EditReviewDataProvider(int dataProviderId, DataProviderReviewUpdateRequestDTO request);
+
+        Task<bool> DeleteReviewDataProvider(int dataProviderId, string userId);
     }
 }
