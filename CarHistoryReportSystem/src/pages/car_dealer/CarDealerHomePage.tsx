@@ -127,7 +127,7 @@ function CarDealerHomePage() {
         setLoading(true);
         setError(null);
 
-        const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string, token);
+        const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {

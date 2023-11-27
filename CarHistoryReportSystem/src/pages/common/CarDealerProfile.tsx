@@ -140,7 +140,7 @@ function CarDealerHomePage() {
             setError(UserResponse.error)
         } else {
             setUserDataprovider(UserResponse.data)
-            const dataProviderResponse: APIResponse = await GetDealerProfileData(UserResponse.data.dataProviderId as unknown as string, token);
+            const dataProviderResponse: APIResponse = await GetDealerProfileData(UserResponse.data.dataProviderId as unknown as string);
             if (dataProviderResponse.error) {
                 setError(dataProviderResponse.error);
             } else {
@@ -374,13 +374,33 @@ function CarDealerHomePage() {
 
 
                     <div className="reviews-list">
+                        {token && ( // This line checks if token is not null, which implies user is logged in
+                            <div className="comment-section">
+                                <form id="comment-form" onSubmit={(e) => { e.preventDefault(); handleSubmitReview(); }}>
+                                    <div className="star-rating">
+                                        <Rating
+                                            name="simple-controlled"
+                                            value={ratingValue}
+                                            onChange={handleRatingChange}
+                                        />
+                                    </div>
+                                    <textarea
+                                        id="comment"
+                                        name="comment"
+                                        placeholder="Write a comment..."
+                                        value={comment}
+                                        onChange={handleCommentChange}
+                                        required
+                                    ></textarea>
+                                    <button onClick={handleSubmitReview} disabled={adding}>Submit</button>
+                                </form>
+                            </div>
+                        )}
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
                                             by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
                                         </span>
@@ -394,6 +414,7 @@ function CarDealerHomePage() {
                             <p>No reviews available</p>
                         )}
                     </div>
+
 
 
 

@@ -1,15 +1,10 @@
 import axios, { AxiosError } from "axios";
 import { APIResponse, Car, CarSaleDetails, CarSalesInfo, DataProvider, EditDataProvider, Reviews } from "../../utils/Interfaces";
 
-export async function GetDealerProfileData(Id: String, token: string) {
+export async function GetDealerProfileData(Id: String) {
     console.log("New")
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${Id}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${Id}`
         )
         return { data: response.data }
     } catch (error) {
