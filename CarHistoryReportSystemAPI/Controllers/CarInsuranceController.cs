@@ -97,6 +97,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Car Service Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Service History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
+        [ProducesResponseType(typeof(IEnumerable<CarInsuranceHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarInsuranceHistoryByDataProviderIdAsync(int dataProviderId, [FromQuery] CarInsuranceHistoryParameter parameter)
+        {
+            var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
+            return Ok(carInsuranceHistorys);
+        }
+
+        /// <summary>
         /// Create Car Service History
         /// </summary>
         /// <param name="request"></param>

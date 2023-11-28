@@ -98,6 +98,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Car Stolen Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Stolen History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarStolenHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarStolenHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarStolenHistoryParameter parameter)
+        {
+            var carStolenHistorys = await _carStolenHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carStolenHistorys.PagingData));
+            return Ok(carStolenHistorys);
+        }
+
+        /// <summary>
         /// Create Car Stolen History
         /// </summary>
         /// <param name="request"></param>

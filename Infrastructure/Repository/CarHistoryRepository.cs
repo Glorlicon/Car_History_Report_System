@@ -75,6 +75,18 @@ namespace Infrastructure.Repository
                               .ToListAsync();
         }
 
+        public virtual async Task<IEnumerable<T>> GetCarHistorysByDataProviderId(int dataProviderId, P parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
         public virtual async Task<IEnumerable<T>> GetCarHistorysByOwnCompany(List<string> carIds, P parameter, bool trackChange)
         {
             var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);

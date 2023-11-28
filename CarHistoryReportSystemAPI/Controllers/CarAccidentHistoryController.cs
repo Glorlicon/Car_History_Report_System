@@ -99,6 +99,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get All Car Accident Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Accident History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarAccidentHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarAccidentHistoryParameter parameter)
+        {
+            var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
+            return Ok(carAccidentHistorys);
+        }
+
+        /// <summary>
         /// Create Car Accident History
         /// </summary>
         /// <param name="request"></param>
