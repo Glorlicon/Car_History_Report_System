@@ -51,6 +51,8 @@ import RegistryInspectionList from '../pages/vehicle_registry/RegistryInspection
 import RegistryRegistrationList from '../pages/vehicle_registry/RegistryRegistrationList';
 import InsuranceCompanyInsuranceList from '../pages/insurance_company/InsuranceCompanyInsuranceList';
 import PoliceCarCrashList from '../pages/police/PoliceCarCrashList';
+import SearchCarDealer from '../pages/common/SearchDealer'
+import SearchServiceShop from '../pages/common/SearchServiceShop'
 
 
 
@@ -72,6 +74,8 @@ const CustomRoutes = () => {
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
                 <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
                 <Route path="/sales/dealer/:id" element={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>} />
+                <Route path="/dealers/search" element={<UserLayout navItems={UserNavigation}> <SearchCarDealer /> </UserLayout>} />
+                <Route path="/services/search" element={<UserLayout navItems={UserNavigation}> <SearchServiceShop /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/maintenance" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><CarMaintenance /></UserLayout>}></ProtectedRoute>} />
