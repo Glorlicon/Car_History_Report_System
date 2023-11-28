@@ -1,0 +1,66 @@
+import React from 'react';
+import { CarInspectionDetail, CarInspectionHistory } from '../../../utils/Interfaces';
+interface RegistryInspectionInspectedCategoriesFormProps {
+    action: "Add" | "Edit"
+    model: CarInspectionHistory
+    handleAddInspectionCategory: () => void
+    handleRemoveInspectionCategory: (index: number) => void
+    handleInspectionCategoryStatus: (index: number) => void
+    handleChangeInspectionCategory: (index: number, name: string) => void
+    handleChangeInspectionNote: (index: number, name: string) => void
+}
+const RegistryInspectionInspectedCategoriesForm: React.FC<RegistryInspectionInspectedCategoriesFormProps> = ({
+    action,
+    model,
+    handleAddInspectionCategory,
+    handleRemoveInspectionCategory,
+    handleInspectionCategoryStatus,
+    handleChangeInspectionCategory,
+    handleChangeInspectionNote
+}) => {
+  return (
+      <div className="reg-inspec-form-columns-2">
+          <div className="reg-inspec-form-column-2">
+              <label>Inspected Categories: </label>
+              <button className="reg-inspec-add-inspec-category-btn" type="button" onClick={handleAddInspectionCategory}>+Add Inspection Category</button>
+              <table className="reg-inspec-inspec-category-table">
+                  <thead>
+                      <tr>
+                          <th>Inspection Category</th>
+                          <th>Status</th>
+                          <th>Note</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {model.carInspectionHistoryDetail.length > 0 ? (
+                          model.carInspectionHistoryDetail.map((item: CarInspectionDetail, index: number) => (
+                          <tr key={index}>
+                              <td>
+                                  <input type="text" name={`category${index}`} value={item.inspectionCategory} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeInspectionCategory(index, e.target.value)} />
+                              </td>
+                              <td>
+                                  <input type="checkbox" name={`passed${index}`} checked={item.isPassed} onChange={() => handleInspectionCategoryStatus(index)} />
+                                  <label>{item.isPassed ? "Passed" : "Not passed"}</label>
+                              </td>
+                              <td>
+                                  <input type="text" name={`note${index}`} value={item.note} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeInspectionNote(index, e.target.value)} />
+                              </td>
+                              <td>
+                              <button className="reg-inspec-remove-inspec-category-btn" type="button" onClick={() => handleRemoveInspectionCategory(index)}>Remove</button>
+                              </td>
+                          </tr>
+                          ))
+                      ):(
+                      <tr>
+                          <td colSpan={4}>No inspection categories</td>
+                      </tr>
+                      )}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  );
+}
+
+export default RegistryInspectionInspectedCategoriesForm;

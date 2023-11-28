@@ -1,6 +1,16 @@
 export interface APIResponse {
     data?: any
     error?: string
+    pages?: Paging
+}
+
+export interface Paging {
+    CurrentPage: number
+    TotalPages: number
+    PageSize: number
+    TotalCount: number
+    HasPrevious: boolean
+    HasNext: boolean
 }
 
 export interface LoginResponse {
@@ -218,14 +228,15 @@ export interface CarHistoryDetail {
     endDate: string;
     carOwner: CarOwner;
     carServiceHistories: CarServiceHistory[];
-    carAccidentHistories: CarAccidentHistory[];
+    carAccidentHistories: CarCrash[];
     carInspectionHistories: CarInspectionHistory[];
     carInsurances: CarInsurance[];
-    carStolenHistories: CarStolenHistory[];
+    carStolenHistories: CarStolen[];
+    carRegistrationHistories: CarRegistration[];
     generalCarHistories: GeneralCarHistory[];
 }
 
-interface CarOwner {
+export interface CarOwner {
     id: string;
     name: string;
     phoneNumber: string;
@@ -259,24 +270,29 @@ export interface CarServiceHistory {
     lastModified: string;
 }
 
-interface CarAccidentHistory {
-    // Define properties for CarAccidentHistory here
+
+export interface CarInspectionHistory {
+    id?: string
+    carId: string
+    note?: string
+    odometer: number
+    reportDate: string
+    source?: string
+    description: string
+    inspectionNumber: string
+    inspectDate: string
+    carInspectionHistoryDetail: CarInspectionDetail[]
 }
 
-
-interface CarInspectionHistory {
-    // Define properties for CarInspectionHistory here
+export interface CarInspectionDetail {
+    id?: number
+    carInspectionHistoryId?: number
+    inspectionCategory: string
+    isPassed: boolean
+    note?: string
 }
 
-interface CarInsuranceHistory {
-    // Define properties for CarInsurance here
-}
-
-interface CarStolenHistory {
-    // Define properties for CarStolenHistory here
-}
-
-interface GeneralCarHistory {
+export interface GeneralCarHistory {
     reportDate: string;
     odometer: number;
     historyType: string;
