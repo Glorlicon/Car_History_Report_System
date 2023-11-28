@@ -11,6 +11,6 @@ export function JWTDecoder(token: string): Token {
         nameidentifier: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
         email: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
         iss: decodedToken["iss"],
-        dataprovider: decodedToken["dataprovider"]
+        dataprovider: decodedToken["dataprovider"],
     }
 }

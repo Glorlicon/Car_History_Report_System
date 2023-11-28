@@ -45,17 +45,14 @@ export interface User {
     isSuspended?: boolean
     dataProviderId?: number | null
     avatarImageLink?: string
-    dataProvider?: {
-        name: string
-        description?: string
-        address?: string
-        websiteLink?: string
-        service?: string
-        phoneNumber?: string
-        email?: string
-        type: number
-    }
+    dataProvider?: DataProvider
 }
+
+export interface UserDataproviderId {
+    id: string
+    dataProviderId?: number | null
+}
+
 
 export interface Manufacturer {
     id: number
@@ -65,6 +62,17 @@ export interface Manufacturer {
     websiteLink?: string
     phoneNumber?: string
     email?: string
+}
+
+export interface CarDealer {
+    id: number
+    userName: string
+    dataProvider: DataProvider
+}
+
+export interface CarDealerImage {
+    id?: string
+    avatarImageLink?: string
 }
 
 export interface CarModel {
@@ -105,6 +113,30 @@ export interface DataProvider {
     email?: string
     type: number
     typeName: string
+    imagelink?: string
+    workingTimes?: workingTimes[]
+}
+
+export interface EditDataProvider {
+    id: number
+    name: string
+    description?: string
+    address?: string
+    websiteLink?: string
+    service?: string
+    phoneNumber?: string
+    email?: string
+    type: number
+    typeName: string
+    imagelink?: string
+    workingTimes: {
+        dayOfWeek: number,
+        startHour: number,
+        startMinute: number,
+        endHour: number,
+        endMinute: number,
+        isClosed: boolean
+        }[]
 }
 
 export interface CarSalesInfo {
@@ -113,6 +145,7 @@ export interface CarSalesInfo {
     features: string[]
     price: number
     carImages?: CarImages[]
+    dataProvider?: DataProvider;
 }
 
 export interface CarSaleDetails {
@@ -125,12 +158,12 @@ export interface CarSaleDetails {
     note: string
 }
 
-export interface CarImages {
-    id?: number
-    carId?: string
-    imageLink: string
+    export interface CarImages {
+        id?: number
+        carId?: string
+        imageLink: string
 
-}
+    }
 export interface Car {
     vinId: string
     licensePlateNumber: string
@@ -142,6 +175,7 @@ export interface Car {
     isModified: boolean
     isCommercialUse: boolean
     model?: CarModel
+    createdByUserId?: string;
     carSalesInfo?: CarSalesInfo
     carImages?: CarImages[]
 }
@@ -317,11 +351,20 @@ export interface workingTimes {
     isClosed: boolean
 }
 
+export interface editWorkingTime {
+    dayOfWeek: number
+    startHour: number
+    startMinute: number
+    endHour: number
+    endMinute: number
+    isClosed: boolean
+}
+
 export interface Reviews {
-    userId: string
+    userId?: string
     description: string
     rating: number
-    //createdTime: Date
+    createdTime?: Date
 }
 
 export interface ModelMaintainanceDetails {
