@@ -210,6 +210,9 @@
   <data name="object not exist in list" xml:space="preserve">
     <value>Không tồn tại trong danh sách</value>
   </data>
+  <data name="Odometer value must be equal or greater than 0" xml:space="preserve">
+    <value>Quãng đường đi này phải lớn hơn 0</value>
+  </data>
   <data name="Order not found" xml:space="preserve">
     <value>Đơn đặt hàng không tìm thấy</value>
   </data>

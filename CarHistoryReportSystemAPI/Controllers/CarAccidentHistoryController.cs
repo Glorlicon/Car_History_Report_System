@@ -1,10 +1,12 @@
 ﻿using Application.Common.Models;
 using Application.DomainServices;
 using Application.DTO.CarAccidentHistory;
+using Application.DTO.CarServiceHistory;
 using Application.DTO.CarStolenHistory;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarAccidentHistory;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -92,6 +94,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistoryByUserIdAsync(string userId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
+            return Ok(carAccidentHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Accident Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Accident History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarAccidentHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarAccidentHistoryParameter parameter)
+        {
+            var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -261,6 +280,33 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var carAccidentHistory = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistoryDetail(id);
             return Ok(carAccidentHistory);
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarAccidentHistoryCreateRequestDTO>
+            {
+                new CarAccidentHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    AccidentDate = DateOnly.FromDateTime(DateTime.Now),
+                    DamageLocation = AccidentDamageLocation.Front | AccidentDamageLocation.Rear | AccidentDamageLocation.Left | AccidentDamageLocation.Right,
+                    Description = "None",
+                    Location = null,
+                    Serverity = 0.5f
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }

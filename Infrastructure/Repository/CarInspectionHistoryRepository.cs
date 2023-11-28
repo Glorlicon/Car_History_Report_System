@@ -65,5 +65,18 @@ namespace Infrastructure.Repository
                               .Take(parameter.PageSize)
                               .ToListAsync();
         }
+
+        public override async Task<IEnumerable<CarInspectionHistory>> GetCarHistorysByDataProviderId(int dataProviderId, CarInspectionHistoryParameter parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Include(x => x.CarInspectionHistoryDetail)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarStolenHistory;
 using Application.DTO.CarStolenHistory;
 using Application.Interfaces;
@@ -92,6 +93,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarStolenHistoryByUserIdAsync(string userId, [FromQuery] CarStolenHistoryParameter parameter)
         {
             var carStolenHistorys = await _carStolenHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carStolenHistorys.PagingData));
+            return Ok(carStolenHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Stolen Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Stolen History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarStolenHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarStolenHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarStolenHistoryParameter parameter)
+        {
+            var carStolenHistorys = await _carStolenHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carStolenHistorys.PagingData));
             return Ok(carStolenHistorys);
         }
@@ -261,6 +279,29 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             var carStolenHistory = await _carStolenHistoryService.InsuranceCompanyGetOwnCarHistoryDetail(id);
             return Ok(carStolenHistory);
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarStolenHistoryCreateRequestDTO>
+            {
+                new CarStolenHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    Description = "None",
+                    Status = Domain.Enum.CarStolenStatus.Stolen
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }
