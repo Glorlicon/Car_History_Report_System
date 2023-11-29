@@ -68,12 +68,21 @@ function CarDealerCarList() {
     };
 
     const handleRemoveFeature = (index: number) => {
-        const newFeatures = [...newCarSales.features];
-        newFeatures.splice(index, 1);
-        setNewCarSales({
-            ...newCarSales,
-            features: newFeatures,
-        });
+        if (editCarSales) {
+            let editFeatures = [...editCarSales.features];
+            editFeatures.splice(index, 1);
+            setEditCarSales({
+                ...editCarSales,
+                features: editFeatures,
+            });
+        } else {
+            let newFeatures = [...newCarSales.features];
+            newFeatures.splice(index, 1);
+            setNewCarSales({
+                ...newCarSales,
+                features: newFeatures,
+            });
+        }
     };
 
     const handleAddCarSales = async () => {
@@ -100,8 +109,6 @@ function CarDealerCarList() {
         if (editCarSales != null && validateCarSales(editCarSales)) {
             setAdding(true);
             setAddError(null);
-            console.log("11", removedImages)
-            console.log("22", newImages)
             const addImages = await UploadMultipleImages(removedImages, newImages)
             const response: APIResponse = await EditCarForSale({
                 ...editCarSales,
@@ -110,8 +117,6 @@ function CarDealerCarList() {
                     ... addImages.data
                 ]
             }, token);
-            console.log("1", editCarSales.carImages)
-            console.log("2",addImages.data)
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);

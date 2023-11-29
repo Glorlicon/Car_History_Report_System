@@ -111,8 +111,8 @@
     margin-right: 75%;
 }
 .payment-info label a{
-    margin-right: 100%;
     font-size: 18px;
+    text-align: left;
 }
 
 .payment-method img {

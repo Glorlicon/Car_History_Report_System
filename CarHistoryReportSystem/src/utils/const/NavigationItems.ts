@@ -7,18 +7,16 @@ export const UserNavigation = [
             { label: 'Track My Car Maintenance', link: '/maintenance' }
         ]
     },
-    { label: 'Car Values', link: '/value' },
     { label: 'Request', link: '/request' }
 ]
 
 export const RequestNavigation = [
-    { label: 'My Request', link: '/request' }
+    { label: 'My Requests', link: '/request' }
 ]
 
 
 export const AdminNavigation = [
     { label: 'Users List', link: '/admin/users' },
-    { label: 'Admin Car List', link: '/admin/cars' },
     { label: 'Admin Car Model List', link: '/admin/car-models' },
     { label: 'Admin Manufacturer List', link: '/admin/manufacturers' },
     { label: 'Request List', link: '/admin/requests' },
@@ -42,12 +40,12 @@ export const CarDealerNavigation = [
 
 export const ServiceShopNavigation = [
     { label: 'Service Shop Details', link: '/service' },
-    { label: 'Car Maintainance List', link: '/service/car-service' },
+    { label: 'Car Service List', link: '/service/car-service' },
     { label: 'Recall List', link: '/service/recalls' },
 ]
 
 export const PoliceNavigation = [
-    { label: 'Partitial Plate Search', link: '/police/plate-search' },
+    { label: 'Partial Plate Search', link: '/police/plate-search' },
     { label: 'VIN Alert', link: '/police/vin-alert' },
     { label: 'Car Crash Reports', link: '/police/crash' },
     { label: 'Car Stolen Reports', link: '/police/stolen' },

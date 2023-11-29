@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../store/State';
 import '../../styles/PaymentPage.css'
@@ -9,9 +9,13 @@ import { ReportPackage } from '../../utils/Interfaces';
 import logo from '../../VNPAY-Logo-scaled.jpg'
 import CryptoJS from 'crypto-js';
 import qs from 'qs'
+import { useTranslation } from 'react-i18next';
 
 function PaymentPage() {
+    const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [selectedPackage, setSelectedPackage] = useState<ReportPackage | null>(null)
     const [bank, setBank] = useState<string>('NCB')
     const [amount, setAmount] = useState<number>(0)
@@ -77,36 +81,39 @@ function PaymentPage() {
         const queryUrl = VNP_CONST.PAYMENT_URL + "?" + data + `&vnp_SecureHash=${signedData}`
         window.location.href = queryUrl
     }
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    },[])
     return (
       <div className="payment-page">
             <div className="payment-page-header">
-                <h1>Order CHRS Reports</h1>
+                <h1>{t('Order CHRS Reports')}</h1>
             </div>
         <div className="payment-details">
           <div className="report-checks">
-              <h3>EACH CHRS REPORT CHECKS FOR</h3>
+              <h3>{t('EACH CHRS REPORT CHECKS FOR')}</h3>
               <ul>
-                  <li>Car General Information</li>
-                  <li>Car Recall History</li>
-                  <li>Car Ownership History</li>
-                  <li>Car Service History</li>
-                  <li>Car Accident History</li>
-                  <li>Car Inspection History</li>
-                  <li>Car Insurance History</li>
-                  <li>Car Stolen Accidents History</li>
+                  <li>{t('Car General Information')}</li>
+                  <li>{t('Car Recall History')}</li>
+                  <li>{t('Car Ownership History')}</li>
+                  <li>{t('Car Service History')}</li>
+                  <li>{t('Car Accident History')}</li>
+                  <li>{t('Car Inspection History')}</li>
+                  <li>{t('Car Insurance History')}</li>
+                  <li>{t('Car Stolen Accidents History')}</li>
               </ul>
           </div>
           <div className="payment-forms">
               <div className="package-selection">
-                        <h3>Step 1: Select Your Package:</h3>
+                        <h3>{t('Step 1: Select Your Package:')}</h3>
                         {token ? (
                             <>
                                 {ReportPackages.map((reportpackage, index) => (
                                     <div className="package-option">
                                         <input type="radio" name="reportOption" id={`package${index}`} onChange={() => { handleSelectPackage(index) }} />
                                         <label htmlFor={`package${index}`}>
-                                            <span>{reportpackage.title} - {reportpackage.price}VND ({reportpackage.pricePerReport}VND/report)</span>
-                                            <span className={reportpackage.type.toLowerCase().replace(/ /g, "-")}>$ {reportpackage.type} $</span>
+                                            <span>{t(reportpackage.title)} - {reportpackage.price}VND ({reportpackage.pricePerReport}VND/{t('report')})</span>
+                                            <span className={reportpackage.type.toLowerCase().replace(/ /g, "-")}>$ {t(reportpackage.type)} $</span>
                                         </label>
                                     </div>
                                 ))}
@@ -116,8 +123,8 @@ function PaymentPage() {
                                     <div className="package-option">
                                         <input type="radio" name="reportOption" id={`package${0}`} onChange={() => { handleSelectPackage(0) }} />
                                         <label htmlFor={`package${0}`}>
-                                            <span>{ReportPackages[0].title} - {ReportPackages[0].price}VND ({ReportPackages[0].pricePerReport}VND/report)</span>
-                                            <span className={ReportPackages[0].type.toLowerCase().replace(/ /g, "-")}>$ {ReportPackages[0].type} $</span>
+                                            <span>{t(ReportPackages[0].title)} - {ReportPackages[0].price}VND ({ReportPackages[0].pricePerReport}VND/{t('report')})</span>
+                                            <span className={ReportPackages[0].type.toLowerCase().replace(/ /g, "-")}>$ {t(ReportPackages[0].type)} $</span>
                                         </label>
                                     </div>
                             </>
@@ -125,7 +132,7 @@ function PaymentPage() {
               </div>
 
               <div className="payment-method">
-                  <h3>Step 2: Select Method of Payment:</h3>
+                  <h3>{t('Step 2: Select Method of Payment:')}</h3>
                   <div className="payment-option">
                         <input type="radio" id="vnpay" name="method" checked/>
                         <img src={logo} alt="Credit Card Logo" /> 
@@ -133,47 +140,47 @@ function PaymentPage() {
               </div>
               <div className="payment-info">
                         <label>
-                            <a>Amount</a>
-                            <input type="text" name="amount" value={selectedPackage?.price ? selectedPackage?.price:"Package Price"} disabled  />
+                            <a>{t('Amount')}</a>
+                            <input type="text" name="amount" value={selectedPackage?.price ? selectedPackage?.price : t('Package Price')} disabled  />
                         </label>
                         <label>
-                            <a>Description</a>
-                            <input type="text" name="description" value={selectedPackage?.title? `Purchase ${selectedPackage?.title}` : "Package Description"} disabled />
+                            <a>{t('Description')}</a>
+                            <input type="text" name="description" value={selectedPackage?.title? t(`Purchase ${selectedPackage?.title}`) : t('Package Description')} disabled />
                         </label>
                   <label>
-                            <a>Language</a>
+                            <a>{t('Language')}</a>
                             <select name="language" onChange={(e) => setLanguage(e.target.value)}>
-                                <option value="vn" selected>Vietnamese</option>
-                                <option value="en">English</option>
+                                <option value="vn" selected>{t('Vietnamese')}</option>
+                                <option value="en">{t('English')}</option>
                             </select>
                   </label>
                         <label>
-                            <a>Bank</a>
+                            <a>{t('Bank')}</a>
                             <select name="bankcode" onChange={(e) => setBank(e.target.value)}>
-                                <option value="NCB" selected>Ngan hang NCB</option>
-                                <option value="SACOMBANK">Ngan hang SacomBank  </option>
-                                <option value="EXIMBANK">Ngan hang EximBank </option>
-                                <option value="MSBANK">Ngan hang MSBANK </option>
-                                <option value="NAMABANK">Ngan hang NamABank </option>
-                                <option value="VISA">Thanh toan qua VISA/MASTER</option>
-                                <option value="VNMART">Vi dien tu VnMart</option>
-                                <option value="VIETINBANK">Ngan hang Vietinbank  </option>
-                                <option value="VIETCOMBANK">Ngan hang VCB </option>
-                                <option value="HDBANK">Ngan hang HDBank</option>
-                                <option value="DONGABANK">Ngan hang Dong A</option>
-                                <option value="TPBANK">Ngan hang TPBank </option>
-                                <option value="OJB">Ngan hang OceanBank</option>
-                                <option value="BIDV">Ngan hang BIDV </option>
-                                <option value="TECHCOMBANK">Ngan hang Techcombank </option>
-                                <option value="VPBANK">Ngan hang VPBank </option>
-                                <option value="AGRIBANK">Ngan hang Agribank </option>
-                                <option value="MBBANK">Ngan hang MBBank </option>
-                                <option value="ACB">Ngan hang ACB </option>
-                                <option value="OCB">Ngan hang OCB </option>
+                                <option value="NCB" selected> NCB </option>
+                                <option value="SACOMBANK"> SacomBank </option>
+                                <option value="EXIMBANK"> EximBank </option>
+                                <option value="MSBANK"> MSBANK </option>
+                                <option value="NAMABANK"> NamABank </option>
+                                <option value="VISA"> VISA/MASTER </option>
+                                <option value="VNMART"> {t('VnMart')} </option>
+                                <option value="VIETINBANK"> Vietinbank </option>
+                                <option value="VIETCOMBANK"> VCB </option>
+                                <option value="HDBANK"> HDBank </option>
+                                <option value="DONGABANK"> {t('Dong A')} </option>
+                                <option value="TPBANK"> TPBank </option>
+                                <option value="OJB"> OceanBank </option>
+                                <option value="BIDV"> BIDV </option>
+                                <option value="TECHCOMBANK"> Techcombank </option>
+                                <option value="VPBANK"> VPBank </option>
+                                <option value="AGRIBANK"> Agribank </option>
+                                <option value="MBBANK"> MBBank </option>
+                                <option value="ACB"> ACB </option>
+                                <option value="OCB"> OCB </option>
                             </select>
                   </label>
               </div>
-              <button className="report-buy-button" type="submit" disabled={selectedPackage ? false : true} onClick={handlePayment}>BUY REPORTS</button>
+              <button className="report-buy-button" type="submit" disabled={selectedPackage ? false : true} onClick={handlePayment}>{t('BUY REPORTS')}</button>
           </div>
       </div>
      </div>
