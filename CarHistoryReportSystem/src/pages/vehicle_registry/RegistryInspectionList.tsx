@@ -37,35 +37,35 @@ function RegistryInspectionList() {
     const [searchQuery, setSearchQuery] = useState('');
     const validateCarInspection = (inspection: CarInspectionHistory): boolean => {
         if (!isValidVIN(inspection.carId)) {
-            setAddError("VIN is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
         if (!inspection.carId) {
-            setAddError("VIN must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
         if (inspection.odometer <= 0 ) {
-            setAddError("Odometer must be higher than 0");
+            setAddError(t('Odometer must be higher than 0'));
             return false;
         }
         if (!inspection.reportDate) {
-            setAddError("Report Date must be chosen");
+            setAddError(t('Report Date must be chosen'));
             return false;
         }
         if (!inspection.description) {
-            setAddError("Description must be filled out");
+            setAddError(t('Description must be filled out'));
             return false;
         }
         if (!inspection.inspectionNumber) {
-            setAddError("Inspection Number must be filled out");
+            setAddError(t('Inspection Number must be filled out'));
             return false;
         }
         if (!inspection.inspectDate) {
-            setAddError("Inspect Date must be chosen");
+            setAddError(t('Inspect Date must be chosen'));
             return false;
         }
         if (inspection.carInspectionHistoryDetail.length === 0 ) {
-            setAddError("Inspection must have details");
+            setAddError(t('Inspection must have details'));
             return false;
         }
         for (let i = 0; i < inspection.carInspectionHistoryDetail.length; i++) {
@@ -77,7 +77,7 @@ function RegistryInspectionList() {
 
     const validateCarInsectionDetails = (detail: CarInspectionDetail): boolean => {
         if (!detail.inspectionCategory) {
-            setAddError("Inspection Category must be filled out");
+            setAddError(t('Inspection Category must be filled out'));
             return false;
         }
 
@@ -87,7 +87,8 @@ function RegistryInspectionList() {
         if (validateCarInspection(newInspection)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AddCarInspection(newInspection, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            const response: APIResponse = await AddCarInspection(newInspection, token, connectAPIError);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -102,7 +103,8 @@ function RegistryInspectionList() {
         if (editInspection != null && editInspection.id != null && validateCarInspection(editInspection)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token, connectAPIError);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -242,7 +244,8 @@ function RegistryInspectionList() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carInspectionResponse: APIResponse = await ListCarInspection(token, page)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        const carInspectionResponse: APIResponse = await ListCarInspection(token, page, connectAPIError)
         if (carInspectionResponse.error) {
             setError(carInspectionResponse.error)
         } else {
@@ -259,12 +262,12 @@ function RegistryInspectionList() {
   return (
       <div className="reg-inspec-list-page">
           <div className="reg-inspec-top-bar">
-              <button className="add-reg-inspec-btn" onClick={() => setShowModal(true)}>+ Add Car Inspection</button>
+              <button className="add-reg-inspec-btn" onClick={() => setShowModal(true)}>{t('+ Add Car Inspection')}</button>
               <div className="reg-inspec-search-filter-container">
                   <input
                       type="text"
                       className="reg-inspec-search-bar"
-                      placeholder="Search..."
+                      placeholder={t('Search...')}
                       value={searchQuery}
                       onChange={handleSearchChange}
                   />
@@ -273,9 +276,9 @@ function RegistryInspectionList() {
           <table className="reg-inspec-table">
               <thead>
                   <tr>
-                      <th>VIN</th>
-                      <th>Inspection Number</th>
-                      <th>Inspect Date</th>
+                      <th>{t('VIN')}</th>
+                      <th>{t('Inspection Number')}</th>
+                      <th>{t('Inspect Date')}</th>
                   </tr>
               </thead>
               <tbody>
@@ -289,7 +292,7 @@ function RegistryInspectionList() {
                       <tr>
                           <td colSpan={3} style={{ textAlign: 'center' }}>
                               {error}
-                              <button onClick={fetchData} className="reg-inspec-retry-btn">Retry</button>
+                              <button onClick={fetchData} className="reg-inspec-retry-btn">{t('Retry')}</button>
                           </td>
                       </tr>
                   ) : inspectionList.length > 0 ? (
@@ -302,7 +305,7 @@ function RegistryInspectionList() {
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={3}>No car inspections found</td>
+                          <td colSpan={3}>{t('No car inspections found')}</td>
                       </tr>
                   )}
               </tbody>
@@ -320,7 +323,7 @@ function RegistryInspectionList() {
               <div className="reg-inspec-modal">
                   <div className="reg-inspec-modal-content">
                       <span className="reg-inspec-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
-                      <h2>Add Car</h2>
+                      <h2>{t('Add Car Inspection')}</h2>
                       {modalPage === 1 && (
                           <RegistryInspectionDetailsForm
                               action="Add"
@@ -340,10 +343,10 @@ function RegistryInspectionList() {
                           />
                       )}
                       <button onClick={handlePreviousPage} disabled={modalPage === 1} className="reg-inspec-prev-btn">
-                          Previous
+                          {t('Previous')}
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="reg-inspec-next-btn">
-                          {modalPage < 2 ? 'Next' : (adding ? (<div className="reg-inspec-inline-spinner"></div>) : 'Add')}
+                          {modalPage < 2 ? t('Next') : (adding ? (<div className="reg-inspec-inline-spinner"></div>) : t('Finish'))}
                       </button>
                       {addError && (
                           <p className="reg-inspec-error">{addError}</p>
@@ -355,7 +358,7 @@ function RegistryInspectionList() {
               <div className="reg-inspec-modal">
                   <div className="reg-inspec-modal-content">
                       <span className="reg-inspec-close-btn" onClick={() => { setEditInspection(null); setModalPage(1) }}>&times;</span>
-                      <h2>Edit Car</h2>
+                      <h2>{t('Edit Car Inspection')}</h2>
                       {modalPage === 1 && (
                           <RegistryInspectionDetailsForm
                               action="Edit"
@@ -375,10 +378,10 @@ function RegistryInspectionList() {
                           />
                       )}
                       <button onClick={handlePreviousPage} disabled={modalPage === 1} className="reg-inspec-prev-btn">
-                          Previous
+                          {t('Previous')}
                       </button>
                       <button onClick={handleNextPage} disabled={adding} className="reg-inspec-next-btn">
-                          {modalPage < 2 ? 'Next' : (adding ? (<div className="reg-inspec-model-inline-spinner"></div>) : 'Update')}
+                          {modalPage < 2 ? t('Next') : (adding ? (<div className="reg-inspec-model-inline-spinner"></div>) : t('Finish'))}
                       </button>
                       {addError && (
                           <p className="reg-inspec-error">{addError}</p>
