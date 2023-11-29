@@ -123,21 +123,40 @@ export async function GetReviewByDataProvider(Id: number) {
     }
 }
 
-//export async function GetReviewByDataProvider(Id: number) {
-//    console.log("New")
-//    try {
-//        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/reviews?DataproviderId=${Id}`,
-//        )
-//        return { data: response.data }
-//    } catch (error) {
-//        const axiosError = error as AxiosError
-//        console.log("Add Error!: ", error)
-//        if (axiosError.code === "ERR_NETWORK") {
-//            return { error: "Network error. Please check your internet connection!" }
-//        } else if (axiosError.response?.status === 404) {
-//            return { error: (axiosError.response.data as any).error }
-//        } else {
-//            return { error: "Something went wrong. Please try again" }
-//        }
-//    }
-//}
+export async function GetCarServiceByDataprovider(Id: number) {
+    console.log("New")
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory/data-provider/${Id}`,
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log("Add Error!: ", error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else if (axiosError.response?.status === 404) {
+            return { error: (axiosError.response.data as any).error }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+
+export async function GetDataProviderByID(Id: number) {
+    console.log(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${Id}`)
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${Id}`,
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log("Add Error!: ", error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else if (axiosError.response?.status === 404) {
+            return { error: (axiosError.response.data as any).error }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
