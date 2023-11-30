@@ -32,7 +32,7 @@ namespace Application.DomainServices
         {
             var carModels = await _carSpecRepository.GetAllCarModels(parameter, trackChange);
             var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
-            var count = await _carSpecRepository.CountAll();
+            var count = await _carSpecRepository.CountAll(parameter);
             return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -40,7 +40,7 @@ namespace Application.DomainServices
         {
             var carModels = await _carSpecRepository.GetAllCarModelsTest(parameter, trackChange);
             var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
-            var count = await _carSpecRepository.CountAll();
+            var count = await _carSpecRepository.CountAll(parameter);
             return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -60,7 +60,7 @@ namespace Application.DomainServices
         {
             var carModels = await _carSpecRepository.GetCarModelByUserId(userId, parameter, trackChange);
             var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
-            var count = await _carSpecRepository.CountByCondition(cs => cs.CreatedByUserId == userId);
+            var count = await _carSpecRepository.CountByCondition(cs => cs.CreatedByUserId == userId, parameter);
             return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -68,7 +68,7 @@ namespace Application.DomainServices
         {
             var carModels =  await _carSpecRepository.GetCarModelByManufacturerId(manufacturerId,parameter, trackChange);
             var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
-            var count = await _carSpecRepository.CountByCondition(cs => cs.ManufacturerId == manufacturerId);
+            var count = await _carSpecRepository.CountByCondition(cs => cs.ManufacturerId == manufacturerId, parameter);
             return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -76,7 +76,7 @@ namespace Application.DomainServices
         {
             var carModels = await _carSpecRepository.GetCarModelsCreatedByAdminstrator(parameter, trackChange: false);
             var carModelsResponse = _mapper.Map<List<CarSpecificationResponseDTO>>(carModels);
-            var count = await _carSpecRepository.CountByCondition(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator);
+            var count = await _carSpecRepository.CountByCondition(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, parameter);
             return new PagedList<CarSpecificationResponseDTO>(carModelsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
