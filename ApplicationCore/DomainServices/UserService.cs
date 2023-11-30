@@ -92,6 +92,10 @@ namespace Application.DomainServices
         public async Task<UserResponseDTO> GetUser(string id)
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
+            if(user is null)
+            {
+                throw new UserNotFoundException("User was not found");
+            }
             var userResponse = _mapper.Map<UserResponseDTO>(user);
             userResponse.RoleName = user.Role.ToString();
             return userResponse;
