@@ -86,5 +86,15 @@
   "Previous": "Trước",
   "Next": "Sau",
   "Finish": "Hoàn tất",
-  "Edit Car Inspection": "Chỉnh sửa thông tin đăng kiểm"
+  "Edit Car Inspection": "Chỉnh sửa thông tin đăng kiểm",
+  "Car ID": "Số khung số máy",
+  "Note": "Ghi chú",
+  "Report Date": "Ngày báo cáo",
+  "Inspected Categories": "Các mục đăng kiểm",
+  "Status": "Trạng thái",
+  "Action": "Hoạt động",
+  "Inspection Category": "Mục đăng kiểm",
+  "Passed": "Đã qua",
+  "Not passed": "Chưa qua",
+  "No inspection categories": "Không có hạng mục đăng kiểm nào"
 }

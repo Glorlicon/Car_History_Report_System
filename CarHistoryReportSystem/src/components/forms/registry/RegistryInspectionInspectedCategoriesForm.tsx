@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/State';
 import { CarInspectionDetail, CarInspectionHistory } from '../../../utils/Interfaces';
 interface RegistryInspectionInspectedCategoriesFormProps {
     action: "Add" | "Edit"
@@ -18,18 +21,24 @@ const RegistryInspectionInspectedCategoriesForm: React.FC<RegistryInspectionInsp
     handleChangeInspectionCategory,
     handleChangeInspectionNote
 }) => {
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const edit = action === "Edit"
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
   return (
       <div className="reg-inspec-form-columns-2">
           <div className="reg-inspec-form-column-2">
-              <label>Inspected Categories: </label>
+              <label>{t('Inspected Categories')}: </label>
               <button className="reg-inspec-add-inspec-category-btn" type="button" onClick={handleAddInspectionCategory}>+Add Inspection Category</button>
               <table className="reg-inspec-inspec-category-table">
                   <thead>
                       <tr>
-                          <th>Inspection Category</th>
-                          <th>Status</th>
-                          <th>Note</th>
-                          <th>Action</th>
+                          <th>{t('Inspection Category')}</th>
+                          <th>{t('Status')}</th>
+                          <th>{t('Note')}</th>
+                          <th>{t('Action')}</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -41,7 +50,7 @@ const RegistryInspectionInspectedCategoriesForm: React.FC<RegistryInspectionInsp
                               </td>
                               <td>
                                   <input type="checkbox" name={`passed${index}`} checked={item.isPassed} onChange={() => handleInspectionCategoryStatus(index)} />
-                                  <label>{item.isPassed ? "Passed" : "Not passed"}</label>
+                                  <label>{item.isPassed ? t('Passed') : t('Not passed')}</label>
                               </td>
                               <td>
                                   <input type="text" name={`note${index}`} value={item.note} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeInspectionNote(index, e.target.value)} />
@@ -53,7 +62,7 @@ const RegistryInspectionInspectedCategoriesForm: React.FC<RegistryInspectionInsp
                           ))
                       ):(
                       <tr>
-                          <td colSpan={4}>No inspection categories</td>
+                          <td colSpan={4}>{t('No inspection categories')}</td>
                       </tr>
                       )}
                   </tbody>

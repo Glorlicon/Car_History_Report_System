@@ -1,6 +1,7 @@
 import React from 'react';
 import { CarCrash } from '../../../utils/Interfaces';
 import car from '../../../car.jpg'
+import { CAR_SIDES } from '../../../utils/const/CarSides';
 interface PoliceCarCrashDetailsFormProps {
     action: "Add" | "Edit"
     model: CarCrash
@@ -13,12 +14,6 @@ const PoliceCarCrashDetailsForm: React.FC<PoliceCarCrashDetailsFormProps> = ({
     handleInputChange,
     handleDamageLocationChange
 }) => {
-    const sides = {
-        front: 1,  
-        rear: 2,   
-        left: 4,   
-        right: 8, 
-    };
     const isSideColored = (sideValue: number): boolean => {
         return (model.damageLocation & sideValue) === sideValue;
     };
@@ -40,16 +35,16 @@ const PoliceCarCrashDetailsForm: React.FC<PoliceCarCrashDetailsFormProps> = ({
                   <label>Damage Location</label>
                   <div className="pol-crash-car-container">
                       <img src={car} alt="Car" className="pol-crash-car-image" style={{
-                          borderTop: `5px solid ${isSideColored(sides.front) ? 'red' : 'black'}`,
-                          borderBottom: `5px solid ${isSideColored(sides.rear) ? 'red' : 'black'}`,
-                          borderLeft: `5px solid ${isSideColored(sides.left) ? 'red' : 'black'}`,
-                          borderRight: `5px solid ${isSideColored(sides.right) ? 'red' : 'black'}`,
+                          borderTop: `5px solid ${isSideColored(CAR_SIDES.Front) ? 'red' : 'black'}`,
+                          borderBottom: `5px solid ${isSideColored(CAR_SIDES.Rear) ? 'red' : 'black'}`,
+                          borderLeft: `5px solid ${isSideColored(CAR_SIDES.Left) ? 'red' : 'black'}`,
+                          borderRight: `5px solid ${isSideColored(CAR_SIDES.Right) ? 'red' : 'black'}`,
                       }} />
                   </div>
               </div>
               <div className="pol-crash-form-column">
                   <div className="pol-crash-checkboxes">
-                      {Object.entries(sides).map(([key, value]) => (
+                      {Object.entries(CAR_SIDES).map(([key, value]) => (
                           <label key={key}>
                               {key.charAt(0).toUpperCase() + key.slice(1)}
                               <input

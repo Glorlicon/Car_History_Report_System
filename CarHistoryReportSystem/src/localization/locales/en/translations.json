@@ -86,5 +86,15 @@
   "Previous": "Previous",
   "Next": "Next",
   "Finish": "Finish",
-  "Edit Car Inspection": "Edit Car Inspection"
+  "Edit Car Inspection": "Edit Car Inspection",
+  "Car ID": "Car ID",
+  "Note": "Note",
+  "Report Date": "Report Date",
+  "Inspected Categories": "Inspected Categories",
+  "Status": "Status",
+  "Action": "Action",
+  "Inspection Category": "Inspection Category",
+  "Passed": "Passed",
+  "Not passed": "Not passed",
+  "No inspection categories": "No inspection categories"
 }

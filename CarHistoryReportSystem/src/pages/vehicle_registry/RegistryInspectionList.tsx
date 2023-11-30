@@ -88,7 +88,8 @@ function RegistryInspectionList() {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
-            const response: APIResponse = await AddCarInspection(newInspection, token, connectAPIError);
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await AddCarInspection(newInspection, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -104,7 +105,8 @@ function RegistryInspectionList() {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
-            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token, connectAPIError);
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -245,7 +247,8 @@ function RegistryInspectionList() {
         setLoading(true);
         setError(null);
         let connectAPIError = t('Cannot connect to API! Please try again later')
-        const carInspectionResponse: APIResponse = await ListCarInspection(token, page, connectAPIError)
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carInspectionResponse: APIResponse = await ListCarInspection(token, page, connectAPIError, language)
         if (carInspectionResponse.error) {
             setError(carInspectionResponse.error)
         } else {

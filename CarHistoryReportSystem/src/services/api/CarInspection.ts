@@ -1,12 +1,13 @@
 import axios, { AxiosError } from "axios"
 import { APIResponse, CarInspectionHistory } from "../../utils/Interfaces"
 
-export async function ListCarInspection(token: string, pageNumber: number, connectAPIError: string): Promise<APIResponse> {
+export async function ListCarInspection(token: string, pageNumber: number, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    /*'Accept-Language': `${language}`*/
                 },
                 params: {
                     PageNumber: pageNumber
@@ -18,17 +19,18 @@ export async function ListCarInspection(token: string, pageNumber: number, conne
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
 
-export async function AddCarInspection(data: CarInspectionHistory, token: string, connectAPIError: string): Promise<APIResponse> {
+export async function AddCarInspection(data: CarInspectionHistory, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory`, data,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -39,17 +41,18 @@ export async function AddCarInspection(data: CarInspectionHistory, token: string
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
 
-export async function EditCarInspection(id: string, data: CarInspectionHistory, token: string, connectAPIError: string): Promise<APIResponse> {
+export async function EditCarInspection(id: string, data: CarInspectionHistory, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/${id}`, data,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -60,7 +63,7 @@ export async function EditCarInspection(id: string, data: CarInspectionHistory, 
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
