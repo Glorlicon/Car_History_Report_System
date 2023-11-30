@@ -1,14 +1,17 @@
-﻿import react, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import SearchDealerForm from '../../components/forms/common/SearchDealerForm';
+import { GetDataProviderByType } from '../../services/api/SearchShop';
 import { RootState } from '../../store/State';
 import '../../styles/DealerSearch.css';
-import { APIResponse, DataProvider } from '../../utils/Interfaces';
+import { APIResponse, DataProvider, Reviews } from '../../utils/Interfaces';
+import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
 
 function SearchDealer() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [CarDealerList, setCarDealerList] = useState<DataProvider[]>([]);
+    const [carDealerList, setCarDealerList] = useState<DataProvider[]>([]);
 
 
     // Example hardcoded data
@@ -80,29 +83,38 @@ function SearchDealer() {
         // Perform search logic here
     };
 
-    //const fetchData = async () => {
-    //    setLoading(true);
-    //    setError(null);
-    //    const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-    //    if (reviewListResponse.error) {
-    //        setError(reviewListResponse.error);
-    //    } else {
-    //        setReview(reviewListResponse.data);
-    //    }
-    //    setLoading(false);
-    //};
+    const calculateAverageRating = (reviews: Reviews[]) => {
+        console.log('Reviews Data:', reviews); // Debug log
+        const totalRating = reviews.reduce((acc, review) => {
+            console.log('Review Rating:', review.rating); // Debug log to check each rating
+            return acc + (typeof review.rating === 'number' ? review.rating : 0); // Ensure rating is a number
+        }, 0);
+        return reviews.length > 0 ? totalRating / reviews.length : 0;
+    };
 
-    //useEffect(() => {
-    //    fetchData();
-    //}, []);
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        const DataProviderResponse: APIResponse = await GetDataProviderByType(0)
+        if (DataProviderResponse.error) {
+            setError(DataProviderResponse.error);
+        } else {
+            setCarDealerList(DataProviderResponse.data);
+            console.log(DataProviderResponse.data)
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
 
     return (
         <div className="search-dealer-container">
             <div className="search-header">
                 <h1>Find Dealer Near Me</h1>
                 <p>CHRIS provides accurate service data with customer reviews to help you find the right service center.</p>
-                <input type="text" placeholder="Search by City, State" />
-                {/* Dropdowns and filters can be added here */}
             </div>
             <SearchDealerForm
                 handleInputChange={handleInputChange}
@@ -110,20 +122,27 @@ function SearchDealer() {
             />
             <div className="dealer-map-container">
                 <div className="dealer-list">
-                    {dealers.map((dealer, index) => (
-                        <div className="dealer-card" key={index}>
-                            <div className="shop-information">
-                                <h2>{dealer.name}</h2>
-                                <div className="dealer-rating">
-                                    {'⭐'.repeat(Math.floor(dealer.rating))}{' '}
-                                    {dealer.reviewCount} Users Reviewed
+                    {carDealerList.map((dealer, index) => {
+                        const averageRating = calculateAverageRating(dealer.reviews || []);
+                        console.log('Average Rating:', averageRating); // Debug log
+                        return (
+                            <a href={`../sales/dealer/${dealer.id}`} key={index}>
+                                <div className="dealer-card">
+                                    <div className="shop-information">
+                                        <h2>{dealer.name}</h2>
+                                        <div className="star-summary">
+                                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                            <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
+                                        </div>
+                                        <div className="dealer-address">{dealer.address}</div>
+                                        <button className="phone-button">Phone Number: {dealer.phoneNumber}</button>
+                                    </div>
                                 </div>
-                                <div className="dealer-address">{dealer.address}</div>
-                                <button className="phone-button">Phone Number</button>
-                            </div>
-                        </div>
-                    ))}
+                            </a>
+                        );
+                    })}
                 </div>
+
                 <div className="map-placeholder">
                     {/* Placeholder content for the map */}
                     <div className="map-content">Map will go here</div>

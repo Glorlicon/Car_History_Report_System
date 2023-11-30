@@ -125,6 +125,7 @@ export interface DataProvider {
     typeName: string
     imagelink?: string
     workingTimes?: workingTimes[]
+    reviews?: Reviews[]
 }
 
 export interface EditDataProvider {

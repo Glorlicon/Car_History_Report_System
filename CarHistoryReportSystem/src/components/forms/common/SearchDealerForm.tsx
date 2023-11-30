@@ -33,7 +33,7 @@ const SearchDealerForm: React.FC<SearchDealerFormProps> = ({
               </select>
 
               <input type="text" placeholder="Search Shops" />
-              <button onClick={handleSearch}>🔍</button>
+              <button onClick={handleSearch}>Search</button>
 
               <select onChange={handleInputChange} name="sort" id="sort">
                   {/* Populate with options */}

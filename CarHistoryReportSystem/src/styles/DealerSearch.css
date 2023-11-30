@@ -1,4 +1,5 @@
 ﻿.search-dealer-container {
+    margin-top:60px;
     padding: 20px;
     background-color: #f9f9f9;
 }
@@ -208,4 +209,30 @@
 .shop-information {
     text-align: left;
     padding: 10px;
+}
+
+.star-summary {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns items to the start of the container */
+    gap: 10px; /* Adjust the space between items */
+    padding: 0; /* Removes any default padding */
+    margin: 0; /* Removes any default margin */
+}
+
+    /* Ensures the Typography component does not push away the Rating component */
+    .star-summary .MuiTypography-root {
+        margin: 0;
+        padding-right: 10px; /* Adds some space after the text */
+    }
+
+    /* Ensures the Rating component does not have margin/padding affecting the layout */
+    .star-summary .MuiRating-root {
+        margin: 0;
+        padding: 0;
+    }
+
+/* Additional reset styles in case other global styles are affecting the layout */
+*, *::before, *::after {
+    box-sizing: border-box; /* Makes sure padding does not affect overall width */
 }
