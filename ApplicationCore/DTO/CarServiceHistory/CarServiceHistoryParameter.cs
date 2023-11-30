@@ -9,5 +9,8 @@ namespace Application.DTO.CarServiceHistory
 {
     public class CarServiceHistoryParameter : PagingParameters
     {
+        public string? CarId { get; set; }
+        public DateTime? ServiceTimeStart { get; set; }
+        public DateTime? ServiceTimeEnd { get; set; }
     }
 }

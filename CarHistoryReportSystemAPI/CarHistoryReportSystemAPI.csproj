@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1" />
+    <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.22" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.22">

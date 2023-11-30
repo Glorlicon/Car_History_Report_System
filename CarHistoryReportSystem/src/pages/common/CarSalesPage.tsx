@@ -7,6 +7,7 @@ import '../../styles/CarForSale.css'
 
 function CarSalesPage() {
     const data = useSelector((state: RootState) => state.auth.token);
+    console.log(data);
     const [error, setError] = useState<string | null>(null);
     const [carList, setCarList] = useState<Car[]>([]);
     const [modelList, setModelList] = useState<CarModel[]>([]);

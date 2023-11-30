@@ -303,6 +303,59 @@ namespace CarHistoryReportSystemAPI.Controllers
             //}
             var review = await _dataProviderService.ReviewDataProvider(dataProviderId, request);
             return Ok(review);
+        }        
+        
+        /// <summary>
+        /// Edit Review Data Provider
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns></returns>
+        /// <response code="201">Edit Review Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="500">Edit Review Failed</response>
+        [HttpPut("{dataProviderId}/review", Name = "ReviewDataProvider")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EditReviewDataProvider(int dataProviderId, [FromBody] DataProviderReviewUpdateRequestDTO request)
+        {
+            //DataProviderCreateRequestDTOValidator validator = new DataProviderCreateRequestDTOValidator();
+            //var validationResult = validator.Validate(request);
+            //if (!validationResult.IsValid)
+            //{
+            //    var errors = new ErrorDetails();
+            //    foreach (var error in validationResult.Errors)
+            //    {
+            //        errors.Error.Add(error.ErrorMessage);
+            //    }
+            //    return BadRequest(errors);
+            //}
+            var review = await _dataProviderService.EditReviewDataProvider(dataProviderId, request);
+            return Ok(review);
+        }
+
+        /// <summary>
+        /// Delete Review Data Provider
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <response code="204">Deleted Successfully</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="404">Review Data Provider Not Found</response>
+        /// <response code="500">Delete Failed</response>
+        [HttpDelete("{dataProviderId}/review/{userId}")]
+        [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteReviewDataProviderAsync(int dataProviderId, string userId)
+        {
+            var result = await _dataProviderService.DeleteReviewDataProvider(dataProviderId, userId);
+            return NoContent();
+
         }
     }
 }

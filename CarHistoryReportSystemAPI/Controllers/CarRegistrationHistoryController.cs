@@ -1,9 +1,11 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarRegistrationHistory;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarRegistrationHistory;
 using CarHistoryReportSystemAPI.Resources;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -92,6 +94,22 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarRegistrationHistoryByUserIdAsync(string userId, [FromQuery] CarRegistrationHistoryParameter parameter)
         {
             var carRegistrationHistorys = await _carRegistrationHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRegistrationHistorys.PagingData));
+            return Ok(carRegistrationHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Registration Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Registration History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [ProducesResponseType(typeof(IEnumerable<CarRegistrationHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarRegistrationHistoryByDataProviderIdAsync(int dataProviderId, [FromQuery] CarRegistrationHistoryParameter parameter)
+        {
+            var carRegistrationHistorys = await _carRegistrationHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRegistrationHistorys.PagingData));
             return Ok(carRegistrationHistorys);
         }
@@ -229,6 +247,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             await _carRegistrationHistoryService.DeleteCarHistory(id);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,VehicleRegistry")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarRegistrationHistoryCreateRequestDTO>
+            {
+                new CarRegistrationHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    ExpireDate = DateOnly.FromDateTime(DateTime.Now),
+                    LicensePlateNumber = "12A-12345",
+                    OwnerName = "Nguyen Van A",
+                    RegistrationNumber = "A12345"
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }

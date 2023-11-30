@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios"
 import { Token } from "typescript"
 import { DATA_PROVIDERS } from "../../utils/const/DataProviderTypes"
-import { APIResponse, Manufacturer } from "../../utils/Interfaces"
+import { APIResponse, CarSalesInfo, Manufacturer } from "../../utils/Interfaces"
 
 export async function ListDataProviderTypes(token: string): Promise<APIResponse> {
     try {
@@ -87,3 +87,25 @@ export async function EditManufacturer(data: Manufacturer, token: string): Promi
         }
     }
 }
+
+//export async function EditDealer(data: , token: string) {
+//    console.log("Data", data)
+//    try {
+//        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${data.carId}/car-sales-info`, data,
+//            {
+//                headers: {
+//                    'Authorization': `Bearer ${token}`
+//                }
+//            }
+//        )
+//        return { data: response.data }
+//    } catch (error) {
+//        const axiosError = error as AxiosError
+//        console.log("Add Error!: ", error)
+//        if (axiosError.code === "ERR_NETWORK") {
+//            return { error: "Network error. Please check your internet connection!" }
+//        } else {
+//            return { error: "Something went wrong. Please try again" }
+//        }
+//    }
+//}

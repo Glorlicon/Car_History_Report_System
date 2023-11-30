@@ -32,7 +32,7 @@ namespace Application.DomainServices
         {
             var orders = await _unitOfWork.OrderRepository.GetAllOrders(parameter, false);
             var ordersResponse = _mapper.Map<List<OrderResponseDTO>>(orders);
-            var count = await _unitOfWork.OrderRepository.CountAll();
+            var count = await _unitOfWork.OrderRepository.CountAll(parameter);
             return new PagedList<OrderResponseDTO>(ordersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -51,7 +51,7 @@ namespace Application.DomainServices
         {
             var orders = await _unitOfWork.OrderRepository.GetOrderByUserId(userId, parameter, false);
             var ordersResponse = _mapper.Map<List<OrderResponseDTO>>(orders);
-            var count = await _unitOfWork.OrderRepository.CountByCondition(x => x.UserId == userId);
+            var count = await _unitOfWork.OrderRepository.CountByCondition(x => x.UserId == userId, parameter);
             return new PagedList<OrderResponseDTO>(ordersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
         public async Task<CreateOrderResult> CreateOrder(OrderCreateRequestDTO request)

@@ -185,6 +185,50 @@ namespace Application.DomainServices
             review.DataProviderId = dataProviderId;
             review.UserId = user.Id;
             _reviewRepository.Create(review);
+            await _reviewRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<bool> EditReviewDataProvider(int dataProviderId, DataProviderReviewUpdateRequestDTO request)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, trackChange: false);
+            if (dataProvider is null)
+            {
+                throw new DataProviderNotFoundException(dataProviderId);
+            }
+            var oldReview = await _reviewRepository.GetReview(user.Id, dataProviderId, trackChange: true);
+            if (oldReview is null)
+            {
+                throw new OldReviewNotExistException(user.Id, dataProviderId);
+            }
+            _mapper.Map(request, oldReview);
+            await _reviewRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteReviewDataProvider(int dataProviderId, string userId)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, false);
+            if (dataProvider is null)
+            {
+                throw new DataProviderNotFoundException(dataProviderId);
+            }
+            var review = await _reviewRepository.GetReview(user.Id, dataProviderId, trackChange: true);
+            if (review is null)
+            {
+                throw new OldReviewNotExistException(user.Id, dataProviderId);
+            }
+            _reviewRepository.Delete(review);
             await _dataProviderRepository.SaveAsync();
             return true;
         }

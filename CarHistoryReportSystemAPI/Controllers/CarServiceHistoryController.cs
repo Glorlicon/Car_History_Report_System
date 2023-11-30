@@ -57,6 +57,31 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
+        /// Get Car Service Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,ServiceShop")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carServiceHistorys = new List<CarServiceHistoryCreateRequestDTO>
+            {
+                new CarServiceHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    OtherServices = "None",
+                    ServiceTime = DateTime.Now,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    Services = CarServiceType.TireRotation
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carServiceHistorys);
+        }
+
+        /// <summary>
         /// Get Car Service History By Id
         /// </summary>
         /// <param name="id"></param>
@@ -98,6 +123,22 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarServiceHistoryByUserIdAsync(string userId, [FromQuery] CarServiceHistoryParameter parameter)
         {
             var carServiceHistorys = await _carServiceHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carServiceHistorys.PagingData));
+            return Ok(carServiceHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Service Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Service History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [ProducesResponseType(typeof(IEnumerable<CarServiceHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarServiceHistoryByDataProviderIdAsync(int dataProviderId, [FromQuery] CarServiceHistoryParameter parameter)
+        {
+            var carServiceHistorys = await _carServiceHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carServiceHistorys.PagingData));
             return Ok(carServiceHistorys);
         }

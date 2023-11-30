@@ -73,6 +73,14 @@ namespace Application.DomainServices
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
+        public async Task<PagedList<R>> GetCarHistoryByDataProviderId(int dataProviderId, P parameter)
+        {
+            var carHistorys = await _carHistoryRepository.GetCarHistorysByDataProviderId(dataProviderId, parameter, false);
+            var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
+            var count = await _carHistoryRepository.CountCarHistoryByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, parameter);
+            return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
         public virtual async Task<int> CreateCarHistory(C request)
         {
             var carHistory = _mapper.Map<T>(request);
