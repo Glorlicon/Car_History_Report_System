@@ -96,5 +96,19 @@
   "Inspection Category": "Mục đăng kiểm",
   "Passed": "Đã qua",
   "Not passed": "Chưa qua",
-  "No inspection categories": "Không có hạng mục đăng kiểm nào"
+  "No inspection categories": "Không có hạng mục đăng kiểm nào",
+  "Excel Template": "Tải File Excel mẫu",
+  "Import From Excel": "Thêm từ file Excel",
+  "From": "Từ",
+  "To": "Đến",
+  "Inspection Date": "Ngày đăng kiểm",
+  "Search by Inspection Number": "Tìm theo số quản lý",
+  "Search by Car ID": "Tìm theo số khung số máy",
+  "Reset Filters": "Hủy bỏ bộ lọc",
+  "Export to excel": "Xuất ra file Excel",
+  "All rights reserved": "Đã đăng ký Bản quyền",
+  "Address": "Địa chỉ",
+  "Phone": "Điện thoại",
+  "FPT University, Ha Noi, Vietnam": "Đại học FPT, Hà Nội, Việt Nam",
+  "Add Inspection Category": "Thêm hạng mục đăng kiểm"
 }

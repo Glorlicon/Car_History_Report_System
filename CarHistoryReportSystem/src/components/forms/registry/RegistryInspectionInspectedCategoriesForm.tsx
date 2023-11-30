@@ -31,7 +31,7 @@ const RegistryInspectionInspectedCategoriesForm: React.FC<RegistryInspectionInsp
       <div className="reg-inspec-form-columns-2">
           <div className="reg-inspec-form-column-2">
               <label>{t('Inspected Categories')}: </label>
-              <button className="reg-inspec-add-inspec-category-btn" type="button" onClick={handleAddInspectionCategory}>+Add Inspection Category</button>
+              <button className="reg-inspec-add-inspec-category-btn" type="button" onClick={handleAddInspectionCategory}>+{t('Add Inspection Category')}</button>
               <table className="reg-inspec-inspec-category-table">
                   <thead>
                       <tr>

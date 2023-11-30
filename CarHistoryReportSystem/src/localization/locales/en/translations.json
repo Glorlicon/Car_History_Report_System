@@ -96,5 +96,20 @@
   "Inspection Category": "Inspection Category",
   "Passed": "Passed",
   "Not passed": "Not passed",
-  "No inspection categories": "No inspection categories"
+  "No inspection categories": "No inspection categories",
+  "Excel Template": "Download Excel Template",
+  "Import From Excel": "Import From Excel",
+  "From": "From",
+  "To": "To",
+  "Inspection Date": "Inspection Date",
+  "Search by Inspection Number": "Search by Inspection Number",
+  "Search by Car ID": "Search by Car ID",
+  "Reset Filters": "Reset Filters",
+  "Export to excel": "Export to excel",
+  "All rights reserved": "All rights reserved",
+  "Address": "Address",
+  "Phone": "Phone",
+  "FPT University, Ha Noi, Vietnam": "FPT University, Ha Noi, Vietnam",
+  "Add Inspection Category": "Add Inspection Category"
+
 }

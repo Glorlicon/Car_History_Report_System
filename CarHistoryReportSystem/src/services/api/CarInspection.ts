@@ -1,16 +1,21 @@
 import axios, { AxiosError } from "axios"
-import { APIResponse, CarInspectionHistory } from "../../utils/Interfaces"
+import { APIResponse, CarInspectionHistory, CarInspectionSearchParams } from "../../utils/Interfaces"
 
-export async function ListCarInspection(token: string, pageNumber: number, connectAPIError: string, language: string): Promise<APIResponse> {
+export async function ListCarInspection(dataprovider: number, token: string, pageNumber: number, connectAPIError: string, language: string, carInspectionSearchParams: CarInspectionSearchParams): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory`,
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/data-provider/${dataprovider}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    /*'Accept-Language': `${language}`*/
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
                 },
                 params: {
-                    PageNumber: pageNumber
+                    PageNumber: pageNumber,
+                    CarId: carInspectionSearchParams.carId,
+                    InspectionNumber: carInspectionSearchParams.inspectionNumber,
+                    InspectionStartDate: carInspectionSearchParams.startDate,
+                    InspectionEndDate: carInspectionSearchParams.endDate
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination'])}
@@ -23,7 +28,56 @@ export async function ListCarInspection(token: string, pageNumber: number, conne
         }
     }
 }
+export async function GetInspectionExcel(dataprovider: number, token: string, pageNumber: number, connectAPIError: string, language: string, carInspectionSearchParams: CarInspectionSearchParams): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/data-provider/${dataprovider}`,
+            {
+                headers: {
+                    'Accept': 'text/csv',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    CarId: carInspectionSearchParams.carId,
+                    InspectionNumber: carInspectionSearchParams.inspectionNumber,
+                    InspectionStartDate: carInspectionSearchParams.startDate,
+                    InspectionEndDate: carInspectionSearchParams.endDate
+                }
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            console.log(axiosError)
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
 
+export async function ImportFromExcel(token: string, data: FormData, connectAPIError: string): Promise<APIResponse> {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/collection/from-csv`, data ,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+        return { data: response.data}
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            console.log(axiosError)
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
 export async function AddCarInspection(data: CarInspectionHistory, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory`, data,

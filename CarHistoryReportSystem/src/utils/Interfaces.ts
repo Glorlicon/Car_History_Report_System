@@ -508,3 +508,10 @@ export interface CarInsurance {
     expired?: boolean
 }
 
+export interface CarInspectionSearchParams {
+    carId: string
+    inspectionNumber: string
+    startDate: string
+    endDate: string
+}
+
