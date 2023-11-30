@@ -1,8 +1,10 @@
 ﻿using Application.Common.Models;
+using Application.DTO.CarAccidentHistory;
 using Application.DTO.CarInsurance;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarInsuranceHistory;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -90,6 +92,23 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInsuranceHistoryByUserIdAsync(string userId, [FromQuery] CarInsuranceHistoryParameter parameter)
         {
             var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
+            return Ok(carInsuranceHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Service Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Service History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
+        [ProducesResponseType(typeof(IEnumerable<CarInsuranceHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarInsuranceHistoryByDataProviderIdAsync(int dataProviderId, [FromQuery] CarInsuranceHistoryParameter parameter)
+        {
+            var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
             return Ok(carInsuranceHistorys);
         }
@@ -227,6 +246,32 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             await _carInsuranceHistoryService.DeleteCarHistory(id);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,InsuranceCompany")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarInsuranceHistoryCreateRequestDTO>
+            {
+                new CarInsuranceHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    EndDate = DateOnly.FromDateTime(DateTime.Now),
+                    Description = "None",
+                    InsuranceNumber = "A12345",
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }

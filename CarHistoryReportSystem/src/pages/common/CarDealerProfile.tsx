@@ -134,7 +134,7 @@ function CarDealerHomePage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        console.log("1")
+
         const UserResponse: APIResponse = await GetUserById(id as string);
         if (UserResponse.error) {
             setError(UserResponse.error)
