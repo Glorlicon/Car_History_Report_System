@@ -44,7 +44,7 @@ namespace Application.DomainServices
         {
             var carRecalls = await _unitOfWork.CarRecallRepository.GetCarRecalls(parameter, false);
             var carRecallsResponse = _mapper.Map<List<CarRecallResponseDTO>>(carRecalls);
-            var count = await _unitOfWork.CarRecallRepository.CountAll();
+            var count = await _unitOfWork.CarRecallRepository.CountAll(parameter);
             return new PagedList<CarRecallResponseDTO>(carRecallsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -52,7 +52,7 @@ namespace Application.DomainServices
         {
             var carRecalls = await _unitOfWork.CarRecallRepository.GetCarRecallsByManufacturer(manufacturerId,parameter, false);
             var carRecallsResponse = _mapper.Map<List<CarRecallResponseDTO>>(carRecalls);
-            var count = await _unitOfWork.CarRecallRepository.CountByCondition(x => x.Model.ManufacturerId == manufacturerId);
+            var count = await _unitOfWork.CarRecallRepository.CountByCondition(x => x.Model.ManufacturerId == manufacturerId, parameter);
             return new PagedList<CarRecallResponseDTO>(carRecallsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -60,7 +60,7 @@ namespace Application.DomainServices
         {
             var carRecalls = await _unitOfWork.CarRecallRepository.GetCarRecallsByModel(modelId, parameter, false);
             var carRecallsResponse = _mapper.Map<List<CarRecallResponseDTO>>(carRecalls);
-            var count = await _unitOfWork.CarRecallRepository.CountByCondition(x => x.ModelId == modelId);
+            var count = await _unitOfWork.CarRecallRepository.CountByCondition(x => x.ModelId == modelId, parameter);
             return new PagedList<CarRecallResponseDTO>(carRecallsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 

@@ -17,15 +17,18 @@ namespace CarHistoryReportSystemAPI
     {
         public static void ConfigureSwagger(this IServiceCollection services)
         {
+            services.AddDateOnlyTimeOnlyStringConverters();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
-                options.MapType<DateOnly>(() => new OpenApiSchema
+                options.UseDateOnlyTimeOnlyStringConverters();
+                /*options.MapType<DateOnly>(() => new OpenApiSchema
                 {
                     Type = "string",
                     Format = "date",
                     Example = new OpenApiString("2022-01-01")
                 });
+                */
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

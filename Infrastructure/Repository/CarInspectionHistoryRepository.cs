@@ -78,5 +78,18 @@ namespace Infrastructure.Repository
                               .Take(parameter.PageSize)
                               .ToListAsync();
         }
+
+        public override IQueryable<CarInspectionHistory> Filter(IQueryable<CarInspectionHistory> query, CarInspectionHistoryParameter parameter)
+        {
+            if (parameter.CarId != null)
+                query = query.Where(x => x.CarId.Contains(parameter.CarId));
+            if (parameter.InspectionNumber != null)
+                query = query.Where(x => x.InspectionNumber.Contains(parameter.InspectionNumber));
+            if (parameter.InspectionStartDate != null)
+                query = query.Where(x => x.InspectDate >= parameter.InspectionStartDate);
+            if (parameter.InspectionEndDate != null)
+                query = query.Where(x => x.InspectDate <= parameter.InspectionEndDate);
+            return query;
+        }
     }
 }
