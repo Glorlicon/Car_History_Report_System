@@ -22,6 +22,8 @@
     <Folder Include="src\components\forms\registry\" />
     <Folder Include="src\components\forms\police\" />
     <Folder Include="src\components\forms\register\" />
+    <Folder Include="src\components\paging\" />
+    <Folder Include="src\localization\locales\en\" />
     <Folder Include="src\pages\admin\car_model\" />
     <Folder Include="src\pages\manufacturer\car\" />
     <Folder Include="src\pages\manufacturer\car_model\" />

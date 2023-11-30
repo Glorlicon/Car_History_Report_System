@@ -3,6 +3,7 @@ using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,5 +22,7 @@ namespace Application.Interfaces
         Task<IEnumerable<CarSpecification>> GetCarModelByManufacturerId(int manufacturerId, CarSpecificationParameter parameter, bool trackChange);
 
         Task<IEnumerable<CarSpecification>> GetCarModelsCreatedByAdminstrator(CarSpecificationParameter parameter, bool trackChange);
+        Task<int> CountAll(CarSpecificationParameter parameter);
+        Task<int> CountByCondition(Expression<Func<CarSpecification, bool>> expression, CarSpecificationParameter parameter);
     }
 }

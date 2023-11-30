@@ -6,7 +6,8 @@ const initialState = {
         email: null,
         password: null
     },
-    verifyToken: null
+    verifyToken: null,
+    language: 'vn'
 };
 
 const authSlice = createSlice({
@@ -34,9 +35,12 @@ const authSlice = createSlice({
         },
         clearVerifyToken: (state) => {
             state.verifyToken = null
+        },
+        setLanguage: (state, action) => {
+            state.language = action.payload;
         }
     }
 });
 
-export const { setToken, logout, setUserData, clearUserData, setVerifyToken, clearVerifyToken } = authSlice.actions;
+export const { setToken, logout, setUserData, clearUserData, setVerifyToken, clearVerifyToken, setLanguage } = authSlice.actions;
 export default authSlice.reducer;

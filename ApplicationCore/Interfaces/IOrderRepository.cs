@@ -3,6 +3,7 @@ using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,5 +15,7 @@ namespace Application.Interfaces
         Task<Order> GetOrderById(int id, bool trackChange);
 
         Task<IEnumerable<Order>> GetOrderByUserId(string userId, OrderParameter parameter, bool trackChange);
+        Task<int> CountAll(OrderParameter parameter);
+        Task<int> CountByCondition(Expression<Func<Order, bool>> expression, OrderParameter parameter);
     }
 }
