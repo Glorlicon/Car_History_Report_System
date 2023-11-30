@@ -3,8 +3,14 @@ import { useSelector } from 'react-redux';
 import SearchDealerForm from '../../components/forms/common/SearchDealerForm';
 import { RootState } from '../../store/State';
 import '../../styles/DealerSearch.css';
+import { APIResponse, DataProvider } from '../../utils/Interfaces';
 
 function SearchDealer() {
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [CarDealerList, setCarDealerList] = useState<DataProvider[]>([]);
+
+
     // Example hardcoded data
     const dealers = [
         {
@@ -74,6 +80,21 @@ function SearchDealer() {
         // Perform search logic here
     };
 
+    //const fetchData = async () => {
+    //    setLoading(true);
+    //    setError(null);
+    //    const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+    //    if (reviewListResponse.error) {
+    //        setError(reviewListResponse.error);
+    //    } else {
+    //        setReview(reviewListResponse.data);
+    //    }
+    //    setLoading(false);
+    //};
+
+    //useEffect(() => {
+    //    fetchData();
+    //}, []);
 
     return (
         <div className="search-dealer-container">
@@ -91,16 +112,15 @@ function SearchDealer() {
                 <div className="dealer-list">
                     {dealers.map((dealer, index) => (
                         <div className="dealer-card" key={index}>
-                            <h2>{dealer.name}</h2>
-                            <div className="dealer-rating">
-                                {'⭐'.repeat(Math.floor(dealer.rating))}{' '}
-                                {dealer.reviewCount} Users Reviewed
+                            <div className="shop-information">
+                                <h2>{dealer.name}</h2>
+                                <div className="dealer-rating">
+                                    {'⭐'.repeat(Math.floor(dealer.rating))}{' '}
+                                    {dealer.reviewCount} Users Reviewed
+                                </div>
+                                <div className="dealer-address">{dealer.address}</div>
+                                <button className="phone-button">Phone Number</button>
                             </div>
-                            <div className="dealer-favorite">
-                                ❤️ {dealer.favoritedCount} Favorited This Shop
-                            </div>
-                            <div className="dealer-address">{dealer.address}</div>
-                            <button className="phone-button">Phone Number</button>
                         </div>
                     ))}
                 </div>

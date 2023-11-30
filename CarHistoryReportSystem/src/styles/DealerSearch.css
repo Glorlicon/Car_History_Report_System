@@ -204,3 +204,8 @@
             margin: 5px 0; /* Stack the elements vertically with space between */
         }
 }
+
+.shop-information {
+    text-align: left;
+    padding: 10px;
+}
