@@ -7,12 +7,22 @@ import '../../styles/DealerSearch.css';
 import { APIResponse, DataProvider, Reviews } from '../../utils/Interfaces';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 
 function SearchDealer() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carDealerList, setCarDealerList] = useState<DataProvider[]>([]);
+    const [currentLocation, setCurrentLocation] = useState({ lat: 0, lng: 0 });
+    const mapContainerStyle = {
+        width: '800px',
+        height: '600px',
+    };
 
+    const center = {
+        lat: -34.397,
+        lng: 150.644,
+    };
 
     // Example hardcoded data
     const dealers = [
@@ -107,6 +117,19 @@ function SearchDealer() {
 
     useEffect(() => {
         fetchData();
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setCurrentLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    });
+                },
+                () => {
+                    // Handle location error
+                }
+            );
+        }
     }, []);
 
 
@@ -142,10 +165,16 @@ function SearchDealer() {
                         );
                     })}
                 </div>
-
-                <div className="map-placeholder">
-                    {/* Placeholder content for the map */}
-                    <div className="map-content">Map will go here</div>
+                <div className="map-container">
+                    <LoadScript googleMapsApiKey="AIzaSyCRbVNvnE3sge__2-oH3x3xlVqMd-_TPOQ">
+                        <GoogleMap
+                            mapContainerStyle={mapContainerStyle}
+                            center={currentLocation}
+                            zoom={8}
+                        >
+                            {/* Map contents like markers */}
+                        </GoogleMap>
+                    </LoadScript>
                 </div>
             </div>
             <div className="pagination">

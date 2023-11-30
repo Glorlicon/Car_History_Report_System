@@ -236,3 +236,17 @@
 *, *::before, *::after {
     box-sizing: border-box; /* Makes sure padding does not affect overall width */
 }
+.dealer-map-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* You can adjust the gap between the list and map as needed */
+}
+
+.dealer-list {
+    flex: 0 0 55%; /* Takes up 70% of the space */
+}
+
+.map-container {
+    flex: 0 0 30%;
+    height: 400px;
+}
