@@ -8,7 +8,9 @@
     justify-content: flex-start;
     margin-bottom: 20px;
 }
-
+.csv-input{
+    display:none;
+}
 .add-reg-reg-btn {
     background-color: #4CAF50; /* Green */
     color: white;
@@ -157,6 +159,14 @@
         width: 100%;
         margin-bottom: 10px;
     }
+
+.reg-reg-form-column-2 button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
 
 .reg-reg-model-add-btn {
     background-color: #3498db;

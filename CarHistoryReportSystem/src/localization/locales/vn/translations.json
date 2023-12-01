@@ -121,5 +121,10 @@
   "Car VIN": "Số khung số máy",
   "No car registrations found": "Không tìm thấy thông tin đăng ký xe nào",
   "Add Car Registration": "Thông tin đăng ký xe mới",
-  "Edit Car Registration": "Chỉnh sửa thông tin đăng ký xe"
+  "Edit Car Registration": "Chỉnh sửa thông tin đăng ký xe",
+  "Odometer": "Số đồng hồ đo đường",
+  "Non-empty file is selected": "File không trống đã được chọn",
+  "Import file must have all data correct to be able to import": "File phải có toàn bộ dữ liệu đã được chuẩn hóa",
+  "Choose file": "Chọn file",
+  "Import from csv": "Thêm dữ liệu từ csv"
 }

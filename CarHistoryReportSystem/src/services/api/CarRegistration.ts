@@ -66,7 +66,7 @@ export async function ImportRegistrationFromExcel(token: string, data: FormData,
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarRegistrationHistory/collection/from-csv`, data,
             {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data; boundary=--14737809831466499882746641449',
                     'Authorization': `Bearer ${token}`,
                     'Accept-Language': `${language}`
                 }
@@ -129,10 +129,10 @@ export async function AddCarRegistration(data: CarRegistration, token: string, c
     }
 }
 
-export async function EditCarRegistration(carId: string, data: CarRegistration, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+export async function EditCarRegistration(id: number, data: CarRegistration, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     console.log(token)
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarRegistrationHistory/${carId}`,data,
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarRegistrationHistory/${id}`,data,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,

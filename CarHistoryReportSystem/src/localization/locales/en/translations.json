@@ -121,6 +121,10 @@
   "Car VIN": "Car VIN",
   "No car registrations found": "No car registrations found",
   "Add Car Registration": "Add Car Registration",
-  "Edit Car Registration": "Edit Car Registration"
-
+  "Edit Car Registration": "Edit Car Registration",
+  "Odometer": "Odometer",
+  "Non-empty file is selected": "Non-empty file is selected",
+  "Import file must have all data correct to be able to import": "Import file must have all data correct to be able to import",
+  "Choose file": "Choose file",
+  "Import from csv": "Import from csv"
 }

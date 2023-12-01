@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import RegistryRegistrationDetailsForm from '../../components/forms/registry/RegistryRegistrationDetailsForm';
-import { AddCarRegistration, DownloadRegistrationExcelFile, EditCarRegistration, GetRegistrationExcel, ListCarRegistration } from '../../services/api/CarRegistration';
+import { AddCarRegistration, DownloadRegistrationExcelFile, EditCarRegistration, GetRegistrationExcel, ImportRegistrationFromExcel, ListCarRegistration } from '../../services/api/CarRegistration';
 import { RootState } from '../../store/State';
 import { APIResponse, CarRegistration, CarRegistrationSearchParams, Paging } from '../../utils/Interfaces';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
@@ -44,6 +44,8 @@ function RegistryRegistrationList() {
     const [searchLicensePlateNumber, setSearchLicensePlateNumber] = useState('')
     const [template, setTemplate] = useState('')
     const [templateTrigger, setTemplateTrigger] = useState(0)
+    const [importData, setImportData] = useState<FormData | null>(null)
+    const isFirstRender = useRef(true);
     const handleDownloadCsv = () => {
         const element = document.getElementById('excel')
         element?.click()
@@ -62,11 +64,52 @@ function RegistryRegistrationList() {
         element?.click()
     }
     useEffect(() => {
-        handleDownloadTemplateClick()
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+        } else {
+            handleDownloadTemplateClick();
+        }
     }, [templateTrigger])
 
     const handleImportExcel = async () => {
+        if (importData) {
+            setAdding(true);
+            setAddError(null);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await ImportRegistrationFromExcel(token, importData, connectAPIError, language);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setOpenImport(false)
+                setImportData(null)
+                fetchData();
+            }
+        }
+    }
 
+    const handleImportClick = () => {
+        document.getElementById('excel-file')?.click()
+    }
+
+    const handleAddDataFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files
+        if (files && files[0]) {
+            const file = files[0]
+            const reader = new FileReader()
+            reader.onload = (e: ProgressEvent<FileReader>) => {
+                if (e.target && e.target.result) {
+                    const fileContent = e.target.result
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    console.log('1', fileContent)
+                    console.log('2', data)
+                    setImportData(formData)
+                }
+            }
+            reader.readAsText(file);
+        }
     }
     const validateCarRegistration = (registration: CarRegistration): boolean => {
         if (!isValidVIN(registration.carId)) {
@@ -125,12 +168,12 @@ function RegistryRegistrationList() {
     }
 
     const handleEditCarRegistration = async () => {
-        if (editRegistration && validateCarRegistration(editRegistration)) {
+        if (editRegistration && editRegistration.id && validateCarRegistration(editRegistration)) {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-            const response: APIResponse = await EditCarRegistration(editRegistration.carId, editRegistration, token, connectAPIError, language);
+            const response: APIResponse = await EditCarRegistration(editRegistration.id, editRegistration, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -210,7 +253,7 @@ function RegistryRegistrationList() {
                     hidden
                     id="template"
                 />
-                <button className="add-reg-reg-btn" onClick={() => { }}>+ {t('Import From Excel')}</button>
+                <button className="add-reg-reg-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
             </div>
             <div className="reg-inspec-top-bar">
                 <div className="reg-inspec-search-filter-container">
@@ -337,7 +380,7 @@ function RegistryRegistrationList() {
                             handleInputChange={handleInputChange}
                         />
                         <button onClick={handleAddCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
-                            {adding ? (<div className="reg-reg-model-inline-spinner"></div>) : t('Finish')}
+                            {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
                         </button>
                         {addError && (
                             <p className="reg-reg-error">{addError}</p>
@@ -356,7 +399,7 @@ function RegistryRegistrationList() {
                             handleInputChange={handleInputChange}
                         />
                         <button onClick={handleEditCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
-                            {adding ? (<div className="reg-reg-model-inline-spinner"></div>) : t('Finish')}
+                            {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
                         </button>
                         {addError && (
                             <p className="reg-reg-error">{addError}</p>
@@ -367,14 +410,26 @@ function RegistryRegistrationList() {
             {openImport && (
                 <div className="reg-reg-modal">
                     <div className="reg-reg-modal-content">
-                        <span className="reg-reg-close-btn" onClick={() => { setOpenImport(false) }}>&times;</span>
-                        <h2>{t('Edit Car Registration')}</h2>
-                        <button onClick={handleEditCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
-                            {adding ? (<div className="reg-reg-model-inline-spinner"></div>) : t('Finish')}
-                        </button>
-                        {addError && (
-                            <p className="reg-reg-error">{addError}</p>
-                        )}
+                        <span className="reg-reg-close-btn" onClick={() => { setOpenImport(false); setImportData(null) }}>&times;</span>
+                        <h2>{t('Import from csv')}</h2>
+                        <div className="reg-reg-form-columns">
+                            <div className="reg-reg-form-column-2">
+                            <input type="file" id="excel-file" accept=".csv" className="csv-input" onChange={handleAddDataFromFile} />
+                                <button onClick={handleImportClick} className="dealer-car-sales-form-image-add-button"> {t('Choose file')}</button>
+                            </div>
+                            {importData && (
+                                <>
+                                    <label>{t('Non-empty file is selected')}</label>
+                                    <label className="reg-reg-error"> ! {t('Import file must have all data correct to be able to import')} !</label>
+                                </>
+                            )}
+                            <button onClick={handleImportExcel} disabled={adding} className="reg-reg-model-add-btn">
+                                {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                            {addError && (
+                                <p className="reg-reg-error">{addError}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
