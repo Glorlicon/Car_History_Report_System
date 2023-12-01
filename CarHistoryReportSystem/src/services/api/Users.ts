@@ -38,7 +38,6 @@ export async function Add(data: User, token: string): Promise<APIResponse> {
         dataProvider: checkRole ? undefined : _dataProvider,
         dataProviderId: checkRole && checkNewDataProvider ? null : data.dataProviderId
 }
-    console.log("verifiedData: ", verifiedData)
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/User`, verifiedData, {
             headers: {
@@ -48,7 +47,6 @@ export async function Add(data: User, token: string): Promise<APIResponse> {
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Add: ", axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.code === "ERR_BAD_REQUEST") {
@@ -62,7 +60,6 @@ export async function Add(data: User, token: string): Promise<APIResponse> {
             }
             return { error: message }
         } else {
-            console.log("here")
             return { error: "Something went wrong. Please try again" }
         }
     }
@@ -74,8 +71,6 @@ export async function Edit(id: string, data: User, token: string): Promise<APIRe
         ...data,
         dataProviderId: checkRole ? null : data.dataProviderId
     }
-    console.log("Role",checkRole)
-    console.log("verifiedData: ", verifiedData)
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`, verifiedData,{
             headers: {
@@ -85,7 +80,6 @@ export async function Edit(id: string, data: User, token: string): Promise<APIRe
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Add: ", axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.code === "ERR_BAD_REQUEST") {
@@ -147,10 +141,8 @@ export async function SuspendUser(id: string, token: string): Promise<APIRespons
                 'Authorization': `Bearer ${token}`
             }
         })
-        console.log(response)
         return { data: "Success"}
     } catch (error) {
-        console.log(error)
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
@@ -167,7 +159,6 @@ export async function UnsuspendUser(id: string, token: string): Promise<APIRespo
                 'Authorization': `Bearer ${token}`
             }
         })
-        console.log(response)
         return { data: "Success" }
     } catch (error) {
         const axiosError = error as AxiosError

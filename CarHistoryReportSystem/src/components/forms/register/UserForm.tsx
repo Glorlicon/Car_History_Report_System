@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/State';
 import { isValidNumber } from '../../../utils/Validators';
 import FormWrapper from './FormWrapper';
 
@@ -23,7 +26,11 @@ function UserForm({
     shake
 }: UserFormProps) {
     const [validNumber, setValidNumber] = useState(true)
-
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     useEffect(() => {
         const isNumberValid = isValidNumber(phoneNumber);
         setValidNumber(isNumberValid);
@@ -32,7 +39,7 @@ function UserForm({
 
     return (
         <FormWrapper title="User Details">
-            <label>First Name</label>
+            <label>{t('First Name')}</label>
             <input
                 autoFocus
                 required
@@ -40,14 +47,14 @@ function UserForm({
                 value={firstName}
                 onChange={e => updateFields({ firstName: e.target.value })}
             />
-            <label>Last Name</label>
+            <label>{t('Last Name')}</label>
             <input
                 required
                 type="text"
                 value={lastName}
                 onChange={e => updateFields({ lastName: e.target.value })}
             />
-            <label>Phone Number</label>
+            <label>{t('Phone Number')}</label>
             <input
                 autoFocus
                 required
@@ -57,7 +64,7 @@ function UserForm({
             />
             <div className={` ${shake ? 'shaking' : 'validation'}`}>
                 {!validNumber && (
-                    <div className="error">Phone number is not valid!!</div>
+                    <div className="error">{t('Phone number is not valid')}!!</div>
                 )}
             </div>
         </FormWrapper>

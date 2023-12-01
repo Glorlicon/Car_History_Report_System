@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/State';
 import { isValidEmail, isValidPassword, matchingPassword } from '../../../utils/Validators';
 import FormWrapper from './FormWrapper';
 
@@ -27,6 +30,8 @@ function AccountForm({
     const [validEmail, setValidEmail] = useState(false)
     const [matchedPassword, setMatchedPassword] = useState(false)
     const [validPassword, setValidPassword] = useState(false)
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
 
     useEffect(() => {
         const isEmailValid = isValidEmail(email);
@@ -40,10 +45,12 @@ function AccountForm({
         setValid(isEmailValid && isPasswordMatched && isPasswordValid);
     }, [email, password, confirmPassword])
 
-
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     return (
         <FormWrapper title="Account Details">
-            <label>Username</label>
+            <label>{t('Username')}</label>
             <input
                 autoFocus
                 required
@@ -59,14 +66,14 @@ function AccountForm({
                 value={email}
                 onChange={e => updateFields({ email: e.target.value })}
             />
-            <label>Password</label>
+            <label>{t('Password')}</label>
             <input
                 required
                 type="password"
                 value={password}
                 onChange={e => updateFields({ password: e.target.value })}
             />
-            <label>Confirm Password</label>
+            <label>{t('Confirm Password')}</label>
             <input
                 autoFocus
                 required
@@ -76,13 +83,13 @@ function AccountForm({
             />
             <div className={`${shake ? 'shaking' : 'validation'}`}>
                 {!validEmail && (
-                    <div className="error">Email is invalid!</div>
+                    <div className="error">{t('Email is invalid')}!</div>
                 )}
                 {!validPassword && (
-                    <div className="error">Password is not valid!</div>
+                    <div className="error">{t('Password is not valid')}!</div>
                 )}
                 {!matchedPassword && (
-                    <div className="error">Passwords are not matching!!</div>
+                    <div className="error">{t('Passwords are not matching')}!</div>
                 )}
             </div>
         </FormWrapper>

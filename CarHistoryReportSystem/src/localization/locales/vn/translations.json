@@ -126,5 +126,18 @@
   "Non-empty file is selected": "File không trống đã được chọn",
   "Import file must have all data correct to be able to import": "File phải có toàn bộ dữ liệu đã được chuẩn hóa",
   "Choose file": "Chọn file",
-  "Import from csv": "Thêm dữ liệu từ csv"
+  "Import from csv": "Thêm dữ liệu từ csv",
+  "Username": "Tên tài khoản",
+  "Password": "Mật khẩu",
+  "Confirm Password": "Xác nhận mật khẩu",
+  "Email is invalid": "Email không hợp lệ",
+  "Password is not valid": "Mật khẩu không hợp lệ",
+  "Passwords are not matching": "Mật khẩu không khớp",
+  "First Name": "Tên",
+  "Last Name": "Họ",
+  "Phone Number": "Số điện thoại",
+  "Phone number is not valid": "Số điện thoại không hợp lệ",
+  "Other Services": "Các dịch vụ khác",
+  "Service Date": "Ngày sửa chữa",
+  "Services": "Các dịch vụ"
 }

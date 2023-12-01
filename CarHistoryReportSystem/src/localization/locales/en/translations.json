@@ -126,5 +126,18 @@
   "Non-empty file is selected": "Non-empty file is selected",
   "Import file must have all data correct to be able to import": "Import file must have all data correct to be able to import",
   "Choose file": "Choose file",
-  "Import from csv": "Import from csv"
+  "Import from csv": "Import from csv",
+  "Username": "Username",
+  "Password": "Password",
+  "Confirm Password": "Confirm Password",
+  "Email is invalid": "Email is invalid",
+  "Password is not valid": "Password is not valid",
+  "Passwords are not matching": "Passwords are not matching",
+  "First Name": "First Name",
+  "Last Name": "Last Name",
+  "Phone Number": "Phone Number",
+  "Phone number is not valid": "Phone number is not valid",
+  "Other Services": "Other Services",
+  "Service Date": "Service Date",
+  "Services": "Services"
 }
