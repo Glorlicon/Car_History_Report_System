@@ -24,8 +24,8 @@ namespace Infrastructure.Repository.Extension
         {
             query = parameter.SortByDate switch
             {
-                1 => query.OrderBy(r => r.CreatedTime),
-                -1 => query.OrderByDescending(r => r.CreatedTime),
+                1 => query.OrderBy(r => r.LastModified),
+                -1 => query.OrderByDescending(r => r.LastModified),
                 _ => query
             };
             return query;

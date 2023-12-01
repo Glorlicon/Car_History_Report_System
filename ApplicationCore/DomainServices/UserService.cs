@@ -32,7 +32,7 @@ namespace Application.DomainServices
         public UserService(IMapper mapper, 
             IUserRepository userRepository, 
             IEmailServices emailServices, 
-            IIdentityServices identityServices, 
+            IIdentityServices identityServices,
             IAuthenticationServices authenticationServices)
         {
             _mapper = mapper;
@@ -80,7 +80,6 @@ namespace Application.DomainServices
             var userResponse = _mapper.Map<List<UserResponseDTO>>(users);
 
             var count = await _userRepository.CountAll();
-
             foreach (var user in userResponse)
             {
                 user.RoleName = user.Role.ToString();
