@@ -1,6 +1,7 @@
 ﻿using Application.DTO.CarInsurance;
 using Domain.Entities;
 using Infrastructure.DBContext;
+using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,10 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarInsurance>> GetAllCarHistorys(CarInsuranceHistoryParameter parameter, bool trackChange)
         {
             var query = FindAll(trackChange);
-            query = Filter(query, parameter);
-            query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)
                               .ThenInclude(x => x.DataProvider)
+                              .Filter(parameter)
+                              .Sort(parameter)
                               .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                               .Take(parameter.PageSize)
                               .ToListAsync();
@@ -41,10 +42,10 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByCarId(string vinId, CarInsuranceHistoryParameter parameter, bool trackChange)
         {
             var query = FindByCondition(x => x.CarId == vinId, trackChange);
-            query = Filter(query, parameter);
-            query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)
                               .ThenInclude(x => x.DataProvider)
+                              .Filter(parameter)
+                              .Sort(parameter)
                               .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                               .Take(parameter.PageSize)
                               .ToListAsync();
@@ -53,10 +54,10 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByUserId(string userId, CarInsuranceHistoryParameter parameter, bool trackChange)
         {
             var query = FindByCondition(x => x.CreatedByUserId == userId, trackChange);
-            query = Filter(query, parameter);
-            query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)
                               .ThenInclude(x => x.DataProvider)
+                              .Filter(parameter)
+                              .Sort(parameter)
                               .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                               .Take(parameter.PageSize)
                               .ToListAsync();
@@ -65,10 +66,10 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByOwnCompany(List<string> carIds, CarInsuranceHistoryParameter parameter, bool trackChange)
         {
             var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);
-            query = Filter(query, parameter);
-            query = Sort(query, parameter);
             return await query.Include(x => x.CreatedByUser)
                               .ThenInclude(x => x.DataProvider)
+                              .Filter(parameter)
+                              .Sort(parameter)
                               .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                               .Take(parameter.PageSize)
                               .ToListAsync();
