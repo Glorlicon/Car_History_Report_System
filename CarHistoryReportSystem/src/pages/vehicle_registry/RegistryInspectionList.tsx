@@ -3,17 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import RegistryInspectionDetailsForm from '../../components/forms/registry/RegistryInspectionDetailsForm';
 import RegistryInspectionInspectedCategoriesForm from '../../components/forms/registry/RegistryInspectionInspectedCategoriesForm';
-import { AddCarInspection, EditCarInspection, ListCarInspection } from '../../services/api/CarInspection';
+import { AddCarInspection, EditCarInspection, GetInspectionExcel, ListCarInspection } from '../../services/api/CarInspection';
 import { RootState } from '../../store/State';
-import { APIResponse, CarInspectionDetail, CarInspectionHistory, Paging } from '../../utils/Interfaces';
+import { APIResponse, CarInspectionDetail, CarInspectionHistory, CarInspectionSearchParams, Paging } from '../../utils/Interfaces';
 import { isValidVIN } from '../../utils/Validators';
 import '../../styles/RegistryCarInspection.css'
-import PagingComponent from '../../components/paging/PagingComponent';
+import { Pagination } from '@mui/material';
+import { JWTDecoder } from '../../utils/JWTDecoder';
 function RegistryInspectionList() {
     const { t, i18n } = useTranslation();
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const id = JWTDecoder(token).dataprovider
     const [page, setPage] = useState(1)
-    const [maxPage, setMaxPage] = useState(1)
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [showModal, setShowModal] = useState(false);
@@ -34,7 +35,16 @@ function RegistryInspectionList() {
     const [editInspection, setEditInspection] = useState<CarInspectionHistory | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchCarID, setSearchCarId] = useState('')
+    const [searchInspectionNumber, setSearchInspectionNumber] = useState('')
+    const [searchInspectionStartDate, setSearchInspectionStartDate] = useState('')
+    const [searchInspectionEndDate, setSearchInspectionEndDate] = useState('')
+    const [resetTrigger, setResetTrigger] = useState(0);
+    const [data, setData] = useState("")
+    const handleDownloadCsv = () => {
+        const element = document.getElementById('excel')
+        element?.click()
+    }
     const validateCarInspection = (inspection: CarInspectionHistory): boolean => {
         if (!isValidVIN(inspection.carId)) {
             setAddError(t('VIN is invalid'));
@@ -88,7 +98,8 @@ function RegistryInspectionList() {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
-            const response: APIResponse = await AddCarInspection(newInspection, token, connectAPIError);
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await AddCarInspection(newInspection, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -104,7 +115,8 @@ function RegistryInspectionList() {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
-            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token, connectAPIError);
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await EditCarInspection(editInspection.id, editInspection, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -155,6 +167,14 @@ function RegistryInspectionList() {
                 ]
             })
         }
+    }
+
+    const handleResetFilters = () => {
+        setSearchCarId('')
+        setSearchInspectionEndDate('')
+        setSearchInspectionNumber('')
+        setSearchInspectionStartDate('')
+        setResetTrigger(prev => prev + 1);
     }
 
     const handleRemoveInspectionCategory = (index: number) => {
@@ -238,20 +258,26 @@ function RegistryInspectionList() {
             });
         }
     };
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
+
     const fetchData = async () => {
         setLoading(true);
         setError(null);
+        let searchParams: CarInspectionSearchParams = {
+            carId: searchCarID,
+            endDate: searchInspectionEndDate,
+            inspectionNumber: searchInspectionNumber,
+            startDate: searchInspectionStartDate
+        }
         let connectAPIError = t('Cannot connect to API! Please try again later')
-        const carInspectionResponse: APIResponse = await ListCarInspection(token, page, connectAPIError)
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carInspectionResponse: APIResponse = await ListCarInspection(id, token, page, connectAPIError, language, searchParams)
         if (carInspectionResponse.error) {
             setError(carInspectionResponse.error)
         } else {
             setInspectionList(carInspectionResponse.data)
-            console.log(carInspectionResponse.pages)
             setPaging(carInspectionResponse.pages)
+            const responseCsv: APIResponse = await GetInspectionExcel(id, token, page, connectAPIError, language, searchParams)
+            setData(responseCsv.data)
         }
         setLoading(false)
     }
@@ -259,18 +285,73 @@ function RegistryInspectionList() {
         fetchData();
         i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
   return (
       <div className="reg-inspec-list-page">
           <div className="reg-inspec-top-bar">
               <button className="add-reg-inspec-btn" onClick={() => setShowModal(true)}>{t('+ Add Car Inspection')}</button>
+          </div>
+          <div className="reg-inspec-top-bar">
               <div className="reg-inspec-search-filter-container">
-                  <input
-                      type="text"
-                      className="reg-inspec-search-bar"
-                      placeholder={t('Search...')}
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                  />
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Car ID')}</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Car ID')}
+                          value={searchCarID}
+                          onChange={(e) => setSearchCarId(e.target.value)}
+                      />
+                  </div>
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Inspection Number')}</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Inspection Number')}
+                          value={searchInspectionNumber}
+                          onChange={(e) => setSearchInspectionNumber(e.target.value)}
+                      />
+                  </div>
+                  <div className="reg-inspec-search-filter-item-2">
+                      <label>{t('Inspection Date')}</label>
+                      <div className="reg-inspec-search-filter-item-2-dates">
+                          <label>{t('From')}: </label>
+                          <input
+                              type="date"
+                              className="reg-inspec-search-bar"
+                              placeholder="Inspection Start Date"
+                              value={searchInspectionStartDate}
+                              onChange={(e) => setSearchInspectionStartDate(e.target.value)}
+                          />
+                          <label>{t('To')}: </label>
+                          <input
+                              type="date"
+                              className="reg-inspec-search-bar"
+                              placeholder="Inspection End Date"
+                              value={searchInspectionEndDate}
+                              onChange={(e) => setSearchInspectionEndDate(e.target.value)}
+                          />
+                      </div>
+                  </div>
+                  <button
+                      className="search-reg-inspec-btn"
+                      onClick={fetchData}
+                  >
+                      {t('Search...')}
+                  </button>
+                  <button
+                      className="reset-reg-inspec-btn"
+                      onClick={handleResetFilters}
+                  >
+                      {t('Reset Filters')}
+                  </button>
               </div>
           </div>
           <table className="reg-inspec-table">
@@ -298,7 +379,7 @@ function RegistryInspectionList() {
                   ) : inspectionList.length > 0 ? (
                       inspectionList.map((model: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditInspection(model) }}>{model.carId}</td>
+                              <td onClick={() => { setEditInspection(model) }}>{model.carId} &#x270E;</td>
                               <td>{model.inspectionNumber}</td>
                               <td>{model.inspectDate}</td>
                           </tr>
@@ -310,15 +391,6 @@ function RegistryInspectionList() {
                   )}
               </tbody>
           </table>
-          {paging &&
-              <PagingComponent
-                  CurrentPage={paging.CurrentPage}
-                  TotalCount={paging.TotalCount}
-                  PageSize={paging.PageSize}
-                  TotalPages={paging.TotalPages}
-                  HasPrevious={paging.HasPrevious}
-                  HasNext={paging.HasNext}
-              />}
           {showModal && (
               <div className="reg-inspec-modal">
                   <div className="reg-inspec-modal-content">
@@ -389,6 +461,18 @@ function RegistryInspectionList() {
                   </div>
               </div>
           )}
+          {paging && paging.TotalPages > 0 &&
+              <>
+              <button className="export-reg-inspec-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
+              <a
+                  href={`data:text/csv;charset=utf-8,${escape(data)}`}
+                  download={`inpection-${Date.now()}.csv`}
+                  hidden
+                  id="excel"
+              />
+                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+              </>
+          }
       </div>
   );
 }

@@ -508,3 +508,19 @@ export interface CarInsurance {
     expired?: boolean
 }
 
+export interface CarInspectionSearchParams {
+    carId: string
+    inspectionNumber: string
+    startDate: string
+    endDate: string
+}
+
+export interface CarRegistrationSearchParams {
+    carId: string
+    ownerName: string
+    registrationNumber: string
+    expireDateStart: string
+    expireDateEnd: string
+    licensePlateNumber: string
+}
+

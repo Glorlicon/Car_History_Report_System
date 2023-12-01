@@ -186,7 +186,7 @@ function UserProfile() {
 
                             <div className="reports-section">
                                 <button className="profile-btn">My Reports</button>
-                                <p>Remaining Report(s): {user.maxReports}</p>
+                                <p>Remaining Report(s): {user.maxReports ? user.maxReports : 0}</p>
                                 <button className="profile-btn">Change Password</button>
                             </div>
                         </div>

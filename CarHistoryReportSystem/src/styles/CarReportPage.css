@@ -87,10 +87,15 @@
         text-align: center;
     }
 
-
+.car-report-service-history{
+    margin-top: 5%;
+    margin-bottom: 1%;
+}
 
 .car-report-service-history-table {
-    width: 100%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
     border-collapse: collapse;
     border: 1px solid black;
 }
@@ -115,4 +120,11 @@
 .car-report-service-history-table-ownership-data{
     display: flex;
     flex-direction: column
+}
+.report-crash-car-image {
+    display: block;
+    margin: 0 auto;
+    width: 15%;
+    height: 15%;
+    transform: rotateZ(90deg);
 }
