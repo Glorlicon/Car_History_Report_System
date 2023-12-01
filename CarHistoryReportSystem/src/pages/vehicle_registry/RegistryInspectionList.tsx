@@ -35,7 +35,6 @@ function RegistryInspectionList() {
     const [editInspection, setEditInspection] = useState<CarInspectionHistory | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
     const [searchCarID, setSearchCarId] = useState('')
     const [searchInspectionNumber, setSearchInspectionNumber] = useState('')
     const [searchInspectionStartDate, setSearchInspectionStartDate] = useState('')
@@ -297,8 +296,6 @@ function RegistryInspectionList() {
       <div className="reg-inspec-list-page">
           <div className="reg-inspec-top-bar">
               <button className="add-reg-inspec-btn" onClick={() => setShowModal(true)}>{t('+ Add Car Inspection')}</button>
-              <button className="add-reg-inspec-btn" onClick={() => { }}>&dArr; {t('Excel Template')} (WIP)</button>
-              <button className="add-reg-inspec-btn" onClick={() => { }}>+ {t('Import From Excel')} (WIP)</button>
           </div>
           <div className="reg-inspec-top-bar">
               <div className="reg-inspec-search-filter-container">

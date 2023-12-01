@@ -110,5 +110,16 @@
   "Address": "Địa chỉ",
   "Phone": "Điện thoại",
   "FPT University, Ha Noi, Vietnam": "Đại học FPT, Hà Nội, Việt Nam",
-  "Add Inspection Category": "Thêm hạng mục đăng kiểm"
+  "Add Inspection Category": "Thêm hạng mục đăng kiểm",
+  "Owner Name": "Người đăng ký",
+  "Add New Car Registration": "Thông tin đăng ký xe mới",
+  "Expire Date": "Ngày hết hạn",
+  "Registration Number": "Số đăng ký",
+  "Search by Registration Number": "Tìm theo số đăng ký",
+  "License Plate Number": "Biến số xe",
+  "Search by License Plate Number": "Tìm theo biển số đăng ký",
+  "Car VIN": "Số khung số máy",
+  "No car registrations found": "Không tìm thấy thông tin đăng ký xe nào",
+  "Add Car Registration": "Thông tin đăng ký xe mới",
+  "Edit Car Registration": "Chỉnh sửa thông tin đăng ký xe"
 }

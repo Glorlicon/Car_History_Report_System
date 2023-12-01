@@ -58,17 +58,39 @@ export async function GetInspectionExcel(dataprovider: number, token: string, pa
     }
 }
 
-export async function ImportFromExcel(token: string, data: FormData, connectAPIError: string): Promise<APIResponse> {
+export async function ImportInspectionFromExcel(token: string, data: FormData, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/collection/from-csv`, data ,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             })
         return { data: response.data}
     } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            console.log(axiosError)
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function DownloadInpectionExcelFile(token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarInspectionHistory/collection/from-csv/form`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
+                }
+            })
+        return { data: response.data }
+    } catch(error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }

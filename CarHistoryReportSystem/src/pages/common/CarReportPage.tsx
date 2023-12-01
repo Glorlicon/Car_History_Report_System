@@ -55,6 +55,13 @@ function CarReportPage() {
     const isSideColored = (model: CarCrash, sideValue: number): boolean => {
         return (model.damageLocation & sideValue) === sideValue;
     };
+    const isHistoryEmpty = (carReport: CarReport, historyName: keyof CarHistoryDetail): boolean => {
+        return carReport.carHistoryDetails.every(detail => {
+            const history = detail[historyName]
+            return Array.isArray(history) && history.length === 0
+        })
+    }
+
     const fetchData = async () => {
         setLoading(true);
         setError(null);
@@ -72,6 +79,7 @@ function CarReportPage() {
             setError(response.error);
         } else {
             setReport(response.data)
+            console.log(response.data)
         }
     }
     useEffect(() => {
@@ -116,9 +124,9 @@ function CarReportPage() {
                           </div>
                       </div>
 
-                      <div className="car-report-recall-history">
+                      <div className="car-report-service-history">
                           <h3>Car Recall History</h3>
-                          <table className="car-report-recall-history-table">
+                          <table className="car-report-service-history-table">
                               <thead>
                                   <tr>
                                       <th>Recall Description</th>
@@ -157,19 +165,19 @@ function CarReportPage() {
                                   </tr>
                               </thead>
                               <tbody>
-                                  {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 ? (
+                                  {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report,'carServiceHistories') ? (
                                       report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
                                           const serviceCount = history.carServiceHistories?.length || 1;
                                           return (
                                               <>
                                                   <tr key={`${index}-0`}>
+                                                      {history.carServiceHistories && history.carServiceHistories.length > 0 ? (
+                                                          <>
                                                       <td className="car-report-service-history-table-ownership-data" rowSpan={serviceCount}>
                                                           <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                           <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                           <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                       </td>
-                                                      {history.carServiceHistories && history.carServiceHistories.length > 0 ? (
-                                                          <>
                                                               <td>{history.carServiceHistories[0].serviceTime}</td>
                                                               <td>{history.carServiceHistories[0].odometer}</td>
                                                               <td>{history.carServiceHistories[0].source}</td>
@@ -221,20 +229,20 @@ function CarReportPage() {
                                               return (
                                                   <>
                                                       <tr key={`${index}-0`}>
+                                                          {history.carAccidentHistories && history.carAccidentHistories.length > 0 && !isHistoryEmpty(report, 'carAccidentHistories') ? (
+                                                              <>
                                                           <td className="car-report-service-history-table-ownership-data" rowSpan={accidentCount}>
                                                               <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                               <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                               <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                           </td>
-                                                          {history.carAccidentHistories && history.carAccidentHistories.length > 0 ? (
-                                                              <>
                                                                   <td>{history.carAccidentHistories[0].accidentDate}</td>
                                                                   <td>{history.carAccidentHistories[0].odometer}</td>
                                                                   <td>{history.carAccidentHistories[0].source}</td>
                                                                   <td>{history.carAccidentHistories[0].serverity}</td>
                                                                   <td>
                                                                       <div className="pol-crash-car-container">
-                                                                          <img src={car} alt="Car" className="pol-crash-car-image" style={{
+                                                                          <img src={car} alt="Car" className="report-crash-car-image" style={{
                                                                               borderTop: `5px solid ${isSideColored(history.carAccidentHistories[0], CAR_SIDES.Front) ? 'red' : 'black'}`,
                                                                               borderBottom: `5px solid ${isSideColored(history.carAccidentHistories[0], CAR_SIDES.Rear) ? 'red' : 'black'}`,
                                                                               borderLeft: `5px solid ${isSideColored(history.carAccidentHistories[0], CAR_SIDES.Left) ? 'red' : 'black'}`,
@@ -255,7 +263,7 @@ function CarReportPage() {
                                                                   <td>{accident.serverity}</td>
                                                                   <td>
                                                                       <div className="pol-crash-car-container">
-                                                                          <img src={car} alt="Car" className="pol-crash-car-image" style={{
+                                                                          <img src={car} alt="Car" className="report-crash-car-image" style={{
                                                                               borderTop: `5px solid ${isSideColored(accident, CAR_SIDES.Front) ? 'red' : 'black'}`,
                                                                               borderBottom: `5px solid ${isSideColored(accident, CAR_SIDES.Rear) ? 'red' : 'black'}`,
                                                                               borderLeft: `5px solid ${isSideColored(accident, CAR_SIDES.Left) ? 'red' : 'black'}`,
@@ -292,19 +300,19 @@ function CarReportPage() {
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 ? (
+                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report, 'carInspectionHistories') ? (
                                           report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
                                               const inspectionCount = history.carInspectionHistories?.length || 1;
                                               return (
                                                   <>
                                                       <tr key={`${index}-0`}>
+                                                          {history.carInspectionHistories && history.carInspectionHistories.length > 0 ? (
+                                                              <>
                                                           <td className="car-report-service-history-table-ownership-data" rowSpan={inspectionCount}>
                                                               <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                               <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                               <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                           </td>
-                                                          {history.carInspectionHistories && history.carInspectionHistories.length > 0 ? (
-                                                              <>
                                                                   <td>{history.carInspectionHistories[0].inspectDate}</td>
                                                                   <td>{history.carInspectionHistories[0].odometer}</td>
                                                                   <td>{history.carInspectionHistories[0].source}</td>
@@ -360,19 +368,19 @@ function CarReportPage() {
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 ? (
+                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report, 'carInsurances') ? (
                                           report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
                                               const insuranceCount = history.carInsurances?.length || 1;
                                               return (
                                                   <>
                                                       <tr key={`${index}-0`}>
+                                                          {history.carInsurances && history.carInsurances.length > 0 ? (
+                                                              <>
                                                           <td className="car-report-service-history-table-ownership-data" rowSpan={insuranceCount}>
                                                               <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                               <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                               <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                           </td>
-                                                          {history.carInsurances && history.carInsurances.length > 0 ? (
-                                                              <>
                                                                   <td>{history.carInsurances[0].odometer}</td>
                                                                   <td>{history.carInsurances[0].source}</td>
                                                                   <td>{history.carInsurances[0].startDate}</td>
@@ -416,23 +424,23 @@ function CarReportPage() {
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 ? (
+                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report, 'carStolenHistories') ? (
                                           report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
                                               const stolenCount = history.carStolenHistories?.length || 1;
                                               return (
                                                   <>
                                                       <tr key={`${index}-0`}>
+                                                          {history.carStolenHistories && history.carStolenHistories.length > 0 ? (
+                                                              <>
                                                           <td className="car-report-service-history-table-ownership-data" rowSpan={stolenCount}>
                                                               <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                               <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                               <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                           </td>
-                                                          {history.carStolenHistories && history.carStolenHistories.length > 0 ? (
-                                                              <>
                                                                   <td>{history.carStolenHistories[0].reportDate}</td>
                                                                   <td>{history.carStolenHistories[0].odometer}</td>
                                                                   <td>{history.carStolenHistories[0].source}</td>
-                                                                  <td>{history.carStolenHistories[0].status}</td>
+                                                                  <td>{history.carStolenHistories[0].status === 1 ? 'Found' : 'Not found'}</td>
                                                               </>
                                                           ) : null}
                                                       </tr>
@@ -443,7 +451,7 @@ function CarReportPage() {
                                                                   <td>{stolen.reportDate}</td>
                                                                   <td>{stolen.odometer}</td>
                                                                   <td>{stolen.source}</td>
-                                                                  <td>{stolen.status}</td>
+                                                                  <td>{stolen.status === 1 ? 'Found' : 'Not found'}</td>
                                                               </tr>
                                                           ))
                                                       ) : null}
@@ -473,19 +481,19 @@ function CarReportPage() {
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 ? (
+                                      {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report, 'carRegistrationHistories') ? (
                                           report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
                                               const registrationCount = history.carRegistrationHistories?.length || 1;
                                               return (
                                                   <>
                                                       <tr key={`${index}-0`}>
+                                                          {history.carRegistrationHistories && history.carRegistrationHistories.length > 0 ? (
+                                                              <>
                                                           <td className="car-report-service-history-table-ownership-data" rowSpan={registrationCount}>
                                                               <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
                                                               <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
                                                               <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
                                                           </td>
-                                                          {history.carRegistrationHistories && history.carRegistrationHistories.length > 0 ? (
-                                                              <>
                                                                   <td>{history.carRegistrationHistories[0].reportDate}</td>
                                                                   <td>{history.carRegistrationHistories[0].odometer}</td>
                                                                   <td>{history.carRegistrationHistories[0].source}</td>

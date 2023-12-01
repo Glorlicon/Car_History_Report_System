@@ -110,6 +110,17 @@
   "Address": "Address",
   "Phone": "Phone",
   "FPT University, Ha Noi, Vietnam": "FPT University, Ha Noi, Vietnam",
-  "Add Inspection Category": "Add Inspection Category"
+  "Add Inspection Category": "Add Inspection Category",
+  "Owner Name": "Owner Name",
+  "Add New Car Registration": "Add New Car Registration",
+  "Expire Date": "Expire Date",
+  "Registration Number": "Registration Number",
+  "Search by Registration Number": "Search by Registration Number",
+  "License Plate Number": "License Plate Number",
+  "Search by License Plate Number": "Search by License Plate Number",
+  "Car VIN": "Car VIN",
+  "No car registrations found": "No car registrations found",
+  "Add Car Registration": "Add Car Registration",
+  "Edit Car Registration": "Edit Car Registration"
 
 }

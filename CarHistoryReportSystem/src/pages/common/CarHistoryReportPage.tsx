@@ -91,13 +91,13 @@ function CarHistoryReportPage() {
               </button>
               {vinError && <div className="report-search-error">{vinError}</div>}
           </div>
-          or
-          <div className="report-search-section">
-              <label>Search by License Plate(WIP)</label>
-              <input type="text" value={plate} onChange={(e) => setPlate(e.target.value)} placeholder="Enter Plate" />
-              <button onClick={handlePlateCheck}>Get CHRS Report</button>
-              {plateError && <div className="report-search-error">{plateError}</div>}
-          </div>
+          {/*or*/}
+          {/*<div className="report-search-section">*/}
+          {/*    <label>Search by License Plate(WIP)</label>*/}
+          {/*    <input type="text" value={plate} onChange={(e) => setPlate(e.target.value)} placeholder="Enter Plate" />*/}
+          {/*    <button onClick={handlePlateCheck}>Get CHRS Report</button>*/}
+          {/*    {plateError && <div className="report-search-error">{plateError}</div>}*/}
+          {/*</div>*/}
 
           <div className="report-links-section">
               {token ? (

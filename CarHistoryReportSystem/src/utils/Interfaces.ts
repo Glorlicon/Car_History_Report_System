@@ -515,3 +515,12 @@ export interface CarInspectionSearchParams {
     endDate: string
 }
 
+export interface CarRegistrationSearchParams {
+    carId: string
+    ownerName: string
+    registrationNumber: string
+    expireDateStart: string
+    expireDateEnd: string
+    licensePlateNumber: string
+}
+
