@@ -23,7 +23,6 @@ namespace Application.Validation.CarAccidentHistory
             //    .InclusiveBetween(1, 5)
             //    .WithMessage("Rating can only be in range of [0,5]");
 
-            RuleFor(x => x.DamageLocation).IsInEnum().WithMessage("Damage Location Error Input");
             RuleFor(x => x.SortByServerity)
                 .InclusiveBetween(-1, 1)
                 .WithMessage("Can only be -1 for descending, 1 for ascending, 0 for not sorting");

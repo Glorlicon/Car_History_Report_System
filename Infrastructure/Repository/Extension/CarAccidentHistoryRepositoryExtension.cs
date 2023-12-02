@@ -18,13 +18,17 @@ namespace Infrastructure.Repository.Extension
             {
                 query = query.Where(x => x.CarId.ToLower().Contains(parameter.VinId.ToLower()));
             }
-            if (parameter.DamageLocation != null)
+            if (parameter.Location != null)
             {
-                query = query.Where(x => x.DamageLocation == parameter.DamageLocation);
+                query = query.Where(x => x.Location.ToLower().Contains(parameter.Location.ToLower()));
             }
-            if (parameter.Serverity != null)
+            if (parameter.MinServerity != null)
             {
-                query = query.Where(x => x.Serverity == parameter.Serverity);
+                query = query.Where(x => x.Serverity >= parameter.MinServerity);
+            }            
+            if (parameter.MaxServerity != null)
+            {
+                query = query.Where(x => x.Serverity <= parameter.MaxServerity);
             }
             if (parameter.AccidentStartDate != null)
             {
