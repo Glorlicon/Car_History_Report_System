@@ -1,4 +1,5 @@
 ﻿using Application.DTO.CarAccidentHistory;
+using Application.DTO.CarInsurance;
 using Application.DTO.CarStolenHistory;
 using Domain.Entities;
 using Infrastructure.DBContext;
@@ -68,6 +69,18 @@ namespace Infrastructure.Repository
         public override async Task<IEnumerable<CarAccidentHistory>> GetCarHistorysByOwnCompany(List<string> carIds, CarAccidentHistoryParameter parameter, bool trackChange)
         {
             var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Filter(parameter)
+                              .Sort(parameter)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
+        public override async Task<IEnumerable<CarAccidentHistory>> GetCarHistorysByDataProviderId(int dataProviderId, CarAccidentHistoryParameter parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, trackChange);
             return await query.Include(x => x.CreatedByUser)
                               .ThenInclude(x => x.DataProvider)
                               .Filter(parameter)

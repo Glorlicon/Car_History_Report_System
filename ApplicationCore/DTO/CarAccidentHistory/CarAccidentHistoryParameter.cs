@@ -12,9 +12,10 @@ namespace Application.DTO.CarAccidentHistory
     {
         public string? VinId { get; set; }
 
-        public float? Serverity { get; set; }
+        public float? MinServerity { get; set; }
+        public float? MaxServerity { get; set; }
 
-        public AccidentDamageLocation? DamageLocation { get; set; }
+        public string? Location { get; set; }
 
         public DateOnly? AccidentStartDate { get; set; }
         public DateOnly? AccidentEndDate { get; set; }
