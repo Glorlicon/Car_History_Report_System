@@ -524,3 +524,10 @@ export interface CarRegistrationSearchParams {
     licensePlateNumber: string
 }
 
+export interface CarCrashSearchParams {
+    vinId: string,
+    serverity: number,
+    accidentStartDate: string,
+    accidentEndDate: string,
+}
+

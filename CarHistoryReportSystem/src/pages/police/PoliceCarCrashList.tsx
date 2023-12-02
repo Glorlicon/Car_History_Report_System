@@ -1,15 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PoliceCarCrashDetailsForm from '../../components/forms/police/PoliceCarCrashDetailsForm';
 import PoliceCarCrashIdentificationForm from '../../components/forms/police/PoliceCarCrashIdentificationForm';
-import { AddCarCrash, EditCarCrash, ListCarCrash } from '../../services/api/CarCrash';
+import { AddCarCrash, DownloadCrashExcelFile, EditCarCrash, GetCrashExcel, ImportCrashFromExcel, ListCarCrash } from '../../services/api/CarCrash';
 import { RootState } from '../../store/State';
-import { APIResponse, CarCrash } from '../../utils/Interfaces';
+import { APIResponse, CarCrash, CarCrashSearchParams, Paging } from '../../utils/Interfaces';
 import { isValidVIN } from '../../utils/Validators';
 import '../../styles/PoliceCrashCar.css'
+import { useTranslation } from 'react-i18next';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import { Pagination } from '@mui/material';
 
 function PoliceCarCrashList() {
+    const { t, i18n } = useTranslation()
+    const [page, setPage] = useState(1)
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [paging, setPaging] = useState<Paging>()
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const id = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [showModal, setShowModal] = useState(false);
@@ -26,46 +34,118 @@ function PoliceCarCrashList() {
         accidentDate: '',
         location: ''
     });
+    const [searchVinId, setSearchVinId] = useState('')
+    const [searchSeverity, setSearchSeverity] = useState(0)
+    const [searchCrashStartDate, setSearchStartDate] = useState('')
+    const [searchCrashEndDate, setSearchEndDate] = useState('')
     const [editCarCrashReport, setEditCarCrashReport] = useState<CarCrash | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [resetTrigger, setResetTrigger] = useState(0);
+    const [data, setData] = useState("")
+    const [openImport, setOpenImport] = useState(false)
+    const [template, setTemplate] = useState('')
+    const [templateTrigger, setTemplateTrigger] = useState(0)
+    const [importData, setImportData] = useState<FormData | null>(null)
+    const isFirstRender = useRef(true);
+    const handleDownloadCsv = () => {
+        const element = document.getElementById('excel')
+        element?.click()
+    }
+    const handleDownloadTemplate = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const res = await DownloadCrashExcelFile(token, connectAPIError, language)
+        if (res.data) {
+            setTemplate(res.data)
+            setTemplateTrigger(prev => prev + 1)
+        }
+    }
+    const handleDownloadTemplateClick = () => {
+        const element = document.getElementById('template')
+        element?.click()
+    }
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+        } else {
+            handleDownloadTemplateClick();
+        }
+    }, [templateTrigger])
 
+    const handleImportExcel = async () => {
+        if (importData) {
+            setAdding(true);
+            setAddError(null);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await ImportCrashFromExcel(token, importData, connectAPIError, language);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setOpenImport(false)
+                setImportData(null)
+                fetchData();
+            }
+        }
+    }
+
+    const handleImportClick = () => {
+        document.getElementById('excel-file')?.click()
+    }
+
+    const handleAddDataFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files
+        if (files && files[0]) {
+            const file = files[0]
+            const reader = new FileReader()
+            reader.onload = (e: ProgressEvent<FileReader>) => {
+                if (e.target && e.target.result) {
+                    const fileContent = e.target.result
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    setImportData(formData)
+                }
+            }
+            reader.readAsText(file);
+        }
+    }
     const validateCarCrashReport = (crashReport: CarCrash): boolean => {
         if (!isValidVIN(crashReport.carId)) {
-            setAddError("VIN is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
         if (!crashReport.carId) {
-            setAddError("VIN must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
         if (!crashReport.description) {
-            setAddError("Description must be filled out");
+            setAddError(t('Description must be filled out'));
             return false;
         }
         if (!crashReport.location) {
-            setAddError("Location must be filled out");
+            setAddError(t('Location must be filled out'));
             return false;
         }
         if (!crashReport.odometer) {
-            setAddError("Odometer must be chosen");
+            setAddError(t('Odometer must be chosen'));
             return false;
         }
         if (!crashReport.accidentDate) {
-            setAddError("Accident Date must be chosen");
+            setAddError(t('Accident Date must be chosen'));
             return false;
         }
         if (!crashReport.reportDate) {
-            setAddError("Report Date must be chosen");
+            setAddError(t('Report Date must be chosen'));
             return false;
         }
         if (!crashReport.note) {
-            setAddError("Note must be filled out");
+            setAddError(t('Note must be filled out'));
             return false;
         }
         if (crashReport.serverity <= 0) {
-            setAddError("Severity must be higher than 0");
+            setAddError(t('Severity must be higher than 0'));
             return false;
         }
         return true;
@@ -103,7 +183,9 @@ function PoliceCarCrashList() {
         if (validateCarCrashReport(newCarCrashReport)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AddCarCrash(newCarCrashReport, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await AddCarCrash(newCarCrashReport, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -118,7 +200,9 @@ function PoliceCarCrashList() {
         if (editCarCrashReport && editCarCrashReport.id && validateCarCrashReport(editCarCrashReport)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await EditCarCrash(editCarCrashReport.id, editCarCrashReport, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await EditCarCrash(editCarCrashReport.id, editCarCrashReport, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -143,45 +227,125 @@ function PoliceCarCrashList() {
             });
         }
     };
-    const filteredList = carCrashList
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
+
+    const handleResetFilters = () => {
+        setSearchEndDate('')
+        setSearchSeverity(0)
+        setSearchStartDate('')
+        setSearchVinId('')
+        setResetTrigger(prev => prev + 1);
+    }
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carCrashReportResponse: APIResponse = await ListCarCrash(token)
+        let searchParams: CarCrashSearchParams = {
+            vinId: searchVinId,
+            accidentEndDate: searchCrashEndDate,
+            accidentStartDate: searchCrashStartDate,
+            serverity: searchSeverity
+        }
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carCrashReportResponse: APIResponse = await ListCarCrash(id, token, page, connectAPIError, language, searchParams)
         if (carCrashReportResponse.error) {
             setError(carCrashReportResponse.error)
         } else {
             setCarCrashList(carCrashReportResponse.data)
+            setPaging(carCrashReportResponse.pages)
+            const responseCsv: APIResponse = await GetCrashExcel(id, token, page, connectAPIError, language, searchParams)
+            setData(responseCsv.data)
         }
         setLoading(false)
     }
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
     return (
         <div className="pol-crash-list-page">
             <div className="pol-crash-top-bar">
-                <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ Add New Crash Car Report</button>
-                <div className="pol-crash-search-filter-container">
-                    <input
-                        type="text"
-                        className="pol-crash-search-bar"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
+                <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Crash Car Report')}</button>
+                <button className="add-pol-crash-btn" onClick={() => { handleDownloadTemplate() }}>&dArr; {t('Excel Template')}</button>
+                <a
+                    href={`data:text/csv;charset=utf-8,${escape(template)}`}
+                    download={`template.csv`}
+                    hidden
+                    id="template"
+                />
+                <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
+            </div>
+            <div className="pol-crash-top-bar">
+                <div className="reg-inspec-search-filter-container">
+                    <div className="reg-inspec-search-filter-item">
+                        <label>{t('Car ID')}</label>
+                        <input
+                            type="text"
+                            className="reg-inspec-search-bar"
+                            placeholder={t('Search by Car ID')}
+                            value={searchVinId}
+                            onChange={(e) => setSearchVinId(e.target.value)}
+                        />
+                    </div>
+                    <div className="reg-inspec-search-filter-item">
+                        <label>{t('Severity')}</label>
+                        <input
+                            type="number"
+                            className="reg-inspec-search-bar"
+                            placeholder={t('Search by Severity')}
+                            value={searchSeverity}
+                            onChange={(e) => setSearchSeverity(Number.parseFloat(e.target.value))}
+                            min="0"
+                            step="0.01"
+                            max="1"
+                        />
+                    </div>
+                    <div className="reg-inspec-search-filter-item-2">
+                        <label>{t('Accident Date')}</label>
+                        <div className="reg-inspec-search-filter-item-2-dates">
+                            <label>{t('From')}: </label>
+                            <input
+                                type="date"
+                                className="reg-inspec-search-bar"
+                                value={searchCrashStartDate}
+                                onChange={(e) => setSearchStartDate(e.target.value)}
+                            />
+                            <label>{t('To')}: </label>
+                            <input
+                                type="date"
+                                className="reg-inspec-search-bar"
+                                value={searchCrashEndDate}
+                                onChange={(e) => setSearchEndDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <button
+                        className="search-reg-inspec-btn"
+                        onClick={fetchData}
+                    >
+                        {t('Search...')}
+                    </button>
+                    <button
+                        className="reset-reg-inspec-btn"
+                        onClick={handleResetFilters}
+                    >
+                        {t('Reset Filters')}
+                    </button>
                 </div>
             </div>
             <table className="pol-crash-table">
                 <thead>
                     <tr>
-                        <th>Car VIN</th>
-                        <th>Location</th>
-                        <th>Report Date</th>
-                        <th>Severity</th>
+                        <th>{t('Car VIN')}</th>
+                        <th>{t('Location')}</th>
+                        <th>{t('Report Date')}</th>
+                        <th>{t('Severity')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -195,13 +359,13 @@ function PoliceCarCrashList() {
                         <tr>
                             <td colSpan={5} style={{ textAlign: 'center' }}>
                                 {error}
-                                    <button onClick={fetchData} className="pol-crash-retry-btn">Retry</button>
+                                    <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
                             </td>
                         </tr>
-                    ) : filteredList.length > 0 ? (
-                                filteredList.map((model: CarCrash, index: number) => (
+                    ) : carCrashList.length > 0 ? (
+                                carCrashList.map((model: CarCrash, index: number) => (
                             <tr key={index}>
-                                <td onClick={() => { setEditCarCrashReport(model) }}>{model.id}</td>
+                                <td onClick={() => { setEditCarCrashReport(model) }}>{model.carId}</td>
                                 <td>{model.location}</td>
                                 <td>{model.reportDate}</td>
                                 <td>{model.serverity}</td>
@@ -209,7 +373,7 @@ function PoliceCarCrashList() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No crash car reports found</td>
+                            <td colSpan={5}>{t('No crash car reports found')}</td>
                         </tr>
                     )}
                 </tbody>
@@ -218,7 +382,7 @@ function PoliceCarCrashList() {
                 <div className="pol-crash-modal">
                     <div className="pol-crash-modal-content">
                         <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setModalPage(1) }}>&times;</span>
-                        <h2>Add Car Crash Report</h2>
+                        <h2>{t('Add Car Crash Report')}</h2>
                         {modalPage === 1 && (
                             <PoliceCarCrashIdentificationForm
                                 action="Add"
@@ -237,10 +401,10 @@ function PoliceCarCrashList() {
                         {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
                             <>
                                 <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
-                                    Previous
+                                    {t('Previous')}
                                 </button>
                                 <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
-                                    {modalPage < 2 ? 'Next' : 'Add'}
+                                    {modalPage < 2 ? t('Next') : t('Finish')}
                                 </button>
                             </>
                         )}
@@ -254,7 +418,7 @@ function PoliceCarCrashList() {
                 <div className="pol-crash-modal">
                     <div className="pol-crash-modal-content">
                         <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setEditCarCrashReport(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Car Crash Report</h2>
+                        <h2>{t('Edit Car Crash Report')}</h2>
                         {modalPage === 1 && (
                             <PoliceCarCrashIdentificationForm
                                 action="Edit"
@@ -273,10 +437,10 @@ function PoliceCarCrashList() {
                         {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
                             <>
                                 <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
-                                    Previous
+                                    {t('Previous')}
                                 </button>
                                 <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
-                                    {modalPage < 2 ? 'Next' : 'Update'}
+                                    {modalPage < 2 ? t('Next') : t('Finish')}
                                 </button>
                             </>
                         )}
@@ -286,6 +450,44 @@ function PoliceCarCrashList() {
                     </div>
                 </div>
             )}
+            {openImport && (
+                <div className="reg-reg-modal">
+                    <div className="reg-reg-modal-content">
+                        <span className="reg-reg-close-btn" onClick={() => { setOpenImport(false); setImportData(null) }}>&times;</span>
+                        <h2>{t('Import from csv')}</h2>
+                        <div className="reg-reg-form-columns">
+                            <div className="reg-reg-form-column-2">
+                                <input type="file" id="excel-file" accept=".csv" className="csv-input" onChange={handleAddDataFromFile} />
+                                <button onClick={handleImportClick} className="dealer-car-sales-form-image-add-button"> {t('Choose file')}</button>
+                            </div>
+                            {importData && (
+                                <>
+                                    <label>{t('Non-empty file is selected')}</label>
+                                    <label className="reg-reg-error"> ! {t('Import file must have all data correct to be able to import')} !</label>
+                                </>
+                            )}
+                            <button onClick={handleImportExcel} disabled={adding} className="reg-reg-model-add-btn">
+                                {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                            {addError && (
+                                <p className="reg-reg-error">{addError}</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {paging && paging.TotalPages > 0 &&
+                <>
+                    <button className="export-reg-inspec-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
+                    <a
+                        href={`data:text/csv;charset=utf-8,${escape(data)}`}
+                        download={`crash-${Date.now()}.csv`}
+                        hidden
+                        id="excel"
+                    />
+                    <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+                </>
+            }
         </div>
     )
 }
