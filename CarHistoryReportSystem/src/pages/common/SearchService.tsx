@@ -9,7 +9,7 @@ import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
-function SearchDealer() {
+function SearchService() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carDealerList, setCarDealerList] = useState<DataProvider[]>([]);
@@ -85,7 +85,7 @@ function SearchDealer() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const DataProviderResponse: APIResponse = await GetDataProviderByType(0)
+        const DataProviderResponse: APIResponse = await GetDataProviderByType(2)
         if (DataProviderResponse.error) {
             setError(DataProviderResponse.error);
         } else {
@@ -177,7 +177,7 @@ function SearchDealer() {
     return (
         <div className="search-dealer-container">
             <div className="search-header">
-                <h1>Find Dealer Near Me</h1>
+                <h1>Find Service Shop Near Me</h1>
                 <p>CHRS provides accurate service data with customer reviews to help you find the right service center.</p>
             </div>
             {/*<SearchDealerForm*/}
@@ -232,4 +232,4 @@ function SearchDealer() {
     );
 }
 
-export default SearchDealer;
+export default SearchService;
