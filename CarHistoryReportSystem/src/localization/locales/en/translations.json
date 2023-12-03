@@ -253,5 +253,12 @@
   "Edit information": "Edit information",
   "My Reports": "My Reports",
   "Remaining Report(s)": "Remaining Report(s)",
-  "Change Password": "Change Password"
+  "Change Password": "Change Password",
+  "Invalid email address": "Invalid email address",
+  "Invalid phone number": "Invalid phone number",
+  "All fields must be filled out": "All fields must be filled out",
+  "Add Manufacturer": "Add Manufacturer",
+  "Search by Name": "Search by Name",
+  "No manufacturers added by admin": "No manufacturers added by admin",
+  "Edit Manufacturer": "Edit Manufacturer"
 }

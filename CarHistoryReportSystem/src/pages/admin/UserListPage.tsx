@@ -50,15 +50,15 @@ function UserListPage() {
     const [resetTrigger, setResetTrigger] = useState(0);
     const validateUser = (user: User): boolean => {
         if (!isValidEmail(user.email)) {
-            setAddError("Invalid email address");
+            setAddError(t('Invalid email address'));
             return false;
         }
         if (!isValidNumber(user.phoneNumber)) {
-            setAddError("Invalid phone number");
+            setAddError(t('Invalid phone number'));
             return false;
         }
-        if (!user.email || !user.userName || !user.firstName || !user.lastName || !user.phoneNumber) {
-            setAddError("All fields must be filled out");
+        if (!user.email || !user.userName || !user.firstName || !user.lastName || !user.phoneNumber || !user.address) {
+            setAddError(t('All fields must be filled out'));
             return false;
         }
         return true;

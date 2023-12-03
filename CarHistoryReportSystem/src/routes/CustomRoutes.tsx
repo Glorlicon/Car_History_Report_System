@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SpecialLayout from '../components/layout/SpecialLayout';
 import UserLayout from '../components/layout/UserLayout';
 import AdminHomePage from '../pages/admin/AdminHomePage';
-import AdminCarList from '../pages/admin/car/AdminCarList';
 import AdminCarModelList from '../pages/admin/car_model/AdminCarModelList';
 import AdminManufacturerList from '../pages/admin/manufacturer/AdminManufacturerList';
 import UserListPage from '../pages/admin/UserListPage';
@@ -80,7 +79,6 @@ const CustomRoutes = () => {
                 <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/manufacturers" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminManufacturerList /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/car-models" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarModelList /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/cars" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarList /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminRequestPage /></SpecialLayout>}></ProtectedRoute>} />
 
                 {/*Service Shop*/}

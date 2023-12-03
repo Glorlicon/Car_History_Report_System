@@ -3,11 +3,20 @@ import { useSelector } from 'react-redux';
 import '../../../styles/AdminManus.css';
 import { AddManufacturer, EditManufacturer, List, ListDataProviderTypes } from '../../../services/api/DataProvider';
 import { RootState } from '../../../store/State';
-import { APIResponse, Manufacturer } from '../../../utils/Interfaces';
+import { APIResponse, Manufacturer, ManufacturerSearchParams, Paging } from '../../../utils/Interfaces';
 import { isValidEmail, isValidNumber } from '../../../utils/Validators';
 import { JWTDecoder } from '../../../utils/JWTDecoder';
+import { useTranslation } from 'react-i18next';
+import { Pagination } from '@mui/material';
 
 function AdminManufacturerList() {
+    const { t, i18n } = useTranslation()
+    const [page, setPage] = useState(1)
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [paging, setPaging] = useState<Paging>()
+    const [resetTrigger, setResetTrigger] = useState(0);
+    const [searchName, setSearchName] = useState('')
+    const [searchEmail, setSearchEmail] = useState('')
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [dataProviders, setDataProviders] = useState<string[]>([])
     const [manufactureres, setManufacturers] = useState([])
@@ -30,30 +39,22 @@ function AdminManufacturerList() {
     }
     const [newManu, setNewManu] = useState<Manufacturer>(emptyManu)
 
-    const filteredManufacturers = manufactureres.filter((manu: any) => {
-        const matchingQuery = manu.name.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchingQuery
-    })
-
     const validateManu = (manu: Manufacturer): boolean => {
         if (manu.email && !isValidEmail(manu.email)) {
-            setAddError("Invalid email address");
+            setAddError(t('Invalid email address'));
             return false;
         }
         if (manu.phoneNumber && !isValidNumber(manu.phoneNumber)) {
-            setAddError("Invalid phone number");
+            setAddError(t('Invalid phone number'));
             return false;
         }
-        if (!manu.description || !manu.name) {
-            setAddError("Name and description must be filled out");
+        if (!manu.description || !manu.name || !manu.email || !manu.phoneNumber || !manu.address || !manu.websiteLink) {
+            setAddError(t('All fields must be filled out'));
             return false;
         }
         return true;
     };
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editManu) {
@@ -73,7 +74,10 @@ function AdminManufacturerList() {
         if (validateManu(newManu)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await AddManufacturer(dataProviders,newManu,token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await AddManufacturer(dataProviders, newManu, token, connectAPIError, unknownError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -90,7 +94,10 @@ function AdminManufacturerList() {
         if (validateManu(editManu)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await EditManufacturer(editManu, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await EditManufacturer(editManu, token, connectAPIError, unknownError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -103,23 +110,35 @@ function AdminManufacturerList() {
     };
 
     const fetchData = async () => {
-        console.log(JWTDecoder(token))
         setLoading(true);
         setError(null);
-        const dataProviderResponse: APIResponse = await ListDataProviderTypes(token);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchParams: ManufacturerSearchParams = {
+            email: searchEmail,
+            name: searchName
+        }
+        const dataProviderResponse: APIResponse = await ListDataProviderTypes(token, connectAPIError, unknownError, language);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {
             setDataProviders(dataProviderResponse.data)
-            const manufacturerResponse: APIResponse = await List(token)
+            const manufacturerResponse: APIResponse = await List(token, page, connectAPIError, unknownError, language, searchParams)
             if (manufacturerResponse.error) {
                 setError(manufacturerResponse.error)
             } else {
                 setManufacturers(manufacturerResponse.data)
+                setPaging(manufacturerResponse.pages)
             }
         }
         setLoading(false)
     };
+    const handleResetFilters = () => {
+        setSearchEmail('')
+        setSearchName('')
+        setResetTrigger(prev => prev + 1);
+    }
 
     useEffect(() => {
         fetchData();
@@ -127,23 +146,50 @@ function AdminManufacturerList() {
   return (
       <div className="ad-manu-list-page">
           <div className="ad-manu-top-bar">
-              <button className="add-ad-manu-btn" onClick={() => setShowModal(true)}>+ Add Manufacturer</button>
-              <div className="ad-manu-search-filter-container">
-                  <input
-                      type="text"
-                      className="ad-manu-search-bar"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                  />
+              <button className="add-ad-manu-btn" onClick={() => setShowModal(true)}>+ {t('Add Manufacturer')}</button>
+          </div>
+          <div className="ad-user-top-bar">
+              <div className="ad-user-search-filter-container">
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Name')}</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Name')}
+                          value={searchName}
+                          onChange={(e) => setSearchName(e.target.value)}
+                      />
+                  </div>
+                  <div className="reg-inspec-search-filter-item">
+                      <label>Email</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Email')}
+                          value={searchEmail}
+                          onChange={(e) => setSearchEmail(e.target.value)}
+                      />
+                  </div>
+                  <button
+                      className="search-reg-inspec-btn"
+                      onClick={fetchData}
+                  >
+                      {t('Search...')}
+                  </button>
+                  <button
+                      className="reset-reg-inspec-btn"
+                      onClick={handleResetFilters}
+                  >
+                      {t('Reset Filters')}
+                  </button>
               </div>
           </div>
           <table className="ad-manu-table">
               <thead>
                   <tr>
                       <th>ID</th>
-                      <th>Name</th>
-                      <th>Description</th>
+                      <th>{t('Name')}</th>
+                      <th>{t('Description')}</th>
                   </tr>
               </thead>
               <tbody>
@@ -157,11 +203,11 @@ function AdminManufacturerList() {
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
                               {error}
-                              <button onClick={fetchData} className="ad-manu-retry-btn">Retry</button>
+                              <button onClick={fetchData} className="ad-manu-retry-btn">{t('Retry')}</button>
                           </td>
                       </tr>
-                      ) : filteredManufacturers.length > 0 ? (
-                          filteredManufacturers.map((manu: any, index: number) => (
+                      ) : manufactureres.length > 0 ? (
+                          manufactureres.map((manu: any, index: number) => (
                               <tr key={index}>
                               <td onClick={() => { setEditManu(manu); setCurrentId(manu.id) }}>{manu.id}</td>
                               <td>{manu.name}</td>
@@ -170,7 +216,7 @@ function AdminManufacturerList() {
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>No manufacturers added by admin</td>
+                          <td colSpan={5}>{t('No manufacturers added by admin')}</td>
                       </tr>
                   )}
               </tbody>
@@ -180,28 +226,28 @@ function AdminManufacturerList() {
               <div className="ad-manu-modal">
                   <div className="ad-manu-modal-content">
                       <span className="ad-manu-close-btn" onClick={() => {setShowModal(false); setNewManu(emptyManu)}}>&times;</span>
-                      <h2>Add Manufacturer</h2>
+                      <h2>{t('Add Manufacturer')}</h2>
                       <div className="ad-manu-form-columns">
                           <div className="ad-manu-form-column">
-                              <label>Name</label>
+                              <label>{t('Name')}</label>
                               <input type="text" name="name" value={newManu.name} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Description</label>
+                              <label>{t('Description')}</label>
                               <input type="text" name="description" value={newManu.description} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Address</label>
+                              <label>{t('Address')}</label>
                               <input type="text" name="address" value={newManu.address} onChange={handleInputChange}/>
                           </div>
                       </div>
                       <div className="ad-manu-form-columns">
                           <div className="ad-manu-form-column">
-                              <label>Website Link</label>
+                              <label>{t('Website Link')}</label>
                               <input type="text" name="websiteLink" value={newManu.websiteLink} onChange={handleInputChange}/>
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Phone</label>
+                              <label>{t('Phone')}</label>
                               <input type="text" name="phoneNumber" value={newManu.phoneNumber} onChange={handleInputChange}/>
                           </div>
                           <div className="ad-manu-form-column">
@@ -212,7 +258,7 @@ function AdminManufacturerList() {
                       <button onClick={handleAddManu} disabled={adding} className="ad-manu-add-btn">
                           {adding ? (
                               <div className="ad-manu-inline-spinner"></div>
-                          ) : 'Add'}
+                          ) : t('Finish')}
                       </button>
                       {addError && (
                           <p className="ad-manu-error">{addError}</p>
@@ -224,32 +270,32 @@ function AdminManufacturerList() {
               <div className="ad-manu-modal">
                   <div className="ad-manu-modal-content">
                       <span className="ad-manu-close-btn" onClick={() => setEditManu(null)}>&times;</span>
-                      <h2>User Details</h2>
+                      <h2>{t('Edit Manufacturer')}</h2>
                       <div className="ad-manu-form-columns">
                           <div className="ad-manu-form-column">
                               <label>ID</label>
                               <input type="text" name="id" value={editManu.id} onChange={handleInputChange} disabled />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Name</label>
+                              <label>{t('Name')}</label>
                               <input type="text" name="name" value={editManu.name} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Description</label>
+                              <label>{t('Description')}</label>
                               <input type="text" name="description" value={editManu.description} onChange={handleInputChange} required />
                           </div>
                       </div>
                       <div className="ad-manu-form-columns">
                           <div className="ad-manu-form-column">
-                              <label>Address</label>
+                              <label>{t('Address')}</label>
                               <input type="text" name="address" value={editManu.address} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Website Link</label>
+                              <label>{t('Website Link')}</label>
                               <input type="text" name="websiteLink" value={editManu.websiteLink} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
-                              <label>Phone</label>
+                              <label>{t('Phone')}</label>
                               <input type="text" name="phoneNumber" value={editManu.phoneNumber} onChange={handleInputChange} required />
                           </div>
                           <div className="ad-manu-form-column">
@@ -260,7 +306,7 @@ function AdminManufacturerList() {
                       <button onClick={handleEditManu} disabled={adding} className="ad-manu-add-btn">
                           {adding ? (
                               <div className="ad-manu-inline-spinner"></div>
-                          ) : 'Update'}
+                          ) : t('Finish') }
                       </button>
                       {addError && (
                           <p className="ad-manu-error">{addError}</p>
@@ -268,6 +314,11 @@ function AdminManufacturerList() {
                   </div>
               </div>
           )}
+          {paging && paging.TotalPages > 0 &&
+              <>
+                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+              </>
+          }
       </div>
   );
 }

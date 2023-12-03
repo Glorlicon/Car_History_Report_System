@@ -254,5 +254,12 @@
   "Edit information": "Chỉnh sửa thông tin",
   "My Reports": "Báo cáo của tôi",
   "Remaining Report(s)": "Số báo cáo còn lại",
-  "Change Password": "Đổi mật khẩu"
+  "Change Password": "Đổi mật khẩu",
+  "Invalid email address": "Email không hợp lệ",
+  "Invalid phone number": "Số điện thoại không hợp lệ",
+  "All fields must be filled out": "Hãy điền toàn bộ thông tin còn trống",
+  "Add Manufacturer": "Nhà sản xuất mới",
+  "Search by Name": "Tìm kiếm theo tên",
+  "No manufacturers added by admin": "Không tìm thấy nhà sản xuất nào",
+  "Edit Manufacturer": "Chỉnh sửa thông tin nhà sản xuất"
 }
