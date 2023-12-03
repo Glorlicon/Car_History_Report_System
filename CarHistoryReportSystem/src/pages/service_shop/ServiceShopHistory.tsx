@@ -302,7 +302,7 @@ function ServiceShopHistory() {
                 </div>
             </div>
             <div className="manu-car-model-top-bar">
-                <button className="add-manu-car-model-btn" onClick={() => setSearchModal(true)}>+ Add Car Service History</button>
+                <button className="add-manu-car-model-btn" onClick={() => setSearchModal(true)}>+ Search Car Recall</button>
             </div>
             <table className="manu-car-model-table">
                 <thead>
