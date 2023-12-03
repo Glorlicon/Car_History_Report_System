@@ -41,8 +41,8 @@ function ManufacturerCarRecallList() {
 
 
     const validateCarRegistration = (recall: CarRecalls): boolean => {
-        if (!isValidVIN(recall.modelId)) {
-            setAddError("VIN is invalid");
+        if (!recall.modelId) {
+            setAddError("VIN must be filled out");
             return false;
         }
         if (!recall.description) {
@@ -126,6 +126,7 @@ function ManufacturerCarRecallList() {
         } else if (carModelResponse.error) {
             setError(carModelResponse.error)
         } else {
+            console.log("Model", carModelResponse.data)
             setRecallList(CarRecallReponse.data)
             setModelList(carModelResponse.data)
             setPaging(CarRecallReponse.pages)
@@ -144,56 +145,56 @@ function ManufacturerCarRecallList() {
         fetchData();
     }, [resetTrigger]);
     return (
-        <div className="manu-manu-list-page">
-            <div className="manu-manu-top-bar">
-                <button className="add-manu-manu-btn" onClick={() => setShowModal(true)}>+ {t('Add New Car Recall')}</button>
+        <div className="reg-reg-list-page">
+            <div className="reg-reg-top-bar">
+                <button className="add-reg-reg-btn" onClick={() => setShowModal(true)}>+ {t('Add New Car Recall')}</button>
             </div>
-            <div className="manu-inspec-top-bar">
-                <div className="manu-inspec-search-filter-container">
-                    <div className="manu-inspec-search-filter-item">
+            <div className="reg-inspec-top-bar">
+                <div className="reg-inspec-search-filter-container">
+                    <div className="reg-inspec-search-filter-item">
                         <label>{t('ModelID')}</label>
                         <input
                             type="text"
-                            className="manu-inspec-search-bar"
+                            className="reg-inspec-search-bar"
                             placeholder={t('Search Recall By ModelID')}
                             value={searchModelId}
                             onChange={(e) => setSearchModelId(e.target.value)}
                         />
                     </div>
-                    <div className="manu-inspec-search-filter-item-2">
+                    <div className="reg-inspec-search-filter-item-2">
                         <label>{t('RecallDate')}</label>
-                        <div className="manu-inspec-search-filter-item-2-dates">
+                        <div className="reg-inspec-search-filter-item-2-dates">
                             <label>{t('From')}: </label>
                             <input
                                 type="date"
-                                className="manu-inspec-search-bar"
+                                className="reg-inspec-search-bar"
                                 value={searchRecallStartDate}
                                 onChange={(e) => setSearchRecallStartDate(e.target.value)}
                             />
                             <label>{t('To')}: </label>
                             <input
                                 type="date"
-                                className="manu-inspec-search-bar"
+                                className="reg-inspec-search-bar"
                                 value={searchRecallEndDate}
                                 onChange={(e) => setSearchRecallEndDate(e.target.value)}
                             />
                         </div>
                     </div>
                     <button
-                        className="search-manu-inspec-btn"
+                        className="search-reg-inspec-btn"
                         onClick={fetchData}
                     >
                         {t('Search...')}
                     </button>
                     <button
-                        className="reset-manu-inspec-btn"
+                        className="reset-reg-inspec-btn"
                         onClick={handleResetFilters}
                     >
                         {t('Reset Filters')}
                     </button>
                 </div>
             </div>
-            <table className="manu-manu-table">
+            <table className="reg-reg-table">
                 <thead>
                     <tr>
                         <th>{t('ModelID')}</th>
@@ -205,14 +206,14 @@ function ManufacturerCarRecallList() {
                     {loading ? (
                         <tr>
                             <td colSpan={4} style={{ textAlign: 'center' }}>
-                                <div className="manu-manu-spinner"></div>
+                                <div className="reg-reg-spinner"></div>
                             </td>
                         </tr>
                     ) : error ? (
                         <tr>
                             <td colSpan={4} style={{ textAlign: 'center' }}>
                                 {error}
-                                    <button onClick={fetchData} className="manu-manu-retry-btn">{t('Retry')}</button>
+                                <button onClick={fetchData} className="reg-reg-retry-btn">{t('Retry')}</button>
                             </td>
                         </tr>
                     ) : recallList.length > 0 ? (
@@ -231,39 +232,39 @@ function ManufacturerCarRecallList() {
                 </tbody>
             </table>
             {showModal && (
-                <div className="manu-manu-modal">
-                    <div className="manu-manu-modal-content">
-                        <span className="manu-manu-close-btn" onClick={() => { setShowModal(false) }}>&times;</span>
+                <div className="reg-reg-modal">
+                    <div className="reg-reg-modal-content">
+                        <span className="reg-reg-close-btn" onClick={() => { setShowModal(false) }}>&times;</span>
                         <h2>{t('Add Car Registration')}</h2>
                         <CarRecallAddModal
                             recall={newRecall}
                             models={modelList}
                             handleInputChange={handleInputChange}
                         />
-                        <button onClick={handleAddCarRegistration} disabled={adding} className="manu-manu-model-add-btn">
-                            {adding ? (<div className="manu-manu-inline-spinner"></div>) : t('Finish')}
+                        <button onClick={handleAddCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
+                            {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
                         </button>
                         {addError && (
-                            <p className="manu-manu-error">{addError}</p>
+                            <p className="reg-reg-error">{addError}</p>
                         )}
                     </div>
                 </div>
             )}
             {editRecalModel && (
-                <div className="manu-manu-modal">
-                    <div className="manu-manu-modal-content">
-                        <span className="manu-manu-close-btn" onClick={() => { setShowModal(false); setEditRecallModel(null) }}>&times;</span>
+                <div className="reg-reg-modal">
+                    <div className="reg-reg-modal-content">
+                        <span className="reg-reg-close-btn" onClick={() => { setShowModal(false); setEditRecallModel(null) }}>&times;</span>
                         <h2>{t('Edit Car Registration')}</h2>
                         <CarRecallEditModal
                             action="Edit"
                             model={editRecalModel}
                             handleInputChange={handleInputChange}
                         />
-                        <button onClick={handleEditCarRegistration} disabled={adding} className="manu-manu-model-add-btn">
-                            {adding ? (<div className="manu-manu-inline-spinner"></div>) : t('Finish')}
+                        <button onClick={handleEditCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
+                            {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
                         </button>
                         {addError && (
-                            <p className="manu-manu-error">{addError}</p>
+                            <p className="reg-reg-error">{addError}</p>
                         )}
                     </div>
                 </div>
