@@ -143,5 +143,7 @@
   "ModelID": "Mẫu xe",
   "RecallDate": "Ngày thu hồi",
   "No car recall found": "Không tìm thấy thông tin thu hồi xe nào",
-  "Search Recall By ModelID":  "Tìm theo mẫu xe"
+  "Search Recall By ModelID": "Tìm theo mẫu xe",
+  "Car Model": "Mẫu xe",
+  "Add New Car Recall": "Thêm thông tin thu hồi xe mới"
 }
