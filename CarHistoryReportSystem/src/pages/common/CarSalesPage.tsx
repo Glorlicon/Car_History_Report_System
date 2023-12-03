@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import {ListCarForSale } from '../../services/api/CarForSale';
-import { APIResponse, Car, CarModel } from '../../utils/Interfaces';
+import { APIResponse, Car, CarModel, Manufacturer } from '../../utils/Interfaces';
 import '../../styles/CarForSale.css'
 
 function CarSalesPage() {
@@ -12,11 +12,13 @@ function CarSalesPage() {
     const [carList, setCarList] = useState<Car[]>([]);
     const [modelList, setModelList] = useState<CarModel[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [manufacturerList, setManufacturerList] = useState<Manufacturer[]>([]);
 
     const fetchData = async () => {
         setLoading(true);
         setError(null);
         const carListResponse: APIResponse = await ListCarForSale()
+        /*const manufacturerReponse: APIReponse = await */
         if (carListResponse.error) {
             setError(carListResponse.error)
         } else {
@@ -33,7 +35,7 @@ function CarSalesPage() {
 
     return (
         <>
-            <main>
+            <div className="car-sale">
                 <aside id="filters">
                     <div id="search">
                         <input type="text" placeholder="Search" />
@@ -45,9 +47,22 @@ function CarSalesPage() {
                     </div>
                     <div id="filter-options">
                         <div className="filter-choice">
-                            <p>Make & Model</p>
+                            <p>Make</p>
                             <select>
-                                <option value="make-model">Any Make & Model</option>
+                                <option value="">Any Make</option>
+                                {manufacturerList.length > 0 ? (
+                                    manufacturerList.map((model, index) => (
+                                        <option key={index} value={model.name}>{model.name}</option>
+                                    ))
+                                ) : (
+                                    <option value="" disabled>Loading...</option> // Show while the list is empty
+                                )}
+                            </select>
+                        </div>
+                        <div className="filter-choice">
+                            <p>Model</p>
+                            <select>
+                                <option value="make-model">Any Model</option>
                             </select>
                         </div>
                         <div className="filter-choice">
@@ -74,9 +89,7 @@ function CarSalesPage() {
                                 <option value="make-model">Any Body Style</option>
                             </select>
                         </div>
-                        {/* ... other filters ... */}
                     </div>
-                    
                 </aside>
 
                 <section id="car-listings">
@@ -144,51 +157,13 @@ function CarSalesPage() {
                             <td colSpan={5}>No cars found</td>
                         </tr>
                     )}
-
-                    {/*<article className="car-card">*/}
-                    {/*    <div className="Car-header">*/}
-                    {/*        <h3>Used Model Name</h3>*/}
-                    {/*        <img src="#" alt="Car Image" />*/}
-                            
-                    {/*    </div>*/}
-
-                    {/*    <div className="used-car-info-container">*/}
-                    {/*        <div className="used-car-info">*/}
-                    {/*            <h3>Price: Price</h3>*/}
-                    {/*            <p><strong>Dealer:</strong> DealerName</p>*/}
-                    {/*        </div>*/}
-                    {/*        <div className="used-car-info">*/}
-                    {/*            <p><strong>Location:</strong> Location</p>*/}
-                    {/*            <p><strong>Color:</strong> Color</p>*/}
-                    {/*            <p><strong>Transmission:</strong> Transmission</p>*/}
-                    {/*            <p><strong>MPG:</strong> MPG</p>*/}
-                    {/*        </div>*/}
-
-                    {/*        <div className="used-car-info">*/}
-                    {/*            <p><strong>Mileage:</strong> Mileage</p>*/}
-                    {/*            <p><strong>Body Style:</strong> BodyStyle</p>*/}
-                    {/*            <p><strong>Engine:</strong> Engine</p>*/}
-
-                    {/*        </div>*/}
-
-                    {/*    </div>*/}
-                    {/*    <div className="description">*/}
-                    {/*        <p><strong>Description:</strong> Description</p>*/}
-                    {/*    </div>*/}
-                        
-                    {/*</article>*/}
-
-                   
-
-                    {/* ... other car cards ... */}
-
                     <div id="pagination">
                         <button id="previous">Previous</button>
                         <span>1 2 3 4 ...</span>
                         <button id="next">Next</button>
                     </div>
                 </section>
-            </main>
+            </div>
         </>
     );
 }

@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { AddReview, EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
-import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews, UserDataproviderId } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
+import '../../styles/CarDealerProfile.css'
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 function CarDealerHomePage() {
