@@ -20,11 +20,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:3000")
+                          policy.WithOrigins(builder.Configuration["ClientUrl"])
                                 .AllowAnyMethod()
                                 .AllowAnyHeader()
                                 .WithExposedHeaders("X-Pagination");
                       });
+    Console.WriteLine(builder.Configuration["ClientUrl"]);
 });
 
 

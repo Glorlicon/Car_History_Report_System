@@ -15,6 +15,7 @@ import CarSalesDetailPage from '../pages/common/CarSalesDetailPage';
 import HomePage from '../pages/common/HomePage';
 import LoginPage from '../pages/common/LoginPage';
 import CarDealerProfile from '../pages/common/CarDealerProfile';
+import CarServiceShoprProfile from '../pages/common/ServiceShopProfile';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
 import ManufacturerCarModelList from '../pages/manufacturer/car_model/ManufacturerCarModelList';
@@ -49,6 +50,8 @@ import InsuranceCompanyInsuranceList from '../pages/insurance_company/InsuranceC
 import PoliceCarCrashList from '../pages/police/PoliceCarCrashList';
 import InsuranceCompanyCrashList from '../pages/insurance_company/InsuranceCompanyCrashList';
 import InsuranceCompanyStolenList from '../pages/insurance_company/InsuranceCompanyStolenList';
+import SearchCarDealer from '../pages/common/SearchDealer';
+import SearchServiceShop from '../pages/common/SearchServiceShop';
 
 
 
@@ -70,6 +73,9 @@ const CustomRoutes = () => {
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
                 <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
                 <Route path="/sales/dealer/:id" element={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>} />
+                <Route path="/service/:id" element={<UserLayout navItems={UserNavigation}> <CarServiceShoprProfile /> </UserLayout>} />
+                <Route path="/dealers/search" element={<UserLayout navItems={UserNavigation}> <SearchCarDealer /> </UserLayout>} />
+                <Route path="/services/search" element={<UserLayout navItems={UserNavigation}> <SearchServiceShop /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/maintenance" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><CarMaintenance /></UserLayout>}></ProtectedRoute>} />

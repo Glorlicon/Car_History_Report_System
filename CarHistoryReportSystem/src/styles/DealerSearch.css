@@ -1,0 +1,252 @@
+﻿.search-dealer-container {
+    margin-top:60px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.search-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .search-header input[type="text"] {
+        width: 50%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+.dealer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dealer-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+}
+
+.dealer-rating {
+    margin-bottom: 10px;
+    color: #ffcc00; /* gold color for stars */
+}
+
+.dealer-favorite {
+    margin-bottom: 10px;
+    color: #ff4444; /* heart color */
+}
+
+.dealer-address {
+    margin-bottom: 10px;
+}
+
+.phone-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .phone-button:hover {
+        background-color: #0056b3;
+    }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+    .pagination button {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f6f6f6;
+        cursor: pointer;
+    }
+
+        .pagination button:hover {
+            background-color: #e0e0e0;
+        }
+
+
+.dealer-map-container {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+}
+
+.dealer-list {
+    flex: 0 0 70%;
+    min-height: 1004.61px;
+    /* overflow-y: auto; Scrollable*/
+}
+
+.map-placeholder {
+    flex: 0 0 30%;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 1004.61px;
+}
+
+.map-content {
+    text-align: center;
+}
+
+.dealer-search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+    .dealer-search-bar select,
+    .dealer-search-bar input,
+    .dealer-search-bar button {
+        padding: 8px 10px;
+        margin: 0 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 1rem;
+        color: #333;
+        outline: none;
+    }
+
+    .dealer-search-bar button {
+        cursor: pointer;
+        background-color: #e7e7e7; /* Light grey background for the button */
+        transition: background-color 0.2s;
+    }
+
+        .dealer-search-bar button:hover {
+            background-color: #d4d4d4; /* Slightly darker grey on hover */
+        }
+
+        /* Style for the search icon */
+        .dealer-search-bar button::before {
+            content: '🔍';
+            margin-right: 5px;
+        }
+
+    .dealer-search-bar input[type="text"] {
+        flex-grow: 1; /* Allows the search input to take up the remaining space */
+    }
+
+    /* Optional: if you want to hide the default arrow in IE for select elements */
+    .dealer-search-bar select::-ms-expand {
+        display: none;
+    }
+
+/* Optional: custom styles for different browsers */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .dealer-search-bar select {
+        -webkit-appearance: none; /* Removes default chrome and safari style */
+        -moz-appearance: none; /* Removes default style Firefox */
+        background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Add custom arrow for dropdown */
+        background-position: right 10px top 50%; /* Position for the custom arrow */
+        background-repeat: no-repeat;
+        background-size: 12px; /* Size of the custom arrow */
+    }
+}
+
+/* Clear styles for the input search */
+.dealer-search-bar input[type="text"] {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-right: 5px;
+    border-radius: 4px;
+}
+
+/* Style for the search button */
+.dealer-search-bar button {
+    padding: 8px 12px;
+    background-color: #007bff; /* Bootstrap primary color */
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+    /* Hover effect for the search button */
+    .dealer-search-bar button:hover {
+        background-color: #0056b3; /* A darker shade for hover */
+    }
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .dealer-search-bar {
+        flex-direction: column;
+        gap: 10px; /* Spacing between elements on small screens */
+    }
+
+        .dealer-search-bar select,
+        .dealer-search-bar input,
+        .dealer-search-bar button {
+            width: 100%; /* Full width on small screens */
+            margin: 5px 0; /* Stack the elements vertically with space between */
+        }
+}
+
+.shop-information {
+    text-align: left;
+    padding: 10px;
+}
+
+.star-summary {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns items to the start of the container */
+    gap: 10px; /* Adjust the space between items */
+    padding: 0; /* Removes any default padding */
+    margin: 0; /* Removes any default margin */
+}
+
+    /* Ensures the Typography component does not push away the Rating component */
+    .star-summary .MuiTypography-root {
+        margin: 0;
+        padding-right: 10px; /* Adds some space after the text */
+    }
+
+    /* Ensures the Rating component does not have margin/padding affecting the layout */
+    .star-summary .MuiRating-root {
+        margin: 0;
+        padding: 0;
+    }
+
+/* Additional reset styles in case other global styles are affecting the layout */
+*, *::before, *::after {
+    box-sizing: border-box; /* Makes sure padding does not affect overall width */
+}
+.dealer-map-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* You can adjust the gap between the list and map as needed */
+}
+
+.dealer-list {
+    flex: 0 0 55%; /* Takes up 70% of the space */
+}
+
+.map-container {
+    flex: 0 0 30%;
+    height: 400px;
+}
