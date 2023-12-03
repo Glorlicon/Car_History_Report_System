@@ -13,7 +13,6 @@ function CarDealerHomePage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carList, setCarList] = useState<Car[]>([]);
-    const [userDataprovider, setUserDataprovider] = useState < UserDataproviderId>()
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const [ratingValue, setRatingValue] = useState<number | null>(null);
     const [comment, setComment] = useState('');
@@ -134,13 +133,7 @@ function CarDealerHomePage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        console.log("1")
-        const UserResponse: APIResponse = await GetUserById(id as string);
-        if (UserResponse.error) {
-            setError(UserResponse.error)
-        } else {
-            setUserDataprovider(UserResponse.data)
-            const dataProviderResponse: APIResponse = await GetDealerProfileData(UserResponse.data.dataProviderId as unknown as string);
+            const dataProviderResponse: APIResponse = await GetDealerProfileData(id as unknown as string);
             if (dataProviderResponse.error) {
                 setError(dataProviderResponse.error);
             } else {
@@ -183,7 +176,6 @@ function CarDealerHomePage() {
 
                 setLoading(false);
             }
-        }
     };
 
     useEffect(() => {

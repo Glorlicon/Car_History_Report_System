@@ -5,39 +5,26 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { AddReview, EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
-function ServiceShopHomePage() {
+function ServiceShopProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const dealerId = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
-    const [newImages, setNewImages] = useState<File[]>([])
-    const [User, setUser] = useState<DataProvider | null>(null) //EditDataProvider
-    const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
-    const [modalPage, setModalPage] = useState(1);
-    const [showModal, setShowModal] = useState(false);
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const [removedImages, setRemovedImages] = useState<string[]>([]);
+    const [comment, setComment] = useState('');
     const [adding, setAdding] = useState(false);
+    const [addError, setAddError] = useState<string | null>(null);
     const [review, setReview] = useState<Reviews[]>([]);
+    const [ratingValue, setRatingValue] = useState<number | null>(null);
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
     const [allServices, setAllServices] = useState<string[]>([]);
-
-    //const [showAllMakes, setShowAllMakes] = useState(false);
-    //const maxItemsToShow = 15;
-    /*const makesList = userDetails.makes; // Replace with actual makes list from userDetails*/
-    /*const visibleMakes = showAllMakes ? makesList : makesList.slice(0, maxItemsToShow);*/
-    //const [showAllServices, setShowAllServices] = useState(false);
-    //const maxServicesToShow = 15;
-    //const servicesList = userDetails.services; // Replace with actual services list from userDetails
-    //const visibleServices = showAllServices ? servicesList : servicesList.slice(0, maxServicesToShow);
 
 
     const [userDetails, setUserDetails] = useState({
@@ -101,106 +88,114 @@ function ServiceShopHomePage() {
     const [workingTimes, setWorkingTimes] = useState<editWorkingTime[]>(
         userDetails?.workingTimes && userDetails.workingTimes.length > 0 ? userDetails.workingTimes : defaultSchedule
     );
-
-
-
-
-    const handleNextPage = () => {
-        if (modalPage < 2) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editDealerProfile) handleEditDealerProfile();
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (modalPage > 1) {
-            setModalPage(prevPage => prevPage - 1);
-        }
-    };
-    const [addError, setAddError] = useState<string | null>(null);
-
-
-    const data = useSelector((state: RootState) => state.auth.token)
     type RouteParams = {
         id: string
     }
     const { id } = useParams<RouteParams>()
     const [overlayWidth, setOverlayWidth] = useState<string>('100%');
-
-
-    const [editProfile, setEditProfile] = useState<DataProvider | null>(null)
-
     const value = 50;
     const max = 100;
+
+    // Handler for the rating change
+    const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
+        setRatingValue(newValue);
+        console.log("Rating", newValue);
+    };
+
+    // Handler for the comment change
+    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setComment(event.target.value);
+    };
+
+    const handleSubmitReview = async () => {
+        const actualId = id?.replace('id=', '');
+        const newReview: Reviews = {
+            userId: actualId,
+            description: comment,
+            rating: ratingValue || 0,
+            createdTime: new Date()
+        };
+        setReview(prevReviews => [...prevReviews, newReview]);
+        if (review != null) {
+            console.log("Submitted review:", newReview);
+            console.log("Target DataProvider", userDetails.id)
+            setAdding(true);
+            setAddError(null);
+            const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
+            setAdding(false);
+            if (reviewResponse.error) {
+                setAddError(reviewResponse.error);
+            } else {
+                fetchData()
+            }
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
         setError(null);
+        const actualIdString = id?.replace('id=', '');
+        const actualId = Number(actualIdString);
+        const dataProviderResponse: APIResponse = await GetDealerProfileData(actualId as unknown as string);
+            if (dataProviderResponse.error) {
+                setError(dataProviderResponse.error);
+            } else {
+                let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
 
-        const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
-        if (dataProviderResponse.error) {
-            setError(dataProviderResponse.error);
-        } else {
-            let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
+                if (Array.isArray(dataProviderResponse.data.workingTimes)) {
+                    transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
+                        const [startHour, startMinute] = time.startTime.split(':').map(Number);
+                        const [endHour, endMinute] = time.endTime.split(':').map(Number);
 
-            if (Array.isArray(dataProviderResponse.data.workingTimes)) {
-                transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
-                    const [startHour, startMinute] = time.startTime.split(':').map(Number);
-                    const [endHour, endMinute] = time.endTime.split(':').map(Number);
+                        return {
+                            dayOfWeek: time.dayOfWeek,
+                            startHour,
+                            startMinute,
+                            endHour,
+                            endMinute,
+                            isClosed: time.isClosed
+                        };
+                    });
+                }
 
-                    return {
-                        dayOfWeek: time.dayOfWeek,
-                        startHour,
-                        startMinute,
-                        endHour,
-                        endMinute,
-                        isClosed: time.isClosed
-                    };
+                setUserDetails({
+                    ...dataProviderResponse.data,
+                    workingTimes: transformedWorkingTimes
                 });
+
+                console.log("Transformed Data:", userDetails);
+
+                const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(actualId);
+                if (carServiceResponse.error) {
+                    setError(carServiceResponse.error);
+                } else {
+                    setCarServicesList(carServiceResponse.data);
+
+                    // Define the initial value of the accumulator explicitly as an array of strings
+                    const initialServices: string[] = [];
+
+                    const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
+                        if (item.servicesName) {
+                            const serviceNames = item.servicesName.split(', ').map(name => name.trim());
+                            return acc.concat(serviceNames);
+                        }
+                        return acc;
+                    }, []);
+                    // Remove duplicates
+                    const uniqueServices = Array.from(new Set<string>(services));
+                    setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
+                }
+
+
+                const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+                if (reviewListResponse.error) {
+                    setError(reviewListResponse.error);
+                } else {
+                    setReview(reviewListResponse.data);
+                }
+
+                setLoading(false);
             }
-
-            setUserDetails({
-                ...dataProviderResponse.data,
-                workingTimes: transformedWorkingTimes
-            });
-
-            console.log("Transformed Data:", userDetails);
-
-            const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(dealerId);
-            if (carServiceResponse.error) {
-                setError(carServiceResponse.error);
-            } else {
-                setCarServicesList(carServiceResponse.data);
-
-                // Define the initial value of the accumulator explicitly as an array of strings
-                const initialServices: string[] = [];
-
-                const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
-                    if (item.servicesName) {
-                        const serviceNames = item.servicesName.split(', ').map(name => name.trim());
-                        return acc.concat(serviceNames);
-                    }
-                    return acc;
-                }, []);
-                // Remove duplicates
-                const uniqueServices = Array.from(new Set<string>(services));
-                setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
-            }
-
-
-            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-            if (reviewListResponse.error) {
-                setError(reviewListResponse.error);
-            } else {
-                setReview(reviewListResponse.data);
-            }
-
-            setLoading(false);
-        }
-
-
-
         setLoading(false);
     };
 
@@ -226,105 +221,9 @@ function ServiceShopHomePage() {
         setStarCounts(counts as { '1': number, '2': number, '3': number, '4': number, '5': number });
     }, [review]);
 
-
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
-        const { name, value, type } = e.target;
-
-        setEditDealerProfile(prevProfile => {
-            if (!prevProfile) return null;
-
-            // If the change is related to working times
-            if (index !== undefined && field) {
-                let updatedTimes = [...prevProfile.workingTimes];
-
-                if (type === 'time') {
-                    const [hours, minutes] = value.split(':').map(Number);
-
-                    updatedTimes = updatedTimes.map((time, i) => {
-                        if (i === index) {
-                            if (field === 'startHour') {
-                                return { ...time, startHour: hours, startMinute: minutes };
-                            } else if (field === 'endHour') {
-                                return { ...time, endHour: hours, endMinute: minutes };
-                            }
-                        }
-                        return time;
-                    });
-                } else if (type === 'checkbox' && field === 'isClosed') {
-                    // Handle isClosed separately
-                    updatedTimes = updatedTimes.map((time, i) =>
-                        i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
-                    );
-                }
-
-                return { ...prevProfile, workingTimes: updatedTimes };
-            } else {
-                // For changes outside of working times
-                return { ...prevProfile, [name]: value };
-            }
-        });
-        console.log("updated user:", editDealerProfile)
-    };
-
-
-
-
-
-    const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const addedImageUrl = URL.createObjectURL(event.target.files[0]); // Create a URL for the file
-
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: addedImageUrl // Update the imagelink directly
-                };
-            });
-        }
-    };
-
-    const handleRemoveImage = () => {
-        if (editDealerProfile && editDealerProfile.imagelink) {
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: "" // Clearing the imagelink
-                };
-            });
-        }
-    };
-
-
-    const handleEditDealerProfile = async () => {
-        if (editDealerProfile != null) {
-            setAdding(true);
-            setAddError(null);
-
-            const response: APIResponse = await EditProfile(editDealerProfile, token);
-            console.log("Submitted Data", editDealerProfile);
-
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
-            } else {
-                setEditDealerProfile(null); // Resetting the edit state
-                setModalPage(1);
-                fetchData(); // Fetching the latest data and updating state
-            }
-        }
-    };
-
-
     useEffect(() => {
         fetchData();
-    }, [dealerId, token]);
+    }, []);
 
     useEffect(() => {
         const percentage = Math.round((value / max) * 100);
@@ -396,7 +295,6 @@ function ServiceShopHomePage() {
                     <div className="profile-image">
                         {/* Add image here */}
                     </div>
-                    <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                 </div>
             </div>
 
@@ -466,13 +364,33 @@ function ServiceShopHomePage() {
 
 
                     <div className="reviews-list">
+                        {token && ( // This line checks if token is not null, which implies user is logged in
+                            <div className="comment-section">
+                                <form id="comment-form" onSubmit={(e) => { e.preventDefault(); handleSubmitReview(); }}>
+                                    <div className="star-rating">
+                                        <Rating
+                                            name="simple-controlled"
+                                            value={ratingValue}
+                                            onChange={handleRatingChange}
+                                        />
+                                    </div>
+                                    <textarea
+                                        id="comment"
+                                        name="comment"
+                                        placeholder="Write a comment..."
+                                        value={comment}
+                                        onChange={handleCommentChange}
+                                        required
+                                    ></textarea>
+                                    <button onClick={handleSubmitReview} disabled={adding}>Submit</button>
+                                </form>
+                            </div>
+                        )}
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
                                             by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
                                         </span>
@@ -526,51 +444,8 @@ function ServiceShopHomePage() {
                     {/* ... other parts of the section ... */}
                 </div>
             </div>
-            {editDealerProfile && (
-                <div className="dealer-car-sales-modal">
-                    <div className="dealer-car-sales-modal-content">
-                        <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Profile</h2>
-                        {modalPage === 1 && (
-                            <CarDealerProfilePage
-                                action="Edit"
-                                userDetails={editDealerProfile}
-                                handleInputChange={handleInputChange}
-                            />
-                        )}
-                        {modalPage === 2 && (
-                            <CarDealerProfileImage
-                                model={editDealerProfile}
-                                handleAddImages={handleAddImages}
-                                handleRemoveImages={handleRemoveImage}
-                            />
-                        )}
-                        {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
-                            <>
-                                <div>
-                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
-                                    </button>
-                                    <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                        {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
-                        {/*    Previous*/}
-                        {/*</button>*/}
-                        {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
-                        {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
-                        {/*</button>*/}
-                        {addError && (
-                            <p className="dealer-car-sales-error">{addError}</p>
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
 
-export default ServiceShopHomePage;
+export default ServiceShopProfile;

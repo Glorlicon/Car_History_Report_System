@@ -418,3 +418,33 @@ svg {
     border-radius: 5px;
     overflow: hidden;
 }
+
+.service-information-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f6f6f6;
+    padding: 20px;
+    margin: 20px 50px;
+}
+
+.service-info, .makes-serviced {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.services-list, .makes-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 10px;
+}
+
+    .services-list span, .makes-list span {
+        background-color: #e9e9e9;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
