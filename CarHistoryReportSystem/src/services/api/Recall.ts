@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { APIResponse, CarModel, CarRecalls } from "../../utils/Interfaces";
+import { APIResponse, CarModel, CarRecalls, CarRecallSearchParams, CarRegistrationSearchParams } from "../../utils/Interfaces";
 
 export async function ListManufacturerRecalls(id: number, token: string): Promise<APIResponse> {
     try {
@@ -84,6 +84,33 @@ export async function EditCarRecall(data: CarRecalls, token: string): Promise<AP
             return { error: "Network error. Please check your internet connection!" }
         } else {
             return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+
+export async function ListServiceShopCarRecall(token: string, pageNumber: number, connectAPIError: string, language: string, CarRecallSearchParams: CarRecallSearchParams): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarRecall`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    ModelID: CarRecallSearchParams.modelId,
+                    ExpireDateStart: CarRecallSearchParams.recallDateStart,
+                    ExpireDateEnd: CarRecallSearchParams.recallDateEnd
+                }
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

@@ -139,5 +139,9 @@
   "Phone number is not valid": "Phone number is not valid",
   "Other Services": "Other Services",
   "Service Date": "Service Date",
-  "Services": "Services"
+  "Services": "Services",
+  "ModelID": "Model ID",
+  "RecallDate": "Recall Date",
+  "No car recall found": "No car recall found",
+  "Search Recall By ModelID": "Search Recall By ModelID"
 }

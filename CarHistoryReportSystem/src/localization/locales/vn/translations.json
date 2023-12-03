@@ -139,5 +139,9 @@
   "Phone number is not valid": "Số điện thoại không hợp lệ",
   "Other Services": "Các dịch vụ khác",
   "Service Date": "Ngày sửa chữa",
-  "Services": "Các dịch vụ"
+  "Services": "Các dịch vụ",
+  "ModelID": "Mẫu xe",
+  "RecallDate": "Ngày thu hồi",
+  "No car recall found": "Không tìm thấy thông tin thu hồi xe nào",
+  "Search Recall By ModelID":  "Tìm theo mẫu xe"
 }

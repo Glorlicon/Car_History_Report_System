@@ -524,3 +524,9 @@ export interface CarRegistrationSearchParams {
     licensePlateNumber: string
 }
 
+export interface CarRecallSearchParams {
+    modelId: string
+    recallDateStart: string
+    recallDateEnd: string
+}
+
