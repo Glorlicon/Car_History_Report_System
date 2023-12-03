@@ -79,7 +79,7 @@ namespace Application.DomainServices
 
             var userResponse = _mapper.Map<List<UserResponseDTO>>(users);
 
-            var count = await _userRepository.CountAll();
+            var count = await _userRepository.CountAll(parameter);
             foreach (var user in userResponse)
             {
                 user.RoleName = user.Role.ToString();

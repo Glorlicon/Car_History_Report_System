@@ -117,7 +117,7 @@ namespace Application.DomainServices
         {
             var modelMaintainances = await _modelMaintainanceRepository.GetModelMaintainances(parameter, trackChange);
             var modelMaintainancesResponse = _mapper.Map<List<ModelMaintainanceResponseDTO>>(modelMaintainances);
-            var count = await _modelMaintainanceRepository.CountAll();
+            var count = await _modelMaintainanceRepository.CountAll(parameter);
             return new PagedList<ModelMaintainanceResponseDTO>(modelMaintainancesResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -125,7 +125,7 @@ namespace Application.DomainServices
         {
             var modelMaintainances = await _modelMaintainanceRepository.GetModelMaintainancesByModelId(modelId, parameter, trackChange);
             var modelMaintainancesResponse = _mapper.Map<List<ModelMaintainanceResponseDTO>>(modelMaintainances);
-            var count = await _modelMaintainanceRepository.CountByCondition(x => x.ModelId == modelId);
+            var count = await _modelMaintainanceRepository.CountByCondition(x => x.ModelId == modelId, parameter);
             return new PagedList<ModelMaintainanceResponseDTO>(modelMaintainancesResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
