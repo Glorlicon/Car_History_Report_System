@@ -103,8 +103,6 @@ function RegistryRegistrationList() {
                     const fileContent = e.target.result
                     const formData = new FormData()
                     formData.append('file', file)
-                    console.log('1', fileContent)
-                    console.log('2', data)
                     setImportData(formData)
                 }
             }
@@ -113,39 +111,39 @@ function RegistryRegistrationList() {
     }
     const validateCarRegistration = (registration: CarRegistration): boolean => {
         if (!isValidVIN(registration.carId)) {
-            setAddError("VIN is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
         if (!isValidPlateNumber(registration.licensePlateNumber)) {
-            setAddError("License Plate Number is invalid");
+            setAddError(t('License Plate Number is invalid'));
             return false;
         }
         if (!registration.carId) {
-            setAddError("VIN must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
         if (!registration.ownerName) {
-            setAddError("Owner Name must be filled out");
+            setAddError(t('Owner Name must be filled out'));
             return false;
         }
         if (!registration.odometer) {
-            setAddError("Odometer must be chosen");
+            setAddError(t('Odometer must be chosen'));
             return false;
         }
         if (!registration.expireDate) {
-            setAddError("Expire Date must be chosen");
+            setAddError(t('Expire Date must be chosen'));
             return false;
         }
         if (!registration.reportDate) {
-            setAddError("Report Date must be chosen");
+            setAddError(t('Report Date must be chosen'));
             return false;
         }
         if (!registration.registrationNumber) {
-            setAddError("Registration Number must be chosen");
+            setAddError(t('Registration Number must be chosen'));
             return false;
         }
         if (!registration.licensePlateNumber) {
-            setAddError("License Plate Number must be chosen");
+            setAddError(t('License Plate Number must be chosen'));
             return false;
         }
         return true;

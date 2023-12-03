@@ -56,6 +56,7 @@ export const InsuranceNavigation = [
     { label: 'Car Insurance', link: '/insurance/insurance-list' },
     { label: 'Car Crash Reports', link: '/insurance/crash' },
     { label: 'Car Stolen Reports', link: '/insurance/stolen' },
+    { label: 'Car Reports', link: '/insurance/car-reports' }
 ]
 
 export const RegistryNavigation = [

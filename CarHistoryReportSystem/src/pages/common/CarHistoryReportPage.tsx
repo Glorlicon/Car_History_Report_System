@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AddUserReport, CheckReportExist, GetReport } from '../../services/api/Reports';
@@ -9,6 +10,8 @@ import { AddReport, APIResponse } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
 function CarHistoryReportPage() {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const navigate = useNavigate()
     const [vin, setVin] = useState('')
@@ -18,6 +21,9 @@ function CarHistoryReportPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleVINCheck = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         if (!vin) {
             setVinError('Please enter VIN.');
         } else if (!isValidVIN(vin)) {
@@ -28,7 +34,7 @@ function CarHistoryReportPage() {
             if (!token) navigate(`/payment/${vin}`)
             else {
                 const id = JWTDecoder(token).nameidentifier
-                const userResponse: APIResponse = await Get(id, token)
+                const userResponse: APIResponse = await Get(id, token, connectAPIError, unknownError, language)
                 console.log(userResponse.data)
                 if (userResponse.data.maxReportNumber > 0) {
                     let decodedToken = JWTDecoder(token)
