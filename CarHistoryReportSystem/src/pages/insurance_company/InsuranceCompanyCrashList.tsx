@@ -19,7 +19,8 @@ function InsuranceCompanyCrashList() {
     const [carCrashList, setCarCrashList] = useState<CarCrash[]>([]);
     const [modalPage, setModalPage] = useState(1);
     const [searchVinId, setSearchVinId] = useState('')
-    const [searchSeverity, setSearchSeverity] = useState(0)
+    const [searchMinSeverity, setSearchMinSeverity] = useState('')
+    const [searchMaxSeverity, setSearchMaxSeverity] = useState('')
     const [searchCrashStartDate, setSearchStartDate] = useState('')
     const [searchCrashEndDate, setSearchEndDate] = useState('')
     const [resetTrigger, setResetTrigger] = useState(0);
@@ -44,7 +45,8 @@ function InsuranceCompanyCrashList() {
 
     const handleResetFilters = () => {
         setSearchEndDate('')
-        setSearchSeverity(0)
+        setSearchMaxSeverity('')
+        setSearchMinSeverity('')
         setSearchStartDate('')
         setSearchVinId('')
         setResetTrigger(prev => prev + 1);
@@ -61,7 +63,8 @@ function InsuranceCompanyCrashList() {
             vinId: searchVinId,
             accidentEndDate: searchCrashEndDate,
             accidentStartDate: searchCrashStartDate,
-            serverity: searchSeverity
+            minServerity: searchMinSeverity,
+            maxServerity: searchMaxSeverity
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
@@ -101,18 +104,30 @@ function InsuranceCompanyCrashList() {
                             onChange={(e) => setSearchVinId(e.target.value)}
                         />
                     </div>
-                    <div className="reg-inspec-search-filter-item">
+                    <div className="reg-inspec-search-filter-item-2">
                         <label>{t('Severity')}</label>
-                        <input
-                            type="number"
-                            className="reg-inspec-search-bar"
-                            placeholder={t('Search by Severity')}
-                            value={searchSeverity}
-                            onChange={(e) => setSearchSeverity(Number.parseFloat(e.target.value))}
-                            min="0"
-                            step="0.01"
-                            max="1"
-                        />
+                        <div className="reg-inspec-search-filter-item-2-dates">
+                            <label>{t('From')}: </label>
+                            <input
+                                type="number"
+                                className="reg-inspec-search-bar"
+                                value={searchMinSeverity}
+                                onChange={(e) => setSearchMinSeverity(e.target.value)}
+                                min="0"
+                                step="0.01"
+                                max="1"
+                            />
+                            <label>{t('To')}: </label>
+                            <input
+                                type="number"
+                                className="reg-inspec-search-bar"
+                                value={searchMaxSeverity}
+                                onChange={(e) => setSearchMaxSeverity(e.target.value)}
+                                min="0"
+                                step="0.01"
+                                max="1"
+                            />
+                        </div>
                     </div>
                     <div className="reg-inspec-search-filter-item-2">
                         <label>{t('Accident Date')}</label>
@@ -199,29 +214,29 @@ function InsuranceCompanyCrashList() {
                                         <input type="text" name="id" value={showCarCrashReport.id} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Description</label>
+                                        <label>{t('Description')}</label>
                                         <input type="text" name="description" value={showCarCrashReport.description} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Car VIN id</label>
+                                        <label>{t('Car VIN')}</label>
                                         <input type="text" name="carId" value={showCarCrashReport.carId} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Note</label>
+                                        <label>{t('Note')}</label>
                                         <input type="text" name="note" value={showCarCrashReport.note} disabled />
                                     </div>
                                 </div>
                                 <div className="pol-crash-form-columns">
                                     <div className="pol-crash-form-column">
-                                        <label>Odometer</label>
+                                        <label>{t('Odometer')}</label>
                                         <input type="number" name="odometer" value={showCarCrashReport.odometer} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Accident Date</label>
+                                        <label>{t('Accident Date')}</label>
                                         <input type="date" name="accidentDate" value={showCarCrashReport.accidentDate} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Report Date</label>
+                                        <label>{t('Report Date')}</label>
                                         <input type="date" name="reportDate" value={showCarCrashReport.reportDate} disabled />
                                     </div>
                                 </div>
@@ -231,17 +246,17 @@ function InsuranceCompanyCrashList() {
                             <>
                                 <div className="pol-crash-form-columns">
                                     <div className="pol-crash-form-column">
-                                        <label>Location</label>
+                                        <label>{t('Location')}</label>
                                         <input type="text" name="location" value={showCarCrashReport.location} disabled />
                                     </div>
                                     <div className="pol-crash-form-column">
-                                        <label>Severity</label>
+                                        <label>{t('Severity')}</label>
                                         <input type="number" name="serverity" value={showCarCrashReport.serverity} disabled />
                                     </div>
                                 </div>
                                 <div className="pol-crash-form-columns">
                                     <div className="pol-crash-form-column">
-                                        <label>Damage Location</label>
+                                        <label>{t('Damage Location')}</label>
                                         <div className="pol-crash-car-container">
                                             <img src={car} alt="Car" className="pol-crash-car-image" style={{
                                                 borderTop: `5px solid ${isSideColored(CAR_SIDES.Front) ? 'red' : 'black'}`,
@@ -255,7 +270,7 @@ function InsuranceCompanyCrashList() {
                                         <div className="pol-crash-checkboxes">
                                             {Object.entries(CAR_SIDES).map(([key, value]) => (
                                                 <label key={key}>
-                                                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                                                    {t(key.charAt(0).toUpperCase() + key.slice(1))}
                                                     <input
                                                         type="checkbox"
                                                         checked={isSideColored(value)}

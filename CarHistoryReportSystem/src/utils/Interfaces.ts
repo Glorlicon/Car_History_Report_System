@@ -52,6 +52,7 @@ export interface User {
     address?: string
     maxReports: number
     role: number
+    roleName?: string
     isSuspended?: boolean
     dataProviderId?: number | null
     avatarImageLink?: string
@@ -109,7 +110,8 @@ export interface CarModel {
     createdByUserId?: string,
     modifiedByUserId?: string,
     createdTime?: string,
-    lastModified?: string
+    lastModified?: string,
+    modelOdometers: ModelMaintenance[]
 }
 
 export interface DataProvider {
@@ -383,6 +385,13 @@ export interface Reviews {
     createdTime?: Date
 }
 
+export interface ModelMaintenance {
+    modelId?: string
+    maintenancePart: string
+    odometerPerMaintainance: number,
+    dayPerMaintainance: number
+    recommendAction: string
+}
 export interface ModelMaintainanceDetails {
     modelMaintainance: {
         modelId: string
@@ -526,8 +535,33 @@ export interface CarRegistrationSearchParams {
 
 export interface CarCrashSearchParams {
     vinId: string,
-    serverity: number,
+    minServerity: string,
+    maxServerity: string,
     accidentStartDate: string,
     accidentEndDate: string,
+}
+
+export interface CarStolenSearchParams {
+    vinID: string
+    status: string
+}
+
+export interface AdminUserSearchParams {
+    username: string
+    email: string
+    role: string
+    dataProviderName: string
+}
+
+export interface CarModelSearchParams {
+    modelId: string
+    manuName: string
+    releasedDateStart: string
+    releasedDateEnd: string
+}
+
+export interface ManufacturerSearchParams {
+    name: string
+    email: string
 }
 

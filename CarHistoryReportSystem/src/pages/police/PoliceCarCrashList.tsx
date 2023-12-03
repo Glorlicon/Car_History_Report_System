@@ -35,7 +35,8 @@ function PoliceCarCrashList() {
         location: ''
     });
     const [searchVinId, setSearchVinId] = useState('')
-    const [searchSeverity, setSearchSeverity] = useState(0)
+    const [searchMinSeverity, setSearchMinSeverity] = useState('')
+    const [searchMaxSeverity, setSearchMaxSeverity] = useState('')
     const [searchCrashStartDate, setSearchStartDate] = useState('')
     const [searchCrashEndDate, setSearchEndDate] = useState('')
     const [editCarCrashReport, setEditCarCrashReport] = useState<CarCrash | null>(null)
@@ -230,7 +231,8 @@ function PoliceCarCrashList() {
 
     const handleResetFilters = () => {
         setSearchEndDate('')
-        setSearchSeverity(0)
+        setSearchMaxSeverity('')
+        setSearchMinSeverity('')
         setSearchStartDate('')
         setSearchVinId('')
         setResetTrigger(prev => prev + 1);
@@ -242,7 +244,8 @@ function PoliceCarCrashList() {
             vinId: searchVinId,
             accidentEndDate: searchCrashEndDate,
             accidentStartDate: searchCrashStartDate,
-            serverity: searchSeverity
+            minServerity: searchMinSeverity,
+            maxServerity: searchMaxSeverity
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
@@ -293,18 +296,30 @@ function PoliceCarCrashList() {
                             onChange={(e) => setSearchVinId(e.target.value)}
                         />
                     </div>
-                    <div className="reg-inspec-search-filter-item">
+                    <div className="reg-inspec-search-filter-item-2">
                         <label>{t('Severity')}</label>
-                        <input
-                            type="number"
-                            className="reg-inspec-search-bar"
-                            placeholder={t('Search by Severity')}
-                            value={searchSeverity}
-                            onChange={(e) => setSearchSeverity(Number.parseFloat(e.target.value))}
-                            min="0"
-                            step="0.01"
-                            max="1"
-                        />
+                        <div className="reg-inspec-search-filter-item-2-dates">
+                            <label>{t('From')}: </label>
+                            <input
+                                type="number"
+                                className="reg-inspec-search-bar"
+                                value={searchMinSeverity}
+                                onChange={(e) => setSearchMinSeverity(e.target.value)}
+                                min="0"
+                                step="0.01"
+                                max="1"
+                            />
+                            <label>{t('To')}: </label>
+                            <input
+                                type="number"
+                                className="reg-inspec-search-bar"
+                                value={searchMaxSeverity}
+                                onChange={(e) => setSearchMaxSeverity(e.target.value)}
+                                min="0"
+                                step="0.01"
+                                max="1"
+                            />
+                        </div>
                     </div>
                     <div className="reg-inspec-search-filter-item-2">
                         <label>{t('Accident Date')}</label>

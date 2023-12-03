@@ -1,4 +1,6 @@
+import { Pagination } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import UserModalAccountPage from '../../components/forms/admin/User/UserModalAccountPage';
 import UserModalDetailsPage from '../../components/forms/admin/User/UserModalDetailsPage';
@@ -7,12 +9,15 @@ import { Add, Edit, GetDataProviders, List, SuspendUser, UnsuspendUser } from '.
 import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
-import { APIResponse, DataProvider, User } from '../../utils/Interfaces';
+import { AdminUserSearchParams, APIResponse, DataProvider, Paging, User } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidEmail, isValidNumber } from '../../utils/Validators';
 
 function UserListPage() {
-    //TODO details is user is data provider
+    const { t, i18n } = useTranslation()
+    const [page, setPage] = useState(1)
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [paging, setPaging] = useState<Paging>()
     const [users, setUsers] = useState([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -32,20 +37,17 @@ function UserListPage() {
     });
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedRole, setSelectedRole] = useState('all');
+    const [searchRole, setSearchRole] = useState('');
+    const [searchUsername, setSearchUsername] = useState('');
+    const [searchEmail, setSearchEmail] = useState('');
+    const [searchDataProviderName, setSearchDataProviderName] = useState('');
     const [suspendTab, setSuspendTab] = useState(false);
     const [userToSuspend, setUserToSuspend] = useState<User | null>(null);
     const [isDataProvider, setIsDataProvider] = useState(false)
     const [isNewDataProvider, setNewDataProvider] = useState(false)
     const [providersList, setProvidersList] = useState<DataProvider[] | null>(null)
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const filteredUsers = users.filter((user: any) => {
-        const matchesQuery = user.userName.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesFilter = selectedRole === 'all' || user.role.toString() === selectedRole;
-        return matchesQuery && matchesFilter;
-    });
-
+    const [resetTrigger, setResetTrigger] = useState(0);
     const validateUser = (user: User): boolean => {
         if (!isValidEmail(user.email)) {
             setAddError("Invalid email address");
@@ -62,13 +64,6 @@ function UserListPage() {
         return true;
     };
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
-
-    const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedRole(e.target.value);
-    };
 
     const handleCheckboxToggle = () => {
         setNewDataProvider(!isNewDataProvider)
@@ -105,7 +100,10 @@ function UserListPage() {
         if (validateUser(newUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Add(newUser,token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await Add(newUser, token, connectAPIError, unknownError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -126,13 +124,22 @@ function UserListPage() {
             }
         }
     };
-
+    const handleResetFilters = () => {
+        setSearchDataProviderName('')
+        setSearchEmail('')
+        setSearchRole('')
+        setSearchUsername('')
+        setResetTrigger(prev => prev + 1);
+    }
     const handleEditUser = async () => {
         if (!editingUser) return
         if (validateUser(editingUser)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await Edit(currentId, editingUser,token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await Edit(currentId, editingUser, token, connectAPIError, unknownError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -166,13 +173,15 @@ function UserListPage() {
     }
 
     const handleConfirmSuspend = async () => {
-        // send suspend/unsuspend request here
         let response: APIResponse
         if (userToSuspend) {
             setAdding(true)
             setAddError(null)
-            if (userToSuspend.isSuspended) response = await UnsuspendUser(userToSuspend.id, token)
-            else response = await SuspendUser(userToSuspend.id, token)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            if (userToSuspend.isSuspended) response = await UnsuspendUser(userToSuspend.id, token, connectAPIError, unknownError, language)
+            else response = await SuspendUser(userToSuspend.id, token, connectAPIError, unknownError, language)
             setAdding(false)
             if (response.error) {
                 setAddError(response.error)
@@ -187,12 +196,22 @@ function UserListPage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const response: APIResponse = await List(token);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchParams: AdminUserSearchParams = {
+            username: searchUsername,
+            dataProviderName: searchDataProviderName,
+            email: searchEmail,
+            role: searchRole
+        }
+        const response: APIResponse = await List(token, page, connectAPIError, unknownError, language, searchParams);
         setLoading(false);
         if (response.error) {
             setError(response.error);
         } else {
             setUsers(response.data);
+            setPaging(response.pages)
         }
     };
 
@@ -205,7 +224,10 @@ function UserListPage() {
             newUser.role == USER_ROLE.SERVICE
         ) {
             const temp = setIsDataProvider(true)
-            const response = await GetDataProviders(newUser.role - 2, token)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response = await GetDataProviders(newUser.role - 2, token, connectAPIError, unknownError, language)
             if (response.data) setProvidersList(response.data)
             else console.log("Cannot get providers list")
         }
@@ -237,10 +259,6 @@ function UserListPage() {
     }
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
          changeSize()
     }, [isDataProvider])
 
@@ -251,43 +269,90 @@ function UserListPage() {
     useEffect(() => {
         getProviders()
     }, [newUser.role])
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
   return (
         <div className="ad-user-list-page">
           <div className="ad-user-top-bar">
-              <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ Add Account</button>
+              <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ {t('Add Account')}</button>
+          </div>
+          <div className="ad-user-top-bar">
               <div className="ad-user-search-filter-container">
-                  <input
-                      type="text"
-                      className="ad-user-search-bar"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                  />
-                  <select
-                      className="ad-user-filter-dropdown"
-                      value={selectedRole}
-                      onChange={handleFilterChange}
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Username')}</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Username')}
+                          value={searchUsername}
+                          onChange={(e) => setSearchUsername(e.target.value)}
+                      />
+                  </div>
+                  <div className="reg-inspec-search-filter-item">
+                      <label>Email</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Email')}
+                          value={searchEmail}
+                          onChange={(e) => setSearchEmail(e.target.value)}
+                      />
+                  </div>
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Role')}</label>
+                      <select className="reg-inspec-search-bar" value={searchRole} onChange={(e) => setSearchRole(e.target.value)}>
+                          <option value=''>{t('All')}</option>
+                          <option value={USER_ROLE.ADMIN}>{t('Admin')}</option>
+                          <option value={USER_ROLE.USER}>{t('User')}</option>
+                          <option value={USER_ROLE.DEALER}>{t('Car Dealer')}</option>
+                          <option value={USER_ROLE.INSURANCE}>{t('Insurance Company')}</option>
+                          <option value={USER_ROLE.MANUFACTURER}>{t('Manufacturer')}</option>
+                          <option value={USER_ROLE.POLICE}>{t('Police')}</option>
+                          <option value={USER_ROLE.REGISTRY}>{t('Vehicle Registry Department')}</option>
+                          <option value={USER_ROLE.SERVICE}>{t('Service Shop')}</option>
+                      </select>
+                  </div>
+                  <div className="reg-inspec-search-filter-item">
+                      <label>{t('Data Provider Name')}</label>
+                      <input
+                          type="text"
+                          className="reg-inspec-search-bar"
+                          placeholder={t('Search by Data Provider Name')}
+                          value={searchDataProviderName}
+                          onChange={(e) => setSearchDataProviderName(e.target.value)}
+                      />
+                  </div>
+                  <button
+                      className="search-reg-inspec-btn"
+                      onClick={fetchData}
                   >
-                      <option value="all">All</option>
-                      <option value={USER_ROLE.ADMIN}>Admin</option>
-                      <option value={USER_ROLE.USER}>User</option>
-                      <option value={USER_ROLE.DEALER}>Car Dealer</option>
-                      <option value={USER_ROLE.INSURANCE}>Insurance Company</option>
-                      <option value={USER_ROLE.MANUFACTURER}>Manufacturer</option>
-                      <option value={USER_ROLE.POLICE}>Police</option>
-                      <option value={USER_ROLE.REGISTRY}>Vehicle Registry Department</option>
-                      <option value={USER_ROLE.SERVICE}>Service Shop</option>                    
-                  </select>
+                      {t('Search...')}
+                  </button>
+                  <button
+                      className="reset-reg-inspec-btn"
+                      onClick={handleResetFilters}
+                  >
+                      {t('Reset Filters')}
+                  </button>
                 </div>
             </div>
             <table className="ad-user-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username</th>
-                        <th>Email Address</th>
-                        <th>Role</th>
-                        <th>Action</th>
+                        <th>{t('Username')}</th>
+                        <th>{t('Email Address')}</th>
+                        <th>{t('Role')}</th>
+                        <th>{t('Action')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -301,28 +366,28 @@ function UserListPage() {
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
                               {error}
-                                  <button onClick={fetchData} className="ad-user-retry-btn">Retry</button>
+                                  <button onClick={fetchData} className="ad-user-retry-btn">{t('Retry')}</button>
                           </td>
                           </tr>
-                      ) : filteredUsers.length > 0 ? (
-                          filteredUsers.map((user: any, index: number) => (
+                      ) : users.length > 0 ? (
+                          users.map((user: any, index: number) => (
                               <tr key={index}>
                                   <td onClick={() => { setEditingUser(user); setCurrentId(user.id)}}>{user.id}</td>
                               <td>{user.userName}</td>
                               <td>{user.email}</td>
-                              <td>{user.role}</td>
+                              <td>{user.roleName}</td>
                               <td>
                                       {user.isSuspended ? (
-                                          <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(user)}>Unsuspend</button>
+                                          <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(user)}>{t('Unsuspend')}</button>
                                       ) : (
-                                          <button className="ad-user-suspend-btn" onClick={() => handleSuspendClick(user)}>Suspend</button>
+                                          <button className="ad-user-suspend-btn" onClick={() => handleSuspendClick(user)}>{t('Suspend')}</button>
                                       )}
                               </td>
                           </tr>
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>No users found</td>
+                          <td colSpan={5}>{t('No users found')}</td>
                       </tr>
                   )}
                 </tbody>
@@ -331,8 +396,19 @@ function UserListPage() {
           {showModal && (
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => { setShowModal(false); }}>&times;</span>
-                      <h2>Add User</h2>
+                      <span className="ad-user-close-btn" onClick={() => {
+                          setShowModal(false); setNewUser({
+                              id: '',
+                              userName: '',
+                              email: '',
+                              firstName: '',
+                              phoneNumber: '',
+                              lastName: '',
+                              maxReports: 0,
+                              role: 1,
+                              address: ''
+                          }) }}>&times;</span>
+                      <h2>{t('Add Account')}</h2>
                       <UserModalDetailsPage
                           model={newUser}
                           handleInputChange={handleInputChange}
@@ -356,7 +432,7 @@ function UserListPage() {
                       <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
-                          ) : 'Add'}
+                          ) : t('Finish') }
                       </button>
                       {addError && (
                           <p className="ad-user-error">{addError}</p>
@@ -368,7 +444,7 @@ function UserListPage() {
               <div className="ad-user-modal">
                   <div className="ad-user-modal-content">
                       <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); }}>&times;</span>
-                      <h2>User Details</h2>
+                      <h2>{t('Edit Account')}</h2>
                       <UserModalDetailsPage
                           model={editingUser}
                           handleInputChange={handleInputChange}
@@ -392,7 +468,7 @@ function UserListPage() {
                       <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
                           {adding ? (
                               <div className="ad-user-inline-spinner"></div>
-                          ) : 'Update'}
+                          ) : t('Finish') }
                       </button>
                       {addError && (
                           <p className="ad-user-error">{addError}</p>
@@ -419,6 +495,11 @@ function UserListPage() {
                   </div>
               </div>
           )}
+          {paging && paging.TotalPages > 0 &&
+              <>
+                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+              </>
+          }
         </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿using Application.DomainServices;
+﻿    using Application.DomainServices;
 using Application.DTO.DataProvider;
 using Application.DTO.Request;
 using Application.Interfaces;
@@ -63,7 +63,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpGet("type/{type}/no-user", Name = "GetDataProvidersWithoutUser")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(typeof(IEnumerable<DataProviderDetailsResponseDTO>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderParameter parameter, DataProviderType type)
+        public async Task<IActionResult> GetDataProvidersWithoutUserAsync([FromQuery] DataProviderParameter parameter, DataProviderType type)
         {
             var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
             return Ok(dataProviders);

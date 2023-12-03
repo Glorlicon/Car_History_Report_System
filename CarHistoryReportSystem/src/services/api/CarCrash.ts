@@ -13,12 +13,12 @@ export async function ListCarCrash(dataprovider: number, token: string, pageNumb
                 params: {
                     PageNumber: pageNumber,
                     VinId: carCrashSearchParams.vinId,
-                    Serverity: carCrashSearchParams.serverity,
+                    MinServerity: carCrashSearchParams.minServerity,
+                    MaxServerity: carCrashSearchParams.maxServerity,
                     AccidentStartDate: carCrashSearchParams.accidentStartDate,
                     AccidentEndDate: carCrashSearchParams.accidentEndDate
                 }
             })
-        console.log(response.request)
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -41,7 +41,8 @@ export async function ListCarCrashInsurance(token: string, pageNumber: number, c
                 params: {
                     PageNumber: pageNumber,
                     VinId: carCrashSearchParams.vinId,
-                    Serverity: NaN,
+                    MinServerity: carCrashSearchParams.minServerity,
+                    MaxServerity: carCrashSearchParams.maxServerity,
                     AccidentStartDate: carCrashSearchParams.accidentStartDate,
                     AccidentEndDate: carCrashSearchParams.accidentEndDate
                 }
@@ -49,7 +50,6 @@ export async function ListCarCrashInsurance(token: string, pageNumber: number, c
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log(axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
@@ -71,7 +71,8 @@ export async function GetCrashInsuranceExcel(token: string, pageNumber: number, 
                 params: {
                     PageNumber: pageNumber,
                     VinId: carCrashSearchParams.vinId,
-                    Serverity: carCrashSearchParams.serverity,
+                    MinServerity: carCrashSearchParams.minServerity,
+                    MaxServerity: carCrashSearchParams.maxServerity,
                     AccidentStartDate: carCrashSearchParams.accidentStartDate,
                     AccidentEndDate: carCrashSearchParams.accidentEndDate
                 }
@@ -82,7 +83,6 @@ export async function GetCrashInsuranceExcel(token: string, pageNumber: number, 
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            console.log(axiosError)
             return { error: (axiosError.response?.data as any).error[0] }
         }
     }
@@ -100,7 +100,8 @@ export async function GetCrashExcel(dataprovider: number, token: string, pageNum
                 params: {
                     PageNumber: pageNumber,
                     VinId: carCrashSearchParams.vinId,
-                    Serverity: carCrashSearchParams.serverity,
+                    MinServerity: carCrashSearchParams.minServerity,
+                    MaxServerity: carCrashSearchParams.maxServerity,
                     AccidentStartDate: carCrashSearchParams.accidentStartDate,
                     AccidentEndDate: carCrashSearchParams.accidentEndDate
                 }
@@ -111,7 +112,6 @@ export async function GetCrashExcel(dataprovider: number, token: string, pageNum
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            console.log(axiosError)
             return { error: (axiosError.response?.data as any).error[0] }
         }
     }
@@ -133,7 +133,6 @@ export async function ImportCrashFromExcel(token: string, data: FormData, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            console.log(axiosError)
             return { error: (axiosError.response?.data as any).error[0] }
         }
     }
@@ -157,7 +156,6 @@ export async function DownloadCrashExcelFile(token: string, connectAPIError: str
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            console.log(axiosError)
             return { error: (axiosError.response?.data as any).error[0] }
         }
     }
@@ -176,7 +174,6 @@ export async function AddCarCrash(data: CarCrash, token: string, connectAPIError
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Add Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
@@ -199,7 +196,6 @@ export async function EditCarCrash(id: number, data: CarCrash, token: string, co
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Edit Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {

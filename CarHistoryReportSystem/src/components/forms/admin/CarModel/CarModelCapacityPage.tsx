@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/State';
 import { CarModel } from '../../../../utils/Interfaces';
 
 interface CarModelModalCapacityProps {
@@ -10,25 +13,26 @@ const CarModelCapacityPage: React.FC<CarModelModalCapacityProps> = ({
     model,
     handleInputChange
 }) => {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     return (
         <>
             <div className="ad-car-model-form-columns">
                 <div className="ad-car-model-form-column">
-                    <label>Riding Capacity</label>
-                    <input type="number" name="ridingCapacity" value={model.ridingCapacity} onChange={handleInputChange} min="0" />
-                </div>
-                <div className="ad-car-model-form-column">
-                    <label>Person Carried Number</label>
+                    <label>{t('Person Carried Number')}</label>
                     <input type="number" name="personCarriedNumber" value={model.personCarriedNumber} onChange={handleInputChange} min="0" />
                 </div>
             </div>
             <div className="ad-car-model-form-columns">
                 <div className="ad-car-model-form-column">
-                    <label>Seat Number</label>
+                    <label>{t('Seat Number')}</label>
                     <input type="number" name="seatNumber" value={model.seatNumber} onChange={handleInputChange} min="0" />
                 </div>
                 <div className="ad-car-model-form-column">
-                    <label>Laying Place Number</label>
+                    <label>{t('Laying Place Number')}</label>
                     <input type="number" name="layingPlaceNumber" value={model.layingPlaceNumber} onChange={handleInputChange} min="0" />
                 </div>
             </div>
