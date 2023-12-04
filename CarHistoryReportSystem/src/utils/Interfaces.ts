@@ -572,3 +572,10 @@ export interface CarRecallSearchParams {
     recallDateEnd: string
 }
 
+export interface CarSearchParams {
+    make: string
+    model: string
+    yearstart?: number
+    pricemax?: number
+    milagemax?: number
+}

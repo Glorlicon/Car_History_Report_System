@@ -267,5 +267,18 @@
   "Welcome": "Chào",
   "Wheel Base": "Chiều dài cơ sở xe",
   "Wheel Formula": "Công thức bánh xe",
-  "Wheel Tread": "Vết bánh xe"
+  "Wheel Tread": "Vết bánh xe",
+  "Search": "Tìm kiếm",
+  "Filters": "Chỉ tiêu",
+  "Clear Filters": "Xóa chỉ tiêu",
+  "Make": "Nhà sản xuất",
+  "Model": "Mẫu xe",
+  "Min Year": "Năm tối thiểu",
+  "Max Price": "Giá tối đa",
+  "Max Milage": "Số dặm tối đa đã đi được",
+  "Any Make": "Tất cả nhà sản xuất",
+  "Any Model": "Tất cả mẫu xe",
+  "Any Year": "Tất cả năm",
+  "Any Price": "Tất cả giá",
+  "Any Milage": "Tất cả dặm"
 }

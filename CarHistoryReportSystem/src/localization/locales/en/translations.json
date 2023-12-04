@@ -266,5 +266,17 @@
   "Welcome": "Welcome",
   "Wheel Base": "Wheel Base",
   "Wheel Formula": "Wheel Formula",
-  "Wheel Tread": "Wheel Tread"
+  "Wheel Tread": "Wheel Tread",
+  "Search": "Search",
+  "Filters": "Filters",
+  "Make": "Make",
+  "Model": "Model",
+  "Min Year": "Min Year",
+  "Max Price": "Max Price",
+  "Max Milage": "Max Milage",
+  "Any Make": "Any Make",
+  "Any Model": "Any Model",
+  "Any Year": "Any Year",
+  "Any Price": "Any Price",
+  "Any Milage": "Any Milage"
 }
