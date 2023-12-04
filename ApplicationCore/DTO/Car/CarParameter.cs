@@ -10,6 +10,7 @@ namespace Application.DTO.Car
 {
     public class CarParameter : PagingParameters
     {
+        public string? VinId { get; set; }
         public string? Make { get; set; }
         public string? Model { get; set; }
         public int YearStart { get; set; } = 0;
