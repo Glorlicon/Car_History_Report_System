@@ -45,6 +45,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistorysAsync([FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetAllCarHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -77,6 +78,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistoryByCarIdAsync(string vinId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -94,6 +96,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistoryByUserIdAsync(string userId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -111,6 +114,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -262,6 +266,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistorysByOwnInsuranceCompany([FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistories(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }

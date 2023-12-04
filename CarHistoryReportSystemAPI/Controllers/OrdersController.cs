@@ -37,6 +37,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetOrdersAsync([FromQuery] OrderParameter parameter)
         {
             var orders = await _orderService.GetAllOrders(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(orders.PagingData));
             return Ok(orders);
         }
@@ -54,6 +55,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetOrdersByUserIdAsync(string userId, [FromQuery] OrderParameter parameter)
         {
             var orders = await _orderService.GetOrdersByUserId(userId,parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(orders.PagingData));
             return Ok(orders);
         }
