@@ -5,11 +5,17 @@ import CarIdentificationPage from '../../components/forms/admin/Car/CarIdentific
 import { AddCar, AddOldCarToStorage, EditCar, ListDealerCarStorage } from '../../services/api/Car';
 import { ListAllCarModels } from '../../services/api/CarModel';
 import { RootState } from '../../store/State';
-import { APIResponse, Car, CarModel } from '../../utils/Interfaces';
+import { APIResponse, Car, CarModel, CarModelSearchParams, Paging } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
 import '../../styles/ManufacturerCars.css'
+import { useTranslation } from 'react-i18next';
 function CarDealerCarStorage() {
+    const { t, i18n } = useTranslation()
+    const [page, setPage] = useState(1)
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [paging, setPaging] = useState<Paging>()
+    const [resetTrigger, setResetTrigger] = useState(0);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const id = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
@@ -165,7 +171,16 @@ function CarDealerCarStorage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carModelResponse: APIResponse = await ListAllCarModels(token)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchCarModelParams: CarModelSearchParams = {
+            manuName: '',
+            modelId: '',
+            releasedDateEnd: '',
+            releasedDateStart: ''
+        }
+        const carModelResponse: APIResponse = await ListAllCarModels(token, page, connectAPIError, unknownError, language, searchCarModelParams)
         if (carModelResponse.error) {
             setError(carModelResponse.error)
         } else {

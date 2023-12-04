@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
+using Application.DTO.CarRecall;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.Interfaces;
@@ -13,6 +14,7 @@ using FluentValidation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,15 +44,16 @@ namespace Application.DomainServices
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProviders(parameter, trackChange: false);
             var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
-            var count = await _dataProviderRepository.CountAll();
+            var count = await _dataProviderRepository.CountAll(parameter);
             return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
+        public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(parameter, type, trackChange: false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
+            var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountByCondition(x => x.Type == type && !x.Users.Any(), parameter);
+            return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
@@ -237,7 +240,7 @@ namespace Application.DomainServices
         {
             var reviews = await _reviewRepository.GetAllReview(parameter, trackChange: false);
             var reviewsResponse = _mapper.Map<List<DataProviderReviewsResponseDTO>>(reviews);
-            var count = await _reviewRepository.CountAll();
+            var count = await _reviewRepository.CountAll(parameter);
             return new PagedList<DataProviderReviewsResponseDTO>(reviewsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 

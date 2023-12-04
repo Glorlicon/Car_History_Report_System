@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
+using Application.DTO.CarRecall;
 using Application.DTO.CarSpecification;
 using Application.DTO.Request;
 using Application.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,20 @@ namespace Infrastructure.Repository
         public RequestRepository(ApplicationDBContext repositoryContext) : base(repositoryContext)
         {
 
+        }
+
+        public async Task<int> CountAll(RequestParameter parameter)
+        {
+            return await FindAll(false)
+                            .Filter(parameter)
+                            .CountAsync();
+        }
+
+        public async Task<int> CountByCondition(Expression<Func<Request, bool>> expression, RequestParameter parameter)
+        {
+            return await FindByCondition(expression, false)
+                            .Filter(parameter)
+                            .CountAsync();
         }
 
         public async Task<IEnumerable<Request>> GetAllRequests(RequestParameter parameter, bool trackChange)

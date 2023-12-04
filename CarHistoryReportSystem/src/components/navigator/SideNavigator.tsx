@@ -6,13 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import logo from '../../logo512.png'
-import { logout } from '../../store/authSlice';
+import { logout, setLanguage } from '../../store/authSlice';
+import { useTranslation } from 'react-i18next';
 
 interface SideNavigationBarProps {
     items: NavItem[];
 }
 
 const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const data = useSelector((state: RootState) => state.auth.token)
@@ -23,13 +26,20 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const handleLogout = () => {
-        console.log("Logging out...");
         dispatch(logout())
         navigate('/login')
-        console.log("Should have navigated to /");
         return
     };
-
+    const getLanguage = () => {
+        let currentLanguage = i18n.language;
+        if (currentLanguage === 'vn') {
+            i18n.changeLanguage('en')
+            dispatch(setLanguage('en'))
+        } else {
+            i18n.changeLanguage('vn')
+            dispatch(setLanguage('vn'))
+        }
+    }
     return (
         <div className="side-nav-container">
             <button className={`toggle-btn ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(!isOpen)}>
@@ -40,7 +50,7 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                     <img src={logo} alt="Company Logo" className="side-logo" />
                 </div>
                 <div className="welcome-message">
-                    Welcome, {decoded.name}
+                    {t('Welcome')}, {decoded.name}
                 </div>
                 <ul>
                     {items.map((item, index) => (
@@ -48,26 +58,31 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                             {item.dropdownItems ? (
                                 <>
                                     <span onClick={() => handleDropdownClick(index)}>
-                                        {item.label}
+                                        {t(item.label)}
                                     </span>
                                     {openDropdownIndex === index && (
                                         <ul className="dropdown-menu">
                                             {item.dropdownItems.map((dropdownItem, idx) => (
                                                 <li key={idx}>
-                                                    <Link to={dropdownItem.link || '#'}>{dropdownItem.label}</Link>
+                                                    <Link to={dropdownItem.link || '#'}>{t(dropdownItem.label)}</Link>
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
                                 </>
                             ) : (
-                                <Link to={item.link || '#'}>{item.label}</Link>
+                                <Link to={item.link || '#'}>{t(item.label)}</Link>
                             )}
                         </li>
                     ))}
+                    <li>
+                        <input type="checkbox" id="languageSwitch" onChange={getLanguage} checked={i18n.language === 'vn' ? false : true} className="language-toggle-switch" />
+                        <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
+                        <label className="currentLanguage">{i18n.language}</label>
+                    </li>
                 </ul>
                 <div className="logout-container">
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className="logout-btn">{t('Logout')}</button>
                 </div>
             </nav>
         </div>

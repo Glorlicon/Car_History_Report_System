@@ -4,7 +4,7 @@ import { RootState } from '../../store/State';
 import { APIResponse, CarModel, CarRecalls, CarServices, RecallStatus, ServiceCarRecalls, Services } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import '../../styles/ManufacturerCarModels.css'
-import { AddCarRecall, EditCarRecall, ListManufacturerRecalls } from '../../services/api/Recall';
+import { AddCarRecall, EditCarRecall, ListManufacturerRecallss } from '../../services/api/Recall';
 import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
 import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { ListManufaturerCarModels } from '../../services/api/CarModel';

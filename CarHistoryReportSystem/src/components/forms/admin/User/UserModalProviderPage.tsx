@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/State';
 import { DataProvider } from '../../../../utils/Interfaces';
 
 interface UserModalProviderPageProps {
@@ -24,29 +27,34 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
         setNew(!isNew)
         handleCheckboxToggle()
     }
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
   return (
       <>
           <div className="ad-user-form-columns">
               {edit ? (
                   <>
                       <div className="ad-user-form-column">
-                          <label>Name</label>
+                          <label>{t('Name')}</label>
                           <input type="text" name="name" value={model?.name} disabled />
                       </div>
                       <div className="ad-user-form-column">
-                          <label>Description</label>
+                          <label>{t('Description')}</label>
                           <input type="text" name="description" value={model?.description} disabled />
                       </div>
                       <div className="ad-user-form-column">
-                          <label>Address</label>
+                          <label>{t('Address')}</label>
                           <input type="text" name="address" value={model?.address} disabled />
                       </div>
                       <div className="ad-user-form-column">
-                          <label>Website Link</label>
+                          <label>{t('Website Link')}</label>
                           <input type="text" name="websiteLink" value={model?.websiteLink} disabled />
                       </div>
                       <div className="ad-user-form-column">
-                          <label>Phone</label>
+                          <label>{t('Phone')}</label>
                           <input type="text" name="phoneNumber" value={model?.phoneNumber} disabled />
                       </div>
                       <div className="ad-user-form-column">
@@ -58,7 +66,7 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
                       <>
                           <div className="ad-user-form-column">
                               <label>
-                                  New Data Provider?
+                                  {t('New Data Provider')}?
                                   <input
                                       type="checkbox"
                                       checked={isNew}
@@ -69,39 +77,42 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
                           {isNew && (
                               <>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Name</label>
+                                      <label>{t('Provider Name')}</label>
                                       <input type="text" name="name" value={model?.name} required onChange={handleInputDataProviderChange} />
                                   </div>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Description</label>
+                                      <label>{t('Provider Description')}</label>
                                       <input type="text" name="description" value={model?.description} onChange={handleInputDataProviderChange} />
                                   </div>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Address</label>
+                                      <label>{t('Provider Address')}</label>
                                       <input type="text" name="address" value={model?.address} onChange={handleInputDataProviderChange} />
                                   </div>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Website Link</label>
+                                      <label>{t('Provider Website Link')}</label>
                                       <input type="text" name="websiteLink" value={model?.websiteLink} onChange={handleInputDataProviderChange} />
                                   </div>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Phone</label>
+                                      <label>{t('Provider Phone')}</label>
                                       <input type="text" name="phoneNumber" value={model?.phoneNumber} onChange={handleInputDataProviderChange} />
                                   </div>
                                   <div className="ad-user-form-column">
-                                      <label>Provider Email</label>
+                                      <label>{t('Provider Email')}</label>
                                       <input type="text" name="email" value={model?.email} onChange={handleInputDataProviderChange} />
                                   </div>
                               </>
                           )}
                           {!isNew && (
-                              <select name="dataProviderId" value={model?.id} disabled={edit} onChange={handleInputDataProviderSelect}>
-                                  {providerList && (
-                                      providerList.map((provider: DataProvider) => (
-                                          <option value={provider.id}>{provider.name}</option>
-                                      ))
-                                  )}
-                              </select>
+                              <>
+                                  <label>{t('Data Provider')}</label>
+                                  <select name="dataProviderId" value={model?.id} disabled={edit} onChange={handleInputDataProviderSelect}>
+                                      {providerList && (
+                                          providerList.map((provider: DataProvider) => (
+                                              <option value={provider.id}>{provider.name}</option>
+                                          ))
+                                      )}
+                                  </select>
+                              </>
                           )}
                       </>
               )}

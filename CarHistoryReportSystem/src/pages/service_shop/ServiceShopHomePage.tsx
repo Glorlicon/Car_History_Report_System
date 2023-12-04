@@ -355,7 +355,7 @@ function ServiceShopHomePage() {
     return (
         <div className="car-dealer-profile">
 
-            <div className="header-section">
+            <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
                     {/* Breadcrumb */}
                     <div className="breadcrumb">

@@ -8,8 +8,11 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 import blank from '../../blank.png'
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { isValidEmail } from '../../utils/Validators';
+import { useTranslation } from 'react-i18next';
 
 function UserProfile() {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const id = JWTDecoder(token).nameidentifier
     const [user, setUser] = useState<User>({
@@ -33,7 +36,10 @@ function UserProfile() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const response: APIResponse = await Get(id, token);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const response: APIResponse = await Get(id, token, connectAPIError, unknownError, language);
         setLoading(false);
         if (response.error) {
             setError(response.error);
@@ -43,7 +49,6 @@ function UserProfile() {
                 const image = GetImages(response.data.avatarImageLink)
                 setImageUrl(image)
             }
-            console.log(response.data)
         }
     };
 
@@ -68,12 +73,17 @@ function UserProfile() {
         if (validateUser(user)) {
             setUpdating(true)
             setError(null)
-            const uploadImage = await UploadImages(image)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            let notFoundError = t('No image was found')
+            let failedError = t('Failed to upload image')
+            const uploadImage = await UploadImages(image, notFoundError, failedError)
             if (uploadImage.error) {
                 setUpdating(false)
                 setError(uploadImage.error)
             } else {
-                const response = await Edit(id, { ...updatedUser, avatarImageLink: uploadImage.data }, token)
+                const response = await Edit(id, { ...updatedUser, avatarImageLink: uploadImage.data }, token, connectAPIError, unknownError, language)
                 if (response.error) {
                     setUpdating(false)
                     setError(response.error)
@@ -115,6 +125,7 @@ function UserProfile() {
 
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
     return (
         <div className="profile-container">
@@ -137,13 +148,13 @@ function UserProfile() {
                                 <div className="info-edit-column">
                                     <label>Email</label>
                                     <input className="profile-edit-input" type="text" value={updatedUser.email} name="email" onChange={handleUpdateUser}/>
-                                    <label>First Name</label>
+                                    <label>{t('First Name')}</label>
                                     <input className="profile-edit-input" type="text" value={updatedUser.firstName} name="firstName" onChange={handleUpdateUser}/>
                                 </div>
                                 <div className="info-edit-column">
-                                    <label>Address</label>
+                                    <label>{t('Address')}</label>
                                     <input className="profile-edit-input" type="text" value={updatedUser.address} name="address" onChange={handleUpdateUser}/>
-                                    <label>Last Name</label>
+                                    <label>{t('Last Name')}</label>
                                     <input className="profile-edit-input" type="text" value={updatedUser.lastName} name="lastName" onChange={handleUpdateUser}/>
                                 </div>
                             </div>
@@ -152,8 +163,8 @@ function UserProfile() {
                                     <div className="profile-spinner"></div>
                                 ) : (
                                     <>
-                                        <button className = "profile-edit-btn" onClick = { handleCancelButton }>Cancel</button>
-                                        <button className="profile-edit-btn" onClick={handleUpdateButton}>Save Changes</button>
+                                        <button className = "profile-edit-btn" onClick = { handleCancelButton }>{t('Cancel')}</button>
+                                        <button className="profile-edit-btn" onClick={handleUpdateButton}>{t('Save Changes')}</button>
                                     </>
                                 )}
                             </div>
@@ -176,18 +187,18 @@ function UserProfile() {
                                 <div className="columns">
                                     <div className="info-column">
                                         <a className="info">Email: {user.email}</a>
-                                        <a className="info">First Name: {user.firstName}</a>
-                                        <a className="info">Address: {user.address}</a>
-                                        <a className="info">Last Name: {user.lastName}</a>
+                                        <a className="info">{t('First Name')}: {user.firstName}</a>
+                                        <a className="info">{t('Address')}: {user.address}</a>
+                                        <a className="info">{t('Last Name')}: {user.lastName}</a>
                                     </div>
                                 </div>
-                                <button className="profile-btn" onClick={handleEditButton}>Edit information</button>
+                                <button className="profile-btn" onClick={handleEditButton}>{t('Edit information')}</button>
                             </div>
 
                             <div className="reports-section">
-                                <button className="profile-btn">My Reports</button>
-                                <p>Remaining Report(s): {user.maxReports ? user.maxReports : 0}</p>
-                                <button className="profile-btn">Change Password</button>
+                                <button className="profile-btn">{t('My Reports')}</button>
+                                <p>{t('Remaining Report(s)')}: {user.maxReports ? user.maxReports : 0}</p>
+                                <button className="profile-btn">{t('Change Password')}</button>
                             </div>
                         </div>
                         </>
