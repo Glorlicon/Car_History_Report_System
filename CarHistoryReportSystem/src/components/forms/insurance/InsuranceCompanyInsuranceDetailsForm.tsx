@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/State';
 import { CarInsurance } from '../../../utils/Interfaces';
 interface InsuranceCompanyInsuranceDetailsFormProps {
     action: "Add" | "Edit"
@@ -11,6 +14,11 @@ const InsuranceCompanyInsuranceDetailsForm: React.FC<InsuranceCompanyInsuranceDe
     handleInputChange
 }) => {
     const edit = action === "Edit"
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
   return (
       <>
           <div className="ins-ins-form-columns">
@@ -21,37 +29,37 @@ const InsuranceCompanyInsuranceDetailsForm: React.FC<InsuranceCompanyInsuranceDe
                   </div>
               )}
               <div className="ins-ins-form-column">
-                  <label>Insurance Number</label>
+                  <label>{t('Insurance Number')}</label>
                   <input type="text" name="insuranceNumber" value={model.insuranceNumber} onChange={handleInputChange} disabled={edit} />
               </div>
               <div className="ins-ins-form-column">
-                  <label>Car VIN id</label>
+                  <label>{t('Car VIN')}</label>
                   <input type="text" name="carId" value={model.carId} onChange={handleInputChange} disabled={edit} />
               </div>
               <div className="ins-ins-form-column">
-                  <label>Description</label>
+                  <label>{t('Description')}</label>
                   <input type="text" name="description" value={model.description} onChange={handleInputChange} />
               </div>
               <div className="ins-ins-form-column">
-                  <label>Note</label>
+                  <label>{t('Note')}</label>
                   <input type="text" name="note" value={model.note} onChange={handleInputChange} />
               </div>
           </div>
           <div className="ins-ins-form-columns">
               <div className="ins-ins-form-column">
-                  <label>Odometer</label>
+                  <label>{t('Odometer')}</label>
                   <input type="number" name="odometer" value={model.odometer} onChange={handleInputChange} min="0" />
               </div>
               <div className="ins-ins-form-column">
-                  <label>Start Date</label>
+                  <label>{t('Insurance Start Date')}</label>
                   <input type="date" name="startDate" value={model.startDate} onChange={handleInputChange} />
               </div>
               <div className="ins-ins-form-column">
-                  <label>End Date</label>
+                  <label>{t('Insurance End Date')}</label>
                   <input type="date" name="endDate" value={model.endDate} onChange={handleInputChange} />
               </div>
               <div className="ins-ins-form-column">
-                  <label>Report Date</label>
+                  <label>{t('Report Date')}</label>
                   <input type="date" name="reportDate" value={model.reportDate} onChange={handleInputChange} />
               </div>
           </div>
