@@ -18,6 +18,8 @@ export async function ListCarInspection(dataprovider: number, token: string, pag
                     InspectionEndDate: carInspectionSearchParams.endDate
                 }
             })
+        console.log(response)
+        console.log(response.headers)
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination'])}
     } catch (error) {
         const axiosError = error as AxiosError
