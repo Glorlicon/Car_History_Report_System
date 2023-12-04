@@ -15,7 +15,7 @@ namespace Infrastructure.Repository.Extension
         {
             if (parameter.VinId != null)
             {
-                query = query.Where(x => x.VinId == parameter.VinId);
+                query = query.Where(x => x.VinId.ToLower().Contains(parameter.VinId.ToLower()));
             }
             if (parameter.Make != null)
                 query = query.Where(x => x.Model.Manufacturer.Name == parameter.Make);
