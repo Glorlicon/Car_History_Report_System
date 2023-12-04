@@ -9,8 +9,11 @@ import deleteIcon from '../../delete.png'
 import '../../styles/CarMaintenance.css'
 import { isValidVIN } from '../../utils/Validators';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function CarMaintenancePage() {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const id = JWTDecoder(token).nameidentifier
     const [loading, setLoading] = useState(false)
@@ -52,10 +55,12 @@ function CarMaintenancePage() {
         if (!validateVin(vin)) return
         setAdding(true)
         setAddError(null)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const response: APIResponse = await AddCarMaintenance({
             carId: vin,
             userId: id
-        }, token)
+        }, token, connectAPIError, language)
         if (response.error) {
             setAddError(response.error)
         } else {
@@ -69,10 +74,12 @@ function CarMaintenancePage() {
     const handleDeleteCar = async () => {
         setAdding(true)
         setAddError(null)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const response: APIResponse = await RemoveCarMaintenance({
             carId: currentVin,
             userId: id
-        }, token)
+        }, token, connectAPIError, language)
         if (response.error) {
             setAddError(response.error)
         } else {
@@ -84,7 +91,10 @@ function CarMaintenancePage() {
     const fetchData = async () => {
         setLoading(true)
         setError(null)
-        const response: APIResponse = await ListCarMaintenance(id, token)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const response: APIResponse = await ListCarMaintenance(id, token, connectAPIError, unknownError, language)
         if (response.error) {
             setError(response.error)
         } else {
@@ -98,24 +108,28 @@ function CarMaintenancePage() {
     function handleCarMaintenanceDetails(vinId: any): void {
         navigate(`/maintenance/${vinId}`)
     }
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, []);
 
   return (
       <div className="car-maintenance-page">
           <header className="car-maintenance-header">
               <span className="car-maintenance-icon">🚗</span>
-              <h1>GARAGE</h1>
+              <h1>{t('GARAGE')}</h1>
           </header>
           {loading ? (
               <div className="car-maintenance-spinner"></div>
           ): error ? (
                   <div className="car-maintenance-load-error">
                       {error}
-                      <button onClick={fetchData} className="car-maintenance-retry-btn">Retry</button>
+                      <button onClick={fetchData} className="car-maintenance-retry-btn">{t('Retry')}</button>
               </div>
               ) : list.length > 0 ? (
                       <>
                           <div className="car-maintenance-item" onClick={handleAddButton}>
-                              🚘 Add Car
+                              🚘 {t('Add Car')}
                           </div>
                           {list.map((car: any, index: number) => (
                               <div className="car-maintenance-item">
@@ -125,7 +139,7 @@ function CarMaintenancePage() {
                                   </div>
                                   <div className="car-maintenance-btn" onClick={() => handleDeleteButton(car.vinId)}>
                                       <img src={deleteIcon} alt="cat" />
-                                      <span>Delete</span>
+                                      <span>{t('Delete')}</span>
                                   </div>
                               </div>
                           ))}
@@ -133,29 +147,24 @@ function CarMaintenancePage() {
           ) : (
               <>
                  <div className="car-maintenance-item" onClick={handleAddButton}>
-                     🚘 Add Car
+                     🚘 {t('Add Car')}
                  </div>
-                 <span>No car in garage</span>
+                 <span>{t('No car in garage')}</span>
               </>
           )}
           {showModal && (
               <div className="car-maintenance-modal">
                   <div className="car-maintenance-modal-content">
                       <span className="car-maintenance-close-btn" onClick={() => { if (!adding) { setShowModal(false); setAddError('') } }}>&times;</span>
-                      <h2>Add Car</h2>
+                      <h2>{t('Add Car')}</h2>
                       <div className="car-maintenance-form-columns">
                           <div className="car-maintenance-form-column">
-                              <label>Car VIN</label>
+                              <label>{t('Car VIN')}</label>
                               <input type="text" name="vin" onChange={handleVinChange} required />
-                              OR
-                              <br />
-                              <br />
-                              <label>License Plate (WIP)</label>
-                              <input type="text" name="plate" />
                           </div>
                       
                       <button onClick={handleAddCar} disabled={adding} className="car-maintenance-add-btn">
-                          {adding ? (<div className="car-maintenance-inline-spinner"></div>) : 'Add'}
+                          {adding ? (<div className="car-maintenance-inline-spinner"></div>) : t('Finish')}
                       </button>
                       {addError && (
                           <p className="car-maintenance-error">{addError}</p>
@@ -168,15 +177,15 @@ function CarMaintenancePage() {
               <div className="car-maintenance-modal">
                   <div className="car-maintenance-modal-content">
                       <span className="car-maintenance-close-btn" onClick={() => { if (!adding) setShowDeleteModal(false); }}>&times;</span>
-                      <h2>Delete Car</h2>
-                      <p>Are you sure you want to delete {currentVin} from your garage?</p>
+                      <h2>{t('Delete Car')}</h2>
+                      <p>{t('Are you sure you want to delete')} {currentVin} {t('from your garage')}?</p>
 
                       {adding ? (
                           <div className="car-maintenance-inline-spinner"></div>
                       ) : (
                               <>
-                                  <button onClick={handleDeleteCar} className="car-maintenance-add-btn">Yes</button>
-                                  <button onClick={() => { if (!adding) setShowDeleteModal(false); }} className="car-maintenance-add-btn">No</button>
+                                  <button onClick={handleDeleteCar} className="car-maintenance-add-btn">{t('Yes')}</button>
+                                  <button onClick={() => { if (!adding) setShowDeleteModal(false); }} className="car-maintenance-add-btn">{t('No')}</button>
                           </>
                       )}
                       {addError && (
