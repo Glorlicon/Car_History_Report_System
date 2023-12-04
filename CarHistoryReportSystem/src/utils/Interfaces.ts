@@ -572,3 +572,12 @@ export interface CarRecallSearchParams {
     recallDateEnd: string
 }
 
+export interface CarInsuranceSearchParams {
+    vinID: string
+    insuranceNumber: string
+    startInsuranceDateMin: string
+    startInsuranceDateMax: string
+    endInsuranceDateMin: string
+    endInsuranceDateMax: string
+}
+

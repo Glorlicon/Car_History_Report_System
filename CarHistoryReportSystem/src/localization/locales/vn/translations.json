@@ -303,5 +303,15 @@
   "Yes": "Có",
   "Rotate Tire": "Thay lốp",
   "Change Oil": "Thay dầu",
-  "Inspect Brake System": "Kiểm tra phanh"
+  "Inspect Brake System": "Kiểm tra phanh",
+  "Insurance Number must be filled out": "Hãy điền số bảo hiểm",
+  "Start Date must be chosen": "Hãy chọn thời hạn",
+  "End Date must be chosen": "Hãy chọn thời hạn",
+  "Add New Car Insurance": "Thông tin bảo hiểm mới",
+  "Insurance Number": "Số bảo hiểm",
+  "Search by Insurance Number": "Tìm theo số bảo hiểm",
+  "Insurance Start Date": "Ngày hiệu lực bảo hiểm",
+  "Insurance End Date": "Ngày hết hạn bảo hiểm",
+  "No car insurances found": "Không tìm thấy thông tin bảo hiểm nào",
+  "Edit Car Insurance": "Chỉnh sửa thông tin bảo hiểm"
 }

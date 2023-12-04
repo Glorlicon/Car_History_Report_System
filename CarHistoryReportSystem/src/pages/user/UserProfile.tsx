@@ -54,11 +54,11 @@ function UserProfile() {
 
     const validateUser = (user: User): boolean => {
         if (!isValidEmail(user.email)) {
-            setError("Invalid email address");
+            setError(t('Invalid email address'));
             return false;
         }
         if (!user.email || !user.userName || !user.firstName || !user.lastName) {
-            setError("All fields must be filled out");
+            setError(t('All fields must be filled out'));
             return false;
         }
         return true;

@@ -303,5 +303,15 @@
   "Yes": "Yes",
   "Rotate Tire": "Rotate Tire",
   "Change Oil": "Change Oil",
-  "Inspect Brake System": "Inspect Brake System"
+  "Inspect Brake System": "Inspect Brake System",
+  "Insurance Number must be filled out": "Insurance Number must be filled out",
+  "Start Date must be chosen": "Start Date must be chosen",
+  "End Date must be chosen": "End Date must be chosen",
+  "Add New Car Insurance": "Add New Car Insurance",
+  "Insurance Number": "Insurance Number",
+  "Search by Insurance Number": "Search by Insurance Number",
+  "Insurance Start Date": "Insurance Start Date",
+  "Insurance End Date": "Insurance End Date",
+  "No car insurances found": "No car insurances found",
+  "Edit Car Insurance": "Edit Car Insurance"
 }
