@@ -313,5 +313,7 @@
   "Insurance Start Date": "Ngày hiệu lực bảo hiểm",
   "Insurance End Date": "Ngày hết hạn bảo hiểm",
   "No car insurances found": "Không tìm thấy thông tin bảo hiểm nào",
-  "Edit Car Insurance": "Chỉnh sửa thông tin bảo hiểm"
+  "Edit Car Insurance": "Chỉnh sửa thông tin bảo hiểm",
+  "Model must be chosen": "Hãy chọn mẫu xe",
+  "Engine Number must be filled out": "Hãy điền số máy"
 }

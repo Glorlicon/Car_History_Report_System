@@ -26,15 +26,12 @@ const CarIdentificationPage: React.FC<CarIdentificationPageProps> = ({
                   <label>VIN</label>
                   <input type="text" name="vinId" value={model.vinId} onChange={handleInputChange} disabled={edit} />
               </div>
-              <div className="ad-car-form-column">
-                  <label>License Plate Number</label>
-                  <input type="text" name="licensePlateNumber" value={model.licensePlateNumber} onChange={handleInputChange} />
-              </div>
           </div>
           <div className="ad-car-form-columns">
               <div className="ad-car-form-column">
                   <label>Model</label>
                   <select disabled={edit} name="modelId" value={model.modelId} onChange={handleInputChange}>
+                      <option value="-1">Not chosen</option>
                       {carModels.map((m: any, index: number) => (
                           <option key={index} value={m.modelID}>{m.modelID} {m.manufacturerName}</option>
                       ))}

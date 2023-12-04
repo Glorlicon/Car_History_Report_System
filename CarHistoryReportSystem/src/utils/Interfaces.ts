@@ -179,7 +179,7 @@ export interface CarSaleDetails {
     }
 export interface Car {
     vinId: string
-    licensePlateNumber: string
+    licensePlateNumber?: string
     modelId: string
     color: number
     colorName?: string
@@ -579,5 +579,15 @@ export interface CarInsuranceSearchParams {
     startInsuranceDateMax: string
     endInsuranceDateMin: string
     endInsuranceDateMax: string
+}
+
+export interface CarStorageSearchParams {
+    vin: string
+    manufacturer: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
 }
 

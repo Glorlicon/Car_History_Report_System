@@ -313,5 +313,7 @@
   "Insurance Start Date": "Insurance Start Date",
   "Insurance End Date": "Insurance End Date",
   "No car insurances found": "No car insurances found",
-  "Edit Car Insurance": "Edit Car Insurance"
+  "Edit Car Insurance": "Edit Car Insurance",
+  "Model must be chosen": "Model must be chosen",
+  "Engine Number must be filled out": "Engine Number must be filled out"
 }

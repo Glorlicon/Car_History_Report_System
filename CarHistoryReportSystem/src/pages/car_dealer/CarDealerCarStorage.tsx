@@ -16,6 +16,12 @@ function CarDealerCarStorage() {
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [paging, setPaging] = useState<Paging>()
     const [resetTrigger, setResetTrigger] = useState(0);
+    const [searchManufacturer, setSearchManufacturer] = useState('')
+    const [searchModel, setSearchModel] = useState('')
+    const [searchOdometerMin, setSearchOdometerMin] = useState('')
+    const [searchOdometerMax, setSearchOdometerMax] = useState('')
+    const [searchReleaseDateMin, setSearchReleaseDateMin] = useState('')
+    const [searchReleaseDateMax, setSearchReleaseDateMax] = useState('')
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const id = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +32,6 @@ function CarDealerCarStorage() {
     const [showModal, setShowModal] = useState(false);
     const [newCar, setNewCar] = useState<Car>({
         vinId: '',
-        licensePlateNumber: '',
         color: 0,
         currentOdometer: 0,
         engineNumber: '',
@@ -42,27 +47,19 @@ function CarDealerCarStorage() {
     const [isBrandNewCar, setBrandNewCar] = useState(false)
     const validateCar = (car: Car): boolean => {
         if (!isValidVIN(car.vinId)) {
-            setAddError("VIN is invalid");
-            return false;
-        }
-        if (!isValidPlateNumber(car.licensePlateNumber)) {
-            setAddError("License Plate Number is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
         if (!car.vinId) {
-            setAddError("VIN must be filled out");
-            return false;
-        }
-        if (!car.licensePlateNumber) {
-            setAddError("License Plate Number must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
         if (!car.modelId) {
-            setAddError("Model must be chosen");
+            setAddError(t('Model must be chosen'));
             return false;
         }
         if (!car.engineNumber) {
-            setAddError("Engine Number must be filled out");
+            setAddError(t('Engine Number must be filled out'));
             return false;
         }
         return true;
