@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux';
 import { Edit, Get } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/UserProfile.css'
-import { APIResponse, User } from '../../utils/Interfaces';
+import { APIResponse, User, UserReport } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import blank from '../../blank.png'
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { isValidEmail } from '../../utils/Validators';
 import { useTranslation } from 'react-i18next';
+import { GetUserReports } from '../../services/api/Reports';
+import UserReportListPage from '../../components/forms/user/UserReportListPage';
 
 function UserProfile() {
     const { t, i18n } = useTranslation()
@@ -22,7 +24,7 @@ function UserProfile() {
         firstName: '',
         phoneNumber: '',
         lastName: '',
-        maxReports: 0,
+        maxReportNumber: 0,
         role: 1,
         address: ''
     });
@@ -33,6 +35,8 @@ function UserProfile() {
     const [loading, setLoading] = useState<boolean>(false);
     const [updating, setUpdating] = useState(false);
     const [isEditing, setEditing] = useState(false);
+    const [reports, setReports] = useState<UserReport[]>([])
+    const [openReports, setOpenReports] = useState(false)
     const fetchData = async () => {
         setLoading(true);
         setError(null);
@@ -45,9 +49,15 @@ function UserProfile() {
             setError(response.error);
         } else {
             setUser(response.data);
-            if (response.data.avatarImageLink) {
-                const image = GetImages(response.data.avatarImageLink)
-                setImageUrl(image)
+            const getUserReports: APIResponse = await GetUserReports(id, token, connectAPIError, language)
+            if (getUserReports.error) {
+                setError(getUserReports.error)
+            } else {
+                setReports(getUserReports.data)
+                if (response.data.avatarImageLink) {
+                    const image = GetImages(response.data.avatarImageLink)
+                    setImageUrl(image)
+                }
             }
         }
     };
@@ -104,6 +114,9 @@ function UserProfile() {
             ...updatedUser,
             [e.target.name]: e.target.value
         })
+    }
+    const handleShowReports = () => {
+        setOpenReports(true)
     }
 
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,12 +209,23 @@ function UserProfile() {
                             </div>
 
                             <div className="reports-section">
-                                <button className="profile-btn">{t('My Reports')}</button>
-                                <p>{t('Remaining Report(s)')}: {user.maxReports ? user.maxReports : 0}</p>
+                                <button className="profile-btn" onClick={handleShowReports}>{t('My Reports')}</button>
+                                <p>{t('Remaining Report(s)')}: {user.maxReportNumber ? user.maxReportNumber : 0}</p>
                                 <button className="profile-btn">{t('Change Password')}</button>
                             </div>
                         </div>
-                        </>
+                        {openReports && (
+                            <div className="reg-inspec-modal">
+                            <div className="reg-inspec-modal-content">
+                            <span className="reg-inspec-close-btn" onClick={() => { setOpenReports(false)}}>&times;</span>
+                            <h2>{t('My Reports')}</h2>
+                            <UserReportListPage
+                                list={reports}
+                                                />
+                            </div>
+                            </div>
+                        )}
+                </>
                         )}
                     </>
             )}

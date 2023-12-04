@@ -50,7 +50,7 @@ export interface User {
     phoneNumber: string
     lastName: string
     address?: string
-    maxReports: number
+    maxReportNumber: number
     role: number
     roleName?: string
     isSuspended?: boolean
@@ -600,5 +600,11 @@ export interface CarSaleSearchParams {
     releaseDateMax: string
     priceMin: string
     priceMax: string
+}
+
+export interface UserReport {
+    userId: string
+    carId: string
+    createdDate: string
 }
 
