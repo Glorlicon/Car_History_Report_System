@@ -39,6 +39,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarOwnerHistorysAsync([FromQuery] CarOwnerHistoryParameter parameter)
         {
             var carOwnerHistorys = await _carOwnerHistoryService.GetAllCarOwnerHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carOwnerHistorys.PagingData));
             return Ok(carOwnerHistorys);
         }
@@ -83,6 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarOwnerHistoryByCarIdAsync(string vinId, [FromQuery] CarOwnerHistoryParameter parameter)
         {
             var carOwnerHistorys = await _carOwnerHistoryService.GetCarOwnerHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carOwnerHistorys.PagingData));
             return Ok(carOwnerHistorys);
         }
