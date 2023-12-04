@@ -201,7 +201,7 @@ function InsuranceCompanyInsuranceList() {
                           handleInputChange={handleInputChange}
                       />
                       <button onClick={handleAddCarInsurance} disabled={adding} className="ins-ins-model-add-btn">
-                          {adding ? (<div className="ins-ins-model-inline-spinner"></div>) : 'Add'}
+                          {adding ? (<div className="ins-ins-inline-spinner"></div>) : 'Add'}
                       </button>
                       {addError && (
                           <p className="ins-ins-model-error">{addError}</p>
@@ -220,7 +220,7 @@ function InsuranceCompanyInsuranceList() {
                           handleInputChange={handleInputChange}
                       />
                       <button onClick={handleEditCarInsurance} disabled={adding} className="ins-ins-model-add-btn">
-                          {adding ? (<div className="ins-ins-model-inline-spinner"></div>) : 'Update'}
+                          {adding ? (<div className="ins-ins-inline-spinner"></div>) : 'Update'}
                       </button>
                       {addError && (
                           <p className="ins-ins-model-error">{addError}</p>

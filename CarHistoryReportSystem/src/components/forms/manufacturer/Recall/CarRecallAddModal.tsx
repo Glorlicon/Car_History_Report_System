@@ -1,34 +1,37 @@
 ﻿import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store/State';
 import { CarModel, CarRecalls } from '../../../../utils/Interfaces';
 
 interface CarRecallAddModalCapacityProps {
-    action: "Add" | "Edit"
     recall: CarRecalls,
     models?: CarModel[],
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
 
 const CarRecallAddModal: React.FC<CarRecallAddModalCapacityProps> = ({
-    action,
     recall,
     models,
     handleInputChange
 }) => {
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     return (
         <>
             <div className="manu-car-model-form-columns">
                 <div className="manu-car-model-form-column">
-                    <label>Model</label>
+                    <label>{t('Car Model')}</label>
                     <select name="modelId" value={recall.modelId} onChange={handleInputChange}>
                         {models?.map((m: any, index: number) => (
-                            <option key={index} value={m.modelID}>{m.modelID}</option>
+                            <option key={index} value={m.modelId}>{m.modelId}</option>
                         ))}
                     </select>
                 </div>
             </div>
             <div className="manu-car-model-form-columns">
                 <div className="ad-car-model-form-column">
-                    <label>Description</label>
+                    <label>{t('Description')}</label>
                     <input type="text" name="description" onChange={handleInputChange} min="0" />
                 </div>
                 {/*ẩn vì date có thể lấy ngày hiện tại luôn*/}

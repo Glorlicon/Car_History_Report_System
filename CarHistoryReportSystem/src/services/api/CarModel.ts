@@ -1,46 +1,63 @@
 import axios, { AxiosError } from "axios"
-import { APIResponse, CarModel } from "../../utils/Interfaces"
+import { APIResponse, CarModel, CarModelSearchParams } from "../../utils/Interfaces"
 
-export async function ListAdminCarModels(token: string): Promise<APIResponse> {
+export async function ListAdminCarModels(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: CarModelSearchParams): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/created-by-admin`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    ModelID: searchParams.modelId,
+                    ManufacturerName: searchParams.manuName,
+                    ReleasedDateStart: searchParams.releasedDateStart,
+                    ReleasedDateEnd: searchParams.releasedDateEnd
                 }
             })
-        return { data: response.data }
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
 
-export async function ListManufaturerCarModels(id: number, token: string): Promise<APIResponse> {
+export async function ListManufaturerCarModels(id: number, token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: CarModelSearchParams): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/manufacturer/${id}`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    ModelID: searchParams.modelId,
+                    ManufacturerName: searchParams.manuName,
+                    ReleasedDateStart: searchParams.releasedDateStart,
+                    ReleasedDateEnd: searchParams.releasedDateEnd
                 }
             })
-        return { data: response.data }
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
 
-export async function AddCarModel(data: CarModel, token: string): Promise<APIResponse> {
-    console.log("Data: ",data)
+export async function AddCarModel(data: CarModel, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification`,
             {
@@ -50,7 +67,8 @@ export async function AddCarModel(data: CarModel, token: string): Promise<APIRes
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -59,13 +77,13 @@ export async function AddCarModel(data: CarModel, token: string): Promise<APIRes
         const axiosError = error as AxiosError
         console.log("Add Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
-export async function EditCarModel(data: CarModel, token: string): Promise<APIResponse> {
+export async function EditCarModel(data: CarModel, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/${data.modelID}`, 
             {
@@ -75,7 +93,8 @@ export async function EditCarModel(data: CarModel, token: string): Promise<APIRe
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -84,29 +103,38 @@ export async function EditCarModel(data: CarModel, token: string): Promise<APIRe
         const axiosError = error as AxiosError
         console.log("Edit Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
 
 
-export async function ListAllCarModels(token: string): Promise<APIResponse> {
+export async function ListAllCarModels(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: CarModelSearchParams): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    ModelID: searchParams.modelId,
+                    ManufacturerName: searchParams.manuName,
+                    ReleasedDateStart: searchParams.releasedDateStart,
+                    ReleasedDateEnd: searchParams.releasedDateEnd
                 }
             })
-        return { data: response.data }
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }

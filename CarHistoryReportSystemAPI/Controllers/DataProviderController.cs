@@ -1,4 +1,4 @@
-﻿using Application.DomainServices;
+﻿    using Application.DomainServices;
 using Application.DTO.DataProvider;
 using Application.DTO.Request;
 using Application.Interfaces;
@@ -67,7 +67,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDataProvidersWithoutUserAsync(DataProviderParameter parameter, DataProviderType type)
+        public async Task<IActionResult> GetDataProvidersWithoutUserAsync([FromQuery] DataProviderParameter parameter, DataProviderType type)
         {
             var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));

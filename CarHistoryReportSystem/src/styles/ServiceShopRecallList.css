@@ -1,51 +1,50 @@
-.pol-crash-list-page {
+.reg-reg-list-page {
     padding: 20px;
     padding-top: 120px;
 }
 
-.pol-crash-top-bar {
+.reg-reg-top-bar {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
 
-.add-pol-crash-btn {
+.add-reg-reg-btn {
     background-color: #4CAF50; /* Green */
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 20px;
 }
 
-    .add-pol-crash-btn:hover {
+    .add-reg-reg-btn:hover {
         background-color: #45a049;
     }
 
-.pol-crash-search-filter-container {
+.reg-reg-search-filter-container {
     display: flex;
     align-items: center;
 }
 
 
-.pol-crash-search-bar {
+.reg-reg-search-bar {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
 
-.pol-crash-table {
+.reg-reg-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.pol-crash-table, .pol-crash-table th, .pol-crash-table td {
+.reg-reg-table, .reg-reg-table th, .reg-reg-table td {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-    .pol-crash-table th {
+    .reg-reg-table th {
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: left;
@@ -53,14 +52,14 @@
         color: white;
     }
 
-    .pol-crash-table td {
+    .reg-reg-table td {
         vertical-align: middle;
         text-align: center;
     }
 
 
 
-.pol-crash-spinner {
+.reg-reg-spinner {
     border: 8px solid #f3f3f3;
     border-top: 8px solid #3498db;
     border-radius: 50%;
@@ -80,7 +79,7 @@
     }
 }
 
-.pol-crash-retry-btn {
+.reg-reg-retry-btn {
     background-color: #3498db;
     color: #fff;
     border: none;
@@ -90,11 +89,11 @@
     border-radius: 5px;
 }
 
-    .pol-crash-retry-btn:hover {
+    .reg-reg-retry-btn:hover {
         background-color: #2980b9;
     }
 
-.pol-crash-modal {
+.reg-reg-modal {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -106,7 +105,7 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.pol-crash-modal-content {
+.reg-reg-modal-content {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
@@ -114,7 +113,7 @@
     width: 400px;
 }
 
-.pol-crash-close-btn {
+.reg-reg-close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -122,7 +121,7 @@
     font-size: 20px;
 }
 
-.pol-crash-model-inline-spinner {
+.reg-reg-inline-spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3498db;
     border-radius: 50%;
@@ -132,11 +131,11 @@
     display: inline-block;
 }
 
-.pol-crash-error {
+.reg-reg-error {
     color: #d9534f;
 }
 
-.pol-crash-form-columns {
+.reg-reg-form-columns {
     display: inline-flex;
     flex-direction: column;
     max-width: 150px;
@@ -145,20 +144,20 @@
     margin-right: 20px;
 }
 
-.pol-crash-form-column {
+.reg-reg-form-column {
     flex: 1;
     min-width: 75px;
 }
 
-    .pol-crash-form-column label,
-    .pol-crash-form-column input,
-    .pol-crash-form-column select {
+    .reg-reg-form-column label,
+    .reg-reg-form-column input,
+    .reg-reg-form-column select {
         display: block;
         width: 100%;
         margin-bottom: 10px;
     }
 
-.pol-crash-model-prev-btn {
+.reg-reg-model-add-btn {
     background-color: #3498db;
     color: #fff;
     border: none;
@@ -166,47 +165,8 @@
     cursor: pointer;
     border-radius: 5px;
     margin-top: 20px;
-    margin-right: 10px;
 }
 
-    .pol-crash-model-prev-btn:hover {
+    .reg-reg-model-add-btn:hover {
         background-color: #2980b9;
-    }
-
-.pol-crash-model-next-btn {
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 20px;
-    margin-left: 10px;
-}
-
-    .pol-crash-model-next-btn:hover {
-        background-color: #2980b9;
-    }
-
-.pol-crash-car-container {
-    display: flex; /* Or flex, depending on your layout needs */
-    padding: 1px; /* Adjust the padding to match the border width for visual consistency */
-}
-
-.pol-crash-car-image {
-    display: block;
-    margin: 0 auto;
-    width: 50%;
-    height: 50%;
-}
-
-.pol-crash-checkboxes {
-    margin-top: 20px; /* Space out the checkboxes from the image */
-    display: flex;
-    justify-content: center;
-}
-
-    .pol-crash-checkboxes label {
-        margin-right: 3px; /* Space out the labels if needed */
-        margin-left: 3px; /* Space out the labels if needed */
     }

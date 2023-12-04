@@ -1,14 +1,15 @@
 import axios, { AxiosError } from "axios"
 import { Token } from "typescript"
 import { DATA_PROVIDERS } from "../../utils/const/DataProviderTypes"
-import { APIResponse, CarSalesInfo, Manufacturer } from "../../utils/Interfaces"
+import { APIResponse, CarSalesInfo, Manufacturer, ManufacturerSearchParams } from "../../utils/Interfaces"
 
-export async function ListDataProviderTypes(token: string): Promise<APIResponse> {
+export async function ListDataProviderTypes(token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/types-list`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -16,34 +17,44 @@ export async function ListDataProviderTypes(token: string): Promise<APIResponse>
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
 
-export async function List(token: string): Promise<APIResponse> {
+export async function List(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: ManufacturerSearchParams, pageSize?: number): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/type/${DATA_PROVIDERS.Manufacturer}/no-user`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    Name: searchParams.name,
+                    Email: searchParams.email,
+                    PageSize: pageSize ? pageSize : 100000 
                 }
             }
         )
+        //return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
 
-export async function AddManufacturer(types: string[], data: Manufacturer, token: string): Promise<APIResponse> {
+
+export async function AddManufacturer(types: string[], data: Manufacturer, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     const manufacturer = types.findIndex((x: string) => x === "Manufacturer")
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider`,
@@ -53,7 +64,8 @@ export async function AddManufacturer(types: string[], data: Manufacturer, token
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -61,19 +73,20 @@ export async function AddManufacturer(types: string[], data: Manufacturer, token
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
 
-export async function EditManufacturer(data: Manufacturer, token: string): Promise<APIResponse> {
+export async function EditManufacturer(data: Manufacturer, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${data.id}`, data,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -81,31 +94,9 @@ export async function EditManufacturer(data: Manufacturer, token: string): Promi
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }
-
-//export async function EditDealer(data: , token: string) {
-//    console.log("Data", data)
-//    try {
-//        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${data.carId}/car-sales-info`, data,
-//            {
-//                headers: {
-//                    'Authorization': `Bearer ${token}`
-//                }
-//            }
-//        )
-//        return { data: response.data }
-//    } catch (error) {
-//        const axiosError = error as AxiosError
-//        console.log("Add Error!: ", error)
-//        if (axiosError.code === "ERR_NETWORK") {
-//            return { error: "Network error. Please check your internet connection!" }
-//        } else {
-//            return { error: "Something went wrong. Please try again" }
-//        }
-//    }
-//}
