@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { CreateCarForSale, EditCarForSale, ListCarDealerCarForSale, SaleCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
-import { APIResponse, Car, CarImages, CarSaleDetails, CarSalesInfo } from '../../utils/Interfaces';
+import { APIResponse, Car, CarImages, CarSaleDetails, CarSaleSearchParams, CarSalesInfo, Paging } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidNumber, isValidVIN } from '../../utils/Validators';
 import '../../styles/CarDealerCars.css'
@@ -10,8 +10,24 @@ import { useNavigate } from 'react-router-dom';
 import CarForSaleDetailsPage from '../../components/forms/cardealer/CarForSaleDetailsPage';
 import CarForSaleImagesPage from '../../components/forms/cardealer/CarForSaleImagesPage';
 import { UploadMultipleImages } from '../../services/azure/Images';
+import { useTranslation } from 'react-i18next';
+import { Pagination } from '@mui/material';
 
 function CarDealerCarList() {
+    const { t, i18n } = useTranslation()
+    const [page, setPage] = useState(1)
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [paging, setPaging] = useState<Paging>()
+    const [resetTrigger, setResetTrigger] = useState(0);
+    const [searchManufacturer, setSearchManufacturer] = useState('')
+    const [searchVin, setSearchVin] = useState('')
+    const [searchModel, setSearchModel] = useState('')
+    const [searchOdometerMin, setSearchOdometerMin] = useState('')
+    const [searchOdometerMax, setSearchOdometerMax] = useState('')
+    const [searchReleaseDateMin, setSearchReleaseDateMin] = useState('')
+    const [searchReleaseDateMax, setSearchReleaseDateMax] = useState('')
+    const [searchPriceMin, setSearchPriceMin] = useState('')
+    const [searchPriceMax, setSearchPriceMax] = useState('')
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const dealerId = JWTDecoder(token).dataprovider
     const navigate = useNavigate()
@@ -37,15 +53,15 @@ function CarDealerCarList() {
     const [showModal, setShowModal] = useState(false);
     const validateCarSales = (carSales: CarSalesInfo): boolean => {
         if (!isValidVIN(carSales.carId as unknown as string)) {
-            setAddError("VIN is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
         if (!carSales.carId) {
-            setAddError("VIN must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
         if (carSales.price <=0) {
-            setAddError("Price must be larger than 0");
+            setAddError(t('Price must be larger than 0'));
             return false;
         }
         return true;
@@ -53,6 +69,7 @@ function CarDealerCarList() {
     const [saleDetails, setSaleDetails] = useState<CarSaleDetails|null>();
 
     const handleAddFeature = () => {
+        if (!feature || feature === '') return
         if (editCarSales) {
             setEditCarSales({
                 ...editCarSales,
@@ -89,11 +106,14 @@ function CarDealerCarList() {
         if (validateCarSales(newCarSales)) {
             setAdding(true);
             setAddError(null);
-            const addImages = await UploadMultipleImages([], newImages)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            let notFoundError = t('No image was found')
+            const addImages = await UploadMultipleImages([], newImages, notFoundError)
             const response: APIResponse = await CreateCarForSale({
                 ...newCarSales,
                 carImages: addImages.data
-            }, token);
+            }, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -109,14 +129,17 @@ function CarDealerCarList() {
         if (editCarSales != null && validateCarSales(editCarSales)) {
             setAdding(true);
             setAddError(null);
-            const addImages = await UploadMultipleImages(removedImages, newImages)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            let notFoundError = t('No image was found')
+            const addImages = await UploadMultipleImages(removedImages, newImages, notFoundError)
             const response: APIResponse = await EditCarForSale({
                 ...editCarSales,
                 carImages: [
                     ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
                     ... addImages.data
                 ]
-            }, token);
+            }, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -176,7 +199,9 @@ function CarDealerCarList() {
         if (saleDetails!=null && validateSaleDetails(saleDetails)) {
             setAdding(true);
             setAddError(null);
-            const response: APIResponse = await SaleCar(saleDetails, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await SaleCar(saleDetails, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -201,10 +226,6 @@ function CarDealerCarList() {
             setNewImages([...newImages, ...imageFiles])
         }
         if (editCarSales) {
-            console.log("Edit", [
-                ...editCarSales.carImages as CarImages[],
-                ...addedImages
-            ])
             setEditCarSales({
                 ...editCarSales,
                 carImages: [
@@ -226,17 +247,12 @@ function CarDealerCarList() {
     const handleRemoveImage = (index: number) => {
         if (editCarSales) {
             const currentImages: CarImages[] = [...editCarSales.carImages as CarImages[]]
-            console.log("Current", currentImages)
             const removedImage = currentImages.splice(index, 1)
-            console.log("After", currentImages)
-            console.log("removedImage", removedImage)
             setEditCarSales({
                 ...editCarSales,
                 carImages: currentImages
             })
-            console.log("Test",[...removedImages, removedImage[0].imageLink])
             if (removedImage[0].id != -1) setRemovedImages([...removedImages, removedImage[0].imageLink])
-            console.log("List page images:", currentImages)
         } else {
             const currentImages: CarImages[] = [...newCarSales.carImages as CarImages[]]
             const removedImage = currentImages.splice(index, 1)
@@ -257,54 +273,197 @@ function CarDealerCarList() {
 
     const validateSaleDetails = (d: CarSaleDetails) => {
         if (!isValidNumber(d.phoneNumber)) {
-            setAddError("Customer number is not valid");
+            setAddError(t('Customer number is not valid'));
             return false;
         }
         if (!d.address || !d.dob || !d.name || !d.note || !d.phoneNumber || !d.startDate) {
-            setAddError("Please fill all fields");
+            setAddError(t('All fields must be filled out'));
             return false;
         }
         return true;
     }
 
+    const handleResetFilters = () => {
+        setSearchManufacturer('')
+        setSearchModel('')
+        setSearchOdometerMax('')
+        setSearchOdometerMin('')
+        setSearchReleaseDateMax('')
+        setSearchReleaseDateMin('')
+        setSearchVin('')
+        setSearchPriceMax('')
+        setSearchPriceMin('')
+        setResetTrigger(prev => prev + 1);
+    }
+
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carSalesListResponse: APIResponse = await ListCarDealerCarForSale(dealerId, token)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchParams: CarSaleSearchParams = {
+            vin: searchVin,
+            manufacturer: searchManufacturer,
+            model: searchModel,
+            odometerMax: searchOdometerMax,
+            odometerMin: searchOdometerMin,
+            releaseDateMax: searchReleaseDateMax,
+            releaseDateMin: searchReleaseDateMin,
+            priceMax: searchPriceMax,
+            priceMin: searchPriceMin
+        }
+        const carSalesListResponse: APIResponse = await ListCarDealerCarForSale(dealerId, token, page, connectAPIError, language, searchParams)
         if (carSalesListResponse.error) {
             setError(carSalesListResponse.error)
         } else {
             setCarList(carSalesListResponse.data)
+            setPaging(carSalesListResponse.pages)
         }
         setLoading(false)
     }
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
+
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
   return (
       <div className="dealer-car-sales-list-page">
           <div className="dealer-car-sales-top-bar">
-              <button className="add-dealer-car-sales-btn" onClick={() => setShowModal(true)}>+ Add Car</button>
-              <div className="dealer-car-sales-search-filter-container">
-                  <input
-                      type="text"
-                      className="dealer-car-sales-search-bar"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                  />
+              <button className="add-dealer-car-sales-btn" onClick={() => setShowModal(true)}>+ {t('Add Car Sale')}</button>
+          </div>
+          <div className="reg-inspec-top-bar-2">
+              <div className="reg-inspec-search-filter-container-3">
+                  <div className="reg-inspec-search-filter-container-2">
+                      <div className="reg-inspec-search-filter-item-2">
+                          <label>{t('Release Year')}</label>
+                          <div className="reg-inspec-search-filter-item-2-dates">
+                              <label>{t('From')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchReleaseDateMin}
+                                  onChange={(e) => setSearchReleaseDateMin(e.target.value)}
+                                  min="1900"
+                                  max="2099"
+                                  step="1"
+                              />
+                              <label>{t('To')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchReleaseDateMax}
+                                  onChange={(e) => setSearchReleaseDateMax(e.target.value)}
+                                  min="1900"
+                                  max="2099"
+                                  step="1"
+                              />
+                          </div>
+                      </div>
+                      <div className="reg-inspec-search-filter-item-2">
+                          <label>{t('Odometer')}</label>
+                          <div className="reg-inspec-search-filter-item-2-dates">
+                              <label>{t('From')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchOdometerMin}
+                                  onChange={(e) => setSearchOdometerMin(e.target.value)}
+                                  min="0"
+                              />
+                              <label>{t('To')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchOdometerMax}
+                                  onChange={(e) => setSearchOdometerMax(e.target.value)}
+                                  min="0"
+                              />
+                          </div>
+                      </div>
+                      <div className="reg-inspec-search-filter-item-2">
+                          <label>{t('Price')}</label>
+                          <div className="reg-inspec-search-filter-item-2-dates">
+                              <label>{t('From')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchPriceMin}
+                                  onChange={(e) => setSearchPriceMin(e.target.value)}
+                                  min="0"
+                              />
+                              <label>{t('To')}: </label>
+                              <input
+                                  type="number"
+                                  className="reg-inspec-search-bar"
+                                  value={searchPriceMax}
+                                  onChange={(e) => setSearchPriceMax(e.target.value)}
+                                  min="0"
+                              />
+                          </div>
+                      </div>
+                  </div>
+                  <div className="reg-inspec-search-filter-container-2">
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Car ID')}</label>
+                          <input
+                              type="text"
+                              className="reg-inspec-search-bar"
+                              placeholder={t('Search by Car ID')}
+                              value={searchVin}
+                              onChange={(e) => setSearchVin(e.target.value)}
+                          />
+                      </div>
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Manufacturer')}(WIP)</label>
+                          <input
+                              type="text"
+                              className="reg-inspec-search-bar"
+                              placeholder={t('Search by Manufacturer Name')}
+                              value={searchManufacturer}
+                              onChange={(e) => setSearchManufacturer(e.target.value)}
+                          />
+                      </div>
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Car Model')}(WIP)</label>
+                          <input
+                              type="text"
+                              className="reg-inspec-search-bar"
+                              placeholder={t('Search by Car Model')}
+                              value={searchModel}
+                              onChange={(e) => setSearchModel(e.target.value)}
+                          />
+                      </div>
+                  </div>
+              </div>
+              <div className="reg-inspec-search-filter-item-4">
+                  <button
+                      className="search-reg-inspec-btn"
+                      onClick={fetchData}
+                  >
+                      {t('Search...')}
+                  </button>
+                  <button
+                      className="reset-reg-inspec-btn"
+                      onClick={handleResetFilters}
+                  >
+                      {t('Reset Filters')}
+                  </button>
               </div>
           </div>
           <table className="dealer-car-sales-table">
               <thead>
                   <tr>
-                      <th>VIN</th>
-                      <th>Model ID</th>
-                      <th>Price</th>
-                      <th>Actions</th>
+                      <th>{t('VIN')}</th>
+                      <th>{t('Model ID')}</th>
+                      <th>{t('Price')}</th>
+                      <th>{t('Action')}</th>
                   </tr>
               </thead>
               <tbody>
@@ -318,7 +477,7 @@ function CarDealerCarList() {
                       <tr>
                           <td colSpan={5} style={{ textAlign: 'center' }}>
                               {error}
-                              <button onClick={fetchData} className="dealer-car-sales-retry-btn">Retry</button>
+                              <button onClick={fetchData} className="dealer-car-sales-retry-btn">{t('Retry')}</button>
                           </td>
                       </tr>
                   ) : carList.length > 0 ? (
@@ -328,23 +487,23 @@ function CarDealerCarList() {
                               <td>{model.modelId}</td>
                               <td>{model.carSalesInfo.price}</td>
                               <td>
-                                  <button className="dealer-car-sales-action-btn" onClick={() => handleDetailsClick(model.vinId) }>Details</button>
-                                  <button className="dealer-car-sales-action-btn" onClick={() => handleSoldClick(model.vinId) }>Sold</button>
+                                  <button className="dealer-car-sales-action-btn" onClick={() => handleDetailsClick(model.vinId)}>{t('Details')}</button>
+                                  <button className="dealer-car-sales-action-btn" onClick={() => handleSoldClick(model.vinId)}>{t('Sold')}</button>
                               </td>
                           </tr>
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>No cars found</td>
+                          <td colSpan={5}>{t('No cars found')}</td>
                       </tr>
                   )}
               </tbody>
           </table>
           {showModal && (
               <div className="dealer-car-sales-modal">
-                  <div className="dealer-car-sales-modal-content">
+                  <div className="dealer-car-sales-modal-content-2">
                       <span className="dealer-car-sales-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale); setModalPage(1) }}>&times;</span>
-                      <h2>Add Car</h2>
+                      <h2>{t('Add Car Sale')}</h2>
                       {modalPage === 1 && (
                           <CarForSaleDetailsPage
                               action="Add"
@@ -366,10 +525,10 @@ function CarDealerCarList() {
                       {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                           <>
                               <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                  Previous
+                                  {t('Previous')}
                               </button>
                               <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                  {modalPage < 2 ? 'Next' : 'Add'}
+                                  {modalPage < 2 ? t('Next') : t('Finish')}
                               </button>
                           </>
                       )}
@@ -381,9 +540,9 @@ function CarDealerCarList() {
           )}
           {editCarSales && (
               <div className="dealer-car-sales-modal">
-                  <div className="dealer-car-sales-modal-content">
+                  <div className="dealer-car-sales-modal-content-2">
                       <span className="dealer-car-sales-close-btn" onClick={() => { setEditCarSales(null); setModalPage(1) }}>&times;</span>
-                      <h2>Edit Car</h2>
+                      <h2>{t('Edit Car Sale')}</h2>
                       {modalPage === 1 && (
                           <CarForSaleDetailsPage
                               action="Edit"
@@ -405,10 +564,10 @@ function CarDealerCarList() {
                       {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                           <>
                               <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                  Previous
+                                  {t('Previous')}
                               </button>
                               <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                  {modalPage < 2 ? 'Next'  : 'Edit'}
+                                  {modalPage < 2 ? t('Next') : t('Finish')}
                               </button>
                           </>
                       )}
@@ -422,39 +581,39 @@ function CarDealerCarList() {
               <div className="dealer-car-sales-modal">
                   <div className="dealer-car-sales-modal-content-sale">
                       <span className="dealer-car-sales-close-btn" onClick={() => { setSaleDetails(null); }}>&times;</span>
-                      <h2>Sale Car {saleDetails.carId}</h2>
-                      <div className="dealer-car-sales-form-columns">
+                      <h2>{t('Sale Car')} {saleDetails.carId}</h2>
+                      <div className="dealer-car-sales-form-columns-2">
                           <div className="dealer-car-sales-form-column">
-                              <label>Customer name</label>
+                              <label>{t('Customer name')}</label>
                               <input type="text" name="name" value={saleDetails.name} onChange={handleSalesChange} />
                           </div>
                           <div className="dealer-car-sales-form-column">
-                              <label>Phone Number</label>
+                              <label>{t('Phone Number')}</label>
                               <input type="text" name="phoneNumber" value={saleDetails.phoneNumber} onChange={handleSalesChange} />
                           </div>
                       </div>
-                      <div className="dealer-car-sales-form-columns">
+                      <div className="dealer-car-sales-form-columns-2">
                           <div className="ad-car-model-form-column">
-                              <label>Address</label>
+                              <label>{t('Address')}</label>
                               <input type="text" name="address" value={saleDetails.address} onChange={handleSalesChange} />
                           </div>
                           <div className="dealer-car-sales-form-column">
-                              <label>DOB</label>
+                              <label>{t('DOB')}</label>
                               <input type="date" name="dob" value={saleDetails.dob} onChange={handleSalesChange} />
                           </div>
                       </div>
-                      <div className="dealer-car-sales-form-columns">
+                      <div className="dealer-car-sales-form-columns-2">
                           <div className="dealer-car-sales-form-column">
-                              <label>Start Date</label>
+                              <label>{t('Sale Start Date')}</label>
                               <input type="date" name="startDate" value={saleDetails.startDate} onChange={handleSalesChange} />
                           </div>
                           <div className="dealer-car-sales-form-column">
-                              <label>Note</label>
+                              <label>{t('Note')}</label>
                               <input type="text" name="note" value={saleDetails.note} onChange={handleSalesChange} />
                           </div>
                       </div>
                       <button onClick={handleCarSale} disabled={adding} className="dealer-car-sales-add-btn">
-                          {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Confirm Sale'}
+                          {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : t('Confirm Sale')}
                       </button>
                       {addError && (
                           <p className="dealer-car-sales-error">{addError}</p>
@@ -462,6 +621,11 @@ function CarDealerCarList() {
                   </div>
               </div>
           )}
+          {paging && paging.TotalPages > 0 &&
+              <>
+                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+              </>
+          }
       </div>
   );
 }

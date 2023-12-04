@@ -34,7 +34,6 @@ function PoliceStolenCarList() {
     const [editCarStolenReport, setEditCarStolenReport] = useState<CarStolen | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
     const [resetTrigger, setResetTrigger] = useState(0);
     const [data, setData] = useState("")
     const [openImport, setOpenImport] = useState(false)
