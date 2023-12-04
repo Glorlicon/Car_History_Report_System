@@ -41,7 +41,7 @@ namespace Application.DomainServices
                 throw new UnauthorizedAccessException();
             }
             var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
-            var count = await _requestRepository.CountAll();
+            var count = await _requestRepository.CountAll(parameter);
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -74,7 +74,7 @@ namespace Application.DomainServices
         {
             var requests = await _requestRepository.GetAllRequestByUserId(userId, parameter, trackChange);
             var requestsResponse = _mapper.Map<List<RequestResponseDTO>>(requests);
-            var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == userId);
+            var count = await _requestRepository.CountByCondition(cs => cs.CreatedByUserId == userId, parameter);
             return new PagedList<RequestResponseDTO>(requestsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }       
 

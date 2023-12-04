@@ -16,7 +16,7 @@ namespace Application.Interfaces
     {
         Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter);
 
-        Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type);
+        Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type);
 
         Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type);
 
