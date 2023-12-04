@@ -69,6 +69,17 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetDataProvidersWithoutUserAsync([FromQuery] DataProviderParameter parameter, DataProviderType type)
         {
+            DataProviderParameterValidator validator = new DataProviderParameterValidator();
+            var validationResult = validator.Validate(parameter);
+            if (!validationResult.IsValid)
+            {
+                var errors = new ErrorDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
+                }
+                return BadRequest(errors);
+            }
             var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
