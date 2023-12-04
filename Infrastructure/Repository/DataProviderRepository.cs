@@ -62,6 +62,7 @@ namespace Infrastructure.Repository
         public async Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type, bool trackChange)
         {
             return await FindByCondition(dp => dp.Type == type && !dp.Users.Any(), trackChange).Include(dp => dp.WorkingTimes)
+                                            .Filter(parameter)
                             .Include(dp => dp.Reviews)
                 .ToListAsync();
         }
