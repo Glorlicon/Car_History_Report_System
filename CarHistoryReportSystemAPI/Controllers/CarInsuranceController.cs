@@ -43,6 +43,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInsuranceHistorysAsync([FromQuery] CarInsuranceHistoryParameter parameter)
         {
             var carInsuranceHistorys = await _carInsuranceHistoryService.GetAllCarHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
             return Ok(carInsuranceHistorys);
         }
@@ -75,6 +76,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInsuranceHistoryByCarIdAsync(string vinId, [FromQuery] CarInsuranceHistoryParameter parameter)
         {
             var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
             return Ok(carInsuranceHistorys);
         }
@@ -92,6 +94,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInsuranceHistoryByUserIdAsync(string userId, [FromQuery] CarInsuranceHistoryParameter parameter)
         {
             var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
             return Ok(carInsuranceHistorys);
         }
@@ -109,6 +112,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInsuranceHistoryByDataProviderIdAsync(int dataProviderId, [FromQuery] CarInsuranceHistoryParameter parameter)
         {
             var carInsuranceHistorys = await _carInsuranceHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInsuranceHistorys.PagingData));
             return Ok(carInsuranceHistorys);
         }

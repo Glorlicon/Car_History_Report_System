@@ -44,6 +44,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(ModelState);
             }
             var requests = await _requestService.GetAllRequests(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(requests.PagingData));
             return Ok(requests);
         }
@@ -87,6 +88,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(ModelState);
             }
             var requests = await _requestService.GetAllRequestByUserId(userId, parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(requests.PagingData));
             return Ok(requests);
         }

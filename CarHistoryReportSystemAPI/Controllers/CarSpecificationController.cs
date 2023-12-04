@@ -38,6 +38,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarModelsAsync([FromQuery] CarSpecificationParameter parameter)
         {
             var carModels = await _carSpecService.GetAllCarModels(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -51,6 +52,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarModelsTestAsync([FromQuery] CarSpecificationParameter parameter)
         {
             var carModels = await _carSpecService.GetAllCarModelsTest(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -80,6 +82,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarModelByUserIdAsync(string userId, [FromQuery] CarSpecificationParameter parameter)
         {
             var carModels = await _carSpecService.GetCarModelByUserId(userId, parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -94,6 +97,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarModelByManufacturerIdAsync(int manufacturerId, [FromQuery] CarSpecificationParameter parameter)
         {
             var carModels = await _carSpecService.GetCarModelByManufacturerId(manufacturerId, parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -108,6 +112,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarModelsCreatedByAdminstrator([FromQuery] CarSpecificationParameter parameter)
         {
             var carModels = await _carSpecService.GetCarModelsCreatedByAdminstrator(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -183,6 +188,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetModelMaintainances([FromQuery] ModelMaintainanceParameter parameter)
         {
             var carModels = await _carSpecService.GetModelMaintainances(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
@@ -198,6 +204,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetModelMaintainancesByModelId(string modelId, [FromQuery] ModelMaintainanceParameter parameter)
         {
             var carModels = await _carSpecService.GetModelMaintainancesByModelId(modelId, parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carModels.PagingData));
             return Ok(carModels);
         }
