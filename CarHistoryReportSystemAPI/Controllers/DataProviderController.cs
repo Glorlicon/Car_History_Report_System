@@ -54,6 +54,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var dataProviders = await _dataProviderService.GetAllDataProviders(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
         }
@@ -81,6 +82,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var dataProviders = await _dataProviderService.GetAllDataProvidersWithoutUser(parameter, type);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
         }
@@ -276,6 +278,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var reviews = await _dataProviderService.GetAllReview(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(reviews.PagingData));
             return Ok(reviews);
         }

@@ -52,6 +52,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetAllCars(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -111,6 +112,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarCreatedByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -138,6 +140,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarByManufacturerId(manufacturerId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -165,6 +168,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByCarDealerId(carDealerId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -191,6 +195,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByCurrentDataProviderId(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -219,6 +224,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByAdminstrator(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -245,6 +251,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsCurrentlySelling(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }

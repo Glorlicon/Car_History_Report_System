@@ -79,6 +79,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> ListAccountAsync([FromQuery] UserParameter parameter)
         {
             var users = await _userService.GetAllUsers(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(users.PagingData));
             return Ok(users);
         }

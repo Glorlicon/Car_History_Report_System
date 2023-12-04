@@ -34,6 +34,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetNotificationsAsync([FromQuery] NotificationParameter parameter)
         {
             var notifications = await _notificationService.GetAllNotifications(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(notifications.PagingData));
             return Ok(notifications);
         }
@@ -106,6 +107,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetUserNotificationsAsync(string userId, [FromQuery] UserNotificationParameter parameter)
         {
             var notifications = await _notificationService.GetUserNotifications(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(notifications.PagingData));
             return Ok(notifications);
         }
@@ -144,6 +146,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarTrackingsAsync(string userId, [FromQuery] CarTrackingParameter parameter)
         {
             var carTrackings = await _notificationService.GetCarTrackedList(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carTrackings.PagingData));
             return Ok(carTrackings);
         }
