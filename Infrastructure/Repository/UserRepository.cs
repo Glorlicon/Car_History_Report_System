@@ -1,4 +1,5 @@
 ﻿using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.DTO.User;
 using Application.Interfaces;
 using Domain.Entities;
@@ -21,7 +22,12 @@ namespace Infrastructure.Repository
         {
 
         }
-        //TODO getall
+        public async Task<int> CountAll(UserParameter parameter)
+        {
+            return await FindAll(false)
+                            .Filter(parameter)
+                            .CountAsync();
+        }
         public override async Task<IEnumerable<User>> GetAll(bool trackChanges)
         {
             return await FindAll(trackChanges).ToListAsync();
