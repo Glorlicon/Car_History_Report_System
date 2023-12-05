@@ -222,7 +222,15 @@ function CarSalesPage() {
                                                     {/* Other details */}
                                                 </div>
                                                 <div className="dealer-info">
-                                                    <p>Dealer: {model.carSalesInfo.dataProvider.name}</p>
+                                                    <p>
+                                                        Dealer:
+                                                        <a
+                                                            href={`../dealer/${model.carSalesInfo.dataProvider.id}`}
+                                                            className="dealer-link"
+                                                        >
+                                                            {model.carSalesInfo.dataProvider.name}
+                                                        </a>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
