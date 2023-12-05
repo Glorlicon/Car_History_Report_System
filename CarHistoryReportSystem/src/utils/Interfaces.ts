@@ -50,7 +50,7 @@ export interface User {
     phoneNumber: string
     lastName: string
     address?: string
-    maxReports: number
+    maxReportNumber: number
     role: number
     roleName?: string
     isSuspended?: boolean
@@ -179,7 +179,7 @@ export interface CarSaleDetails {
     }
 export interface Car {
     vinId: string
-    licensePlateNumber: string
+    licensePlateNumber?: string
     modelId: string
     color: number
     colorName?: string
@@ -570,5 +570,41 @@ export interface CarRecallSearchParams {
     modelId: string
     recallDateStart: string
     recallDateEnd: string
+}
+
+export interface CarInsuranceSearchParams {
+    vinID: string
+    insuranceNumber: string
+    startInsuranceDateMin: string
+    startInsuranceDateMax: string
+    endInsuranceDateMin: string
+    endInsuranceDateMax: string
+}
+
+export interface CarStorageSearchParams {
+    vin: string
+    manufacturer: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+}
+export interface CarSaleSearchParams {
+    vin: string
+    manufacturer: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+    priceMin: string
+    priceMax: string
+}
+
+export interface UserReport {
+    userId: string
+    carId: string
+    createdDate: string
 }
 

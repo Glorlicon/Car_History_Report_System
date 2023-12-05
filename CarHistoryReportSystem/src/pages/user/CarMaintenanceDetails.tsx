@@ -5,7 +5,10 @@ import { GetCarServiceHistory, GetMaintenanceDetails } from '../../services/api/
 import { RootState } from '../../store/State';
 import { APIResponse, CarServiceHistory, ModelMaintainanceDetails } from '../../utils/Interfaces';
 import '../../styles/CarMaintenanceDetails.css'
+import { useTranslation } from 'react-i18next';
 function CarMaintenanceDetails() {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const navigate = useNavigate()
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     type RouteParams = {
@@ -99,8 +102,6 @@ function CarMaintenanceDetails() {
                 }
             });
         }
-        console.log("Current", current)
-        console.log(milestones)
         return milestones;
     }
 
@@ -131,7 +132,9 @@ function CarMaintenanceDetails() {
             setLoading(false)
             return
         }
-        const maintenanceDetailsResponse: APIResponse = await GetMaintenanceDetails(id, token)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const maintenanceDetailsResponse: APIResponse = await GetMaintenanceDetails(id, token, connectAPIError, language)
         if (maintenanceDetailsResponse.error) {
             setError(maintenanceDetailsResponse.error)
         } else {
@@ -139,7 +142,7 @@ function CarMaintenanceDetails() {
             setCurrentOdometer(maintenanceDetailsResponse.data[0].currentOdometer)
             //setCurrentOdometer(13305)
             setMaintenanceSchedule(maintenanceDetailsResponse.data, maintenanceDetailsResponse.data[0].currentOdometer)
-            const serviceHistoryResponse: APIResponse = await GetCarServiceHistory(id, token)
+            const serviceHistoryResponse: APIResponse = await GetCarServiceHistory(id, token, connectAPIError, language)
             if (serviceHistoryResponse.error) {
                 setError(serviceHistoryResponse.error)
             } else {
@@ -150,8 +153,9 @@ function CarMaintenanceDetails() {
         setLoading(false)
     }
     useEffect(() => {
-        fetchData()
-    }, [])
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     return (
         <div className="car-maintenance-details-page">
             {loading ? (
@@ -159,58 +163,61 @@ function CarMaintenanceDetails() {
             ) : error ? (
                     <div className="car-maintenance-details-load-error">
                         {error}
-                        <button onClick={fetchData} className="car-maintenance-details-retry-btn">Retry</button>
+                        <button onClick={fetchData} className="car-maintenance-details-retry-btn">{t('Retry')}</button>
                     </div>
             ): (
                 <div className="car-maintenance-details-main-page">
                 <div className="car-maintenance-details-navigator">
-                    <a href="/maintenance">&#8592;Garage</a>
-                    <a onClick={() => setSection(0)}>Dashboard</a>
-                    <a onClick={() => setSection(1)}>Service History</a>
-                    <a onClick={() => setSection(2)}>Maintenance Schedule</a>
+                    <a href="/maintenance">&#8592;{t('Garage')}</a>
+                    <a onClick={() => setSection(0)}>{t('Dashboard')}</a>
+                    <a onClick={() => setSection(1)}>{t('Service History')}</a>
+                    <a onClick={() => setSection(2)}>{t('Maintenance Schedule')}</a>
                 </div>
                 <div className="car-maintenance-details-section">
                 {section === 0 && maintainanceDetails  ? (
                     <>
                     <div className="car-maintenance-details-dashboard">
-                    <a>Car VIN: {id}</a>
-                    <a>Current Odometer: {currentOdometer}</a>
+                    <a>{t('Car VIN')}: {id}</a>
+                    <a>{t('Current Odometer')}: {currentOdometer}</a>
                         {maintainanceDetails?.map((details: ModelMaintainanceDetails, index: number) => (
                             <>
-                                <a onClick={() => setCurrentMaintenanceDetails(index)}>{addSpaceBeforeCapital(details.modelMaintainance.maintenancePart)}: {
-                                    details.modelMaintainance.dayPerMaintainance - calculateDays(details.lastOwnerChangeDate, details.lastServicedDate) > 0 ? 
-                                    `${details.modelMaintainance.dayPerMaintainance - calculateDays(details.lastOwnerChangeDate, details.lastServicedDate)} days left` : 
-                                    "Overdue"
+                                <a onClick={() => setCurrentMaintenanceDetails(index)}>{t(details.modelMaintainance.maintenancePart)}: {
+                                    details.modelMaintainance.dayPerMaintainance - calculateDays(details.lastOwnerChangeDate, details.lastServicedDate) <= 0 ? 
+                                    t('Overdue') : (
+                                        currentLanguage === 'vn' ? 
+                                        `${t('left')} ${details.modelMaintainance.dayPerMaintainance - calculateDays(details.lastOwnerChangeDate, details.lastServicedDate)} ${t('Days')}` : 
+                                        `${details.modelMaintainance.dayPerMaintainance - calculateDays(details.lastOwnerChangeDate, details.lastServicedDate)} ${t('Days')} ${t('left')}`
+                                    )
                                 }</a>
                             </>
                         ))}
                     </div>
                     <div className="car-maintenance-details-dashboard-details">
                         <h3>
-                        {addSpaceBeforeCapital(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.maintenancePart)}
+                        {t(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.maintenancePart)}
                         </h3>
                         <div className="car-maintenance-details-dashboard-details-2">
                         <div className="car-maintenance-details-dashboard-details-next">
-                        <h4>Next Service</h4>
-                        <a>{`Date: ${getNextDate(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.dayPerMaintainance - calculateDays(maintainanceDetails[currentMaintenanceDetails].lastOwnerChangeDate, maintainanceDetails[currentMaintenanceDetails].lastServicedDate))}`}</a>
-                        <a>{`Odometer: ${getNextOdometer(getClosestHigherOdometer(1, maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance) - currentOdometer)}`}</a>
-                        <button onClick={goToServiceShops}>View Service Shops</button>
+                        <h4>{t('Next Service')}</h4>
+                        <a>{`${t('Date')}: ${getNextDate(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.dayPerMaintainance - calculateDays(maintainanceDetails[currentMaintenanceDetails].lastOwnerChangeDate, maintainanceDetails[currentMaintenanceDetails].lastServicedDate))}`}</a>
+                        <a>{`${t('Odometer')}: ${getNextOdometer(getClosestHigherOdometer(1, maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance) - currentOdometer)}`}</a>
+                        <button onClick={goToServiceShops}>{t('View Service Shops')}</button>
                         </div> 
 
 
                         <div className="car-maintenance-details-dashboard-details-last">
-                        <h4>Since Last Service</h4>
-                        <h5>Time elapsed</h5>
+                        <h4>{t('Since Last Service')}</h4>
+                        <h5>{t('Time elapsed')}</h5>
                         <progress 
                             value={calculateDays(maintainanceDetails[currentMaintenanceDetails].lastOwnerChangeDate, maintainanceDetails[currentMaintenanceDetails].lastServicedDate)}
                             max={maintainanceDetails[currentMaintenanceDetails].modelMaintainance.dayPerMaintainance}
                             ></progress>
-                        <h5>Kilometers driven</h5>
+                        <h5>{t('Kilometers driven')}</h5>
                         <progress 
                             value={maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance-getClosestHigherOdometer(1,maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance) + currentOdometer}
                             max={maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance}
                             ></progress>
-                        <a>{addSpaceBeforeCapital(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.maintenancePart)}</a>
+                        <a>{t(maintainanceDetails[currentMaintenanceDetails].modelMaintainance.maintenancePart)}</a>
                         <a>{maintainanceDetails[currentMaintenanceDetails].modelMaintainance.dayPerMaintainance} days | {maintainanceDetails[currentMaintenanceDetails].modelMaintainance.odometerPerMaintainance} kilometers</a>
                         </div>                  
                         </div>
@@ -222,8 +229,8 @@ function CarMaintenanceDetails() {
                     <table>
                     <thead>
                     <tr>
-                    <td>Date</td>
-                    <td>Odometer</td>
+                    <td>{t('Date')}</td>
+                    <td>{t('Odometer')}</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -248,18 +255,18 @@ function CarMaintenanceDetails() {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                    <td>Date <br /> {service.reportDate}</td>
-                                    <td>Odometer <br /> {service.odometer}</td>
+                                    <td>{t('Date')} <br /> {service.reportDate}</td>
+                                    <td>{t('Odometer')} <br /> {service.odometer}</td>
                                     </tr>
                                     <tr>
-                                    <td>Service Performed</td>
+                                    <td>{t('Service Performed')}</td>
                                     <td></td>
                                     </tr>
                                     <tr>
                                         <td>
                                             {getServicesPerformedList(service.servicesName).map((serviceName: string, index2: number) => (
                                                 <>
-                                                    {addSpaceBeforeCapital(serviceName)}
+                                                    {t(serviceName)}
                                                     <br />
                                                 </>
                                             ))}
@@ -278,7 +285,7 @@ function CarMaintenanceDetails() {
                     <table>
                     <thead>
                     <tr>
-                    <td>See manufacturer recommended services for </td>
+                    <td>{t('See manufacturer recommended services for')} </td>
                     <td></td>
                     </tr>
                     </thead>
@@ -286,17 +293,17 @@ function CarMaintenanceDetails() {
                     {Object.entries(maintenanceMilestones).map(([km,actions],index) => (
                         <tr onClick={() => setCurrentMilestone(index)}>
                         <td>{km} km</td>
-                        <td>{index === 0 ? "Past" : index === 1 ? "Upcoming" : ""}</td>
+                        <td>{index === 0 ? t('Past') : index === 1 ? t('Upcoming') : ""}</td>
                         </tr>
                     ))}
                     </tbody>
                     </table>
                     </div>
                     <div className="car-maintenance-details-maintenance-milestone-details">
-                    <h4>Manufacturer recommended services at {Object.entries(maintenanceMilestones)[currentMilestone][0]} km</h4>
+                    <h4>{t('Manufacturer recommended services at')} {Object.entries(maintenanceMilestones)[currentMilestone][0]} km</h4>
                     {Object.entries(maintenanceMilestones)[currentMilestone][1].map((action: string, index: number) => (
                         <a>
-                            {action}
+                            {t(action)}
                             <br/>
                         </a>
                     ))}

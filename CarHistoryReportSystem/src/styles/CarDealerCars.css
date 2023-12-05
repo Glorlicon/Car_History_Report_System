@@ -140,12 +140,15 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.dealer-car-sales-modal-content {
+.dealer-car-sales-modal-content-2 {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
     position: relative;
     width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .dealer-car-sales-modal-content-sale {
     background-color: #fff;
@@ -177,7 +180,7 @@
     color: #d9534f;
 }
 
-.dealer-car-sales-form-columns {
+.dealer-car-sales-form-columns-2 {
     display: inline-flex;
     flex-direction: column;
     max-width: 150px;

@@ -17,7 +17,7 @@ export async function GetReport(vin: string, token: string): Promise<APIResponse
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -38,7 +38,7 @@ export async function GetReportExcel(vin: string): Promise<APIResponse> {
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -53,7 +53,7 @@ export async function CreateOrder(data: any): Promise<APIResponse> {
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -74,7 +74,7 @@ export async function AddUserReport(reportData: AddReport, token: string): Promi
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -97,7 +97,28 @@ export async function CheckReportExist(reportData: AddReport, token: string): Pr
             return { data: "Report doesn't exist"}
         } else  {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function GetUserReports(id: string, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarReport/user/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
+                }
+            })
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            console.log(axiosError)
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

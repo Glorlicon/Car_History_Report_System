@@ -31,7 +31,7 @@ function UserListPage() {
         firstName: '',
         phoneNumber: '',
         lastName: '',
-        maxReports: 0,
+        maxReportNumber: 0,
         role: 1,
         address: ''
     });
@@ -116,7 +116,7 @@ function UserListPage() {
                     firstName: '',
                     phoneNumber: '',
                     lastName: '',
-                    maxReports: 0,
+                    maxReportNumber: 0,
                     role: 1,
                     address: ''
                 });
@@ -404,7 +404,7 @@ function UserListPage() {
                               firstName: '',
                               phoneNumber: '',
                               lastName: '',
-                              maxReports: 0,
+                              maxReportNumber: 0,
                               role: 1,
                               address: ''
                           }) }}>&times;</span>

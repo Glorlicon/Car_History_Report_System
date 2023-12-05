@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { AddCar, EditCar, ListAdminCar } from '../../../services/api/Car';
-import { ListAdminCarModels } from '../../../services/api/CarModel';
 import { RootState } from '../../../store/State';
 import { AdminRequest, APIResponse, Car, CarModel, UsersRequest } from '../../../utils/Interfaces';
 import '../../../styles/AdminCars.css'
-import { isValidPlateNumber, isValidVIN } from '../../../utils/Validators';
-import RequestCharacteristicPage from '../../../components/forms/admin/User/RequestCharacteristicPage';
 import { ResponseRequest, GetAllUserRequest } from '../../../services/api/Request';
 import RequestAnsweringPage from '../../../components/forms/admin/Request/RequestAnsweringPage';
 
