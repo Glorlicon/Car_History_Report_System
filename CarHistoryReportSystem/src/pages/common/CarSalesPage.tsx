@@ -92,7 +92,7 @@ function CarSalesPage() {
                     <div id="search">
                         <input type="text" placeholder={t('Search')} />
                     </div>
-                    <button id="clear-filters">{t('Search')}</button>
+                    <button onClick={fetchData} id="clear-filters">{t('Search')}</button>
                     <div className="clear-filters">
                         <p>{t('Filters')}</p>
                         <button onClick={handleResetFilters}>{t('Clear Filters')}</button>
@@ -216,7 +216,7 @@ function CarSalesPage() {
                                         <div className="used-car-info-container">
                                             <div className="used-car-info">
                                                 <h3>Price: {model.carSalesInfo.price}</h3>
-                                                <p><strong>Dealer:</strong> {model</p>
+                                                <p><strong>Dealer:</strong>{model.carSalesInfo.dataProvider.name}</p>
                                             </div>
                                             <div className="used-car-info">
                                                 <p><strong>Color:</strong> {model.colorName}</p>

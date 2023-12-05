@@ -269,6 +269,7 @@
   "Wheel Tread": "Wheel Tread",
   "Search": "Search",
   "Filters": "Filters",
+  "Clear Filters": "Clear Filters",
   "Make": "Make",
   "Model": "Model",
   "Min Year": "Min Year",
@@ -278,5 +279,13 @@
   "Any Model": "Any Model",
   "Any Year": "Any Year",
   "Any Price": "Any Price",
-  "Any Milage": "Any Milage"
+  "Any Milage": "Any Milage",
+  "Used": "Xe",
+  "Vehicle Highlights": "Vehicle Highlights",
+  "Country Of Origin": "Country Of Origin",
+  "Top Features": "Top Features",
+  "Check Availability": "Check Availability",
+  "Mail Intro": "Hi! I am interested in",
+  "Zip": "Zip Code",
+  "Send Message": "Send Message"
 }
