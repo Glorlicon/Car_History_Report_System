@@ -130,6 +130,30 @@
     align-items: center;
 }
 
+.reg-inspec-search-filter-container-2 {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1%;
+}
+.reg-inspec-search-filter-container-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.reg-inspec-search-filter-item-4{
+    display: flex;
+    align-items: center;
+}
+
+.reg-inspec-top-bar-2 {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+    .reg-inspec-top-bar-2 button {
+        margin-right: 20px;
+    }
 
 .reg-inspec-search-bar {
     padding: 10px;

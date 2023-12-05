@@ -186,3 +186,20 @@
     .manu-car-next-btn:hover {
         background-color: #2980b9;
     }
+
+.manu-car-add-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+    .manu-car-add-btn:hover {
+        background-color: #2980b9;
+    }
+.manu-new-car-check{
+    margin: 5%;
+}

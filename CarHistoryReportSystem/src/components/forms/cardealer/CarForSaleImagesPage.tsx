@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { GetImages } from '../../../services/azure/Images';
+import { RootState } from '../../../store/State';
 import { CarSalesInfo } from '../../../utils/Interfaces';
 
 interface CarForSaleImagesPageProps {
@@ -47,12 +50,17 @@ const CarForSaleImagesPage: React.FC<CarForSaleImagesPageProps> = ({
         if (model.carImages)
             console.log("Image: ", model.carImages[currentImageIndex])
     }, [currentImageIndex])
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
   return (
-          <div className="dealer-car-sales-form-image-columns">
+          <div className="dealer-car-sales-form-image-columns-2">
           <div className="dealer-car-sales-form-image-column">
-              <label>Car Images</label>
+              <label>{t('Car Images')}</label>
               <input type="file" id="car-image" accept="image/*" className="car-images-input" onChange={handleAddImages} multiple />
-              <button onClick={handleAddClick} className="dealer-car-sales-form-image-add-button"> + Add Image</button>
+              <button onClick={handleAddClick} className="dealer-car-sales-form-image-add-button"> + {t('Add Image')}</button>
                   {model.carImages && model.carImages?.length > 0 ? (
                       <div className="dealer-car-sales-images">
                           <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
@@ -65,14 +73,14 @@ const CarForSaleImagesPage: React.FC<CarForSaleImagesPageProps> = ({
                           <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
                       <a>
                           <strong>
-                              Total Images: {model.carImages?.length}
+                              {t('Total Images')}: {model.carImages?.length}
                           </strong>
                       </a>
                           <button type="button" className="dealer-car-sales-form-image-remove-button" onClick={() => { handleRemoveImages(currentImageIndex); handleChangeIndex() }}>Remove Current</button>
                       </div>
                   ): (
                       <div className="dealer-car-sales-images">
-                      No images for this car
+                          {t('No images for this car')}'
                       </div>
                   )}
               </div>
