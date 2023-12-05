@@ -22,12 +22,14 @@ namespace CarHistoryReportSystemAPI.Controllers
         private readonly IAuthenticationServices _authServices;
         private readonly IEmailServices _emailServices;
         private readonly IMemoryCache _cache;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationController(IAuthenticationServices authServices, IEmailServices emailServices, IMemoryCache cache)
+        public AuthenticationController(IAuthenticationServices authServices, IEmailServices emailServices, IMemoryCache cache, IConfiguration configuration)
         {
             _authServices = authServices;
             _emailServices = emailServices;
             _cache = cache;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             {
                 foreach (var error in result.Result.Errors)
                 {
-                    ModelState.TryAddModelError(error.Code,error.Description);
+                    ModelState.TryAddModelError(error.Code, error.Description);
                 }
                 return BadRequest(ModelState);
             }
@@ -53,7 +55,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             var verificationCode = AuthenticationUtility.GenerateVerificationCode();
             _cache.Set(request.Email, verificationCode, TimeSpan.FromMinutes(5));
             await _emailServices.SendEmailAsync(request.Email, "Your Verification Code", verificationCode);
-            return StatusCode(201, new { userId = result.UserId , verifyToken = result.VerifyToken, code = verificationCode });
+            return StatusCode(201, new { userId = result.UserId, verifyToken = result.VerifyToken, code = verificationCode });
         }
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="200">Login Successfully</response>
         /// <response code="401">User Exist</response>
         [HttpPost("login")]
-        [ProducesResponseType(typeof(LoginResult),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
@@ -104,9 +106,10 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> Forgot([FromBody] ForgotPasswordRequestDTO request)
         {
             var token = await _authServices.ForgotPassword(request);
-            _emailServices.SendEmailAsync(request.Email, "Click this link to reset your password: ", "Token: "+ token);
             if (token != null)
             {
+                var domain = _configuration["ResetPasswordString"];
+                _emailServices.SendEmailAsync(request.Email, "Verify to reset your password", "Click this link to reset your password: " + domain + "?token=" + token + "?email=" + request.Email);
                 return Ok(token);
             }
             else
@@ -121,24 +124,28 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         /// <response code="204">Change password Successfully</response>
         /// <response code="400">Change password failed</response>
-        [HttpPost("reset/{token}")]
-        public async Task<IActionResult> Reset([FromBody] ResetPasswordRequestDTO request, string token)
+        [HttpPost("reset")]
+        public async Task<IActionResult> Reset([FromBody] ResetPasswordRequestDTO request)
         {
-            var result = await _authServices.ResetPassword(request, token);
-            if (result)
+            var result = await _authServices.ResetPassword(request);
+            if (result != null)
             {
+                _emailServices.SendEmailAsync(request.Email, "Your new password: \n", result);
                 return Ok(result);
             }
-            return BadRequest();
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpPost("confirm-email",Name = "ConfirmEmail")]
+        [HttpPost("confirm-email", Name = "ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationRequestDTO request)
         {
             _cache.TryGetValue(request.Email, out string storedCode);
             if (storedCode == null || storedCode != request.Code) return BadRequest("Invalid or expired code.");
             var result = await _authServices.ConfirmEmail(request.Token, request.Email);
-            if(result)
+            if (result)
                 return Ok();
             else return BadRequest(ModelState);
         }

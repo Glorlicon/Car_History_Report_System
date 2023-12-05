@@ -22,9 +22,9 @@ namespace Application.Interfaces
 
         Task<bool> ChangePassword(string id, ChangePasswordUserRequestDTO request);
 
-        Task<string> ForgotPassword(string email);
+        Task<string> ForgotPassword(ForgotPasswordRequestDTO request);
 
-        Task<bool> ResetPassword(string email, string newPassword, string token);
+        Task<string> ResetPassword(ResetPasswordRequestDTO request);
 
         Task<bool> ValidateUser(string username, string password);
 

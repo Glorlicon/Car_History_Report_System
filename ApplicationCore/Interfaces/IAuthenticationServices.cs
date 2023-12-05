@@ -24,7 +24,7 @@ namespace Application.Interfaces
 
         Task<string> ForgotPassword(ForgotPasswordRequestDTO request);
 
-        Task<bool> ResetPassword(ResetPasswordRequestDTO request, string token);
+        Task<string> ResetPassword(ResetPasswordRequestDTO request);
 
         Task<LoginResult> Login(LoginRequestDTO loginRequest);
 
