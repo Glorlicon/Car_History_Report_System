@@ -109,7 +109,7 @@ function CarSalesDetailPage() {
                         {/* Car Image Section */}
                         <div className="car-image-section">
                             <div className="box">
-                                <div className="car-image">
+                                <div className="car-detail-image">
                                     <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
                                     <img src={
                                         car?.carImages?.at(currentImageIndex)?.id != -1 ?
