@@ -109,7 +109,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             if (token != null)
             {
                 var domain = _configuration["ResetPasswordString"];
-                _emailServices.SendEmailAsync(request.Email, "Verify to reset your password", "<a href=\"" + domain + "\">Click here to reset your password</a>" + "?token=" + token + "?email=" + request.Email);
+                _emailServices.SendEmailAsync(request.Email, "Verify to reset your password", "Click this link to reset your password: " + domain + "?token=" + token + "?email=" + request.Email);
                 return Ok(token);
             }
             else
