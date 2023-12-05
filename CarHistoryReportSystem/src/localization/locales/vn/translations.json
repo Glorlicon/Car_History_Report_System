@@ -404,5 +404,9 @@
   "General": "Vấn đề chung",
   "No Request Found": "Không tìm thấy đơn nào",
   "Process Request": "Xử lí đơn",
-  "Add":  "Thêm"
+  "Add": "Thêm",
+  "Created Date": "Ngày tạo",
+  "Changed Date": "Ngày thay đổi",
+  "+ Add Request": "+ Tạo đơn",
+  "Add Request": "Tạo đơn"
 }

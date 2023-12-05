@@ -404,5 +404,9 @@
   "General": "General",
   "No Request Found": "No Request Found",
   "Process Request": "Process Request",
-  "Add": "Add"
+  "Add": "Add",
+  "Created Date": "Created Date",
+  "Changed Date": "Changed Date",
+  "+ Add Request": "+ Add Request",
+  "Add Request": "Add Request"
 }

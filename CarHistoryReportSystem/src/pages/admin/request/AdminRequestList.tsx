@@ -7,7 +7,7 @@ import { ResponseRequest, GetAllUserRequest } from '../../../services/api/Reques
 import RequestAnsweringPage from '../../../components/forms/admin/Request/RequestAnsweringPage';
 import { t } from 'i18next';
 
-function AdminCarList() {
+function AdminRequestList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -98,13 +98,6 @@ function AdminCarList() {
         console.log(RequestListResponse)
         setLoading(false)
     }
-    //const handleSearchParameters = () => {
-
-    //}
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
 
     useEffect(() => {
         fetchData();
@@ -171,11 +164,10 @@ function AdminCarList() {
               <tr>
                       <th>{t('Type')}</th>
                       <th>{t('Description')}</th>
-                      <th>{t('Created By User')}</th>
-                      <th>{t('Modified By User')}</th>
+                      <th>{t('Created Date')}</th>
+                      <th>{t('Changed Date')}</th>
                       <th>{t('Status')}</th>
                       <th>{t('Process Note')}</th>
-                      <th>{t('Action')}</th>
               </tr>
           </thead>
           <tbody>
@@ -195,7 +187,7 @@ function AdminCarList() {
                       ) : filteredRequest.length > 0 ? (
                               filteredRequest.map((model: any, index: number) => (
                       <tr key={index}>  
-                          <td>{model.type}</td>
+                          <td>{t(model.type)}</td>
                           <td>{model.description}</td>
                           <td>{model.createdByUserId}</td>
                           <td>{model.modifiedByUserId}</td>
@@ -224,7 +216,7 @@ function AdminCarList() {
                           />
                       )}
                       <button onClick={handleResponseRequest} className="ad-car-prev-btn">
-                          {t('Add')}
+                          {t('Response')}
                       </button>
                       {addError && (
                           <p className="ad-car-error">{addError}</p>
@@ -236,4 +228,4 @@ function AdminCarList() {
   );
 }
 
-export default AdminCarList;
+export default AdminRequestList;
