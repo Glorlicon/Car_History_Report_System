@@ -2,6 +2,7 @@
 using Application.DTO.Authentication;
 using Application.DTO.User;
 using Application.Interfaces;
+using Application.Utility;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
@@ -121,24 +122,26 @@ namespace Infrastructure.InfrastructureServices
             return true;
         }
 
-        public async Task<string> ForgotPassword(string email)
+        public async Task<string> ForgotPassword(ForgotPasswordRequestDTO request)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
                 throw new UserNotFoundException("User not found");
             }
-             
+
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            return token;
+            var tokenEncoded = Base64UrlEncoder.Encode(token);
+            return tokenEncoded;
         }
 
-        public async Task<bool> ResetPassword(string email, string newPassword, string token)
+        public async Task<string> ResetPassword(ResetPasswordRequestDTO request)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            var result = _userManager.ResetPasswordAsync(user, token, newPassword);
-            return result.Result.Succeeded;
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            var randomPassword = UserUtility.GenerateRandomPassword(20);
+            var tokenDecoded = Base64UrlEncoder.Decode(request.Token);
+            var result = await _userManager.ResetPasswordAsync(user, tokenDecoded, randomPassword);
+            return randomPassword;
         }
 
         public async Task<string> CreateConfirmEmailToken(string username, string password)
@@ -198,7 +201,7 @@ namespace Infrastructure.InfrastructureServices
             issuer: jwtSettings.GetSection("validIssuer").Value,
             audience: jwtSettings.GetSection("validAudience").Value,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(60*24)),
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(60 * 24)),
             signingCredentials: signingCredentials
             );
             return tokenOptions;

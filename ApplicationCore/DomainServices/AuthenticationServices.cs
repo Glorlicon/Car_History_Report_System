@@ -66,16 +66,12 @@ namespace Application.DomainServices
 
         public async Task<string> ForgotPassword(ForgotPasswordRequestDTO request)
         {
-            return await _identityServices.ForgotPassword(request.Email);
+            return await _identityServices.ForgotPassword(request);
         }
 
-        public async Task<bool> ResetPassword(ResetPasswordRequestDTO request, string token)
+        public async Task<string> ResetPassword(ResetPasswordRequestDTO request)
         {
-            if(request.newPassword != request.newRepeatPassword)
-            {
-                return false;
-            }
-            return await _identityServices.ResetPassword(request.Email, request.newPassword, token);
+            return await _identityServices.ResetPassword(request);
         }
 
         public async Task<string> ResendConfirmEmailTokenAsync(EmailResendConfirmTokenRequestDTO request)
