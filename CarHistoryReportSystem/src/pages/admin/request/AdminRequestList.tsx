@@ -14,49 +14,17 @@ function AdminCarList() {
     const [adding, setAdding] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [RequestList, setRequestList] = useState<AdminRequest[]>([]);
-    const [editRequest, setEditRequest] = useState<AdminRequest | null>(null)
-
+    const [editRequest, setEditRequest] = useState<AdminRequest | null>();
+    const [adminRequestValue, setAdminRequestValue] = useState<AdminRequest | null>({
+        status: "1",
+        response: "",
+    });
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
-    //const validateCar = (car: Car): boolean => {
-    //    if (!isValidVIN(car.vinId)) {
-    //        setAddError("VIN is invalid");
-    //        return false;
-    //    }
-    //    if (!isValidPlateNumber(car.licensePlateNumber)) {
-    //        setAddError("License Plate Number is invalid");
-    //        return false;
-    //    }
-    //    if (!car.vinId) {
-    //        setAddError("VIN must be filled out");
-    //        return false;
-    //    }
-    //    if (!car.licensePlateNumber) {
-    //        setAddError("License Plate Number must be filled out");
-    //        return false;
-    //    }
-    //    if (!car.modelId) {
-    //        setAddError("Model must be chosen");
-    //        return false;
-    //    }
-    //    if (!car.engineNumber) {
-    //        setAddError("Engine Number must be filled out");
-    //        return false;
-    //    }
-    //    return true;
-    //};
     const filteredRequest = RequestList.filter((request: any) => {
         const matchingQuery = RequestList
         return matchingQuery
     })
-
-    //const handleNextPage = () => {
-    //    if (modalPage < 2) {
-    //        setModalPage(prevPage => prevPage + 1);
-    //    } else {
-    //        if (editRequest) handleResponseRequest();
-    //    }
-    //};
 
     const handleResponseRequest = async () => {
         if (editRequest != null) {
@@ -77,11 +45,14 @@ function AdminCarList() {
         }
     }
 
-    //const handlePreviousPage = () => {
-    //    if (modalPage > 1) {
-    //        setModalPage(prevPage => prevPage - 1);
-    //    }
-    //};
+    const handleRequestAnswer = (model: AdminRequest) => {
+        const newEditRequest = {
+            ...model,
+            status: "1"
+        };
+
+        setEditRequest(newEditRequest);
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -165,7 +136,7 @@ function AdminCarList() {
                           <td>{model.modifiedByUserId}</td>
                           <td>{model.status}</td>
                           <td>{model.response}</td>
-                          <td onClick={() => { setEditRequest(model) }}><button>Response</button></td>
+                                      <td onClick={() => { handleRequestAnswer(model) }}><button>Response</button></td>
                       </tr>
                   ))
               ) : (

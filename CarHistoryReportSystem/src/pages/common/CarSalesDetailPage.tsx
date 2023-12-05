@@ -123,7 +123,7 @@ function CarSalesDetailPage() {
                                     </div>
                                 </div>
                                 <div className="vehicle-info">
-                                    <h1>Used {car?.modelId}</h1>
+                                    <h1>{t('Used')} {car?.modelId}</h1>
                                     <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} km</p>
                                     <p>VIN: {car?.vinId}</p>
                                 </div>

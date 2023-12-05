@@ -55,8 +55,8 @@
 }
 
 .vehicle-highlights-box, .dealer-details-box, .sales-description, .car-image-section {
-    margin-bottom: 20px;
-    padding: 20px;
+    padding-right:20px;
+    padding-left:20px;
 }
 
 .availability-section {

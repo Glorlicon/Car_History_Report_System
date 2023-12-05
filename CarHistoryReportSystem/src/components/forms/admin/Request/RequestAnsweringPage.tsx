@@ -2,12 +2,12 @@ import React from 'react';
 import { COLORS } from '../../../../utils/const/Colors';
 import { AdminRequest } from '../../../../utils/Interfaces';
 
-interface RequestAnsweringPage {
+interface RequestAnsweringPageModal {
     action: "Add" | "Edit"
     model: AdminRequest
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
-const RequestAnsweringPage: React.FC<RequestAnsweringPage> = ({
+const RequestAnsweringPage: React.FC<RequestAnsweringPageModal> = ({
     action,
     model,
     handleInputChange
