@@ -234,32 +234,6 @@ function CarSalesPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="car-card" key={index}>
-                                            <div className="car-image">
-                                                <img src={GetImages(model.carImages[0].imageLink)} alt="Car" />
-                                                <span className="image-count">{model.carImages.length} Photos</span>
-                                            </div>
-                                            <div className="car-details">
-                                                <h3>Used {model.modelId}</h3>
-                                                <div className="price">Price: {model.carSalesInfo.price}</div>
-                                                <div className="details">
-                                                    <p>Color: {model.colorName}</p>
-                                                    <p>Mileage: {model.currentOdometer}</p>
-                                                    {/* Other details */}
-                                                </div>
-                                                <div className="dealer-info">
-                                                    <p>
-                                                        Dealer:
-                                                        <a
-                                                            href={`../dealer/${model.carSalesInfo.dataProvider.id}`}
-                                                            className="dealer-link"
-                                                        >
-                                                            {model.carSalesInfo.dataProvider.name}
-                                                        </a>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </a>
                         ))
                     ) : (

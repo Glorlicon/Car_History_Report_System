@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/State';
-import { AdminRequest, APIResponse, Car, CarModel, UsersRequest } from '../../../utils/Interfaces';
+import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, UsersRequest } from '../../../utils/Interfaces';
 import '../../../styles/AdminCars.css'
 import { ResponseRequest, GetAllUserRequest } from '../../../services/api/Request';
 import RequestAnsweringPage from '../../../components/forms/admin/Request/RequestAnsweringPage';
+import { t } from 'i18next';
 
 function AdminCarList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -25,6 +26,13 @@ function AdminCarList() {
         const matchingQuery = RequestList
         return matchingQuery
     })
+    const [page, setPage] = useState(1)
+    const [paging, setPaging] = useState<Paging>()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [resetTrigger, setResetTrigger] = useState(0);
+    const [requestType, setRequestType] = useState(-1)
+    const [requestStatus, setRequestStatus] = useState(-1)
+    const [sortByDate, setSortByDate] = useState(0)
 
     const handleResponseRequest = async () => {
         if (editRequest != null) {
@@ -43,6 +51,13 @@ function AdminCarList() {
             }
 
         }
+    }
+
+    const handleResetFilters = () => {
+        setRequestType(-1)
+        setRequestStatus(-1)
+        setSortByDate(0)
+        setResetTrigger(prev => prev + 1);
     }
 
     const handleRequestAnswer = (model: AdminRequest) => {
@@ -67,7 +82,14 @@ function AdminCarList() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const RequestListResponse: APIResponse = await GetAllUserRequest(token)
+        let searchParams: RequestSearchParams = {
+            requestStatus: requestStatus,
+            requestType: requestType,
+            sortByDate: sortByDate
+        }
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const RequestListResponse: APIResponse = await GetAllUserRequest(token, page, connectAPIError, language, searchParams)
         if (RequestListResponse.error) {
             setError(RequestListResponse.error)
         } else {
@@ -91,26 +113,69 @@ function AdminCarList() {
   return (
       <div className="ad-car-list-page">
           <div className="ad-car-top-bar">
-              <div className="ad-car-search-filter-container">
-                  <input
-                      type="text"
-                      className="ad-car-search-bar"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                  />
+              <div className="reg-inspec-top-bar">
+                  <div className="reg-inspec-search-filter-container">
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Type')}</label>
+                          <select className="reg-inspec-search-bar"
+                              onChange={(e) => setRequestType(Number(e.target.value))}
+                              value={requestType}
+                          >
+                              <option value="-1">{t('Any Type')}</option>
+                              <option value="0">{t('Data Correction')}</option>
+                              <option value="1">{t('Technical Support')}</option>
+                              <option value="2">{t('Report Inaccuracy')}</option>
+                              <option value="3">{t('Feedback')}</option>
+                              <option value="4">{t('General')}</option>
+                          </select>
+                      </div>
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Status')}</label>
+                          <select className="reg-inspec-search-bar"
+                              onChange={(e) => setRequestStatus(Number(e.target.value))}
+                              value={requestStatus}
+                          >
+                              <option value="-1">{t('Any Status')}</option>
+                              <option value="0">{t('Pending')}</option>
+                              <option value="1">{t('Approved')}</option>
+                              <option value="2">{t('Rejected')}</option>
+                          </select>
+                      </div>
+                      <div className="reg-inspec-search-filter-item">
+                          <label>{t('Sort By Date')}</label>
+                          <select className="reg-inspec-search-bar"
+                              onChange={(e) => setSortByDate(Number(e.target.value))}
+                              value={sortByDate}
+                          >
+                              <option value="0">{t('Descending')}</option>
+                              <option value="1">{t('Ascending')}</option>
+                          </select>
+                      </div>
+                      <button
+                          className="search-reg-inspec-btn"
+                          onClick={fetchData}
+                      >
+                          {t('Search...')}
+                      </button>
+                      <button
+                          className="reset-reg-inspec-btn"
+                          onClick={handleResetFilters}
+                      >
+                          {t('Reset Filters')}
+                      </button>
+                  </div>
               </div>
           </div>
       <table className="ad-car-table">
           <thead>
               <tr>
-                      <th>Type</th>
-                      <th>Description</th>
-                      <th>created By User</th>
-                      <th>modified By User</th>
-                      <th>Status</th>
-                      <th>Process Note</th>
-                      <th>Action</th>
+                      <th>{t('Type')}</th>
+                      <th>{t('Description')}</th>
+                      <th>{t('Created By User')}</th>
+                      <th>{t('Modified By User')}</th>
+                      <th>{t('Status')}</th>
+                      <th>{t('Process Note')}</th>
+                      <th>{t('Action')}</th>
               </tr>
           </thead>
           <tbody>
@@ -134,14 +199,14 @@ function AdminCarList() {
                           <td>{model.description}</td>
                           <td>{model.createdByUserId}</td>
                           <td>{model.modifiedByUserId}</td>
-                          <td>{model.status}</td>
+                          <td>{t(model.status)}</td>
                           <td>{model.response}</td>
-                                      <td onClick={() => { handleRequestAnswer(model) }}><button>Response</button></td>
+                          <td onClick={() => { handleRequestAnswer(model) }}><button>{t('Response')}</button></td>
                       </tr>
                   ))
               ) : (
                   <tr>
-                      <td colSpan={5}>No cars found</td>
+                      <td colSpan={5}>{t('No Request Found')}</td>
                   </tr>
               )}
           </tbody>
@@ -150,7 +215,7 @@ function AdminCarList() {
               <div className="ad-car-modal">
                   <div className="ad-car-modal-content">
                       <span className="ad-car-close-btn" onClick={() => { setEditRequest(null); setModalPage(1) }}>&times;</span>
-                      <h2>Process Request</h2>
+                      <h2>{t('Process Request')}</h2>
                       {modalPage === 1 && (
                           <RequestAnsweringPage
                               action="Edit"
@@ -159,7 +224,7 @@ function AdminCarList() {
                           />
                       )}
                       <button onClick={handleResponseRequest} className="ad-car-prev-btn">
-                          Add
+                          {t('Add')}
                       </button>
                       {addError && (
                           <p className="ad-car-error">{addError}</p>

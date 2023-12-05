@@ -615,3 +615,9 @@ export interface CarSearchParams {
     pricemax?: number
     milagemax?: number
 }
+
+export interface RequestSearchParams {
+    requestType: number;
+    requestStatus: number;
+    sortByDate: number;
+}
