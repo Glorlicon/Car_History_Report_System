@@ -1,3 +1,4 @@
+import { Avatar } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
@@ -6,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
@@ -394,7 +396,11 @@ function ServiceShopHomePage() {
                 {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
                     <div className="profile-image">
-                        {/* Add image here */}
+                        <Avatar
+                            alt="Service Shop"
+                            src={GetImages(userDetails?.imagelink)}
+                            sx={{ width: 100, height: 100 }}
+                        />
                     </div>
                     <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                 </div>

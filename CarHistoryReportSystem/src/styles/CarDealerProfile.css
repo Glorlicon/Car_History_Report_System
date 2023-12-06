@@ -5,11 +5,12 @@
     padding-top: 100px;
 }
 
-car-dealer-profile-header-section {
+.car-dealer-profile-header-section {
     height: 200px;
     align-items: center;
     background-color: #f6f6f6;
     padding: 20px;
+    display:flex;
 }
 
 .breadcrumb {
@@ -164,14 +165,14 @@ car-dealer-profile-header-section {
     text-align: center;
 }
 
-.vehicle-image {
+/*.vehicle-image {
     width: 100%;
-    padding-top: 56.25%; /* 16:9 Aspect Ratio */
-    background-color: #ccc; /* Placeholder background */
-    background-size: cover;
+    padding-top: 56.25%;*/ /* 16:9 Aspect Ratio */
+    /*background-color: #ccc;*/ /* Placeholder background */
+    /*background-size: cover;
     background-position: center;
     margin-bottom: 10px;
-}
+}*/
 
 .pagination {
     margin-top: 20px;

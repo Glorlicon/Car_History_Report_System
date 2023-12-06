@@ -8,6 +8,8 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 import '../../styles/CarDealerProfile.css'
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { GetImages } from '../../services/azure/Images';
+import { Avatar, Box } from '@mui/material';
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
@@ -93,7 +95,6 @@ function CarDealerHomePage() {
     // Handler for the rating change
     const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
         setRatingValue(newValue);
-        console.log("Rating", newValue);
     };
 
     // Handler for the comment change
@@ -111,8 +112,6 @@ function CarDealerHomePage() {
         };
         setReview(prevReviews => [...prevReviews, newReview]);
         if (review != null) {
-        console.log("Submitted review:", newReview);
-        console.log("Target DataProvider", userDetails.id)
             setAdding(true);
             setAddError(null);
             const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
@@ -126,7 +125,6 @@ function CarDealerHomePage() {
     };
 
     useEffect(() => {
-        console.log("4")
         fetchData();
     }, []);
 
@@ -173,13 +171,12 @@ function CarDealerHomePage() {
                 } else {
                     setReview(reviewListResponse.data);
                 }
-
+                console.log("Vehicle", carListResponse.data)
                 setLoading(false);
             }
     };
 
     useEffect(() => {
-        console.log("2")
         let totalRating = 0;
         // Initialize counts with all required keys
         let counts: { [key: string]: number } = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
@@ -203,7 +200,6 @@ function CarDealerHomePage() {
 
 
     useEffect(() => {
-        console.log("3")
         const percentage = Math.round((value / max) * 100);
         setOverlayWidth(`${100 - percentage}%`);
 
@@ -225,13 +221,6 @@ function CarDealerHomePage() {
         });
 
     }, [value, max, userDetails, defaultSchedule]);
-
-    
-
-    
-
-
-
     return (
         <div className="car-dealer-profile">
 
@@ -269,7 +258,11 @@ function CarDealerHomePage() {
                 {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
                     <div className="profile-image">
-                        {/* Add image here */}
+                        <Avatar
+                            alt="Service Shop"
+                            src={GetImages(userDetails?.imagelink)}
+                            sx={{ width: 100, height: 100 }}
+                        />
                     </div>
                 </div>
             </div>
@@ -300,7 +293,18 @@ function CarDealerHomePage() {
                     ) : carList.length > 0 ? (
                         carList.map((model: any, index: number) => (
                             <div className="vehicle-card">
-                                <div className="vehicle-image"></div>
+                                <div className="vehicle-image">
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            height: '100%',
+                                            width: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                        alt="The house from the offer."
+                                        src={GetImages(model.carImages[0].imageLink)}
+                                    />
+                                </div>
                                 <p>Used <span>{model.modelId}</span></p>
                                 <p>Price: <span>{model.carSalesInfo.price}</span></p>
                                 <a href={`/sales/details/${model.vinId}`}>More Detail</a>

@@ -1,4 +1,5 @@
-﻿import Rating from '@mui/material/Rating';
+﻿import { Avatar, Box } from '@mui/material';
+import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
@@ -370,7 +372,11 @@ function CarDealerHomePage() {
                     {/* Profile Image (This could be a user or dealer profile) */}
                     <div>
                         <div className="profile-image">
-                            {/* Add image here */}
+                            <Avatar
+                                alt="Dealer Shop"
+                                src={GetImages(userDetails?.imagelink)}
+                                sx={{ width: 100, height: 100 }}
+                            />
                         </div>
                         <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                     </div>
@@ -406,7 +412,18 @@ function CarDealerHomePage() {
                         ) : carList.length > 0 ? (
                             carList.map((model: any, index: number) => (
                                 <div className="vehicle-card">
-                                    <div className="vehicle-image"></div>
+                                    <div className="vehicle-image">
+                                        <Box
+                                            component="img"
+                                            sx={{
+                                                height: '100%',
+                                                width: '100%',
+                                                objectFit: 'cover',
+                                            }}
+                                            alt="The house from the offer."
+                                            src={GetImages(model.carImages[0].imageLink)}
+                                        />
+                                    </div>
                                     <p>Used <span>{model.modelId}</span></p>
                                     <p>Price: <span>{model.carSalesInfo.price}</span></p>
                                     <a href={`/sales/details/${model.vinId}`}>More Detail</a>

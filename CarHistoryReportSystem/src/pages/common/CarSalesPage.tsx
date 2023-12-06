@@ -225,7 +225,7 @@ function CarSalesPage() {
                                                     <p>
                                                         Dealer:
                                                         <a
-                                                            href={`../dealer/${model.carSalesInfo.dataProvider.id}`}
+                                                            href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
                                                             className="dealer-link"
                                                         >
                                                             {model.carSalesInfo.dataProvider.name}
