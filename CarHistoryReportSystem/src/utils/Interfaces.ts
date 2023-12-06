@@ -621,3 +621,24 @@ export interface RequestSearchParams {
     requestStatus: number;
     sortByDate: number;
 }
+
+export interface UserNotification {
+    userId: string,
+    notificationId: string,
+    notification: Notification,
+    isRead: boolean
+}
+
+export interface Notification {
+    id: number,
+    relatedCarId: string,
+    relatedUserId: string,
+    title: string,
+    description: string,
+    relatedLink: string,
+    type: number,
+    createdByUserId: string,
+    modifiedByUserId: string,
+    createdTime: Date,
+    lastModified: Date
+}

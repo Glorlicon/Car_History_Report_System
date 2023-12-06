@@ -61,7 +61,6 @@ function CarSalesPage() {
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const carListResponse: APIResponse = await ListCarForSale(page, connectAPIError, language, searchParams)
-        console.log("car list", carListResponse.data)
         if (carListResponse.error) {
             setError(carListResponse.error)
         } else {

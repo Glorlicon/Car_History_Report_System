@@ -249,9 +249,9 @@ function CarDealerHomePage() {
 
                     {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale">Car For Sale</a>
-                        <a href="#reviews">Reviews</a>
-                        <a href="#about-us">About Us</a>
+                        <a href="#cars-for-sale-section">Car For Sale</a>
+                        <a href="#ratings-reviews-section">Reviews</a>
+                        <a href="#about-us-section">About Us</a>
                     </div>
                 </div>
 
@@ -266,7 +266,7 @@ function CarDealerHomePage() {
                     </div>
                 </div>
             </div>
-            <div className="cars-for-sale-section">
+            <div className="cars-for-sale-section" id="cars-for-sale-section">
                 <div className="listing-header">
                     <h2>{carList.length} Used Vehicles for Sale at {userDetails?.name}</h2>
                     <div className="filters">
@@ -331,7 +331,7 @@ function CarDealerHomePage() {
                 </div>
             </div>
 
-            <div className="ratings-reviews-section">
+            <div className="ratings-reviews-section" id="ratings-reviews-section">
                 <h1>Ratings & Reviews</h1>
                 <div className="rating-comment">
 
@@ -422,7 +422,7 @@ function CarDealerHomePage() {
             </div>
 
 
-            <div className="about-us-section">
+            <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
                     <h2>Working Schedule</h2>
