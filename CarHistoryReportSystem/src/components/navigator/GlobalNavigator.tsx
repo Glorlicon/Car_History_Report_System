@@ -15,6 +15,7 @@ interface GlobalNavigatorProps {
 
 const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const [username, setUsername] = useState('')
+    const [role, setUserRole] = useState('')
     const { t, i18n } = useTranslation();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +39,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         if (token) {
             const data = JWTDecoder(token)
             setUsername(data.name)
+            setUserRole(data.roles)
         }
     }, [token]);
     //useEffect(() => {
@@ -85,6 +87,11 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                             )}
                         </li>
                     ))}
+                    {role === "User" && (
+                        <li>
+                            <a href='/request'>{t('Admin Request')}</a>
+                        </li>
+                    )}
                 </ul>
             </div>
             {token ? (

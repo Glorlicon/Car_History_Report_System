@@ -3,11 +3,10 @@ export const UserNavigation = [
     { label: 'Car Reports', link: '/report' },
     {
         label: 'Car Maintenance', dropdownItems: [
-            { label: 'Find A Service Shop', link: '/serviceshop' },
+            { label: 'Find A Service Shop', link: '/services/search' },
             { label: 'Track My Car Maintenance', link: '/maintenance' }
         ]
-    },
-    { label: 'Request', link: '/request' }
+    }
 ]
 
 export const RequestNavigation = [
