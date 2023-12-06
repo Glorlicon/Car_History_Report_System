@@ -1,6 +1,6 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { NavItem } from '../../utils/Interfaces';
+import { APIResponse, NavItem, UserNotification } from '../../utils/Interfaces';
 import '../../styles/SideNavigator.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
@@ -8,6 +8,9 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 import logo from '../../logo512.png'
 import { logout, setLanguage } from '../../store/authSlice';
 import { useTranslation } from 'react-i18next';
+import { Badge, IconButton } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { GetAllUserNotification, GetUserNotification } from '../../services/api/Notification';
 
 interface SideNavigationBarProps {
     items: NavItem[];
@@ -23,6 +26,7 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
     };
+    const [userNotification, setUserNotification] = useState<UserNotification[]>([]);
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const handleLogout = () => {
@@ -30,6 +34,18 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
         navigate('/login')
         return
     };
+    const fetchData = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const userNotifcationResponse: APIResponse = await GetAllUserNotification(decoded.nameidentifier, connectAPIError, language)
+        if (!userNotifcationResponse.error) {
+            setUserNotification(userNotifcationResponse.data)
+        }
+
+    }
+    useEffect(() => {
+            fetchData();
+    }, []);
     const getLanguage = () => {
         let currentLanguage = i18n.language;
         if (currentLanguage === 'vn') {
@@ -51,6 +67,11 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                 </div>
                 <div className="welcome-message">
                     {t('Welcome')}, {decoded.name}
+                        <IconButton>
+                            <Badge color="secondary" badgeContent={userNotification.length}>
+                                <NotificationsIcon sx={{ color: 'white' }} />
+                            </Badge>
+                        </IconButton>
                 </div>
                 <ul>
                     {items.map((item, index) => (
