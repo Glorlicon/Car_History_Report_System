@@ -1,6 +1,7 @@
 ﻿using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarRegistrationHistory;
 using Domain.Entities;
+using Domain.Exceptions;
 using Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;

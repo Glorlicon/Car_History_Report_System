@@ -1,6 +1,7 @@
 ﻿using Application.DTO.CarInspectionHistory;
 using Application.DTO.CarInsurance;
 using Domain.Entities;
+using Domain.Exceptions;
 using Infrastructure.DBContext;
 using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,14 @@ namespace Infrastructure.Repository
             return await query.Select(x => x.CarId).ToListAsync();
         }
 
+        public async Task<List<string>> GetCarInsuranceUserIdsByCarId(string carId)
+        {
+            return await FindByCondition(x => x.CarId == carId, false)
+                            .Select(x => x.CreatedByUserId)
+                            .Distinct()
+                            .ToListAsync();
+        }
+
         public override IQueryable<CarInsurance> Filter(IQueryable<CarInsurance> query, CarInsuranceHistoryParameter parameter)
         {
             if (parameter.VinId != null)
@@ -133,6 +142,16 @@ namespace Infrastructure.Repository
                 _ => query
             };
             return query;
+        }
+
+        public override void Create(CarInsurance entity)
+        {
+            var isInsuranceNumberExist = IsExistNotAsync(x => x.InsuranceNumber == entity.InsuranceNumber);
+            if (isInsuranceNumberExist)
+            {
+                throw new InsuranceNumberExistException();
+            }
+            base.Create(entity);
         }
     }
 }

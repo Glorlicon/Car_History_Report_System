@@ -59,9 +59,9 @@ namespace Application.DomainServices
             return result;
         }
 
-        public async Task<bool> ChangePassword(string userId, ChangePasswordUserRequestDTO request)
+        public async Task<bool> ChangePassword(ChangePasswordUserRequestDTO request)
         {
-            return await _identityServices.ChangePassword(userId, request);
+            return await _identityServices.ChangePassword(request);
         }
 
         public async Task<string> ForgotPassword(ForgotPasswordRequestDTO request)

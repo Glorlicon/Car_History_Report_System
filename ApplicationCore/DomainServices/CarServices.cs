@@ -156,6 +156,13 @@ namespace Application.DomainServices
             {
                 throw new CarNotFoundException(request.CarId);
             }
+            var userId = _currentUserServices.GetCurrentUserId();
+            var dataProviderId = await _unitOfWork.UserRepository.GetDataProviderId(userId);
+            if (dataProviderId is not null && car.CurrentDataProviderId != dataProviderId)
+            {
+                throw new CarCurrentDataProviderExist(vinId);
+            }
+            car.CurrentDataProviderId = dataProviderId;
             var carSalesInfo = _mapper.Map<CarSalesInfo>(request);
             car.CarSalesInfo = carSalesInfo;
             _mapper.Map(request.CarImages, car.CarImages);
