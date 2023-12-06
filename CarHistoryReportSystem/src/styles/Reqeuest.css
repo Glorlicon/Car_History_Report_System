@@ -191,3 +191,8 @@
     height: 200px;
     font-size: 14pt;
 }
+
+.greyed-out-row {
+    background-color: #f0f0f0;
+    color: #777;
+}

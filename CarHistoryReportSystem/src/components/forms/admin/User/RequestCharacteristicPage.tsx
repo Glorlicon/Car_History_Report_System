@@ -5,12 +5,12 @@ import { RootState } from '../../../../store/State';
 import { COLORS } from '../../../../utils/const/Colors';
 import { AdminRequest, Car, UsersRequest } from '../../../../utils/Interfaces';
 
-interface RequestCharacteristicPage {
+interface RequestCharacteristicFormProps {
     action: "Add" | "Edit"
     model: AdminRequest | UsersRequest,
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
 }
-const RequestCharacteristicPage: React.FC<RequestCharacteristicPage> = ({
+const RequestCharacteristicPage: React.FC<RequestCharacteristicFormProps> = ({
     action,
     model,
     handleInputChange

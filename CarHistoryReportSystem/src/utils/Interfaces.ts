@@ -629,6 +629,11 @@ export interface UserNotification {
     isRead: boolean
 }
 
+export interface UserNotificationRead {
+    userId: string
+    notificationId: string
+}
+
 export interface Notification {
     id: number,
     relatedCarId: string,

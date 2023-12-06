@@ -133,7 +133,7 @@ function ServiceShopCarRecall() {
                             recallList.map((model: CarRecalls, index: number) => (
                                 <tr key={index}>
                                     {/*<td onClick={() => { setEditRecallModel(model) }}>{model.modelId}</td>*/}
-                                    <td>{model.modelId} &#x270E;</td>
+                                    <td>{model.modelId}</td>
                                     <td>{model.description}</td>
                                     <td>{model.recallDate ? new Date(model.recallDate).toLocaleDateString() : 'Date not available'}</td>
                             </tr>

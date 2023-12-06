@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AddRequest, GetUserRequest, GetUserRequests, ResponseRequest } from '../../services/api/Request';
 import { RootState } from '../../store/State';
-import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, User, UserNotification, UsersRequest } from '../../utils/Interfaces';
+import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, User, UserNotification, UserNotificationRead, UsersRequest } from '../../utils/Interfaces';
 import '../../styles/Reqeuest.css'
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import RequestCharacteristicPage from '../../components/forms/admin/User/RequestCharacteristicPage';
 import { t } from 'i18next';
-import { GetUserNotification } from '../../services/api/Notification';
+import { EditUserNotificationStatus, GetUserNotification } from '../../services/api/Notification';
 import { Pagination } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import NotificationDetailPage from '../../components/forms/user/NotificationDetailPage';
 
 function UserNotificationPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -25,20 +27,13 @@ function UserNotificationPage() {
     const [page, setPage] = useState(1)
     const [paging, setPaging] = useState<Paging>()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    const [newRequest, setNewRequest] = useState<UsersRequest>({
-        description: '',
-        response: '',
-        type: '',
-        status: ''
-    });
     const id = JWTDecoder(token).nameidentifier
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-        setNewRequest({
-            ...newRequest,
-            [e.target.name]: value,
-        });
-    };
+    const [notificationDetail, setNotificationDetail] = useState<UserNotification | null>(null)
+    const userNotificationRead = {
+        notificationId: '',
+        userId: id
+    }
+    const [readNotification, setReadNotification] = useState<UserNotification | null>(null)
 
     const fetchData = async () => {
         setLoading(true);
@@ -58,6 +53,20 @@ function UserNotificationPage() {
         }
         console.log(NotificationListResponse)
         setLoading(false)
+    }
+
+    const handleNotificationClick = async (notification: UserNotification) => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const response: APIResponse = await EditUserNotificationStatus({
+            ...userNotificationRead,
+            notificationId: notification.notificationId
+        }, token, connectAPIError, language);
+        if (response.error) {
+            setAddError(response.error);
+        } else {
+            fetchData();
+        }
     }
 
     useEffect(() => {
@@ -145,11 +154,18 @@ function UserNotificationPage() {
                         </tr>
                         ) : filterNotification.length > 0 ? (
                                 filterNotification.map((model: any, index: number) => (
-                            <tr key={index}>
-                                    <td>{t(model.notificationId)}</td>
+                                    <tr key={index} className={model.isRead ? 'greyed-out-row' : ''}>
+                                        <td
+                                            onClick={() => {
+                                                setNotificationDetail(model);
+                                                handleNotificationClick(model);
+                                            }}
+                                        >
+                                            {t(model.notificationId)} &#x1F6C8;
+                                        </td>
                                         <td>{model.notification.title}</td>
                                         <td>{model.notification.description}</td>
-                            </tr>
+                                    </tr>
                         ))
                     ) : (
                         <tr>
@@ -165,16 +181,14 @@ function UserNotificationPage() {
                     </>
                 }
             </div>
-            {showModal && (
-                <div className="ad-car-modal">
-                    <div className="ad-car-modal-content">
-                        <span className="ad-car-close-btn" onClick={() => { setShowModal(false) }}>&times;</span>
+            {notificationDetail && (
+                <div className="ad-car-modal" >
+                    <div className="ad-car-modal-content" style={{ width: '700px' }}>
+                        <span className="ad-car-close-btn" onClick={() => { setNotificationDetail(null) }}>&times;</span>
                         <h2>{t('Notification Detail')}</h2>
                         {(
-                            <RequestCharacteristicPage
-                                action="Add"
-                                model={newRequest}
-                                handleInputChange={handleInputChange}
+                            <NotificationDetailPage
+                                model={notificationDetail}
                             />
                         )}
                         {addError && (
