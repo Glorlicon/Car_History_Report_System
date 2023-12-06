@@ -20,7 +20,7 @@ namespace Application.Interfaces
 
         Task<RegisterResult> RegisterAsync(User user, string password);
 
-        Task<bool> ChangePassword(string id, ChangePasswordUserRequestDTO request);
+        Task<bool> ChangePassword(ChangePasswordUserRequestDTO request);
 
         Task<string> ForgotPassword(ForgotPasswordRequestDTO request);
 

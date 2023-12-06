@@ -81,17 +81,16 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <summary>
         /// Change password
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>
         /// <response code="204">Change password Successfully</response>
         /// <response code="400">Change password failed</response>
-        [HttpPut("change-password/{id}")]
+        [HttpPut("change-password")]
         //[Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ChangePasswordAsync(string id, ChangePasswordUserRequestDTO request)
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordUserRequestDTO request)
         {
-            var result = await _authServices.ChangePassword(id, request);
+            var result = await _authServices.ChangePassword(request);
             if (result == true)
             {
                 return Ok();

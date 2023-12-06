@@ -100,9 +100,13 @@ namespace Infrastructure.InfrastructureServices
             return new RegisterResult(result, user.Id, token);
         }
 
-        public async Task<bool> ChangePassword(string userId, ChangePasswordUserRequestDTO request)
+        public async Task<bool> ChangePassword(ChangePasswordUserRequestDTO request)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            if (!await ValidateUser(request.UsernameOrEmail, request.OldPassword))
+            {
+                throw new UserLoginValidatationException();
+            }
+            var user = _user;
             if (user == null)
             {
                 throw new UserNotFoundException("User not found");

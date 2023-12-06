@@ -40,6 +40,11 @@ namespace Application.DomainServices
 
         public override async Task<int> CreateCarHistory(CarRegistrationHistoryCreateRequestDTO request)
         {
+            var isRegistrationNumberExist = await _carHistoryRepository.IsExist(x => x.RegistrationNumber == request.RegistrationNumber);
+            if (isRegistrationNumberExist)
+            {
+                throw new RegistrationNumberExistException();
+            }
             request.LicensePlateNumber = request.LicensePlateNumber.Replace(".",string.Empty); 
             var carHistory = _mapper.Map<CarRegistrationHistory>(request);
             carHistory.ReportDate ??= DateOnly.FromDateTime(DateTime.Now);
@@ -55,6 +60,7 @@ namespace Application.DomainServices
             }
             if (request.ExpireDate > DateOnly.FromDateTime(DateTime.Today))
                 car.LicensePlateNumber = request.LicensePlateNumber;
+
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
             // Send Notification to police

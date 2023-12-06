@@ -16,6 +16,8 @@ namespace Application.Interfaces
 
         Task<bool> IsExist(Expression<Func<T, bool>> expression);
 
+        bool IsExistNotAsync(Expression<Func<T, bool>> expression);
+
         Task<int> CountByCondition(Expression<Func<T, bool>> expression);
 
         IQueryable<T> FindAll(bool trackChanges);
