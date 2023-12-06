@@ -48,6 +48,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         if (!userNotifcationResponse.error) {
             setUserNotification(userNotifcationResponse.data)
         }
+
     }
 
     useEffect(() => {
