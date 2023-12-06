@@ -6,6 +6,7 @@ import '../../../styles/AdminCars.css'
 import { ResponseRequest, GetAllUserRequest } from '../../../services/api/Request';
 import RequestAnsweringPage from '../../../components/forms/admin/Request/RequestAnsweringPage';
 import { t } from 'i18next';
+import { Pagination } from '@mui/material';
 
 function AdminRequestList() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -203,6 +204,13 @@ function AdminRequestList() {
               )}
           </tbody>
           </table>
+          <div id="pagination">
+              {paging && paging.TotalPages > 0 &&
+                  <>
+                      <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+                  </>
+              }
+          </div>
           {editRequest && (
               <div className="ad-car-modal">
                   <div className="ad-car-modal-content">

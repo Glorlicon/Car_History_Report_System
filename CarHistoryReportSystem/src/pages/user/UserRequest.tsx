@@ -7,6 +7,7 @@ import '../../styles/Reqeuest.css'
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import RequestCharacteristicPage from '../../components/forms/admin/User/RequestCharacteristicPage';
 import { t } from 'i18next';
+import { Pagination } from '@mui/material';
 
 function UserRequest() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -219,6 +220,13 @@ function UserRequest() {
                     )}
                 </tbody>
             </table>
+            <div id="pagination">
+                {paging && paging.TotalPages > 0 &&
+                    <>
+                        <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+                    </>
+                }
+            </div>
             {showModal && (
                 <div className="ad-car-modal">
                     <div className="ad-car-modal-content">

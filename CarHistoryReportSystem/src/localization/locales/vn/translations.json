@@ -411,5 +411,8 @@
   "Add Request": "Tạo đơn",
   "Unauthorized": "Không có quyền truy cập",
   "UnauthorizedDesc1": "Bạn không được phép truy cập vào trang này",
-  "UnauthorizedDesc2": "Nếu bạn nghĩ đây là một vấn đề kĩ thuật, xin hãy liên hệ với chúng tôi"
+  "UnauthorizedDesc2": "Nếu bạn nghĩ đây là một vấn đề kĩ thuật, xin hãy liên hệ với chúng tôi",
+  "No Notification Found": "Không tìm thấy thông báo nào",
+  "Notification Detail": "Chi tiết thông báo",
+  "Title":  "Tiêu đề"
 }

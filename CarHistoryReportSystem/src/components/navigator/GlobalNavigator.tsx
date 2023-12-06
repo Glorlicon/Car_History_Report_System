@@ -121,7 +121,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
                     <label className="currentLanguage">{i18n.language}</label>
                     <a href="/profile" className="nav-item">{t('Hi')}, {username}</a>
-                    <IconButton>
+                    <IconButton onClick={() => navigate('/notification')}>
                         <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
                             <NotificationsIcon sx={{ color: 'white' }} />
                         </Badge>
