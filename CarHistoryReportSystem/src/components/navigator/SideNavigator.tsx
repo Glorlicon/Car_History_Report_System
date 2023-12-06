@@ -26,7 +26,7 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
     const handleDropdownClick = (index: number) => {
         setOpenDropdownIndex(openDropdownIndex === index ? null : index);
     };
-    const [userNotification, setUserNotification] = useState<UserNotification[]>([]);
+    const [userNotification, setUserNotification] = useState<UserNotification[] | null>(null);
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const handleLogout = () => {
@@ -35,6 +35,7 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
         return
     };
     const fetchData = async () => {
+        console.log("Notification get", userNotification)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const userNotifcationResponse: APIResponse = await GetAllUserNotification(decoded.nameidentifier, connectAPIError, language)
@@ -44,8 +45,9 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
 
     }
     useEffect(() => {
-            fetchData();
-    }, []);
+        userNotification ?? fetchData();
+        
+    });
     const getLanguage = () => {
         let currentLanguage = i18n.language;
         if (currentLanguage === 'vn') {
@@ -67,11 +69,11 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                 </div>
                 <div className="welcome-message">
                     {t('Welcome')}, {decoded.name}
-                        <IconButton>
-                            <Badge color="secondary" badgeContent={userNotification.length}>
+                    <IconButton onClick={() => { console.log('onClick'); }}>
+                        <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
                                 <NotificationsIcon sx={{ color: 'white' }} />
                             </Badge>
-                        </IconButton>
+                    </IconButton>
                 </div>
                 <ul>
                     {items.map((item, index) => (
