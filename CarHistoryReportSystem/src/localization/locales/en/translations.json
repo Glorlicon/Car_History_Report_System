@@ -408,5 +408,8 @@
   "Created Date": "Created Date",
   "Changed Date": "Changed Date",
   "+ Add Request": "+ Add Request",
-  "Add Request": "Add Request"
+  "Add Request": "Add Request",
+  "Unauthorized": "Unauthorized",
+  "UnauthorizedDesc1": "You are not authorized to see content of this page.",
+  "UnauthorizedDesc2": "If you believe this is a mistake or if you want to appeal, please contact our support team."
 }

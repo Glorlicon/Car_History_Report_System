@@ -408,5 +408,8 @@
   "Created Date": "Ngày tạo",
   "Changed Date": "Ngày thay đổi",
   "+ Add Request": "+ Tạo đơn",
-  "Add Request": "Tạo đơn"
+  "Add Request": "Tạo đơn",
+  "Unauthorized": "Không có quyền truy cập",
+  "UnauthorizedDesc1": "Bạn không được phép truy cập vào trang này",
+  "UnauthorizedDesc2": "Nếu bạn nghĩ đây là một vấn đề kĩ thuật, xin hãy liên hệ với chúng tôi"
 }
