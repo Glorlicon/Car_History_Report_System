@@ -31,7 +31,7 @@ export const ManufacturerNavigation = [
 ]
 
 export const CarDealerNavigation = [
-    { label: 'Dealer Details', link: '/dealer/details' },
+    { label: 'Dealer Details', link: '/dealer' },
     { label: 'Car Sale List', link: '/dealer/cars' },
     { label: 'Car Storage', link: '/dealer/storage' },
     { label: 'Admin Request', link: '/dealer/requests' }

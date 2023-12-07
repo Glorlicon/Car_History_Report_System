@@ -1,4 +1,4 @@
-import { Avatar } from '@mui/material';
+import { Avatar, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -148,8 +148,11 @@ function ServiceShopHomePage() {
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {
+            if (dataProviderResponse.data.imageLink) {
+                const image = GetImages(dataProviderResponse.data.imageLink)
+                setImageUrl(image)
+            }
             let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
-
             if (Array.isArray(dataProviderResponse.data.workingTimes)) {
                 transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
                     const [startHour, startMinute] = time.startTime.split(':').map(Number);
@@ -323,20 +326,18 @@ function ServiceShopHomePage() {
         setOverlayWidth(`${100 - percentage}%`);
 
         setUserDetails((currentUser) => {
-            // Check if currentUser exists and if workingTimes needs to be set
             if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
                 const updatedUser = {
                     ...currentUser,
-                    workingTimes: defaultSchedule // Set workingTimes directly on currentUser
+                    workingTimes: defaultSchedule
                 };
                 setWorkingTimes(defaultSchedule);
                 return updatedUser;
             } else if (currentUser?.workingTimes) {
-                // If workingTimes already exists, just update the workingTimes state
                 setWorkingTimes(currentUser.workingTimes);
             }
 
-            return currentUser; // Return the currentUser as is if no updates are needed
+            return currentUser;
         });
 
         console.log("User", userDetails);
@@ -349,12 +350,9 @@ function ServiceShopHomePage() {
 
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
                     <div className="breadcrumb">
                         Home
                     </div>
-
-                    {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
@@ -369,34 +367,29 @@ function ServiceShopHomePage() {
                         </div>
 
                     </div>
-
-                    {/* Contact Info */}
                     <div className="phone-info">
                         <span>Phone Number: {userDetails?.phoneNumber}</span>
                     </div>
-
-                    {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale">Car For Sale</a>
-                        <a href="#reviews">Reviews</a>
-                        <a href="#about-us">About Us</a>
+                        <a href="#service-information-section">Car For Sale</a>
+                        <a href="#ratings-reviews-section">Reviews</a>
+                        <a href="#about-us-section">About Us</a>
                     </div>
                 </div>
-
-                {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
-                    <div className="profile-image">
-                        <Avatar
-                            alt="Service Shop"
-                            src={GetImages(userDetails?.imageLink)}
-                            sx={{ width: 100, height: 100 }}
-                        />
+                    <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                        <Tooltip title={t('Edit')}>
+                            <Avatar
+                                alt="Dealer Shop"
+                                src={GetImages(userDetails?.imageLink)}
+                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                            />
+                        </Tooltip>
                     </div>
-                    <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                 </div>
             </div>
 
-            <div className="service-information-section">
+            <div className="service-information-section" id="service-information-section">
                 <div className="service-info">
                     <h3>Top Services Performed</h3>
                     <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these services, in addition to many others:</p>
@@ -410,24 +403,10 @@ function ServiceShopHomePage() {
                         )}
                     </div>
                 </div>
-                {/*<div className="makes-serviced">*/}
-                {/*    <h3>Top Makes Serviced</h3>*/}
-                {/*    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these Makes, in addition to many others:</p>*/}
-                {/*    <div className="makes-list">*/}
-                {/*        {visibleMakes.map((make, index) => (*/}
-                {/*            <span key={index}>• {make}</span>*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*    {makesList.length > maxItemsToShow && (*/}
-                {/*        <button onClick={() => setShowAllMakes(!showAllMakes)}>*/}
-                {/*            {showAllMakes ? 'Show Less' : 'Show More'}*/}
-                {/*        </button>*/}
-                {/*    )}*/}
-                {/*</div>*/}
             </div>
 
 
-            <div className="ratings-reviews-section">
+            <div className="ratings-reviews-section" id="ratings-reviews-section">
                 <h1>Ratings & Reviews</h1>
                 <div className="rating-comment">
 
@@ -497,7 +476,7 @@ function ServiceShopHomePage() {
             </div>
 
 
-            <div className="about-us-section">
+            <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
                     <h2>Working Schedule</h2>

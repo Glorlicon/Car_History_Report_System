@@ -1,4 +1,4 @@
-﻿import { Avatar, Box } from '@mui/material';
+﻿import { Avatar, Box, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -137,8 +137,11 @@ function CarDealerHomePage() {
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {
+            if (dataProviderResponse.data.imageLink) {
+                const image = GetImages(dataProviderResponse.data.imageLink)
+                setImageUrl(image)
+            }
             let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
-
             if (Array.isArray(dataProviderResponse.data.workingTimes)) {
                 transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
                     const [startHour, startMinute] = time.startTime.split(':').map(Number);
@@ -159,15 +162,14 @@ function CarDealerHomePage() {
                 ...dataProviderResponse.data,
                 workingTimes: transformedWorkingTimes
             });
-
-            const carListResponse: APIResponse = await GetCarForSaleBySellerID(userDetails?.id as unknown as string);
+            const carListResponse: APIResponse = await GetCarForSaleBySellerID(dealerId as unknown as string);
             if (carListResponse.error) {
                 setError(carListResponse.error);
             } else {
                 setCarList(carListResponse.data);
             }
 
-            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dealerId)
             if (reviewListResponse.error) {
                 setError(reviewListResponse.error);
             } else {
@@ -336,14 +338,15 @@ function CarDealerHomePage() {
 
                     {/* Profile Image (This could be a user or dealer profile) */}
                     <div>
-                        <div className="profile-image">
-                            <Avatar
+                        <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                            <Tooltip title={t('Edit')}>
+                                <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
-                                sx={{ width: 100, height: 100 }}
-                            />
+                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                                />
+                            </Tooltip>
                         </div>
-                        <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                     </div>
 
 
