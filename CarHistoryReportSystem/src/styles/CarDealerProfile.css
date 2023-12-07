@@ -387,15 +387,12 @@ svg {
     margin-left: 10px; /* Adjust space as needed */
 }
 
-.dealer-car-sales-modal-content {
-    margin-top:80px;
-    width:1000px;
-}
 
 .dealer-car-sales-form-columns {
-    width: 1000px;
-    max-width: 300px;
+    width: auto;
+    max-width: none;
 }
+
 
 .input {
     display: flex;

@@ -70,6 +70,7 @@ function CarSalesPage() {
             setCarList(carListResponse.data)
             setPaging(carListResponse.pages)
         }
+        console.log(carListResponse.data)
         setLoading(false)
     }
 

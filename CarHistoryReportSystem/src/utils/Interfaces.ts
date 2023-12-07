@@ -141,7 +141,7 @@ export interface EditDataProvider {
     email?: string
     type: number
     typeName: string
-    imagelink?: string
+    imageLink?: string
     workingTimes: {
         dayOfWeek: number,
         startHour: number,

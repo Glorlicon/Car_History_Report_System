@@ -1,13 +1,14 @@
 ﻿import { Avatar, Box } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
-import { GetImages } from '../../services/azure/Images';
+import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
@@ -19,6 +20,7 @@ function CarDealerHomePage() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);     
     const [carList, setCarList] = useState<Car[]>([]);
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [newImages, setNewImages] = useState<File[]>([])
     const [User, setUser] = useState<DataProvider | null>(null) //EditDataProvider
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
@@ -26,6 +28,8 @@ function CarDealerHomePage() {
     const [showModal, setShowModal] = useState(false);
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
+    const [image, setImage] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [adding, setAdding] = useState(false);
     const [review, setReview] = useState<Reviews[]>([]);
     const [averageRating, setAverageRating] = useState<number>(0);
@@ -40,7 +44,7 @@ function CarDealerHomePage() {
         phoneNumber: '',
         email: '',
         type: 0,
-        imagelink: '',
+        imageLink: '',
         workingTimes: Array(7).fill({
             dayOfWeek: 0,
             startHour: 0,
@@ -156,14 +160,11 @@ function CarDealerHomePage() {
                 workingTimes: transformedWorkingTimes
             });
 
-            console.log("Transformed Data:", userDetails);
-
             const carListResponse: APIResponse = await GetCarForSaleBySellerID(userDetails?.id as unknown as string);
             if (carListResponse.error) {
                 setError(carListResponse.error);
             } else {
                 setCarList(carListResponse.data);
-                console.log("Car List Data:", carListResponse.data);
             }
 
             const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
@@ -175,14 +176,10 @@ function CarDealerHomePage() {
 
             setLoading(false);
         }
-
-        
-
         setLoading(false);
     };
 
     useEffect(() => {
-        console.log("2")
         let totalRating = 0;
         // Initialize counts with all required keys
         let counts: { [key: string]: number } = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
@@ -211,14 +208,10 @@ function CarDealerHomePage() {
 
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
-
-            // If the change is related to working times
             if (index !== undefined && field) {
                 let updatedTimes = [...prevProfile.workingTimes];
-
                 if (type === 'time') {
                     const [hours, minutes] = value.split(':').map(Number);
-
                     updatedTimes = updatedTimes.map((time, i) => {
                         if (i === index) {
                             if (field === 'startHour') {
@@ -230,71 +223,48 @@ function CarDealerHomePage() {
                         return time;
                     });
                 } else if (type === 'checkbox' && field === 'isClosed') {
-                    // Handle isClosed separately
                     updatedTimes = updatedTimes.map((time, i) =>
                         i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
                     );
                 }
-
                 return { ...prevProfile, workingTimes: updatedTimes };
             } else {
-                // For changes outside of working times
                 return { ...prevProfile, [name]: value };
             }
         });
-        console.log("updated user:", editDealerProfile)
     };
-
-
-
-
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            const addedImageUrl = URL.createObjectURL(event.target.files[0]); // Create a URL for the file
-
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: addedImageUrl // Update the imagelink directly
-                };
-            });
+            const addedImageUrl = URL.createObjectURL(event.target.files[0]);
+            const file = event.target.files[0];
+            setImageUrl(addedImageUrl)
+            setImage(file)
         }
     };
-
-    const handleRemoveImage = () => {
-        if (editDealerProfile && editDealerProfile.imagelink) {
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: "" // Clearing the imagelink
-                };
-            });
-        }
-    };
-
 
     const handleEditDealerProfile = async () => {
         if (editDealerProfile != null) {
             setAdding(true);
             setAddError(null);
-
-            const response: APIResponse = await EditProfile(editDealerProfile, token);
-            console.log("Submitted Data", editDealerProfile);
-
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            let notFoundError = t('No image was found')
+            let failedError = t('Failed to upload image')
+            const uploadImage = await UploadImages(image, notFoundError, failedError)
+            if (uploadImage.error) {
+                setError(uploadImage.error)
             } else {
-                setEditDealerProfile(null); // Resetting the edit state
-                setModalPage(1);
-                fetchData(); // Fetching the latest data and updating state
+                const response: APIResponse = await EditProfile({...editDealerProfile, imageLink: uploadImage.data }, token);
+                setAdding(false);
+                if (response.error) {
+                    setAddError(response.error);
+                } else {
+                    setEditDealerProfile(null);
+                    setModalPage(1);
+                    fetchData();
+                }
             }
         }
     };
@@ -324,8 +294,6 @@ function CarDealerHomePage() {
 
             return currentUser; // Return the currentUser as is if no updates are needed
         });
-
-        console.log("User", userDetails);
     }, [value, max, userDetails, defaultSchedule]);
 
 
@@ -348,9 +316,6 @@ function CarDealerHomePage() {
                                     <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
                                     <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                                 </div>
-                                <span className="favorites">
-                                    favNum Favourited This Shop
-                                </span>
                                 <div className="overlay"></div>
                             </div>
 
@@ -374,7 +339,7 @@ function CarDealerHomePage() {
                         <div className="profile-image">
                             <Avatar
                                 alt="Dealer Shop"
-                                src={GetImages(userDetails?.imagelink)}
+                                src={GetImages(userDetails?.imageLink)}
                                 sx={{ width: 100, height: 100 }}
                             />
                         </div>
@@ -547,7 +512,7 @@ function CarDealerHomePage() {
                 </div>
                 {editDealerProfile && (
                     <div className="dealer-car-sales-modal">
-                        <div className="dealer-car-sales-modal-content">
+                        <div className="dealer-car-sales-modal-content-2">
                             <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
                             <h2>Edit Profile</h2>
                             {modalPage === 1 && (
@@ -561,7 +526,7 @@ function CarDealerHomePage() {
                                 <CarDealerProfileImage
                                     model={editDealerProfile}
                                     handleAddImages={handleAddImages}
-                                    handleRemoveImages={handleRemoveImage}
+                                    imageUrl={imageUrl}
                                 />
                             )}
                             {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (

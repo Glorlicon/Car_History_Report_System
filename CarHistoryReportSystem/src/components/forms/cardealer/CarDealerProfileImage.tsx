@@ -1,39 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { GetImages } from '../../../services/azure/Images';
 import { CarDealer, DataProvider, EditDataProvider } from '../../../utils/Interfaces';
+import blank from '../../../blank.png'
 
 interface CarDealerProfileImageProps {
     model: EditDataProvider
     handleAddImages: (event: React.ChangeEvent<HTMLInputElement>) => void
-    handleRemoveImages: () => void
+    imageUrl: string | null
 }
 const CarDealerProfileImage: React.FC<CarDealerProfileImageProps> = ({
     model,
     handleAddImages,
-    handleRemoveImages
+    imageUrl
 }) => {
 
     const handleAddClick = () => {
         document.getElementById('car-image')?.click()
     }
     useEffect(() => {
-        if (model.imagelink) {
-            console.log("Image Link: ", model.imagelink);
+        if (model.imageLink) {
+            console.log("Image Link: ", model);
         }
-    }, [model.imagelink]);
+    }, [model.imageLink]);
     return (
         <div className="dealer-car-sales-form-image-columns">
             <div className="dealer-car-sales-form-image-column">
                 <label>Profile Avatar</label>
-                <input type="file" id="car-image" accept="image/*" className="car-images-input" onChange={handleAddImages} />
-                <button onClick={handleAddClick} className="dealer-car-sales-form-image-add-button">+ Add Image</button>
-                {model.imagelink ? (
                     <div className="dealer-car-sales-images">
-                        <img src={model.imagelink} alt="Avatar" className="dealer-car-sales-details-image" />
+                    <input type="file" id="profile-picture" accept="image/*" className="profile-edit-picture"  onChange={handleAddImages} />
+                    <img src={imageUrl ? imageUrl : blank} id="picture" alt="Click to change" title="Click to change" className="edit-picture" onClick={handleAddClick} />
                     </div>
-                ) : (
-                    <div className="dealer-car-sales-images">No avatar</div>
-                )}
             </div>
         </div>
     );
