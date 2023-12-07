@@ -429,5 +429,9 @@
   "No Notification Found": "No Notification Found",
   "Notification Detail": "Notification Detail",
   "Title": "Title",
-  "No Order Found": "No Order Found"
+  "No Order Found": "No Order Found",
+  "Old password": "Old password",
+  "New password": "New Password",
+  "Re-enter new password": "Re-enter new password",
+  "Password does not match": "Password does not match"
 }

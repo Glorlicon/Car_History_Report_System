@@ -59,6 +59,13 @@ export interface User {
     dataProvider?: DataProvider
 }
 
+export interface PasswordChange {
+    usernameOrEmail: string,
+    oldPassword: string,
+    password: string,
+    rePassword: string
+}
+
 export interface UserDataproviderId {
     id: string
     dataProviderId?: number | null

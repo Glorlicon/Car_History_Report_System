@@ -1,13 +1,13 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Edit, Get } from '../../services/api/Users';
+import { Edit, EditPassword, Get } from '../../services/api/Users';
 import { RootState } from '../../store/State';
 import '../../styles/UserProfile.css'
-import { APIResponse, User, UserReport } from '../../utils/Interfaces';
+import { APIResponse, PasswordChange, User, UserReport } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import blank from '../../blank.png'
 import { GetImages, UploadImages } from '../../services/azure/Images';
-import { isValidEmail } from '../../utils/Validators';
+import { isValidEmail, isValidPassword } from '../../utils/Validators';
 import { useTranslation } from 'react-i18next';
 import { GetUserReports } from '../../services/api/Reports';
 import UserReportListPage from '../../components/forms/user/UserReportListPage';
@@ -18,7 +18,7 @@ function UserProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const id = JWTDecoder(token).nameidentifier
     const [user, setUser] = useState<User>({
-        id:'',
+        id: '',
         userName: '',
         email: '',
         firstName: '',
@@ -28,13 +28,21 @@ function UserProfile() {
         role: 1,
         address: ''
     });
+    const [password, setPassword] = useState<PasswordChange>({
+        usernameOrEmail: '',
+        oldPassword: '',
+        password: '',
+        rePassword: ''
+    });
     const [updatedUser, setUpdatedUser] = useState(user)
+    const [updatedPassword, setUpdatedPassword] = useState(password)
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [updating, setUpdating] = useState(false);
     const [isEditing, setEditing] = useState(false);
+    const [isEditingPassword, setEditingPassword] = useState(false);
     const [reports, setReports] = useState<UserReport[]>([])
     const [openReports, setOpenReports] = useState(false)
     const fetchData = async () => {
@@ -74,12 +82,50 @@ function UserProfile() {
         return true;
     };
 
+    const validatePassword = (password: PasswordChange): boolean => {
+        if (!password.password || !password.rePassword || !password.oldPassword) {
+            setError(t('All fields must be filled out'));
+            return false;
+        } else if (!(password.password === password.rePassword)) {
+            setError(t('Password does not match'))
+            return false;
+        } else if (!isValidPassword(password.password)) {
+            setError(t('Password is not valid'))
+            return false;
+        }
+        return true;
+    };
+
     const handleEditButton = () => {
         setEditing(true)
         setUpdatedUser(user)
     }
 
-    const handleUpdateButton = async() => {
+    const handlePasswordChangeButton = () => {
+        setEditingPassword(true)
+        setUpdatedUser(user)
+    }
+
+    const handleEditPasswordButton = async () => {
+        if (validatePassword(updatedPassword)) {
+            setUpdating(true)
+            setError(null)
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response = await EditPassword(updatedPassword, token, connectAPIError, unknownError, language)
+            if (response.error) {
+                setUpdating(false)
+                setError(response.error)
+            } else {
+                setUpdating(false)
+                setEditingPassword(false)
+                fetchData()
+            }
+        }
+    }
+
+    const handleUpdateButton = async () => {
         if (validateUser(user)) {
             setUpdating(true)
             setError(null)
@@ -106,13 +152,25 @@ function UserProfile() {
         }
     }
     const handleCancelButton = () => {
-        setEditing(false)
+        if (isEditing) {
+            setEditing(false)
+        } else if (isEditingPassword) {
+            setEditingPassword(false)
+        }
         setUpdatedUser(user)
     }
     const handleUpdateUser = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUpdatedUser({
             ...updatedUser,
             [e.target.name]: e.target.value
+        })
+    }
+    const handleUpdatePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUpdatedPassword({
+            ...updatedPassword,
+            [e.target.name]: e.target.value,
+            usernameOrEmail: user.email
+
         })
     }
     const handleShowReports = () => {
@@ -146,90 +204,129 @@ function UserProfile() {
                 <div className="profile-spinner"></div>
             ) : (
                 <>
-                {isEditing ? (
-                <>
-                    <div className="header-edit-section">
-                        <div className="profile-edit-icon">
-                            <input type="file" id="profile-picture" accept="image/*" className="profile-edit-picture" onChange={onImageChange} />
-                            <img src={imageUrl ? imageUrl : blank} id="picture" alt="Click to change" title="Click to change" className="edit-picture" onClick={handleImageClick} />
-                        </div>
-                        <p>{user.userName}</p>
-                    </div>
-                    <div className="edit-sections">
-                        <div className="info-edit-section">
-                            <div className="edit-columns">
-                                <div className="info-edit-column">
-                                    <label>Email</label>
-                                    <input className="profile-edit-input" type="text" value={updatedUser.email} name="email" onChange={handleUpdateUser}/>
-                                    <label>{t('First Name')}</label>
-                                    <input className="profile-edit-input" type="text" value={updatedUser.firstName} name="firstName" onChange={handleUpdateUser}/>
+                    {isEditing ? (
+                        <>
+                            <div className="header-edit-section">
+                                <div className="profile-edit-icon">
+                                    <input type="file" id="profile-picture" accept="image/*" className="profile-edit-picture" onChange={onImageChange} />
+                                    <img src={imageUrl ? imageUrl : blank} id="picture" alt="Click to change" title="Click to change" className="edit-picture" onClick={handleImageClick} />
                                 </div>
-                                <div className="info-edit-column">
-                                    <label>{t('Address')}</label>
-                                    <input className="profile-edit-input" type="text" value={updatedUser.address} name="address" onChange={handleUpdateUser}/>
-                                    <label>{t('Last Name')}</label>
-                                    <input className="profile-edit-input" type="text" value={updatedUser.lastName} name="lastName" onChange={handleUpdateUser}/>
+                                <p>{user.userName}</p>
+                            </div>
+                            <div className="edit-sections">
+                                <div className="info-edit-section">
+                                    <div className="edit-columns">
+                                        <div className="info-edit-column">
+                                            <label>Email</label>
+                                            <input className="profile-edit-input" type="text" value={updatedUser.email} name="email" onChange={handleUpdateUser} />
+                                            <label>{t('First Name')}</label>
+                                            <input className="profile-edit-input" type="text" value={updatedUser.firstName} name="firstName" onChange={handleUpdateUser} />
+                                        </div>
+                                        <div className="info-edit-column">
+                                            <label>{t('Address')}</label>
+                                            <input className="profile-edit-input" type="text" value={updatedUser.address} name="address" onChange={handleUpdateUser} />
+                                            <label>{t('Last Name')}</label>
+                                            <input className="profile-edit-input" type="text" value={updatedUser.lastName} name="lastName" onChange={handleUpdateUser} />
+                                        </div>
+                                    </div>
+                                    <div className="buttons-edit-section">
+                                        {updating ? (
+                                            <div className="profile-spinner"></div>
+                                        ) : (
+                                            <>
+                                                <button className="profile-edit-btn" onClick={handleCancelButton}>{t('Cancel')}</button>
+                                                <button className="profile-edit-btn" onClick={handleUpdateButton}>{t('Save Changes')}</button>
+                                            </>
+                                        )}
+                                    </div>
+                                    {error && (
+                                        <p className="profile-error">{error}</p>
+                                    )}
                                 </div>
                             </div>
-                            <div className="buttons-edit-section">
-                                {updating ? (
-                                    <div className="profile-spinner"></div>
-                                ) : (
-                                    <>
-                                        <button className = "profile-edit-btn" onClick = { handleCancelButton }>{t('Cancel')}</button>
-                                        <button className="profile-edit-btn" onClick={handleUpdateButton}>{t('Save Changes')}</button>
-                                    </>
-                                )}
+                        </>
+                    ) : isEditingPassword ? (
+                        <>
+                            <div className="header-edit-section">
+                                <div className="profile-edit-icon">
+                                    <input type="file" id="profile-picture" accept="image/*" className="profile-edit-picture" onChange={onImageChange} />
+                                    <img src={imageUrl ? imageUrl : blank} id="picture" alt="Click to change" title="Click to change" className="edit-picture" onClick={handleImageClick} />
+                                </div>
+                                <p>{user.userName}</p>
                             </div>
-                                 {error && (
-                                      <p className="profile-error">{error}</p>
-                                 )}
-                        </div>
-                    </div>
-                </>
-            ): (
-                <>
-                        <div className="header-section">
-                            <div className="profile-icon">
-                                <img src={imageUrl ? imageUrl : blank} alt="Click to change" title="Click to change" className="picture" />
+                            <div className="edit-sections">
+                                <div className="info-edit-section">
+                                    <div className="edit-columns">
+                                        <div className="info-edit-column">
+                                            <label>{t('Old password')}</label>
+                                            <input className="profile-edit-input" type="password" name="oldPassword" onChange={handleUpdatePassword} />
+                                        </div>
+                                        <div className="info-edit-column">
+                                            <label>{t('New password')}</label>
+                                            <input className="profile-edit-input" type="password" name="password" onChange={handleUpdatePassword} />
+                                            <label>{t('Re-enter new password')}</label>
+                                            <input className="profile-edit-input" type="password" name="rePassword" onChange={handleUpdatePassword} />
+                                        </div>
+                                    </div>
+                                    <div className="buttons-edit-section">
+                                        {updating ? (
+                                            <div className="profile-spinner"></div>
+                                        ) : (
+                                            <>
+                                                <button className="profile-edit-btn" onClick={handleCancelButton}>{t('Cancel')}</button>
+                                                <button className="profile-edit-btn" onClick={handleEditPasswordButton}>{t('Save Changes')}</button>
+                                            </>
+                                        )}
+                                    </div>
+                                    {error && (
+                                        <p className="profile-error">{error}</p>
+                                    )}
+                                </div>
                             </div>
-                            <p>{user.userName}</p>
-                        </div>
-                        <div className="sections">
-                            <div className="info-section">
-                                <div className="columns">
-                                    <div className="info-column">
-                                        <a className="info">Email: {user.email}</a>
-                                        <a className="info">{t('First Name')}: {user.firstName}</a>
-                                        <a className="info">{t('Address')}: {user.address}</a>
-                                        <a className="info">{t('Last Name')}: {user.lastName}</a>
+                        </>
+                    ) : (
+                        <>
+                            <div className="header-section">
+                                <div className="profile-icon">
+                                    <img src={imageUrl ? imageUrl : blank} alt="Click to change" title="Click to change" className="picture" />
+                                </div>
+                                <p>{user.userName}</p>
+                            </div>
+                            <div className="sections">
+                                <div className="info-section">
+                                    <div className="columns">
+                                        <div className="info-column">
+                                            <a className="info">Email: {user.email}</a>
+                                            <a className="info">{t('First Name')}: {user.firstName}</a>
+                                            <a className="info">{t('Address')}: {user.address}</a>
+                                            <a className="info">{t('Last Name')}: {user.lastName}</a>
+                                        </div>
+                                    </div>
+                                    <button className="profile-btn" onClick={handleEditButton}>{t('Edit information')}</button>
+                                </div>
+
+                                <div className="reports-section">
+                                    <button className="profile-btn" onClick={handleShowReports}>{t('My Reports')}</button>
+                                    <p>{t('Remaining Report(s)')}: {user.maxReportNumber ? user.maxReportNumber : 0}</p>
+                                    <button className="profile-btn" onClick={handlePasswordChangeButton}>{t('Change Password')}</button>
+                                </div>
+                            </div>
+                            {openReports && (
+                                <div className="reg-inspec-modal">
+                                    <div className="reg-inspec-modal-content">
+                                        <span className="reg-inspec-close-btn" onClick={() => { setOpenReports(false) }}>&times;</span>
+                                        <h2>{t('My Reports')}</h2>
+                                        <UserReportListPage
+                                            list={reports}
+                                        />
                                     </div>
                                 </div>
-                                <button className="profile-btn" onClick={handleEditButton}>{t('Edit information')}</button>
-                            </div>
-
-                            <div className="reports-section">
-                                <button className="profile-btn" onClick={handleShowReports}>{t('My Reports')}</button>
-                                <p>{t('Remaining Report(s)')}: {user.maxReportNumber ? user.maxReportNumber : 0}</p>
-                                <button className="profile-btn">{t('Change Password')}</button>
-                            </div>
-                        </div>
-                        {openReports && (
-                            <div className="reg-inspec-modal">
-                            <div className="reg-inspec-modal-content">
-                            <span className="reg-inspec-close-btn" onClick={() => { setOpenReports(false)}}>&times;</span>
-                            <h2>{t('My Reports')}</h2>
-                            <UserReportListPage
-                                list={reports}
-                                                />
-                            </div>
-                            </div>
-                        )}
+                            )}
+                        </>
+                    )}
                 </>
-                        )}
-                    </>
             )}
-            
+
         </div>
     );
 }
