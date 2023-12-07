@@ -14,18 +14,14 @@ function InsuranceCompanyStolenList() {
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [paging, setPaging] = useState<Paging>()
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const id = JWTDecoder(token).dataprovider
     const [searchVinId, setSearchVinId] = useState('')
     const [searchStatus, setSearchStatus] = useState('')
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [showModal, setShowModal] = useState(false);
     const [carStolenList, setcarStolenList] = useState<CarStolen[]>([]);
     const [showCarStolenReport, setShowCarStolenReport] = useState<CarStolen | null>(null)
     const [resetTrigger, setResetTrigger] = useState(0);
     const [data, setData] = useState("")
-    const [templateTrigger, setTemplateTrigger] = useState(0)
-    const [importData, setImportData] = useState<FormData | null>(null)
 
     const handleDownloadCsv = () => {
         const element = document.getElementById('excel')

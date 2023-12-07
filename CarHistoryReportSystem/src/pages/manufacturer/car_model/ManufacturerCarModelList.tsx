@@ -396,7 +396,8 @@ function ManufacturerCarModelList() {
                   ) : carModels.length > 0 ? (
                       carModels.map((model: any, index: number) => (
                           <tr key={index}>
-                              <td onClick={() => { setEditModel(model)}}>{model.modelID}</td>
+                              <td onClick={() => { setEditModel(model) }}>{model.modelID}</td>
+                              <td>{model.manufacturerName}</td>
                               <td>{model.releasedDate}</td>
                               <td>{model.country}</td>
                               <td>
