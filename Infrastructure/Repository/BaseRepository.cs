@@ -48,11 +48,16 @@ namespace Infrastructure.Repository
             return await repositoryContext.Set<T>().AnyAsync(expression);
         }
 
+        public bool IsExistNotAsync(Expression<Func<T, bool>> expression)
+        {
+            return repositoryContext.Set<T>().Any(expression);
+        }
+
         public virtual async Task<IEnumerable<T>> GetAll(bool trackChange)
         {
             return await FindAll(trackChange).ToListAsync();
         }
-        public void Create(T entity)
+        public virtual void Create(T entity)
         {
             repositoryContext.Set<T>().Add(entity);
         }

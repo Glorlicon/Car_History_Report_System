@@ -8,9 +8,9 @@ namespace Application.Common.Models
 {
     public class PagingParameters
     {
-        const int maxPageSize = 100;
+        const int maxPageSize = 100000;
         public int PageNumber { get; set; } = 1;
-        private int _pageSize = 10;
+        private int _pageSize = 15;
         public int PageSize
         {
             get

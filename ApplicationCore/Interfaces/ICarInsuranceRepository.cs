@@ -14,5 +14,6 @@ namespace Infrastructure.Repository
     public interface ICarInsuranceRepository : ICarHistoryRepository<CarInsurance, CarInsuranceHistoryParameter>
     {
         Task<List<string>> InsuranceCompanyGetOwnCarIds(int? dataProviderId, bool trackChange);
+        Task<List<string>> GetCarInsuranceUserIdsByCarId(string carId);
     }
 }

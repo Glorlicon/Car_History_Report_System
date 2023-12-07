@@ -1,5 +1,6 @@
 ﻿using Application.DTO.CarInspectionHistory;
 using Domain.Entities;
+using Domain.Exceptions;
 using Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,6 +17,16 @@ namespace Infrastructure.Repository
         public CarInspectionHistoryRepository(ApplicationDBContext repositoryContext) : base(repositoryContext)
         {
 
+        }
+
+        public override void Create(CarInspectionHistory entity)
+        {
+            var isInspectionNumberExist = IsExistNotAsync(x => x.InspectionNumber == entity.InspectionNumber);
+            if (isInspectionNumberExist)
+            {
+                throw new InspectionNumberExistException();
+            }
+            base.Create(entity);
         }
 
         public override async Task<IEnumerable<CarInspectionHistory>> GetAllCarHistorys(CarInspectionHistoryParameter parameter, bool trackChange)
