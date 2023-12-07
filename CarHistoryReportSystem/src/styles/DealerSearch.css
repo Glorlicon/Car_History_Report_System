@@ -232,10 +232,6 @@
         padding: 0;
     }
 
-/* Additional reset styles in case other global styles are affecting the layout */
-*, *::before, *::after {
-    box-sizing: border-box; /* Makes sure padding does not affect overall width */
-}
 .dealer-map-container {
     display: flex;
     flex-direction: row;

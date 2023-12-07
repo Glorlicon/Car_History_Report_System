@@ -171,11 +171,17 @@
   <data name="Inspect Date cannot be in the future" xml:space="preserve">
     <value>Ngày kiểm định không thể trống</value>
   </data>
+  <data name="Inspection Number already exist" xml:space="preserve">
+    <value>Số Kiểm định đã tồn tại</value>
+  </data>
   <data name="Inspection Number should not be empty" xml:space="preserve">
     <value>Số kiểm định không thể trống</value>
   </data>
   <data name="InspectionCategory should not be empty" xml:space="preserve">
     <value>Mục kiểm định không thể trống</value>
+  </data>
+  <data name="Insurance Number already exist" xml:space="preserve">
+    <value>Số bảo hiểm đã tồn tại</value>
   </data>
   <data name="Invalid email" xml:space="preserve">
     <value>Email không hợp lệ</value>
@@ -224,6 +230,9 @@
   </data>
   <data name="Rating can only be in range of [0,5]" xml:space="preserve">
     <value>Đánh giá chỉ có thể trong khoảng 0 đến 5</value>
+  </data>
+  <data name="Registration Number already exist" xml:space="preserve">
+    <value>Số Đăng Kí đã tồn tại</value>
   </data>
   <data name="Registration Number cannot be empty" xml:space="preserve">
     <value>Số đăng kí không thể trống</value>

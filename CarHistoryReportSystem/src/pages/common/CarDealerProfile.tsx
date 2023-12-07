@@ -272,10 +272,6 @@ function CarDealerHomePage() {
                         {/* Add image here */}
                     </div>
                 </div>
-
-
-
-
             </div>
             <div className="cars-for-sale-section">
                 <div className="listing-header">

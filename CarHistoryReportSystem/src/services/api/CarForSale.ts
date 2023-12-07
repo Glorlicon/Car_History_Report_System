@@ -1,20 +1,34 @@
 import axios, { AxiosError } from "axios"
-import { APIResponse, Car, CarModel, ContactMail } from "../../utils/Interfaces"
+import { APIResponse, Car, CarModel, CarSearchParams, ContactMail } from "../../utils/Interfaces"
 
-export async function ListCarForSale(): Promise<APIResponse> {
+
+export async function ListCarForSale(pageNumber: number, connectAPIError: string, language: string, carSearchParams: CarSearchParams): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/selling`)
-        return { data: response.data }
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/selling`,
+            {
+                headers: {
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    Make: carSearchParams.make,
+                    Model: carSearchParams.model,
+                    YearStart: carSearchParams.yearstart,
+                    PriceMax: carSearchParams.pricemax,
+                    MilageMax: carSearchParams.milagemax
+                }
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
-
 export async function GetCarForSale(vinId: String): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${vinId}`)
@@ -96,6 +110,29 @@ export async function ListManufacturer(): Promise<APIResponse> {
             return { error: "Network error. Please check your internet connection!" }
         } else {
             return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
+
+export async function ListManufacturerModel(connectAPIError: string, language: string, manufacturerId: number): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/manufacturer/${manufacturerId}`,
+            {
+                headers: {
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageSize: 999
+                }
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
