@@ -213,6 +213,8 @@ export interface AdminRequest {
     status: string
     createdByUserId?: string
     modifiedByUserId?: string
+    createdTime?: Date
+    lastModified?: Date
 }
 export interface ReportPackage {
     title: string

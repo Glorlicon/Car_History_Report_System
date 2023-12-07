@@ -18,6 +18,10 @@ function LoginPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleCreateAccountClick = () => {
+        navigate('/register');
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthenticationError(false)
@@ -83,33 +87,35 @@ function LoginPage() {
         <div className="login-container">
             <form onSubmit={handleSubmit} className="login-form">
                 <h2>Login</h2>
-                <label htmlFor="username">Username</label>
                 <input
                     type="text"
-                    placeholder="Username"
+                    id="username"
+                    placeholder="Email address or username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
-                <label htmlFor="password">Password</label>
                 <input
                     type="password"
+                    id="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <div className="register-link">
-                    <a href="/register"> Don't have an account? Register</a>
-                </div>
-                <div className="error">
-                    {authenticationError && (
-                        <div className="message">{errorMessage}</div>
-                    )}
-                </div>
-                {isLoading ? (
-                    <div className="logging"></div>
-                ): (
-                    <button type="submit">Login</button>
+                {authenticationError && (
+                    <div className="error message">{errorMessage}</div>
                 )}
+                {isLoading ? (
+                    <div className="logging-in"></div>
+                ) : (
+                    <button type="submit" className="login-button">Log in</button>
+                )}
+                <div className="login-form-footer">
+                    <a href="/forgotpassword" className="forgot-password">Forgotten password?</a>
+                    <div className="divider"></div>
+                    <button type="button" className="create-account-button" onClick={handleCreateAccountClick}>
+                        Create new account
+                    </button>
+                </div>
             </form>
         </div>
     );

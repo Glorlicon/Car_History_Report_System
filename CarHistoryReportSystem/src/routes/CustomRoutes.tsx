@@ -54,7 +54,9 @@ import SearchCarDealer from '../pages/common/SearchDealer';
 import SearchServiceShop from '../pages/common/SearchServiceShop';
 import UserNotification from '../pages/user/UserNotification';
 import AdminMonetizationPage from '../pages/admin/AdminMonetizationPage';
-
+import ForgotPassword from '../pages/common/ForgottenPassword';
+import ForgotPasswordInitiate from '../pages/common/ForgottenPasswordInitiate';
+import ForgottenPasswordSuccess from '../pages/common/ForgottenPasswordSucess'
 
 
 const CustomRoutes = () => {
@@ -78,6 +80,9 @@ const CustomRoutes = () => {
                 <Route path="/service/:id" element={<UserLayout navItems={UserNavigation}> <CarServiceShoprProfile /> </UserLayout>} />
                 <Route path="/dealers/search" element={<UserLayout navItems={UserNavigation}> <SearchCarDealer /> </UserLayout>} />
                 <Route path="/services/search" element={<UserLayout navItems={UserNavigation}> <SearchServiceShop /> </UserLayout>} />
+                <Route path="/forgotpassword" element={<UserLayout navItems={UserNavigation}> <ForgotPassword /> </UserLayout>} />
+                <Route path="/forgotpassword/initiate/:email" element={<UserLayout navItems={UserNavigation}> <ForgotPasswordInitiate /> </UserLayout>} />
+                <Route path="/forgotpassword/sucess" element={<UserLayout navItems={UserNavigation}> <ForgottenPasswordSuccess /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/maintenance" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><CarMaintenance /></UserLayout>}></ProtectedRoute>} />

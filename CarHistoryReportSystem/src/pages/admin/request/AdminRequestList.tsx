@@ -166,9 +166,10 @@ function AdminRequestList() {
                       <th>{t('Type')}</th>
                       <th>{t('Description')}</th>
                       <th>{t('Created Date')}</th>
-                      <th>{t('Changed Date')}</th>
+                      <th>{t('Created By User')}</th>
                       <th>{t('Status')}</th>
                       <th>{t('Process Note')}</th>
+                      <th>{t('Action')}</th>
               </tr>
           </thead>
           <tbody>
@@ -190,8 +191,8 @@ function AdminRequestList() {
                       <tr key={index}>  
                           <td>{t(model.type)}</td>
                           <td>{model.description}</td>
+                          <td>{model.createdTime}</td>
                           <td>{model.createdByUserId}</td>
-                          <td>{model.modifiedByUserId}</td>
                           <td>{t(model.status)}</td>
                           <td>{model.response}</td>
                           <td onClick={() => { handleRequestAnswer(model) }}><button>{t('Response')}</button></td>
