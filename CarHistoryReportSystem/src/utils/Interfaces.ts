@@ -608,3 +608,19 @@ export interface UserReport {
     createdDate: string
 }
 
+export interface OrderSearchParams {
+    usedId: string
+    orderOption: string
+    transactionId: string
+    createdDateStart: string
+    createdDateEnd: string
+}
+
+export interface OrderResponse {
+    id: number
+    userId?: string
+    orderOptionId: number
+    transactionId: string
+    createdDate: string
+}
+

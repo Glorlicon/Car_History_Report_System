@@ -57,7 +57,12 @@
         text-align: center;
     }
 
-
+.pol-stolen-table tr:nth-child(2n+1){
+    background-color: lightgray;
+}
+.pol-stolen-table tr{
+    background-color: white;
+}
 
 .pol-stolen-spinner {
     border: 8px solid #f3f3f3;

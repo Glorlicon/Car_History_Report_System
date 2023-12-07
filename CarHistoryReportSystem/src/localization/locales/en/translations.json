@@ -362,5 +362,19 @@
   "Remove Feature": "Remove Feature",
   "You do not have any reports": "You do not have any reports",
   "Records up to": "Records up to",
-  "See Report": "See Report"
+  "See Report": "See Report",
+  "Number of transactions this month": "Number of transactions this month",
+  "Daily income this month": "Daily income this month",
+  "nghin VND": "Thousand VND",
+  "Monthly Income": "Monthly Income",
+  "Package Popularity This Month": "Package Popularity This Month",
+  "Packages Income This Month": "Packages Income This Month",
+  "Package Popularity Over Past 6 Months": "Package Popularity Over Past 6 Months",
+  "Packages Income Over 6 Months": "Packages Income Over 6 Months",
+  "User ID": "User ID",
+  "Search by User ID": "Search by User ID",
+  "Transaction ID": "Transaction ID",
+  "Search by Transaction ID": "Search by Transaction ID",
+  "Order Option": "Order Option",
+  "Transaction Date": "Transaction Date"
 }

@@ -30,6 +30,5 @@
     <Folder Include="src\pages\vehicle_registry\" />
     <Folder Include="src\pages\police\" />
     <Folder Include="src\services\azure\" />
-    <Folder Include="src\services\payment\" />
   </ItemGroup>
 </Project>
