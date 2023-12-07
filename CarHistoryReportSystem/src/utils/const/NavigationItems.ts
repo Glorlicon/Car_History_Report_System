@@ -41,6 +41,7 @@ export const ServiceShopNavigation = [
     { label: 'Service Shop Details', link: '/service' },
     { label: 'Car Service List', link: '/service/car-service' },
     { label: 'Recall List', link: '/service/recalls' },
+    { label: 'Admin Request', link: '/service/requests' }
 ]
 
 export const PoliceNavigation = [
@@ -55,12 +56,14 @@ export const InsuranceNavigation = [
     { label: 'Car Insurance', link: '/insurance/insurance-list' },
     { label: 'Car Crash Reports', link: '/insurance/crash' },
     { label: 'Car Stolen Reports', link: '/insurance/stolen' },
-    { label: 'Car Reports', link: '/insurance/car-reports' }
+    { label: 'Car Reports', link: '/insurance/car-reports' },
+    { label: 'Admin Request', link: '/insurance/requests' }
 ]
 
 export const RegistryNavigation = [
     { label: 'Car Inspection', link: '/registry/inspection' },
     { label: 'Car Registration', link: '/registry/registration' },
     { label: 'Car Reports', link: '/registry/car-reports' },
+    { label: 'Admin Request', link: '/registry/requests' }
 ]
 
