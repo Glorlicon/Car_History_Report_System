@@ -28,6 +28,7 @@ import CarMaintenance from '../pages/user/CarMaintenancePage';
 import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
 import AdminRequestPage from '../pages/admin/request/AdminRequestList'
+import UnauthorizedPage from '../pages/special/UnauthorizedPage';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 import { AdminNavigation, CarDealerNavigation, InsuranceNavigation, ServiceShopNavigation, ManufacturerNavigation, PoliceNavigation, RegistryNavigation, UserNavigation } from '../utils/const/NavigationItems';
 import ProtectedRoute from '../utils/ProtectedRoute';
