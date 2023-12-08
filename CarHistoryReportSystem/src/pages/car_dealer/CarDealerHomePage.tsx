@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
+import i18n from '../../localization/config';
 import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
@@ -16,9 +17,9 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const dealerId = JWTDecoder(token).dataprovider 
+    const dealerId = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);     
+    const [loading, setLoading] = useState<boolean>(false);
     const [carList, setCarList] = useState<Car[]>([]);
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [newImages, setNewImages] = useState<File[]>([])
@@ -26,7 +27,7 @@ function CarDealerHomePage() {
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -34,9 +35,8 @@ function CarDealerHomePage() {
     const [review, setReview] = useState<Reviews[]>([]);
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
-
     const [userDetails, setUserDetails] = useState({
-        id:0,
+        id: 0,
         name: '',
         description: '',
         address: '',
@@ -98,7 +98,7 @@ function CarDealerHomePage() {
     );
 
 
-    
+
 
     const handleNextPage = () => {
         if (modalPage < 2) {
@@ -258,7 +258,7 @@ function CarDealerHomePage() {
             if (uploadImage.error) {
                 setError(uploadImage.error)
             } else {
-                const response: APIResponse = await EditProfile({...editDealerProfile, imageLink: uploadImage.data }, token);
+                const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadImage.data }, token);
                 setAdding(false);
                 if (response.error) {
                     setAddError(response.error);
@@ -273,6 +273,7 @@ function CarDealerHomePage() {
 
 
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData();
     }, []);
 
@@ -300,264 +301,263 @@ function CarDealerHomePage() {
 
 
 
-        return (
-            <div className="car-dealer-profile">
+    return (
+        <div className="car-dealer-profile">
 
-                <div className="car-dealer-profile-header-section">
-                    <div className="profile-information">
-                        {/* Breadcrumb */}
-                        <div className="breadcrumb">
-                            Home
-                        </div>
+            <div className="car-dealer-profile-header-section">
+                <div className="profile-information">
+                    {/* Breadcrumb */}
+                    {/*<div className="breadcrumb">*/}
+                    {/*    Home*/}
+                    {/*</div>*/}
 
-                        {/* Dealer Name and Ratings */}
-                        <div className="dealer-info">
-                            <h1>{userDetails?.name}</h1>
-                            <div className="rating-favoured">
-                                <div className="star-summary">
-                                    <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
-                                    <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
-                                </div>
-                                <div className="overlay"></div>
+                    {/* Dealer Name and Ratings */}
+                    <div className="dealer-info">
+                        <h1>{userDetails?.name}</h1>
+                        <div className="rating-favoured">
+                            <div className="star-summary">
+                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
-
+                            <div className="overlay"></div>
                         </div>
 
-                        {/* Contact Info */}
-                        <div className="phone-info">
-                            <span>Phone Number: {userDetails?.phoneNumber}</span>
-                        </div>
-
-                        {/* Navigation */}
-                        <div className="navigation">
-                            <a href="#cars-for-sale-section">Car For Sale</a>
-                            <a href="#ratings-reviews-section">Reviews</a>
-                            <a href="#about-us-section">About Us</a>
-                        </div>
                     </div>
 
-                    {/* Profile Image (This could be a user or dealer profile) */}
-                    <div>
-                        <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
-                            <Tooltip title={t('Edit')}>
-                                <Avatar
+                    <div className="phone-info">
+                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="navigation">
+                        <a href="#cars-for-sale-section">{t('Car For Sale')}</a>
+                        <a href="#ratings-reviews-section">{t('Reviews')}</a>
+                        <a href="#about-us-section">{t('Working Schedule')}</a>
+                    </div>
+                </div>
+
+                {/* Profile Image (This could be a user or dealer profile) */}
+                <div>
+                    <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                        <Tooltip title={t('Edit')}>
+                            <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
                                 sx={{ width: 100, height: 100, cursor: 'pointer' }}
-                                />
-                            </Tooltip>
-                        </div>
+                            />
+                        </Tooltip>
                     </div>
+                </div>
 
 
 
+
+            </div>
+            <div className="cars-for-sale-section" id="cars-for-sale-sections">
+                <div className="listing-header">
+                    <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
+                    <div className="filters">
+                        Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
+                    </div>
+                </div>
+
+
+                <div className="vehicle-grid">
+
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                <div className="ad-car-spinner"></div>
+                            </td>
+                        </tr>
+                    ) : error ? (
+                        <tr>
+                            <td colSpan={5} style={{ textAlign: 'center' }}>
+                                {error}
+                                <button onClick={fetchData} className="ad-car-retry-btn">{t('Retry')}</button>
+                            </td>
+                        </tr>
+                    ) : carList.length > 0 ? (
+                        carList.map((model: any, index: number) => (
+                            <div className="vehicle-card">
+                                <div className="vehicle-image">
+                                    <Box
+                                        component="img"
+                                        sx={{
+                                            height: '100%',
+                                            width: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                        alt="The house from the offer."
+                                        src={GetImages(model.carImages[0].imageLink)}
+                                    />
+                                </div>
+                                <p>{t('Used')} <span>{model.modelId}</span></p>
+                                <p>{t('Price')}: <span>{model.carSalesInfo.price}</span></p>
+                                <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                            </div>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={5}>{t('No cars found')}</td>
+                        </tr>
+                    )}
 
                 </div>
-                <div className="cars-for-sale-section" id="cars-for-sale-sections">
-                    <div className="listing-header">
-                        <h2>{carList.length} Used Vehicles for Sale at {userDetails?.name}</h2>
-                        <div className="filters">
-                            Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
+                <div className="pagination">
+                    1 - 6 Result on 9 Total Result
+                    <div className="page-links">
+                        <a href="#">Previous</a>
+                        <a href="#">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        ...
+                        <a href="#">Next</a>
+                    </div>
+                </div>
+            </div>
+
+            <div className="ratings-reviews-section" id="ratings-reviews-section">
+                <h1>{t('Ratings & Review')}</h1>
+                <div className="rating-comment">
+
+                    <div className="rating">
+                        <div className="star-summary">
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                            <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
+                        </div>
+                        <div className="star-details">
+                            {Object.keys(starCounts)
+                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                .map((star, index) => {
+                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                    return (
+                                        <div className="star-row" key={index}>
+                                            <span className="star-label">{star} {t('Stars')}</span>
+                                            <div className="star-bar">
+                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The filled portion of the bar */}
+                                                </div>
+                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The empty portion of the bar */}
+                                                </div>
+                                            </div>
+                                            <span className="star-percentage">{percentage}%</span>
+                                        </div>
+                                    );
+                                })}
                         </div>
                     </div>
 
 
-                    <div className="vehicle-grid">
-
-                        {loading ? (
-                            <tr>
-                                <td colSpan={5} style={{ textAlign: 'center' }}>
-                                    <div className="ad-car-spinner"></div>
-                                </td>
-                            </tr>
-                        ) : error ? (
-                            <tr>
-                                <td colSpan={5} style={{ textAlign: 'center' }}>
-                                    {error}
-                                    <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
-                                </td>
-                            </tr>
-                        ) : carList.length > 0 ? (
-                            carList.map((model: any, index: number) => (
-                                <div className="vehicle-card">
-                                    <div className="vehicle-image">
-                                        <Box
-                                            component="img"
-                                            sx={{
-                                                height: '100%',
-                                                width: '100%',
-                                                objectFit: 'cover',
-                                            }}
-                                            alt="The house from the offer."
-                                            src={GetImages(model.carImages[0].imageLink)}
-                                        />
+                    <div className="reviews-list">
+                        {review.length > 0 ? (
+                            review.map((reviewItem, index) => (
+                                <div className="review-card" key={index}>
+                                    <div className="review-header">
+                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
+                                        <Rating name="read-only" value={reviewItem.rating} readOnly />
+                                        {/* You might want to fetch the username using reviewItem.userId */}
+                                        <span className="review-user">
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                        </span>
                                     </div>
-                                    <p>Used <span>{model.modelId}</span></p>
-                                    <p>Price: <span>{model.carSalesInfo.price}</span></p>
-                                    <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                                    <p className="review-content">
+                                        {reviewItem.description}
+                                    </p>
                                 </div>
                             ))
                         ) : (
-                            <tr>
-                                <td colSpan={5}>No cars found</td>
-                            </tr>
+                            <p>{t('No reviews available')}</p>
                         )}
-
                     </div>
-                    <div className="pagination">
-                        1 - 6 Result on 9 Total Result
-                        <div className="page-links">
-                            <a href="#">Previous</a>
-                            <a href="#">1</a>
-                            <a href="#">2</a>
-                            <a href="#">3</a>
-                            <a href="#">4</a>
-                            ...
-                            <a href="#">Next</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="ratings-reviews-section" id="ratings-reviews-section">
-                    <h1>Ratings & Reviews</h1>
-                    <div className="rating-comment">
-
-                        <div className="rating">
-                            <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
-                                <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
-                            </div>
-                            <div className="star-details">
-                                {Object.keys(starCounts)
-                                    .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
-                                    .map((star, index) => {
-                                        const starKey = star as keyof typeof starCounts; // Assert the type of star
-                                        const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
-                                        return (
-                                            <div className="star-row" key={index}>
-                                                <span className="star-label">{star} Stars</span>
-                                                <div className="star-bar">
-                                                    <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                        {/* The filled portion of the bar */}
-                                                    </div>
-                                                    <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                        {/* The empty portion of the bar */}
-                                                    </div>
-                                                </div>
-                                                <span className="star-percentage">{percentage}%</span>
-                                            </div>
-                                        );
-                                    })}
-                            </div>
-                        </div>
 
 
-                        <div className="reviews-list">
-                            {review.length > 0 ? (
-                                review.map((reviewItem, index) => (
-                                    <div className="review-card" key={index}>
-                                        <div className="review-header">
-                                            {/* Display the stars based on the rating. This assumes a rating out of 5 */}
-                                            <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                            {/* You might want to fetch the username using reviewItem.userId */}
-                                            <span className="review-user">
-                                                by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
-                                            </span>
-                                        </div>
-                                        <p className="review-content">
-                                            {reviewItem.description}
-                                        </p>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No reviews available</p>
-                            )}
-                        </div>
-
-
-
-                    </div>
-                    <div className="review-pagination">
-                        <button className="pagination-button">Previous</button>
-                        {[1, 2, 3, 4, 5].map((page, index) => (
-                            <button className="pagination-button" key={index}>{page}</button>
-                        ))}
-                        <button className="pagination-button">Next</button>
-                    </div>
 
                 </div>
-
-
-                <div className="about-us-section" id="about-us-section">
-
-                    <div className="about-us-title">
-                        <h2>Working Schedule</h2>
-                    </div>
-
-                    <div className="about-us-section">
-                        {/* ... other parts of the section ... */}
-
-                        <div className="operation-hours">
-                            {isDefaultSchedule(userDetails.workingTimes) ? (
-                                <p>No work schedule present</p>
-                            ) : (
-                                userDetails.workingTimes.map((day, index) => (
-                                    <p key={index}>
-                                        {daysOfWeek[day.dayOfWeek]}:
-                                        {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
-                                    </p>
-                                ))
-                            )}
-                        </div>
-
-                        {/* ... other parts of the section ... */}
-                    </div>
+                <div className="review-pagination">
+                    <button className="pagination-button">Previous</button>
+                    {[1, 2, 3, 4, 5].map((page, index) => (
+                        <button className="pagination-button" key={index}>{page}</button>
+                    ))}
+                    <button className="pagination-button">Next</button>
                 </div>
-                {editDealerProfile && (
-                    <div className="dealer-car-sales-modal">
-                        <div className="dealer-car-sales-modal-content-2">
-                            <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                            <h2>Edit Profile</h2>
-                            {modalPage === 1 && (
-                                <CarDealerProfilePage
-                                    action="Edit"
-                                    userDetails={editDealerProfile}
-                                    handleInputChange={handleInputChange}
-                                />
-                            )}
-                            {modalPage === 2 && (
-                                <CarDealerProfileImage
-                                    model={editDealerProfile}
-                                    handleAddImages={handleAddImages}
-                                    imageUrl={imageUrl}
-                                />
-                            )}
-                            {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
-                                <>
-                                    <div>
-                                        <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
-                                        </button>
-                                        <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                            {modalPage < 2 ? 'Next' : 'Edit'}
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                            {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
-                            {/*    Previous*/}
-                            {/*</button>*/}
-                            {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
-                            {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
-                            {/*</button>*/}
-                            {addError && (
-                                <p className="dealer-car-sales-error">{addError}</p>
-                            )}
-                        </div>
-                    </div>
-                )}
+
             </div>
-        );
+
+
+            <div className="about-us-section" id="about-us-section">
+
+                <div className="about-us-title">
+                    <h2>{t('Working Schedule')}</h2>
+                </div>
+
+                <div className="about-us-section">
+                    {/* ... other parts of the section ... */}
+
+                    <div className="operation-hours">
+                        {isDefaultSchedule(userDetails.workingTimes) ? (
+                            <p>{t('No work schedule present')}</p>
+                        ) : (
+                            userDetails.workingTimes.map((day, index) => (
+                                <p key={index}>
+                                    {daysOfWeek[day.dayOfWeek]}:
+                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                </p>
+                            ))
+                        )}
+                    </div>
+
+                    {/* ... other parts of the section ... */}
+                </div>
+            </div>
+            {editDealerProfile && (
+                <div className="dealer-car-sales-modal">
+                    <div className="dealer-car-sales-modal-content-2">
+                        <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
+                        <h2>Edit Profile</h2>
+                        {modalPage === 1 && (
+                            <CarDealerProfilePage
+                                action="Edit"
+                                userDetails={editDealerProfile}
+                                handleInputChange={handleInputChange}
+                            />
+                        )}
+                        {modalPage === 2 && (
+                            <CarDealerProfileImage
+                                model={editDealerProfile}
+                                handleAddImages={handleAddImages}
+                                imageUrl={imageUrl}
+                            />
+                        )}
+                        {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
+                            <>
+                                <div>
+                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
+                                        Previous
+                                    </button>
+                                    <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
+                                        {modalPage < 2 ? 'Next' : 'Edit'}
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
+                        {/*    Previous*/}
+                        {/*</button>*/}
+                        {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
+                        {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
+                        {/*</button>*/}
+                        {addError && (
+                            <p className="dealer-car-sales-error">{addError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default CarDealerHomePage;

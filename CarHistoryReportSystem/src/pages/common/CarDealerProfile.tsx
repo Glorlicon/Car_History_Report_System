@@ -9,13 +9,16 @@ import '../../styles/CarDealerProfile.css'
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GetImages } from '../../services/azure/Images';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, Tooltip } from '@mui/material';
+import { t } from 'i18next';
+import i18n from '../../localization/config';
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carList, setCarList] = useState<Car[]>([]);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [ratingValue, setRatingValue] = useState<number | null>(null);
     const [comment, setComment] = useState('');
     const [adding, setAdding] = useState(false);
@@ -32,7 +35,7 @@ function CarDealerHomePage() {
         phoneNumber: '',
         email: '',
         type: 0,
-        imagelink: '',
+        imageLink: '',
         workingTimes: Array(7).fill({
             dayOfWeek: 0,
             startHour: 0,
@@ -125,6 +128,7 @@ function CarDealerHomePage() {
     };
 
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData();
     }, []);
 
@@ -227,48 +231,55 @@ function CarDealerHomePage() {
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
                     {/* Breadcrumb */}
-                    <div className="breadcrumb">
-                        Home
-                    </div>
+                    {/*<div className="breadcrumb">*/}
+                    {/*    Home*/}
+                    {/*</div>*/}
 
                     {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
-                            <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
+                            <div className="star-summary">
+                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
+                            </div>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
 
-                    {/* Contact Info */}
                     <div className="phone-info">
-                        <span>Phone Number: {userDetails?.phoneNumber}</span>
+                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
                     </div>
 
                     {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale-section">Car For Sale</a>
-                        <a href="#ratings-reviews-section">Reviews</a>
-                        <a href="#about-us-section">About Us</a>
+                        <a href="#cars-for-sale-section">{t('Car For Sale')}</a>
+                        <a href="#ratings-reviews-section">{t('Reviews')}</a>
+                        <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
 
                 {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
                     <div className="profile-image">
-                        <Avatar
-                            alt="Service Shop"
-                            src={GetImages(userDetails?.imagelink)}
-                            sx={{ width: 100, height: 100 }}
-                        />
+                        <Tooltip title={t('Edit')}>
+                            <Avatar
+                                alt="Dealer Shop"
+                                src={GetImages(userDetails?.imageLink)}
+                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                            />
+                        </Tooltip>
                     </div>
                 </div>
+
+
+
+
             </div>
-            <div className="cars-for-sale-section" id="cars-for-sale-section">
+            <div className="cars-for-sale-section" id="cars-for-sale-sections">
                 <div className="listing-header">
-                    <h2>{carList.length} Used Vehicles for Sale at {userDetails?.name}</h2>
+                    <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
                     <div className="filters">
                         Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
                     </div>
@@ -287,7 +298,7 @@ function CarDealerHomePage() {
                         <tr>
                             <td colSpan={5} style={{ textAlign: 'center' }}>
                                 {error}
-                                <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
+                                <button onClick={fetchData} className="ad-car-retry-btn">{t('Retry')}</button>
                             </td>
                         </tr>
                     ) : carList.length > 0 ? (
@@ -305,14 +316,14 @@ function CarDealerHomePage() {
                                         src={GetImages(model.carImages[0].imageLink)}
                                     />
                                 </div>
-                                <p>Used <span>{model.modelId}</span></p>
-                                <p>Price: <span>{model.carSalesInfo.price}</span></p>
+                                <p>{t('Used')} <span>{model.modelId}</span></p>
+                                <p>{t('Price')}: <span>{model.carSalesInfo.price}</span></p>
                                 <a href={`/sales/details/${model.vinId}`}>More Detail</a>
                             </div>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No cars found</td>
+                            <td colSpan={5}>{t('No cars found')}</td>
                         </tr>
                     )}
 
@@ -332,12 +343,12 @@ function CarDealerHomePage() {
             </div>
 
             <div className="ratings-reviews-section" id="ratings-reviews-section">
-                <h1>Ratings & Reviews</h1>
+                <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -348,7 +359,7 @@ function CarDealerHomePage() {
                                     const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
                                     return (
                                         <div className="star-row" key={index}>
-                                            <span className="star-label">{star} Stars</span>
+                                            <span className="star-label">{star} {t('Stars')}</span>
                                             <div className="star-bar">
                                                 <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
                                                     {/* The filled portion of the bar */}
@@ -366,33 +377,13 @@ function CarDealerHomePage() {
 
 
                     <div className="reviews-list">
-                        {token && ( // This line checks if token is not null, which implies user is logged in
-                            <div className="comment-section">
-                                <form id="comment-form" onSubmit={(e) => { e.preventDefault(); handleSubmitReview(); }}>
-                                    <div className="star-rating">
-                                        <Rating
-                                            name="simple-controlled"
-                                            value={ratingValue}
-                                            onChange={handleRatingChange}
-                                        />
-                                    </div>
-                                    <textarea
-                                        id="comment"
-                                        name="comment"
-                                        placeholder="Write a comment..."
-                                        value={comment}
-                                        onChange={handleCommentChange}
-                                        required
-                                    ></textarea>
-                                    <button onClick={handleSubmitReview} disabled={adding}>Submit</button>
-                                </form>
-                            </div>
-                        )}
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
+                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
+                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
                                             by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
                                         </span>
@@ -403,10 +394,9 @@ function CarDealerHomePage() {
                                 </div>
                             ))
                         ) : (
-                            <p>No reviews available</p>
+                            <p>{t('No reviews available')}</p>
                         )}
                     </div>
-
 
 
 
@@ -425,7 +415,7 @@ function CarDealerHomePage() {
             <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>Working Schedule</h2>
+                    <h2>{t('Working Schedule')}</h2>
                 </div>
 
                 <div className="about-us-section">
@@ -433,12 +423,12 @@ function CarDealerHomePage() {
 
                     <div className="operation-hours">
                         {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>No work schedule present</p>
+                            <p>{t('No work schedule present')}</p>
                         ) : (
                             userDetails.workingTimes.map((day, index) => (
                                 <p key={index}>
                                     {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
                                 </p>
                             ))
                         )}

@@ -36,14 +36,6 @@ function ServiceShopHomePage() {
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    //const [showAllMakes, setShowAllMakes] = useState(false);
-    //const maxItemsToShow = 15;
-    /*const makesList = userDetails.makes; // Replace with actual makes list from userDetails*/
-    /*const visibleMakes = showAllMakes ? makesList : makesList.slice(0, maxItemsToShow);*/
-    //const [showAllServices, setShowAllServices] = useState(false);
-    //const maxServicesToShow = 15;
-    //const servicesList = userDetails.services; // Replace with actual services list from userDetails
-    //const visibleServices = showAllServices ? servicesList : servicesList.slice(0, maxServicesToShow);
 
 
     const [userDetails, setUserDetails] = useState({
@@ -342,14 +334,14 @@ function ServiceShopHomePage() {
         <div className="car-dealer-profile">
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    <div className="breadcrumb">
-                        Home
-                    </div>
+                    {/*<div className="breadcrumb">*/}
+                    {/*    Home*/}
+                    {/*</div>*/}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
