@@ -29,6 +29,28 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(true);
+    type UserRole = 'User' | 'CarDealer' | 'InsuranceCompany' | 'ServiceShop' | 'Manufacturer' | 'VehicleRegistry' | 'PoliceOffice';
+
+    const roleProfilePath: { [key in UserRole]: string } = {
+        "User": "/profile",
+        "CarDealer": "/dealer/profile",
+        "InsuranceCompany": "/insurance/profile",
+        "ServiceShop": "/service/profile",
+        "Manufacturer": "/manufacturer/profile",
+        "VehicleRegistry": "/registry/profile",
+        "PoliceOffice": "/police/profile",
+    };
+    const roleNotificationPath: { [key in UserRole]: string } = {
+        "User": "/notification",
+        "CarDealer": "/dealer/notification",
+        "InsuranceCompany": "/insurance/notification",
+        "ServiceShop": "/service/notification",
+        "Manufacturer": "/manufacturer/notification",
+        "VehicleRegistry": "/registry/notification",
+        "PoliceOffice": "/police/notification",
+    };
+    const profilePath = roleProfilePath[role as UserRole] || '/profile';
+    const notificationPath = roleNotificationPath[role as UserRole] || '/notification';
 
     const getLanguage = () => {
         let currentLanguage = i18n.language;
@@ -40,7 +62,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
             dispatch(setLanguage('vn'))
         }
     }
-
+    
     const fetchData = async () => {
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
@@ -120,8 +142,8 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     <input type="checkbox" id="languageSwitch" onChange={getLanguage} checked={i18n.language === 'vn' ? false : true} className="language-toggle-switch" />
                     <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
                     <label className="currentLanguage">{i18n.language}</label>
-                    <a href="/profile" className="nav-item">{t('Hi')}, {username}</a>
-                    <IconButton onClick={() => navigate('/notification')}>
+                    <a href={profilePath} className="nav-item">{t('Hi')}, {username}</a>
+                    <IconButton onClick={() => navigate(notificationPath)}>
                         <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
                             <NotificationsIcon sx={{ color: 'white' }} />
                         </Badge>

@@ -68,8 +68,8 @@ const SideNavigator: React.FC<SideNavigationBarProps> = ({ items }) => {
                     <img src={logo} alt="Company Logo" className="side-logo" />
                 </div>
                 <div className="welcome-message">
-                    {t('Welcome')}, {decoded.name}
-                    <IconButton onClick={() => { console.log('onClick'); }}>
+                    <a href="/admin/profile" className="nav-item">{t('Hi')}, {decoded.name}</a>
+                    <IconButton onClick={() => navigate('/admin/notification')}>
                         <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
                                 <NotificationsIcon sx={{ color: 'white' }} />
                             </Badge>
