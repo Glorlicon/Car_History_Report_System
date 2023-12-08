@@ -446,3 +446,8 @@ svg {
         border-radius: 5px;
         margin: 5px 0;
     }
+
+.operation-hours p{
+    text-align:center;
+    gap:50px;
+}

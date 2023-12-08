@@ -1,11 +1,15 @@
+import { Avatar, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
+import i18n from '../../localization/config';
 import { AddReview, EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
+import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
@@ -16,7 +20,7 @@ function ServiceShopProfile() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
     const [comment, setComment] = useState('');
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
@@ -25,6 +29,7 @@ function ServiceShopProfile() {
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
     const [allServices, setAllServices] = useState<string[]>([]);
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
 
 
     const [userDetails, setUserDetails] = useState({
@@ -36,7 +41,7 @@ function ServiceShopProfile() {
         phoneNumber: '',
         email: '',
         type: 0,
-        imagelink: '',
+        imageLink: '',
         workingTimes: Array(7).fill({
             dayOfWeek: 0,
             startHour: 0,
@@ -222,6 +227,7 @@ function ServiceShopProfile() {
     }, [review]);
 
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData();
     }, []);
 
@@ -246,96 +252,76 @@ function ServiceShopProfile() {
             return currentUser; // Return the currentUser as is if no updates are needed
         });
 
-        console.log("User", userDetails);
     }, [value, max, userDetails, defaultSchedule]);
 
 
 
     return (
         <div className="car-dealer-profile">
-
-            <div className="header-section">
+            <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
                     <div className="breadcrumb">
                         Home
                     </div>
-
-                    {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
-                                favNum Favourited This Shop
                             </span>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
-
-                    {/* Contact Info */}
                     <div className="phone-info">
-                        <span>Phone Number: {userDetails?.phoneNumber}</span>
+                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
                     </div>
-
-                    {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale">Car For Sale</a>
-                        <a href="#reviews">Reviews</a>
-                        <a href="#about-us">About Us</a>
+                        <a href="#service-information-section">{t('Top Service Performed')}</a>
+                        <a href="#ratings-reviews-section">{t('Reviews')}</a>
+                        <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
-
-                {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
                     <div className="profile-image">
-                        {/* Add image here */}
+                        <Tooltip title={t('Click to edit')}>
+                            <Avatar
+                                alt="Dealer Shop"
+                                src={GetImages(userDetails?.imageLink)}
+                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                            />
+                        </Tooltip>
                     </div>
                 </div>
             </div>
 
-            <div className="service-information-section">
+            <div className="service-information-section" id="service-information-section">
                 <div className="service-info">
-                    <h3>Top Services Performed</h3>
-                    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these services, in addition to many others:</p>
+                    <h3>{t('Top Services Performed')}</h3>
+                    <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
                     <div className="services-list">
                         {allServices.length === 0 ? (
-                            <p>No services available</p>
+                            <p>{t('No services available')}</p>
                         ) : (
                             allServices.map((service, index) => (
-                                <span key={index}>{service}</span>
+                                <span key={index}>{t(service)}</span>
                             ))
                         )}
                     </div>
                 </div>
-                {/*<div className="makes-serviced">*/}
-                {/*    <h3>Top Makes Serviced</h3>*/}
-                {/*    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these Makes, in addition to many others:</p>*/}
-                {/*    <div className="makes-list">*/}
-                {/*        {visibleMakes.map((make, index) => (*/}
-                {/*            <span key={index}>• {make}</span>*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*    {makesList.length > maxItemsToShow && (*/}
-                {/*        <button onClick={() => setShowAllMakes(!showAllMakes)}>*/}
-                {/*            {showAllMakes ? 'Show Less' : 'Show More'}*/}
-                {/*        </button>*/}
-                {/*    )}*/}
-                {/*</div>*/}
             </div>
 
 
-            <div className="ratings-reviews-section">
-                <h1>Ratings & Reviews</h1>
+            <div className="ratings-reviews-section" id="ratings-reviews-section">
+                <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -346,13 +332,11 @@ function ServiceShopProfile() {
                                     const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
                                     return (
                                         <div className="star-row" key={index}>
-                                            <span className="star-label">{star} Stars</span>
+                                            <span className="star-label">{star} {t('Stars')}</span>
                                             <div className="star-bar">
                                                 <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The filled portion of the bar */}
                                                 </div>
                                                 <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The empty portion of the bar */}
                                                 </div>
                                             </div>
                                             <span className="star-percentage">{percentage}%</span>
@@ -364,33 +348,13 @@ function ServiceShopProfile() {
 
 
                     <div className="reviews-list">
-                        {token && ( // This line checks if token is not null, which implies user is logged in
-                            <div className="comment-section">
-                                <form id="comment-form" onSubmit={(e) => { e.preventDefault(); handleSubmitReview(); }}>
-                                    <div className="star-rating">
-                                        <Rating
-                                            name="simple-controlled"
-                                            value={ratingValue}
-                                            onChange={handleRatingChange}
-                                        />
-                                    </div>
-                                    <textarea
-                                        id="comment"
-                                        name="comment"
-                                        placeholder="Write a comment..."
-                                        value={comment}
-                                        onChange={handleCommentChange}
-                                        required
-                                    ></textarea>
-                                    <button onClick={handleSubmitReview} disabled={adding}>Submit</button>
-                                </form>
-                            </div>
-                        )}
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
+                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
+                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
                                             by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
                                         </span>
@@ -401,7 +365,7 @@ function ServiceShopProfile() {
                                 </div>
                             ))
                         ) : (
-                            <p>No reviews available</p>
+                            <p>{t('No reviews available')}</p>
                         )}
                     </div>
 
@@ -419,10 +383,10 @@ function ServiceShopProfile() {
             </div>
 
 
-            <div className="about-us-section">
+            <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>Working Schedule</h2>
+                    <h2>{t('Working Schedule')}</h2>
                 </div>
 
                 <div className="about-us-section">
@@ -430,12 +394,12 @@ function ServiceShopProfile() {
 
                     <div className="operation-hours">
                         {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>No work schedule present</p>
+                            <p>{t('No work schedule present')}</p>
                         ) : (
                             userDetails.workingTimes.map((day, index) => (
                                 <p key={index}>
                                     {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
                                 </p>
                             ))
                         )}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { GetImages } from '../../../services/azure/Images';
 import { CarDealer, DataProvider, EditDataProvider } from '../../../utils/Interfaces';
 import blank from '../../../blank.png'
+import { t } from 'i18next';
 
 interface CarDealerProfileImageProps {
     model: EditDataProvider
@@ -27,7 +28,7 @@ const CarDealerProfileImage: React.FC<CarDealerProfileImageProps> = ({
     return (
         <div className="dealer-car-sales-form-image-columns">
             <div className="dealer-car-sales-form-image-column">
-                <label>Profile Avatar</label>
+                <label>{t('Profile Avatar')}</label>
                     <div className="dealer-car-sales-images">
                     <input
                         type="file"

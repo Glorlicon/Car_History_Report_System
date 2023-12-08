@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
+import i18n from '../../localization/config';
 import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
@@ -22,11 +23,10 @@ function ServiceShopHomePage() {
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
     const [newImages, setNewImages] = useState<File[]>([])
     const [User, setUser] = useState<DataProvider | null>(null) //EditDataProvider
-    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [adding, setAdding] = useState(false);
     const [review, setReview] = useState<Reviews[]>([]);
@@ -35,7 +35,7 @@ function ServiceShopHomePage() {
     const [allServices, setAllServices] = useState<string[]>([]);
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     //const [showAllMakes, setShowAllMakes] = useState(false);
     //const maxItemsToShow = 15;
     /*const makesList = userDetails.makes; // Replace with actual makes list from userDetails*/
@@ -143,7 +143,6 @@ function ServiceShopHomePage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-
         const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
@@ -173,9 +172,6 @@ function ServiceShopHomePage() {
                 ...dataProviderResponse.data,
                 workingTimes: transformedWorkingTimes
             });
-
-            console.log("Transformed Data:", userDetails);
-
             const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(dealerId);
             if (carServiceResponse.error) {
                 setError(carServiceResponse.error);
@@ -184,7 +180,6 @@ function ServiceShopHomePage() {
 
                 // Define the initial value of the accumulator explicitly as an array of strings
                 const initialServices: string[] = [];
-
                 const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
                     if (item.servicesName) {
                         const serviceNames = item.servicesName.split(', ').map(name => name.trim());
@@ -239,7 +234,6 @@ function ServiceShopHomePage() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
         const { name, value, type } = e.target;
-
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
 
@@ -273,7 +267,6 @@ function ServiceShopHomePage() {
                 return { ...prevProfile, [name]: value };
             }
         });
-        console.log("updated user:", editDealerProfile)
     };
 
 
@@ -318,6 +311,7 @@ function ServiceShopHomePage() {
 
 
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData();
     }, [dealerId, token]);
 
@@ -340,14 +334,12 @@ function ServiceShopHomePage() {
             return currentUser;
         });
 
-        console.log("User", userDetails);
     }, [value, max, userDetails, defaultSchedule]);
 
 
 
     return (
         <div className="car-dealer-profile">
-
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
                     <div className="breadcrumb">
@@ -357,28 +349,27 @@ function ServiceShopHomePage() {
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
-                                favNum Favourited This Shop
                             </span>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
                     <div className="phone-info">
-                        <span>Phone Number: {userDetails?.phoneNumber}</span>
+                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
                     </div>
                     <div className="navigation">
-                        <a href="#service-information-section">Car For Sale</a>
-                        <a href="#ratings-reviews-section">Reviews</a>
-                        <a href="#about-us-section">About Us</a>
+                        <a href="#service-information-section">{t('Top Service Performed')}</a>
+                        <a href="#ratings-reviews-section">{t('Reviews')}</a>
+                        <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
                 <div>
                     <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
-                        <Tooltip title={t('Edit')}>
+                        <Tooltip title={t('Click to edit')}>
                             <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
@@ -391,14 +382,14 @@ function ServiceShopHomePage() {
 
             <div className="service-information-section" id="service-information-section">
                 <div className="service-info">
-                    <h3>Top Services Performed</h3>
-                    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these services, in addition to many others:</p>
+                    <h3>{t('Top Services Performed')}</h3>
+                    <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
                     <div className="services-list">
                         {allServices.length === 0 ? (
-                            <p>No services available</p>
+                            <p>{t('No services available')}</p>
                         ) : (
                             allServices.map((service, index) => (
-                                <span key={index}>{service}</span>
+                                <span key={index}>{t(service)}</span>
                             ))
                         )}
                     </div>
@@ -407,12 +398,12 @@ function ServiceShopHomePage() {
 
 
             <div className="ratings-reviews-section" id="ratings-reviews-section">
-                <h1>Ratings & Reviews</h1>
+                <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -423,7 +414,7 @@ function ServiceShopHomePage() {
                                     const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
                                     return (
                                         <div className="star-row" key={index}>
-                                            <span className="star-label">{star} Stars</span>
+                                            <span className="star-label">{star} {t('Stars')}</span>
                                             <div className="star-bar">
                                                 <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
                                                     {/* The filled portion of the bar */}
@@ -458,7 +449,7 @@ function ServiceShopHomePage() {
                                 </div>
                             ))
                         ) : (
-                            <p>No reviews available</p>
+                                <p>{t('No reviews available')}</p>
                         )}
                     </div>
 
@@ -479,7 +470,7 @@ function ServiceShopHomePage() {
             <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>Working Schedule</h2>
+                    <h2>{t('Working Schedule')}</h2>
                 </div>
 
                 <div className="about-us-section">
@@ -487,12 +478,12 @@ function ServiceShopHomePage() {
 
                     <div className="operation-hours">
                         {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>No work schedule present</p>
+                            <p>{t('No work schedule present')}</p>
                         ) : (
                             userDetails.workingTimes.map((day, index) => (
                                 <p key={index}>
                                     {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
                                 </p>
                             ))
                         )}
@@ -505,7 +496,7 @@ function ServiceShopHomePage() {
                 <div className="dealer-car-sales-modal">
                     <div className="dealer-car-sales-modal-content-2">
                         <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Profile</h2>
+                        <h2>{t('Edit Profile')}</h2>
                         {modalPage === 1 && (
                             <CarDealerProfilePage
                                 action="Edit"
@@ -524,10 +515,10 @@ function ServiceShopHomePage() {
                             <>
                                 <div>
                                     <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
+                                        {t('Previous')}
                                     </button>
                                     <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
+                                        {modalPage < 2 ? t('Next') : t('Edit')}
                                     </button>
                                 </div>
                             </>
