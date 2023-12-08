@@ -469,5 +469,11 @@
   "No Ratings": "Chưa có đánh giá",
   "Average Rating": "Đánh giá trung bình",
   "Car For Sale": "Xe đang bán",
-  "Used Vehicles for Sale at": "Xe đang bán tại"
+  "Used Vehicles for Sale at": "Xe đang bán tại",
+  "Comment": "Bình luận",
+  "Submit": "Đăng",
+  "Comment Succesfully": "Đăng tải bình luận thành công",
+  "Error Adding Comment": "Đăng tải bình luận thất bại",
+  "Please log in to submit a review.": "Hãy đăng nhập để bình luận",
+  "UnknownDate": "Ngày không xác định"
 }

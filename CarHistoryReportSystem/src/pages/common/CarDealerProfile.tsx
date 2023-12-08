@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { AddReview, EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
+import { AddReview, EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews, UserDataproviderId } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
@@ -9,7 +9,7 @@ import '../../styles/CarDealerProfile.css'
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GetImages } from '../../services/azure/Images';
-import { Avatar, Box, Tooltip } from '@mui/material';
+import { Alert, Avatar, Box, Button, Snackbar, TextField, Tooltip } from '@mui/material';
 import { t } from 'i18next';
 import i18n from '../../localization/config';
 function CarDealerHomePage() {
@@ -19,13 +19,16 @@ function CarDealerHomePage() {
     const [carList, setCarList] = useState<Car[]>([]);
     const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    const [ratingValue, setRatingValue] = useState<number | null>(null);
+    const [ratingValue, setRatingValue] = useState<number | null>(1);
     const [comment, setComment] = useState('');
     const [adding, setAdding] = useState(false);
+    const [popUpError, setPopupError] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [review, setReview] = useState<Reviews[]>([]);
+    const [existingReview, setExistingReview] = useState<Reviews>();
     const [averageRating, setAverageRating] = useState(0);
     const [starCounts, setStarCounts] = useState({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
+    
     const [userDetails, setUserDetails] = useState({
         id: 0,
         name: '',
@@ -46,6 +49,14 @@ function CarDealerHomePage() {
         })
     });
 
+    const [open, setOpen] = React.useState(false);
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setPopupError(false);
+        setOpen(false);
+    };
     interface TransformedWorkingTime {
         dayOfWeek: number;
         startHour: number;
@@ -95,16 +106,6 @@ function CarDealerHomePage() {
     const value = 50;
     const max = 100;
 
-    // Handler for the rating change
-    const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
-        setRatingValue(newValue);
-    };
-
-    // Handler for the comment change
-    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setComment(event.target.value);
-    };
-
     const handleSubmitReview = async () => {
         const actualId = id?.replace('id=', '');
         const newReview: Reviews = {
@@ -120,15 +121,54 @@ function CarDealerHomePage() {
             const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
             setAdding(false);
             if (reviewResponse.error) {
+                setPopupError(true);
                 setAddError(reviewResponse.error);
             } else {
+                setOpen(true);
                 fetchData()
+            }
+        }
+    };
+
+    const handleEditReview = async () => {
+        const actualId = id?.replace('id=', '');
+        const newReview: Reviews = {
+            userId: actualId,
+            description: comment,
+            rating: ratingValue || 0,
+            createdTime: new Date()
+        };
+        setReview(prevReviews => [...prevReviews, newReview]);
+        if (review != null) {
+            setAdding(true);
+            setAddError(null);
+            const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
+            setAdding(false);
+            if (reviewResponse.error) {
+                setPopupError(true);
+                setAddError(reviewResponse.error);
+            } else {
+                setOpen(true);
+                fetchData()
+            }
+        }
+    };
+
+    const handleCheckUserReview = async () => {
+        if (id != null) {
+            const actualId = id.replace('id=', '');
+            const reviewResponse: APIResponse = await GetUserComment(userDetails.id, actualId, token);
+            if (!reviewResponse.error && reviewResponse != null) {
+                setExistingReview(reviewResponse.data);
             }
         }
     };
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
+        if (token != null) {
+            handleCheckUserReview()
+        }
         fetchData();
     }, []);
 
@@ -240,7 +280,9 @@ function CarDealerHomePage() {
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Typography component="legend">
+                                    {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                                </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <div className="overlay"></div>
@@ -348,7 +390,9 @@ function CarDealerHomePage() {
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                            <Typography component="legend">
+                                {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                            </Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -377,15 +421,68 @@ function CarDealerHomePage() {
 
 
                     <div className="reviews-list">
+                        <Box className="review-comment-box">
+                            {token ? (
+                                <>
+                                    <Box className="review-rating-box">
+                                        <Rating
+                                            className="review-rating-selector"
+                                            value={existingReview ? existingReview.rating : ratingValue}
+                                            onChange={(event, newValue) => {
+                                                setRatingValue(newValue);
+                                            }}
+                                        />
+                                    </Box>
+                                    <TextField
+                                        id="filled-basic"
+                                        label={t('Comment')}
+                                        variant="filled"
+                                        defaultValue={existingReview ? existingReview.description : ''}
+                                        onChange={(event) => {
+                                            setComment(event.target.value);
+                                        }}
+                                        multiline
+                                        fullWidth
+                                    />
+                                    <Box className="review-submit-button">
+                                        {existingReview ? (
+                                            <Button variant="contained" onClick={handleEditReview}>{t('Edit')}</Button>
+                                        ) : (
+                                            <Button variant="contained" onClick={handleSubmitReview}>{t('Submit')}</Button>
+                                        )}
+                                    </Box>
+                                </>
+                            ) : (
+                                <TextField
+                                        id="filled-basic"
+                                        label={t('Please log in to submit a review.')}
+                                        variant="filled"
+                                        multiline
+                                        fullWidth
+                                        disabled
+                                    />
+                            )}
+                            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                    {t('Comment Successfully')}
+                                </Alert>
+                            </Snackbar>
+
+                            {addError && (
+                                <Snackbar open={popUpError} autoHideDuration={6000} onClose={() => setPopupError(false)}>
+                                    <Alert onClose={(handleClose) => setPopupError(false)} severity="error" sx={{ width: '100%' }}>
+                                        {t('Error Adding Comment')}
+                                    </Alert>
+                                </Snackbar>
+                            )}
+                        </Box>
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -440,5 +537,3 @@ function CarDealerHomePage() {
         </div>
     );
 }
-
-export default CarDealerHomePage;

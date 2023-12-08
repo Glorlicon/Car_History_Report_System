@@ -17,6 +17,7 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const DataProviderid = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);

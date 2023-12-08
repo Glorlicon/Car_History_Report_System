@@ -270,6 +270,27 @@
     font-size: 14px;
 }
 
+.review-comment-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.review-rating-box {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+}
+
+.review-submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    margin-top:10px;
+}
+
 .review-content {
     margin-top: 10px;
 }

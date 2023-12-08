@@ -424,7 +424,9 @@ function CarDealerHomePage() {
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                            <Typography component="legend">
+                                {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                            </Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
