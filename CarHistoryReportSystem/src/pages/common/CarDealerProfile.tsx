@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { AddReview, EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
+import { AddReview, EditProfile, editUserReview, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
 import { RootState } from '../../store/State';
 import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews, UserDataproviderId } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
@@ -25,6 +25,7 @@ function CarDealerProfile() {
     const [popUpError, setPopupError] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [review, setReview] = useState<Reviews[]>([]);
+    const [editReview, setEditReview] = useState<Reviews>();
     const [existingReview, setExistingReview] = useState<Reviews>();
     const [averageRating, setAverageRating] = useState(0);
     const [starCounts, setStarCounts] = useState({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
@@ -102,6 +103,7 @@ function CarDealerProfile() {
         id: string
     }
     const { id } = useParams<RouteParams>()
+    const LoggedUserID = JWTDecoder(token).nameidentifier
     const [overlayWidth, setOverlayWidth] = useState<string>('100%');
     const value = 50;
     const max = 100;
@@ -131,18 +133,14 @@ function CarDealerProfile() {
     };
 
     const handleEditReview = async () => {
-        const actualId = id?.replace('id=', '');
         const newReview: Reviews = {
-            userId: actualId,
             description: comment,
-            rating: ratingValue || 0,
-            createdTime: new Date()
+            rating: ratingValue || 0
         };
-        setReview(prevReviews => [...prevReviews, newReview]);
         if (review != null) {
             setAdding(true);
             setAddError(null);
-            const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
+            const reviewResponse: APIResponse = await editUserReview(userDetails.id, newReview, token);
             setAdding(false);
             if (reviewResponse.error) {
                 setPopupError(true);
@@ -156,8 +154,7 @@ function CarDealerProfile() {
 
     const handleCheckUserReview = async () => {
         if (id != null) {
-            const actualId = id.replace('id=', '');
-            const reviewResponse: APIResponse = await GetUserComment(userDetails.id, actualId, token);
+            const reviewResponse: APIResponse = await GetUserComment(id as unknown as number, LoggedUserID, token);
             if (!reviewResponse.error && reviewResponse != null) {
                 setExistingReview(reviewResponse.data);
             }
@@ -201,7 +198,6 @@ function CarDealerProfile() {
                     ...dataProviderResponse.data,
                     workingTimes: transformedWorkingTimes
                 });
-                console.log("Detail", userDetails)
                 const carListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string);
                 if (carListResponse.error) {
                     setError(carListResponse.error);
@@ -215,7 +211,6 @@ function CarDealerProfile() {
                 } else {
                     setReview(reviewListResponse.data);
                 }
-                console.log("Vehicle", carListResponse.data)
                 setLoading(false);
             }
     };
@@ -435,7 +430,7 @@ function CarDealerProfile() {
                                     </Box>
                                     <TextField
                                         id="filled-basic"
-                                        label={t('Comment')}
+                                        label={existingReview ? '' : t('Comment')}
                                         variant="filled"
                                         defaultValue={existingReview ? existingReview.description : ''}
                                         onChange={(event) => {

@@ -182,3 +182,27 @@ export async function GetUserComment(DataProviderId: number, UserId: string, tok
         }
     }
 }
+
+export async function editUserReview(id: number, data: Reviews, token: string): Promise<APIResponse> {
+    try {
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${id}/review`,
+            {
+                ...data
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log("Add Error!: ", error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: "Network error. Please check your internet connection!" }
+        } else {
+            return { error: "Something went wrong. Please try again" }
+        }
+    }
+}
