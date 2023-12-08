@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ForgotPassword, Login } from '../../services/auth/Login';
 import '../../styles/ForgotPassword.css'
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,11 +7,14 @@ import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { SendVerifyToken } from '../../services/auth/Verify';
+import { t } from 'i18next';
+import { RootState } from '../../store/State';
+import i18n from '../../localization/config';
 
 function ForgottenPassword() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [email, setEmail] = useState('');
     const [authenticationError, setAuthenticationError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -37,16 +40,20 @@ function ForgottenPassword() {
             navigate("/forgotpassword/initiate/" + {email})
         }
     };
+
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, [])
     return (
         <div className="account-search-container">
             <div className="account-search-form">
                 <form onSubmit={handleSubmit}>
-                    <h2>Reset Your Password</h2>
-                <p>Please enter your email address or mobile number to search for your account.</p>
-                <input
-                    type="text"
-                    className="account-search-input"
-                    placeholder="Email address"
+                    <h2>{t('Reset Your Password')}</h2>
+                    <p>{t('Please enter your email address to search for your account.')}</p>
+                    <input
+                        type="text"
+                        className="account-search-input"
+                        placeholder={t('Email Address')}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 {authenticationError && (
@@ -56,8 +63,8 @@ function ForgottenPassword() {
                     <div className="logging-in"></div>
                 ) : (
                    <div className="account-search-actions">
-                        <button type="button" onClick={handleReturn} className="account-search-cancel">Cancel</button>
-                        <button type="submit" className="account-search-submit" >Search</button>
+                                <button type="button" onClick={handleReturn} className="account-search-cancel">{t('Cancel')}</button>
+                                <button type="submit" className="account-search-submit" >{t('Search')}</button>
                    </div>
                 )}
                 </form>

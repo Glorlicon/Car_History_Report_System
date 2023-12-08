@@ -4,9 +4,13 @@ import '../../styles/ForgotPassword.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { t } from 'i18next';
+import { RootState } from '../../store/State';
+import i18n from '../../localization/config';
 
 function ForgottenPasswordSuccess() {
     const location = useLocation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const searchParams = new URLSearchParams(location.search);
     let token = searchParams.get('token');
     let email = searchParams.get('email');
@@ -39,15 +43,16 @@ function ForgottenPasswordSuccess() {
     };
     useEffect(() => {
         ResetPassword(UserEmail, UserToken)
+        i18n.changeLanguage(currentLanguage)
     }, [])
     return (
         <div className="account-search-container">
             <div className="account-search-form">
-                <h2>Reset Your Password</h2>
+                <h2>{t('Reset Your Password')}</h2>
                 {authenticationError ? (
                     <div className="error message">{errorMessage}</div>
                 ) : (
-                    <p>You have successfully reset your password, we have sent you another email containing your new password!</p>
+                    <p></p>
                 )}
             </div>
         </div>

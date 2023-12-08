@@ -199,7 +199,7 @@ function UserProfile() {
         i18n.changeLanguage(currentLanguage)
     }, []);
     return (
-        <div className="profile-container">
+        <div className="profile-container-2">
             {loading ? (
                 <div className="profile-spinner"></div>
             ) : (

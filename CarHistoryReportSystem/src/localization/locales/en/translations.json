@@ -433,5 +433,13 @@
   "Old password": "Old password",
   "New password": "New Password",
   "Re-enter new password": "Re-enter new password",
-  "Password does not match": "Password does not match"
+  "Password does not match": "Password does not match",
+  "Email address or username": "Email address or username",
+  "Log in": "Log in",
+  "Forgotten password?": "Forgotten password?",
+  "Create new account": "Create new account",
+  "Reset Your Password": "Reset Your Password",
+  "Please enter your email address to search for your account.": "Please enter your email address to search for your account.",
+  "We have sent you an email with the link to reset your password!": "We have sent you an email with the link to reset your password!",
+  "You have successfully reset your password, we have sent you another email containing your new password!": "You have successfully reset your password, we have sent you another email containing your new password!"
 }
