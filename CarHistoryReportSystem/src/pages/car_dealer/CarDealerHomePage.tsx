@@ -1,4 +1,4 @@
-﻿import { Avatar, Box, Tooltip } from '@mui/material';
+﻿import { Avatar, Box, Pagination, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -7,13 +7,14 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import i18n from '../../localization/config';
-import { EditProfile, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
+import { EditProfile, GetAllCarForSaleBySellerID, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewAllByDataProvider, GetReviewByDataProvider } from '../../services/api/Profile';
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
+import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProvider, editWorkingTime, Manufacturer, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
+import i18n from '../../localization/config';
 
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -35,6 +36,25 @@ function CarDealerHomePage() {
     const [review, setReview] = useState<Reviews[]>([]);
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
+    const [carMake, setCarMake] = useState('')
+    const [carModel, setCarModel] = useState('')
+    const [yearStart, setYearStart] = useState(0)
+    const [priceMax, setPriceMax] = useState(9999999999)
+    const [milageMax, setMilageMax] = useState(9999999999)
+    const [carPaging, setCarPaging] = useState<Paging>()
+    const [reviewPaging, setReviewPaging] = useState<Paging>()
+    const [rating, setRating] = useState(0)
+    const [sortByRating, setSortByRating] = useState(0)
+    const [sortByDate, setSortByDate] = useState(0)
+    const [selectedMake, setSelectedMake] = useState(0)
+    const [resetCarTrigger, setResetCarTrigger] = useState(0);
+    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
+    const [manufacturerList, setManufacturerList] = useState<Manufacturer[]>([]);
+    const [carPage, setCarPage] = useState(1)
+    const [reviewPage, setReviewPage] = useState(1)
+    const [modelList, setModelList] = useState<CarModel[]>([]);
+    const [filteredReview, setFilteredReview] = useState<Reviews[]>([]);
+    const [filteredCarList, setFilteredCarList] = useState<Car[]>([]);
     const [userDetails, setUserDetails] = useState({
         id: 0,
         name: '',
@@ -54,6 +74,33 @@ function CarDealerHomePage() {
             isClosed: true
         })
     });
+
+    const handleResetCarFilters = () => {
+        setCarMake('')
+        setCarModel('')
+        setYearStart(0)
+        setPriceMax(9999999999)
+        setMilageMax(9999999999)
+        setResetCarTrigger(prev => prev + 1);
+    }
+    const handleResetReviewFilters = () => {
+        setRating(0)
+        setSortByRating(0)
+        setSortByDate(0)
+        setResetReviewTrigger(prev => prev + 1);
+    }
+
+    const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = Number(e.target.value);
+        setSelectedMake(selectedValue);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
+
+        if (!ManufacturerModelResponse.error) {
+            setModelList(ManufacturerModelResponse.data);
+        }
+    };
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -162,20 +209,40 @@ function CarDealerHomePage() {
                 ...dataProviderResponse.data,
                 workingTimes: transformedWorkingTimes
             });
-            const carListResponse: APIResponse = await GetCarForSaleBySellerID(dealerId as unknown as string);
-            if (carListResponse.error) {
-                setError(carListResponse.error);
+            let searchCarParams: CarSearchParams = {
+                make: carMake,
+                model: carModel,
+                yearstart: yearStart,
+                pricemax: priceMax,
+                milagemax: milageMax
+            }
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const filteredCarListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, carPage, connectAPIError, language, searchCarParams);
+            if (filteredCarListResponse.error) {
+                setError(filteredCarListResponse.error);
             } else {
-                setCarList(carListResponse.data);
+                const manufacturerReponse: APIResponse = await ListManufacturer();
+                setManufacturerList(manufacturerReponse.data)
+                setFilteredCarList(filteredCarListResponse.data);
+                const CarListResponse: APIResponse = await GetAllCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, connectAPIError, language);
+                setCarList(CarListResponse.data)
             }
 
-            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dealerId)
-            if (reviewListResponse.error) {
-                setError(reviewListResponse.error);
-            } else {
-                setReview(reviewListResponse.data);
+            let searchReviewParams: ReviewSearchParams = {
+                dataproviderId: dataProviderResponse?.data.id,
+                rating: rating,
+                sortByRating: sortByRating,
+                sortByDate: sortByDate
             }
-
+            const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+            if (filteredReviewListResponse.error) {
+                setError(filteredReviewListResponse.error);
+            } else {
+                setFilteredReview(filteredReviewListResponse.data);
+                const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
+                setReview(reviewListReponse.data)
+            }
             setLoading(false);
         }
         setLoading(false);
@@ -316,7 +383,9 @@ function CarDealerHomePage() {
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Typography component="legend">
+                                    {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                                </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <div className="overlay"></div>
@@ -357,7 +426,76 @@ function CarDealerHomePage() {
                 <div className="listing-header">
                     <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
                     <div className="filters">
-                        Condition: <span>Used</span> Make & Model: <span>ModelName</span> Price: <span>Price</span> Vehicle History: <span>History</span> <a href="#">Clear All</a>
+                        <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Make')}</p>
+                                <select onChange={handleSelectChange} value={selectedMake}>
+                                    <option value="">{t('Any Make')}</option>
+                                    {manufacturerList.length > 0 ? (
+                                        manufacturerList.map((manufacturer, index) => (
+                                            <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>Loading...</option>
+                                    )}
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Min Year')}</p>
+                                <select onChange={(e) => setYearStart(Number(e.target.value))} value={yearStart}>
+                                    <option value="0">{t('Any Year')}</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2011">2011</option>
+                                    <option value="2010">2010</option>
+                                    <option value="2009">2009</option>
+                                    <option value="2008">2008</option>
+                                    <option value="2007">2007</option>
+                                    <option value="2006">2006</option>
+                                    <option value="2005">2005</option>
+                                    <option value="2004">2004</option>
+                                    <option value="2003">2003</option>
+                                    <option value="2002">2002</option>
+                                    <option value="2001">2001</option>
+                                    <option value="2000">2000</option>
+                                    <option value="1999">1999</option>
+                                    <option value="1998">1998</option>
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Max Price')}</p>
+                                <select onChange={(e) => setPriceMax(Number(e.target.value))} value={priceMax}>
+                                    <option value="9999999999">{t('Any Price')}</option>
+                                    <option value="122025000">122.025.000 VND</option>
+                                    <option value="244050000">244.050.000 VND</option>
+                                    <option value="366075000">366.075.000 VND</option>
+                                    <option value="488100000">488.100.000 VND</option>
+                                    <option value="610125000">610.125.000 VND</option>
+                                    <option value="854175000">854.175.000 VND</option>
+                                    <option value="1220250000">1.220.250.000 VND</option>
+                                    <option value="1830375000">1.830.375.000 VND</option>
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Max Milage')}</p>
+                                <select onChange={(e) => setMilageMax(Number(e.target.value))} value={milageMax}>
+                                    <option value="9999999999">{t('Any Milage')}</option>
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <button onClick={handleResetCarFilters} className="car-btn-filter">{t('Clear Filters')}</button>
+                        </span>
                     </div>
                 </div>
 
@@ -377,7 +515,7 @@ function CarDealerHomePage() {
                                 <button onClick={fetchData} className="ad-car-retry-btn">{t('Retry')}</button>
                             </td>
                         </tr>
-                    ) : carList.length > 0 ? (
+                    ) : filteredCarList.length > 0 ? (
                         carList.map((model: any, index: number) => (
                             <div className="vehicle-card">
                                 <div className="vehicle-image">
@@ -404,24 +542,18 @@ function CarDealerHomePage() {
                     )}
 
                 </div>
-                <div className="pagination">
-                    1 - 6 Result on 9 Total Result
-                    <div className="page-links">
-                        <a href="#">Previous</a>
-                        <a href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">4</a>
-                        ...
-                        <a href="#">Next</a>
-                    </div>
+                <div id="pagination">
+                    {carPaging && carPaging.TotalPages > 0 &&
+                        <>
+                            <Pagination count={carPaging.TotalPages} onChange={(e, value) => setCarPage(value)} />
+                        </>
+                    }
                 </div>
             </div>
 
             <div className="ratings-reviews-section" id="ratings-reviews-section">
                 <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
-
                     <div className="rating">
                         <div className="star-summary">
                             <Typography component="legend">
@@ -455,15 +587,54 @@ function CarDealerHomePage() {
 
 
                     <div className="reviews-list">
-                        {review.length > 0 ? (
-                            review.map((reviewItem, index) => (
+                        <div className="filters">
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Stars Number')}</label>
+                                    <select onChange={(e) => setRating(Number(e.target.value))} value={rating}>
+                                        <option value="0">{t('Any Stars')}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Rating')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByRating(Number(e.target.value))}
+                                        value={sortByRating}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Date')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByDate(Number(e.target.value))}
+                                        value={sortByDate}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
+                        </div>
+                        {filteredReview.length > 0 ? (
+                            filteredReview.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -475,18 +646,14 @@ function CarDealerHomePage() {
                             <p>{t('No reviews available')}</p>
                         )}
                     </div>
-
-
-
                 </div>
-                <div className="review-pagination">
-                    <button className="pagination-button">Previous</button>
-                    {[1, 2, 3, 4, 5].map((page, index) => (
-                        <button className="pagination-button" key={index}>{page}</button>
-                    ))}
-                    <button className="pagination-button">Next</button>
+                <div id="pagination">
+                    {reviewPaging && reviewPaging.TotalPages > 0 &&
+                        <>
+                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                        </>
+                    }
                 </div>
-
             </div>
 
 

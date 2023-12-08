@@ -1,4 +1,4 @@
-import { Alert, Avatar, Box, Button, Snackbar, TextField, Tooltip } from '@mui/material';
+import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -8,11 +8,11 @@ import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import i18n from '../../localization/config';
-import { AddReview, EditProfile, editUserReview, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
+import { AddReview, EditProfile, editUserReview, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewAllByDataProvider, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
 import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
+import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopProfile() {
@@ -33,7 +33,13 @@ function ServiceShopProfile() {
     const [allServices, setAllServices] = useState<string[]>([]);
     const [existingReview, setExistingReview] = useState<Reviews>();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-
+    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
+    const [reviewPaging, setReviewPaging] = useState<Paging>()
+    const [reviewPage, setReviewPage] = useState(1)
+    const [rating, setRating] = useState(0)
+    const [sortByRating, setSortByRating] = useState(0)
+    const [sortByDate, setSortByDate] = useState(0)
+    const [filteredReview, setFilteredReview] = useState<Reviews[]>([]);
 
     const [userDetails, setUserDetails] = useState({
         id: 0,
@@ -80,7 +86,12 @@ function ServiceShopProfile() {
         isClosed: boolean;
     }
 
-
+    const handleResetReviewFilters = () => {
+        setRating(0)
+        setSortByRating(0)
+        setSortByDate(0)
+        setResetReviewTrigger(prev => prev + 1);
+    }
 
     const defaultSchedule = [
         { dayOfWeek: 0, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0, isClosed: false },
@@ -123,15 +134,15 @@ function ServiceShopProfile() {
         };
         setReview(prevReviews => [...prevReviews, newReview]);
         if (review != null) {
-            console.log("Submitted review:", newReview);
-            console.log("Target DataProvider", userDetails.id)
             setAdding(true);
             setAddError(null);
             const reviewResponse: APIResponse = await AddReview(userDetails.id, newReview, token);
             setAdding(false);
             if (reviewResponse.error) {
+                setPopupError(true);
                 setAddError(reviewResponse.error);
             } else {
+                setOpen(true);
                 fetchData()
             }
         }
@@ -168,9 +179,8 @@ function ServiceShopProfile() {
                     ...dataProviderResponse.data,
                     workingTimes: transformedWorkingTimes
                 });
-
-                console.log("Transformed Data:", userDetails);
-
+                let connectAPIError = t('Cannot connect to API! Please try again later')
+                let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
                 const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(actualId);
                 if (carServiceResponse.error) {
                     setError(carServiceResponse.error);
@@ -193,13 +203,20 @@ function ServiceShopProfile() {
                 }
 
 
-                const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-                if (reviewListResponse.error) {
-                    setError(reviewListResponse.error);
-                } else {
-                    setReview(reviewListResponse.data);
+                let searchReviewParams: ReviewSearchParams = {
+                    dataproviderId: dataProviderResponse?.data.id,
+                    rating: rating,
+                    sortByRating: sortByRating,
+                    sortByDate: sortByDate
                 }
-
+                const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+                if (filteredReviewListResponse.error) {
+                    setError(filteredReviewListResponse.error);
+                } else {
+                    setFilteredReview(filteredReviewListResponse.data);
+                    const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
+                    setReview(reviewListReponse.data)
+                }
                 setLoading(false);
             }
         setLoading(false);
@@ -300,7 +317,9 @@ function ServiceShopProfile() {
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Typography component="legend">
+                                    {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                                </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
@@ -354,7 +373,9 @@ function ServiceShopProfile() {
 
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                            <Typography component="legend">
+                                {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                            </Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -368,8 +389,10 @@ function ServiceShopProfile() {
                                             <span className="star-label">{star} {t('Stars')}</span>
                                             <div className="star-bar">
                                                 <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The filled portion of the bar */}
                                                 </div>
                                                 <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                    {/* The empty portion of the bar */}
                                                 </div>
                                             </div>
                                             <span className="star-percentage">{percentage}%</span>
@@ -436,15 +459,54 @@ function ServiceShopProfile() {
                                 </Snackbar>
                             )}
                         </Box>
-                        {review.length > 0 ? (
-                            review.map((reviewItem, index) => (
+                        <div className="filters">
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Stars Number')}</label>
+                                    <select onChange={(e) => setRating(Number(e.target.value))} value={rating}>
+                                        <option value="0">{t('Any Stars')}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Rating')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByRating(Number(e.target.value))}
+                                        value={sortByRating}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Date')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByDate(Number(e.target.value))}
+                                        value={sortByDate}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
+                        </div>
+                        {filteredReview.length > 0 ? (
+                            filteredReview.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -460,12 +522,13 @@ function ServiceShopProfile() {
 
 
                 </div>
-                <div className="review-pagination">
-                    <button className="pagination-button">Previous</button>
-                    {[1, 2, 3, 4, 5].map((page, index) => (
-                        <button className="pagination-button" key={index}>{page}</button>
-                    ))}
-                    <button className="pagination-button">Next</button>
+                <div id="pagination">
+                    {reviewPaging && reviewPaging.TotalPages > 0 &&
+                        <>
+
+                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                        </>
+                    }
                 </div>
 
             </div>

@@ -238,7 +238,7 @@ function CarSalesPage() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No cars found</td>
+                                        <td colSpan={5}>{t('No cars found')}</td>
                         </tr>
                     )}
                     <div id="pagination">

@@ -1,4 +1,4 @@
-import { Avatar, Tooltip } from '@mui/material';
+import { Avatar, Pagination, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -12,7 +12,7 @@ import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetD
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
+import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopHomePage() {
@@ -36,7 +36,13 @@ function ServiceShopHomePage() {
     const [image, setImage] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-
+    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
+    const [reviewPaging, setReviewPaging] = useState<Paging>()
+    const [reviewPage, setReviewPage] = useState(1)
+    const [rating, setRating] = useState(0)
+    const [sortByRating, setSortByRating] = useState(0)
+    const [sortByDate, setSortByDate] = useState(0)
+    const [filteredReview, setFilteredReview] = useState<Reviews[]>([]);
 
     const [userDetails, setUserDetails] = useState({
         id: 0,
@@ -57,6 +63,13 @@ function ServiceShopHomePage() {
             isClosed: true
         })
     });
+
+    const handleResetReviewFilters = () => {
+        setRating(0)
+        setSortByRating(0)
+        setSortByDate(0)
+        setResetReviewTrigger(prev => prev + 1);
+    }
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -185,14 +198,14 @@ function ServiceShopHomePage() {
             }
 
 
-            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-            if (reviewListResponse.error) {
-                setError(reviewListResponse.error);
-            } else {
-                setReview(reviewListResponse.data);
-            }
+            //const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+            //if (reviewListResponse.error) {
+            //    setError(reviewListResponse.error);
+            //} else {
+            //    setReview(reviewListResponse.data);
+            //}
 
-            setLoading(false);
+            //setLoading(false);
         }
 
 
@@ -341,7 +354,9 @@ function ServiceShopHomePage() {
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? t('Average Rating')`: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                                <Typography component="legend">
+                                    {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                                </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
@@ -392,10 +407,11 @@ function ServiceShopHomePage() {
             <div className="ratings-reviews-section" id="ratings-reviews-section">
                 <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
-
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : t('No Ratings')}</Typography>
+                            <Typography component="legend">
+                                {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                            </Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -424,15 +440,54 @@ function ServiceShopHomePage() {
 
 
                     <div className="reviews-list">
-                        {review.length > 0 ? (
-                            review.map((reviewItem, index) => (
+                        <div className="filters">
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Stars Number')}</label>
+                                    <select onChange={(e) => setRating(Number(e.target.value))} value={rating}>
+                                        <option value="0">{t('Any Stars')}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Rating')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByRating(Number(e.target.value))}
+                                        value={sortByRating}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Date')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByDate(Number(e.target.value))}
+                                        value={sortByDate}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
+                        </div>
+                        {filteredReview.length > 0 ? (
+                            filteredReview.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -441,21 +496,17 @@ function ServiceShopHomePage() {
                                 </div>
                             ))
                         ) : (
-                                <p>{t('No reviews available')}</p>
+                            <p>{t('No reviews available')}</p>
                         )}
                     </div>
-
-
-
                 </div>
-                <div className="review-pagination">
-                    <button className="pagination-button">Previous</button>
-                    {[1, 2, 3, 4, 5].map((page, index) => (
-                        <button className="pagination-button" key={index}>{page}</button>
-                    ))}
-                    <button className="pagination-button">Next</button>
+                <div id="pagination">
+                    {reviewPaging && reviewPaging.TotalPages > 0 &&
+                        <>
+                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                        </>
+                    }
                 </div>
-
             </div>
 
 

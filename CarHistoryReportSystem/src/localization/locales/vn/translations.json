@@ -475,5 +475,8 @@
   "Comment Succesfully": "Đăng tải bình luận thành công",
   "Error Adding Comment": "Đăng tải bình luận thất bại",
   "Please log in to submit a review.": "Hãy đăng nhập để bình luận",
-  "UnknownDate": "Ngày không xác định"
+  "UnknownDate": "Ngày không xác định",
+  "Any Stars": "Tất cả sao",
+  "Stars Number": "Đánh giá",
+  "Sort By Rating": "Sắp xếp theo đánh giá"
 }

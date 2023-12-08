@@ -641,6 +641,12 @@ export interface CarSearchParams {
     milagemax?: number
 }
 
+export interface ReviewSearchParams {
+    dataproviderId: number
+    rating: number
+    sortByRating: number
+    sortByDate: number
+}
 export interface RequestSearchParams {
     requestType: number;
     requestStatus: number;
