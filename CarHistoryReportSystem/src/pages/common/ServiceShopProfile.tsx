@@ -1,4 +1,4 @@
-import { Avatar, Tooltip } from '@mui/material';
+import { Alert, Avatar, Box, Button, Snackbar, TextField, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import i18n from '../../localization/config';
-import { AddReview, EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewByDataProvider, GetUserById } from '../../services/api/Profile';
+import { AddReview, EditProfile, editUserReview, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
 import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
@@ -28,8 +28,10 @@ function ServiceShopProfile() {
     const [review, setReview] = useState<Reviews[]>([]);
     const [ratingValue, setRatingValue] = useState<number | null>(null);
     const [averageRating, setAverageRating] = useState<number>(0);
+    const [popUpError, setPopupError] = useState(false);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
     const [allServices, setAllServices] = useState<string[]>([]);
+    const [existingReview, setExistingReview] = useState<Reviews>();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
 
 
@@ -52,6 +54,15 @@ function ServiceShopProfile() {
             isClosed: true
         })
     });
+    const LoggedUserID = JWTDecoder(token).nameidentifier
+    const [open, setOpen] = React.useState(false);
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setPopupError(false);
+        setOpen(false);
+    };
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -101,17 +112,6 @@ function ServiceShopProfile() {
     const [overlayWidth, setOverlayWidth] = useState<string>('100%');
     const value = 50;
     const max = 100;
-
-    // Handler for the rating change
-    const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
-        setRatingValue(newValue);
-        console.log("Rating", newValue);
-    };
-
-    // Handler for the comment change
-    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setComment(event.target.value);
-    };
 
     const handleSubmitReview = async () => {
         const actualId = id?.replace('id=', '');
@@ -227,8 +227,40 @@ function ServiceShopProfile() {
         setStarCounts(counts as { '1': number, '2': number, '3': number, '4': number, '5': number });
     }, [review]);
 
+    const handleEditReview = async () => {
+        const newReview: Reviews = {
+            description: comment,
+            rating: ratingValue || 0
+        };
+        if (review != null) {
+            setAdding(true);
+            setAddError(null);
+            const reviewResponse: APIResponse = await editUserReview(userDetails.id, newReview, token);
+            setAdding(false);
+            if (reviewResponse.error) {
+                setPopupError(true);
+                setAddError(reviewResponse.error);
+            } else {
+                setOpen(true);
+                fetchData()
+            }
+        }
+    };
+
+    const handleCheckUserReview = async () => {
+        if (id != null) {
+            const reviewResponse: APIResponse = await GetUserComment(id as unknown as number, LoggedUserID, token);
+            if (!reviewResponse.error && reviewResponse != null) {
+                setExistingReview(reviewResponse.data);
+            }
+        }
+    };
+
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
+        if (token != null) {
+            handleCheckUserReview()
+        }
         fetchData();
     }, []);
 
@@ -349,6 +381,61 @@ function ServiceShopProfile() {
 
 
                     <div className="reviews-list">
+                        <Box className="review-comment-box">
+                            {token ? (
+                                <>
+                                    <Box className="review-rating-box">
+                                        <Rating
+                                            className="review-rating-selector"
+                                            value={existingReview ? existingReview.rating : ratingValue}
+                                            onChange={(event, newValue) => {
+                                                setRatingValue(newValue);
+                                            }}
+                                        />
+                                    </Box>
+                                    <TextField
+                                        id="filled-basic"
+                                        label={existingReview ? '' : t('Comment')}
+                                        variant="filled"
+                                        defaultValue={existingReview ? existingReview.description : ''}
+                                        onChange={(event) => {
+                                            setComment(event.target.value);
+                                        }}
+                                        multiline
+                                        fullWidth
+                                    />
+                                    <Box className="review-submit-button">
+                                        {existingReview ? (
+                                            <Button variant="contained" onClick={handleEditReview}>{t('Edit')}</Button>
+                                        ) : (
+                                            <Button variant="contained" onClick={handleSubmitReview}>{t('Submit')}</Button>
+                                        )}
+                                    </Box>
+                                </>
+                            ) : (
+                                <TextField
+                                    id="filled-basic"
+                                    label={t('Please log in to submit a review.')}
+                                    variant="filled"
+                                    multiline
+                                    fullWidth
+                                    disabled
+                                />
+                            )}
+                            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                    {t('Comment Successfully')}
+                                </Alert>
+                            </Snackbar>
+
+                            {addError && (
+                                <Snackbar open={popUpError} autoHideDuration={6000} onClose={() => setPopupError(false)}>
+                                    <Alert onClose={(handleClose) => setPopupError(false)} severity="error" sx={{ width: '100%' }}>
+                                        {t('Error Adding Comment')}
+                                    </Alert>
+                                </Snackbar>
+                            )}
+                        </Box>
                         {review.length > 0 ? (
                             review.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
