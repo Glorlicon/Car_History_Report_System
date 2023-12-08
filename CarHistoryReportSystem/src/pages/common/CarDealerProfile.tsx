@@ -12,7 +12,7 @@ import { GetImages } from '../../services/azure/Images';
 import { Alert, Avatar, Box, Button, Snackbar, TextField, Tooltip } from '@mui/material';
 import { t } from 'i18next';
 import i18n from '../../localization/config';
-function CarDealerHomePage() {
+function CarDealerProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -537,3 +537,4 @@ function CarDealerHomePage() {
         </div>
     );
 }
+export default CarDealerProfile;
