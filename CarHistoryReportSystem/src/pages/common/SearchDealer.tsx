@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 function SearchDealer() {
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    console.log(token);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carDealerList, setCarDealerList] = useState<DataProvider[]>([]);
