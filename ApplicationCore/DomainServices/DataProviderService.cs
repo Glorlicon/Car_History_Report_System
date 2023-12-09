@@ -56,11 +56,12 @@ namespace Application.DomainServices
             return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
+        public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type, DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
+            var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, parameter,  false);
+            var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountByCondition(x => x.Type == type, parameter);
+            return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<DataProviderDetailsResponseDTO> GetDataProvider(int dataProviderId)
