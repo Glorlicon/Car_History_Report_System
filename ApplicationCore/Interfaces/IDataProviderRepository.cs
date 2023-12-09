@@ -21,7 +21,7 @@ namespace Application.Interfaces
 
         Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type, bool trackChange);
 
-        Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, bool trackChange);
+        Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, DataProviderParameter parameter, bool trackChange);
 
         Task<DataProvider?> GetDataProvider(int dataProviderId, bool trackChange);
     }

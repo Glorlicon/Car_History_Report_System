@@ -95,9 +95,11 @@ namespace CarHistoryReportSystemAPI.Controllers
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetDataProvidersByTypeAsync(DataProviderType type)
+        public async Task<IActionResult> GetDataProvidersByTypeAsync(DataProviderType type, [FromQuery] DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderService.GetAllDataProvidersByType(type);
+            var dataProviders = await _dataProviderService.GetAllDataProvidersByType(type, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(dataProviders.PagingData));
             return Ok(dataProviders);
         }
 
