@@ -51,20 +51,28 @@ namespace Infrastructure.Repository
                             .ToListAsync();
         }
 
-        public async Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, bool trackChange)
+        public async Task<IEnumerable<DataProvider>> GetAllDataProvidersByType(DataProviderType type, DataProviderParameter parameter, bool trackChange)
         {
             return await FindByCondition(dp => dp.Type == type, trackChange)
-                                            .Include(dp => dp.WorkingTimes)
+                            .Include(dp => dp.WorkingTimes)
                             .Include(dp => dp.Reviews)
-                .ToListAsync();
+                            .Filter(parameter)
+                            .Sort(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
         }
 
         public async Task<IEnumerable<DataProvider>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type, bool trackChange)
         {
-            return await FindByCondition(dp => dp.Type == type && !dp.Users.Any(), trackChange).Include(dp => dp.WorkingTimes)
-                                            .Filter(parameter)
+            return await FindByCondition(dp => dp.Type == type && !dp.Users.Any(), trackChange)
+                            .Include(dp => dp.WorkingTimes)
                             .Include(dp => dp.Reviews)
-                .ToListAsync();
+                            .Filter(parameter)
+                            .Sort(parameter)
+                            .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                            .Take(parameter.PageSize)
+                            .ToListAsync();
         }
 
         public async Task<DataProvider?> GetDataProvider(int dataProviderId, bool trackChange)
