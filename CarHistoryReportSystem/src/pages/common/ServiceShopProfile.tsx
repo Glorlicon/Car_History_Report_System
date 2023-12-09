@@ -339,13 +339,11 @@ function ServiceShopProfile() {
                 </div>
                 <div>
                     <div className="profile-image">
-                        <Tooltip title={t('Click to edit')}>
                             <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
                                 sx={{ width: 100, height: 100, cursor: 'pointer' }}
                             />
-                        </Tooltip>
                     </div>
                 </div>
             </div>

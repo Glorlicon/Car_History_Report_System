@@ -155,7 +155,7 @@ function SearchService() {
     return (
         <div className="search-dealer-container">
             <div className="search-header">
-                <h1>{t('Find Dealer Near Me')}</h1>
+                <h1>{t('Find Service Shop Near Me')}</h1>
                 <p>{t('Search Description')}</p>
             </div>
             <div className="dealer-search-bar">
@@ -216,6 +216,13 @@ function SearchService() {
                             </a>
                         );
                     })}
+                    <div id="pagination">
+                        {paging && paging.TotalPages > 0 &&
+                            <>
+                                <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+                            </>
+                        }
+                    </div>
                 </div>
                 <div className="map-container">
                     <LoadScript googleMapsApiKey="AIzaSyCRbVNvnE3sge__2-oH3x3xlVqMd-_TPOQ">
@@ -250,13 +257,6 @@ function SearchService() {
                         </GoogleMap>
                     </LoadScript>
                 </div>
-            </div>
-            <div id="pagination">
-                {paging && paging.TotalPages > 0 &&
-                    <>
-                        <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
-                    </>
-                }
             </div>
         </div>
     );

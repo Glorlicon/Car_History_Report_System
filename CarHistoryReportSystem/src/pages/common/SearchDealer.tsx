@@ -216,6 +216,13 @@ function SearchDealer() {
                             </a>
                         );
                     })}
+                    <div id="pagination">
+                        {paging && paging.TotalPages > 0 &&
+                            <>
+                                <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
+                            </>
+                        }
+                    </div>
                 </div>
                 <div className="map-container">
                     <LoadScript googleMapsApiKey="AIzaSyCRbVNvnE3sge__2-oH3x3xlVqMd-_TPOQ">
@@ -250,13 +257,6 @@ function SearchDealer() {
                         </GoogleMap>
                     </LoadScript>
                 </div>
-            </div>
-            <div id="pagination">
-                {paging && paging.TotalPages > 0 &&
-                    <>
-                    <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
-                    </>
-                }
             </div>
         </div>
     );
