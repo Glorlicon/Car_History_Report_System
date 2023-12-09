@@ -59,6 +59,13 @@ export interface User {
     dataProvider?: DataProvider
 }
 
+export interface PasswordChange {
+    usernameOrEmail: string,
+    oldPassword: string,
+    password: string,
+    rePassword: string
+}
+
 export interface UserDataproviderId {
     id: string
     dataProviderId?: number | null
@@ -141,7 +148,7 @@ export interface EditDataProvider {
     email?: string
     type: number
     typeName: string
-    imagelink?: string
+    imageLink?: string
     workingTimes: {
         dayOfWeek: number,
         startHour: number,
@@ -213,6 +220,8 @@ export interface AdminRequest {
     status: string
     createdByUserId?: string
     modifiedByUserId?: string
+    createdTime?: Date
+    lastModified?: Date
 }
 export interface ReportPackage {
     title: string
@@ -630,4 +639,42 @@ export interface CarSearchParams {
     yearstart?: number
     pricemax?: number
     milagemax?: number
+}
+
+export interface ReviewSearchParams {
+    dataproviderId: number
+    rating: number
+    sortByRating: number
+    sortByDate: number
+}
+export interface RequestSearchParams {
+    requestType: number;
+    requestStatus: number;
+    sortByDate: number;
+}
+
+export interface UserNotification {
+    userId: string,
+    notificationId: string,
+    notification: Notification,
+    isRead: boolean
+}
+
+export interface UserNotificationRead {
+    userId: string
+    notificationId: string
+}
+
+export interface Notification {
+    id: number,
+    relatedCarId: string,
+    relatedUserId: string,
+    title: string,
+    description: string,
+    relatedLink: string,
+    type: number,
+    createdByUserId: string,
+    modifiedByUserId: string,
+    createdTime: Date,
+    lastModified: Date
 }

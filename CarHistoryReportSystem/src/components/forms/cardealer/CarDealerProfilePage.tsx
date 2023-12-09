@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import { t } from 'i18next';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import i18n from '../../../localization/config';
+import { RootState } from '../../../store/State';
 import { CarDealer, DataProvider, EditDataProvider, workingTimes, } from '../../../utils/Interfaces';
 interface CarDealerProfilePageProps {
     action: "Add" | "Edit";
@@ -12,9 +16,11 @@ const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
 }) => {
     const edit = action === "Edit"
 
-    
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     
 
 
@@ -23,18 +29,18 @@ const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
         <>
             <div className="dealer-car-sales-form-columns">
                 <div className="dealer-car-sales-form-column">
-                    <label>Shop Name:</label>
+                    <label>{t('Shop Name')}:</label>
                     <input type="text" name="name" value={userDetails.name} onChange={handleInputChange} />
                 </div>
                 <div className="dealer-car-sales-form-column">
-                    <label>Phone Number:</label>
+                    <label>{t('Phone Number')}:</label>
                     <input type="text" name="phoneNumber" value={userDetails.phoneNumber} onChange={handleInputChange} />
                 </div>
                 
             </div>
             <div className="dealer-car-sales-form-columns">
                 <div className="dealer-car-sales-form-column">
-                    <label>Working Schedule: </label>
+                    <label>{t('Working Schedule')}: </label>
                     {userDetails?.workingTimes?.map((day, index) => (
                         <div className="dealer-schedule" key={index}>
                             <div className="label">
@@ -64,6 +70,7 @@ const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
                                     checked={day.isClosed}
                                     onChange={(e) => handleInputChange(e, index, 'isClosed')}
                                 />
+                                <p className="dealer-schedule-separator">{t('Closed')}</p>
                             </div>
                         </div>
                     ))}

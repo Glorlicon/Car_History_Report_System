@@ -1,13 +1,16 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/GlobalNavigator.css'
 import logo from '../../logo512.png';
-import { NavItem } from '../../utils/Interfaces';
+import { APIResponse, NavItem, UserNotification } from '../../utils/Interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { useNavigate } from 'react-router-dom';
 import { logout, setLanguage } from '../../store/authSlice';
 import { useTranslation } from 'react-i18next';
+import { Badge, IconButton } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { GetAllUserNotification, GetUserNotification } from '../../services/api/Notification';
 
 interface GlobalNavigatorProps {
     items: NavItem[]
@@ -15,13 +18,39 @@ interface GlobalNavigatorProps {
 
 const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const [username, setUsername] = useState('')
+    const [userId, setUserId] = useState('')
+    const [role, setUserRole] = useState('')
     const { t, i18n } = useTranslation();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const token = useSelector((state: RootState) => state.auth.token)
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const [userNotification, setUserNotification] = useState<UserNotification[]>([]);
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [loading, setLoading] = useState(true);
+    type UserRole = 'User' | 'CarDealer' | 'InsuranceCompany' | 'ServiceShop' | 'Manufacturer' | 'VehicleRegistry' | 'PoliceOffice';
+
+    const roleProfilePath: { [key in UserRole]: string } = {
+        "User": "/profile",
+        "CarDealer": "/dealer/profile",
+        "InsuranceCompany": "/insurance/profile",
+        "ServiceShop": "/service/profile",
+        "Manufacturer": "/manufacturer/profile",
+        "VehicleRegistry": "/registry/profile",
+        "PoliceOffice": "/police/profile",
+    };
+    const roleNotificationPath: { [key in UserRole]: string } = {
+        "User": "/notification",
+        "CarDealer": "/dealer/notification",
+        "InsuranceCompany": "/insurance/notification",
+        "ServiceShop": "/service/notification",
+        "Manufacturer": "/manufacturer/notification",
+        "VehicleRegistry": "/registry/notification",
+        "PoliceOffice": "/police/notification",
+    };
+    const profilePath = roleProfilePath[role as UserRole] || '/profile';
+    const notificationPath = roleNotificationPath[role as UserRole] || '/notification';
 
     const getLanguage = () => {
         let currentLanguage = i18n.language;
@@ -33,11 +62,27 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
             dispatch(setLanguage('vn'))
         }
     }
+    
+    const fetchData = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const userNotifcationResponse: APIResponse = await GetAllUserNotification(JWTDecoder(token).nameidentifier, connectAPIError, language)
+        if (!userNotifcationResponse.error) {
+            setUserNotification(userNotifcationResponse.data)
+        }
+
+    }
 
     useEffect(() => {
         if (token) {
             const data = JWTDecoder(token)
             setUsername(data.name)
+            setUserRole(data.roles)
+            setUserId(data.nameidentifier)
+            setLoading(false);
+            fetchData();
+        } else {
+            setLoading(false);
         }
     }, [token]);
     //useEffect(() => {
@@ -85,6 +130,11 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                             )}
                         </li>
                     ))}
+                    {role === "User" && (
+                        <li>
+                            <a href='/request'>{t('Admin Request')}</a>
+                        </li>
+                    )}
                 </ul>
             </div>
             {token ? (
@@ -92,7 +142,12 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     <input type="checkbox" id="languageSwitch" onChange={getLanguage} checked={i18n.language === 'vn' ? false : true} className="language-toggle-switch" />
                     <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
                     <label className="currentLanguage">{i18n.language}</label>
-                    <a href="/profile" className="nav-item">{t('Hi')}, {username}</a>
+                    <a href={profilePath} className="nav-item">{t('Hi')}, {username}</a>
+                    <IconButton onClick={() => navigate(notificationPath)}>
+                        <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
+                            <NotificationsIcon sx={{ color: 'white' }} />
+                        </Badge>
+                    </IconButton>
                     <a className="nav-item" onClick={Logout}>{t('Logout')}</a>
                 </div>
             ): (

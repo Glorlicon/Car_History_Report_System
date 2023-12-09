@@ -6,6 +6,7 @@ import { APIResponse, Car, CarModel, CarSearchParams, Manufacturer, Paging } fro
 import '../../styles/CarForSale.css'
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '@mui/material';
+import { GetImages } from '../../services/azure/Images';
 
 function CarSalesPage() {
     const data = useSelector((state: RootState) => state.auth.token);
@@ -60,7 +61,6 @@ function CarSalesPage() {
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const carListResponse: APIResponse = await ListCarForSale(page, connectAPIError, language, searchParams)
-        console.log("car list", carListResponse.data)
         if (carListResponse.error) {
             setError(carListResponse.error)
         } else {
@@ -70,6 +70,7 @@ function CarSalesPage() {
             setCarList(carListResponse.data)
             setPaging(carListResponse.pages)
         }
+        console.log(carListResponse.data)
         setLoading(false)
     }
 
@@ -89,9 +90,9 @@ function CarSalesPage() {
         <>
             <div className="car-sale">
                 <aside id="filters">
-                    <div id="search">
-                        <input type="text" placeholder={t('Search')} />
-                    </div>
+                    {/*<div id="search">*/}
+                    {/*    <input type="text" placeholder={t('Search')} />*/}
+                    {/*</div>*/}
                     <button onClick={fetchData} id="clear-filters">{t('Search')}</button>
                     <div className="clear-filters">
                         <p>{t('Filters')}</p>
@@ -100,7 +101,7 @@ function CarSalesPage() {
                     <div id="filter-options">
                         <div className="filter-choice">
                             <p>{t('Make')}</p>
-                            <select onChange={handleSelectChange} value={carMake}>
+                            <select onChange={handleSelectChange} value={selectedMake}>
                                 <option value="">{t('Any Make')}</option>
                                 {manufacturerList.length > 0 ? (
                                     manufacturerList.map((manufacturer, index) => (
@@ -178,16 +179,16 @@ function CarSalesPage() {
                 <section id="car-listings">
                     <div id="sorting">
                         <div className="paging-result">
-                            <p>Test</p>
+                            <p>Showing {paging?.CurrentPage} out of {paging?.TotalPages} pages</p>
                         </div>
                         <div className="sorting-option">
-                            <label htmlFor="sort-by">Sort By: </label>
-                            <select id="sort-by">
-                                <option value="distance">Distance</option>
-                                <option value="value">Value</option>
-                                <option value="price">Price</option>
-                                {/* ... other sorting options ... */}
-                            </select>
+                            {/*<label htmlFor="sort-by">Sort By: </label>*/}
+                            {/*<select id="sort-by">*/}
+                            {/*    <option value="distance">Distance</option>*/}
+                            {/*    <option value="value">Value</option>*/}
+                            {/*    <option value="price">Price</option>*/}
+                            {/*    */}{/* ... other sorting options ... */}
+                            {/*</select>*/}
                         </div>
                     </div>
 
@@ -206,38 +207,38 @@ function CarSalesPage() {
                         </tr>
                         ) : carList.length > 0 ? (
                                 carList.map((model: any, index: number) => (
-                                    <a className="carlink" href={`/sales/details/${model.vinId}`}><article className="car-card" key={index}>
-                                        <div className="Car-header">
-                                            <h3>Used {model.modelId}</h3>
-                                            <img src="{model.CarSalesInfo.carImages.imageLink}" alt="Car Image" />
-
-                                        </div>
-
-                                        <div className="used-car-info-container">
-                                            <div className="used-car-info">
-                                                <h3>Price: {model.carSalesInfo.price}</h3>
-                                                <p><strong>Dealer:</strong>{model.carSalesInfo.dataProvider.name}</p>
+                                    <a className="carlink" href={`/sales/details/${model.vinId}`}>
+                                        <div className="car-card" key={index}>
+                                            <div className="car-image">
+                                                <img src={GetImages(model.carImages[0].imageLink)} alt="Car" />
+                                                <span className="image-count">{model.carImages.length} Photos</span>
                                             </div>
-                                            <div className="used-car-info">
-                                                <p><strong>Color:</strong> {model.colorName}</p>
+                                            <div className="car-details">
+                                                <h3>Used {model.modelId}</h3>
+                                                <div className="price">Price: {model.carSalesInfo.price}</div>
+                                                <div className="details">
+                                                    <p>Color: {model.colorName}</p>
+                                                    <p>Mileage: {model.currentOdometer}</p>
+                                                    {/* Other details */}
+                                                </div>
+                                                <div className="dealer-info">
+                                                    <p>
+                                                        Dealer:
+                                                        <a
+                                                            href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
+                                                            className="dealer-link"
+                                                        >
+                                                            {model.carSalesInfo.dataProvider.name}
+                                                        </a>
+                                                    </p>
+                                                </div>
                                             </div>
-
-                                            <div className="used-car-info">
-                                                <p><strong>Mileage:</strong> {model.currentOdometer}</p>
-                                                <p><strong>Body Style:</strong> {model.modelId}</p>
-
-                                            </div>
-
                                         </div>
-                                        <div className="description">
-                                            <p><strong>Description:</strong> {model.carSalesInfo.description}</p>
-                                        </div>
-
-                                    </article></a>
+                                    </a>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={5}>No cars found</td>
+                                        <td colSpan={5}>{t('No cars found')}</td>
                         </tr>
                     )}
                     <div id="pagination">
