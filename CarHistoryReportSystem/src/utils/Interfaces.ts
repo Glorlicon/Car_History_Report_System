@@ -132,7 +132,7 @@ export interface DataProvider {
     email?: string
     type: number
     typeName: string
-    imagelink?: string
+    imageLink: string
     workingTimes?: workingTimes[]
     reviews?: Reviews[]
 }
@@ -677,4 +677,11 @@ export interface Notification {
     modifiedByUserId: string,
     createdTime: Date,
     lastModified: Date
+}
+
+export interface DataProviderSearchForm {
+    type: number,
+    name: string,
+    email?: string,
+    sortByName: number,
 }

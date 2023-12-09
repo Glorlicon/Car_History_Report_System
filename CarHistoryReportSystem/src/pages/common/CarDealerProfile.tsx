@@ -676,14 +676,11 @@ function CarDealerProfile() {
 
 
             <div className="about-us-section" id="about-us-section">
-
                 <div className="about-us-title">
                     <h2>{t('Working Schedule')}</h2>
                 </div>
-
                 <div className="about-us-section">
                     {/* ... other parts of the section ... */}
-
                     <div className="operation-hours">
                         {isDefaultSchedule(userDetails.workingTimes) ? (
                             <p>{t('No work schedule present')}</p>
@@ -696,7 +693,6 @@ function CarDealerProfile() {
                             ))
                         )}
                     </div>
-
                     {/* ... other parts of the section ... */}
                 </div>
             </div>
