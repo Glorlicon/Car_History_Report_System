@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { USER_ROLE } from "../../utils/const/UserRole";
-import { AdminUserSearchParams, APIResponse, DataProvider, User } from "../../utils/Interfaces";
+import { AdminUserSearchParams, APIResponse, DataProvider, PasswordChange, User } from "../../utils/Interfaces";
 
 interface CreateErrors {
     DuplicateEmail: string[]
@@ -82,6 +82,35 @@ export async function Edit(id: string, data: User, token: string, connectAPIErro
     }
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/User/${id}`, verifiedData,{
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept-Language': `${language}`
+            }
+        })
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else if (axiosError.code === "ERR_BAD_REQUEST") {
+            const errors = axiosError.response?.data as CreateErrors
+            let message = ""
+            if (errors.DuplicateEmail) {
+                message += errors.DuplicateEmail[0] + " "
+            }
+            if (errors.DuplicateUserName) {
+                message += errors.DuplicateUserName[0]
+            }
+            return { error: message }
+        } else {
+            return { error: unknownError }
+        }
+    }
+} 
+
+export async function EditPassword(data: PasswordChange, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/Authentication/change-password`, data, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept-Language': `${language}`

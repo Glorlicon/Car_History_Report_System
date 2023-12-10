@@ -1,14 +1,18 @@
+import { Avatar, Pagination, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
+import i18n from '../../localization/config';
 import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Reviews } from '../../utils/Interfaces';
+import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopHomePage() {
@@ -22,23 +26,23 @@ function ServiceShopHomePage() {
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [adding, setAdding] = useState(false);
     const [review, setReview] = useState<Reviews[]>([]);
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
     const [allServices, setAllServices] = useState<string[]>([]);
-
-    //const [showAllMakes, setShowAllMakes] = useState(false);
-    //const maxItemsToShow = 15;
-    /*const makesList = userDetails.makes; // Replace with actual makes list from userDetails*/
-    /*const visibleMakes = showAllMakes ? makesList : makesList.slice(0, maxItemsToShow);*/
-    //const [showAllServices, setShowAllServices] = useState(false);
-    //const maxServicesToShow = 15;
-    //const servicesList = userDetails.services; // Replace with actual services list from userDetails
-    //const visibleServices = showAllServices ? servicesList : servicesList.slice(0, maxServicesToShow);
-
+    const [image, setImage] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
+    const [reviewPaging, setReviewPaging] = useState<Paging>()
+    const [reviewPage, setReviewPage] = useState(1)
+    const [rating, setRating] = useState(0)
+    const [sortByRating, setSortByRating] = useState(0)
+    const [sortByDate, setSortByDate] = useState(0)
+    const [filteredReview, setFilteredReview] = useState<Reviews[]>([]);
 
     const [userDetails, setUserDetails] = useState({
         id: 0,
@@ -49,7 +53,7 @@ function ServiceShopHomePage() {
         phoneNumber: '',
         email: '',
         type: 0,
-        imagelink: '',
+        imageLink: '',
         workingTimes: Array(7).fill({
             dayOfWeek: 0,
             startHour: 0,
@@ -59,6 +63,13 @@ function ServiceShopHomePage() {
             isClosed: true
         })
     });
+
+    const handleResetReviewFilters = () => {
+        setRating(0)
+        setSortByRating(0)
+        setSortByDate(0)
+        setResetReviewTrigger(prev => prev + 1);
+    }
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -137,13 +148,15 @@ function ServiceShopHomePage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-
         const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
         } else {
+            if (dataProviderResponse.data.imageLink) {
+                const image = GetImages(dataProviderResponse.data.imageLink)
+                setImageUrl(image)
+            }
             let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
-
             if (Array.isArray(dataProviderResponse.data.workingTimes)) {
                 transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
                     const [startHour, startMinute] = time.startTime.split(':').map(Number);
@@ -164,9 +177,6 @@ function ServiceShopHomePage() {
                 ...dataProviderResponse.data,
                 workingTimes: transformedWorkingTimes
             });
-
-            console.log("Transformed Data:", userDetails);
-
             const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(dealerId);
             if (carServiceResponse.error) {
                 setError(carServiceResponse.error);
@@ -175,7 +185,6 @@ function ServiceShopHomePage() {
 
                 // Define the initial value of the accumulator explicitly as an array of strings
                 const initialServices: string[] = [];
-
                 const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
                     if (item.servicesName) {
                         const serviceNames = item.servicesName.split(', ').map(name => name.trim());
@@ -189,14 +198,14 @@ function ServiceShopHomePage() {
             }
 
 
-            const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-            if (reviewListResponse.error) {
-                setError(reviewListResponse.error);
-            } else {
-                setReview(reviewListResponse.data);
-            }
+            //const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+            //if (reviewListResponse.error) {
+            //    setError(reviewListResponse.error);
+            //} else {
+            //    setReview(reviewListResponse.data);
+            //}
 
-            setLoading(false);
+            //setLoading(false);
         }
 
 
@@ -230,7 +239,6 @@ function ServiceShopHomePage() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
         const { name, value, type } = e.target;
-
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
 
@@ -264,7 +272,6 @@ function ServiceShopHomePage() {
                 return { ...prevProfile, [name]: value };
             }
         });
-        console.log("updated user:", editDealerProfile)
     };
 
 
@@ -273,31 +280,10 @@ function ServiceShopHomePage() {
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            const addedImageUrl = URL.createObjectURL(event.target.files[0]); // Create a URL for the file
-
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: addedImageUrl // Update the imagelink directly
-                };
-            });
-        }
-    };
-
-    const handleRemoveImage = () => {
-        if (editDealerProfile && editDealerProfile.imagelink) {
-            setEditDealerProfile(prevProfile => {
-                // Ensure prevProfile is not null
-                if (!prevProfile) return null;
-
-                return {
-                    ...prevProfile,
-                    imagelink: "" // Clearing the imagelink
-                };
-            });
+            const addedImageUrl = URL.createObjectURL(event.target.files[0]);
+            const file = event.target.files[0];
+            setImageUrl(addedImageUrl)
+            setImage(file)
         }
     };
 
@@ -306,23 +292,31 @@ function ServiceShopHomePage() {
         if (editDealerProfile != null) {
             setAdding(true);
             setAddError(null);
-
-            const response: APIResponse = await EditProfile(editDealerProfile, token);
-            console.log("Submitted Data", editDealerProfile);
-
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let unknownError = t('Something went wrong. Please try again')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            let notFoundError = t('No image was found')
+            let failedError = t('Failed to upload image')
+            const uploadImage = await UploadImages(image, notFoundError, failedError)
+            if (uploadImage.error) {
+                setError(uploadImage.error)
             } else {
-                setEditDealerProfile(null); // Resetting the edit state
-                setModalPage(1);
-                fetchData(); // Fetching the latest data and updating state
+                const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadImage.data }, token);
+                setAdding(false);
+                if (response.error) {
+                    setAddError(response.error);
+                } else {
+                    setEditDealerProfile(null);
+                    setModalPage(1);
+                    fetchData();
+                }
             }
         }
     };
 
 
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData();
     }, [dealerId, token]);
 
@@ -331,113 +325,93 @@ function ServiceShopHomePage() {
         setOverlayWidth(`${100 - percentage}%`);
 
         setUserDetails((currentUser) => {
-            // Check if currentUser exists and if workingTimes needs to be set
             if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
                 const updatedUser = {
                     ...currentUser,
-                    workingTimes: defaultSchedule // Set workingTimes directly on currentUser
+                    workingTimes: defaultSchedule
                 };
                 setWorkingTimes(defaultSchedule);
                 return updatedUser;
             } else if (currentUser?.workingTimes) {
-                // If workingTimes already exists, just update the workingTimes state
                 setWorkingTimes(currentUser.workingTimes);
             }
 
-            return currentUser; // Return the currentUser as is if no updates are needed
+            return currentUser;
         });
 
-        console.log("User", userDetails);
     }, [value, max, userDetails, defaultSchedule]);
 
 
 
     return (
         <div className="car-dealer-profile">
-
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
-                    <div className="breadcrumb">
-                        Home
-                    </div>
-
-                    {/* Dealer Name and Ratings */}
+                    {/*<div className="breadcrumb">*/}
+                    {/*    Home*/}
+                    {/*</div>*/}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
-                                <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                                <Typography component="legend">
+                                    {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                                </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
                             <span className="favorites">
-                                favNum Favourited This Shop
                             </span>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
-
-                    {/* Contact Info */}
                     <div className="phone-info">
-                        <span>Phone Number: {userDetails?.phoneNumber}</span>
+                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
                     </div>
-
-                    {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale">Car For Sale</a>
-                        <a href="#reviews">Reviews</a>
-                        <a href="#about-us">About Us</a>
+                        <a href="#service-information-section">{t('Top Service Performed')}</a>
+                        <a href="#ratings-reviews-section">{t('Reviews')}</a>
+                        <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
-
-                {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
-                    <div className="profile-image">
-                        {/* Add image here */}
+                    <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                        <Tooltip title={t('Click to edit')}>
+                            <Avatar
+                                alt="Dealer Shop"
+                                src={GetImages(userDetails?.imageLink)}
+                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                            />
+                        </Tooltip>
                     </div>
-                    <button onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>Edit</button>
                 </div>
             </div>
 
-            <div className="service-information-section">
+            <div className="service-information-section" id="service-information-section">
                 <div className="service-info">
-                    <h3>Top Services Performed</h3>
-                    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these services, in addition to many others:</p>
+                    <h3>{t('Top Services Performed')}</h3>
+                    <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
                     <div className="services-list">
                         {allServices.length === 0 ? (
-                            <p>No services available</p>
+                            <p>{t('No services available')}</p>
                         ) : (
                             allServices.map((service, index) => (
-                                <span key={index}>{service}</span>
+                                <span key={index}>{t(service)}</span>
                             ))
                         )}
                     </div>
                 </div>
-                {/*<div className="makes-serviced">*/}
-                {/*    <h3>Top Makes Serviced</h3>*/}
-                {/*    <p>Based on CHRIS Service History, <strong>{userDetails?.name}</strong> specializes in these Makes, in addition to many others:</p>*/}
-                {/*    <div className="makes-list">*/}
-                {/*        {visibleMakes.map((make, index) => (*/}
-                {/*            <span key={index}>• {make}</span>*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*    {makesList.length > maxItemsToShow && (*/}
-                {/*        <button onClick={() => setShowAllMakes(!showAllMakes)}>*/}
-                {/*            {showAllMakes ? 'Show Less' : 'Show More'}*/}
-                {/*        </button>*/}
-                {/*    )}*/}
-                {/*</div>*/}
             </div>
 
 
-            <div className="ratings-reviews-section">
-                <h1>Ratings & Reviews</h1>
+            <div className="ratings-reviews-section" id="ratings-reviews-section">
+                <h1>{t('Ratings & Review')}</h1>
                 <div className="rating-comment">
-
                     <div className="rating">
                         <div className="star-summary">
-                            <Typography component="legend">{averageRating ? `Average Rating: ${averageRating.toFixed(1)}` : 'No Ratings'}</Typography>
+                            <Typography component="legend">
+                                {averageRating ? `${t('Average Rating')}: ${averageRating.toFixed(1)}` : t('No Ratings')}
+                            </Typography>
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
@@ -448,7 +422,7 @@ function ServiceShopHomePage() {
                                     const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
                                     return (
                                         <div className="star-row" key={index}>
-                                            <span className="star-label">{star} Stars</span>
+                                            <span className="star-label">{star} {t('Stars')}</span>
                                             <div className="star-bar">
                                                 <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
                                                     {/* The filled portion of the bar */}
@@ -466,15 +440,54 @@ function ServiceShopHomePage() {
 
 
                     <div className="reviews-list">
-                        {review.length > 0 ? (
-                            review.map((reviewItem, index) => (
+                        <div className="filters">
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Stars Number')}</label>
+                                    <select onChange={(e) => setRating(Number(e.target.value))} value={rating}>
+                                        <option value="0">{t('Any Stars')}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Rating')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByRating(Number(e.target.value))}
+                                        value={sortByRating}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span>
+                                <div className="filter-choice">
+                                    <label>{t('Sort By Date')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setSortByDate(Number(e.target.value))}
+                                        value={sortByDate}
+                                    >
+                                        <option value="0">{t('Descending')}</option>
+                                        <option value="1">{t('Ascending')}</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
+                        </div>
+                        {filteredReview.length > 0 ? (
+                            filteredReview.map((reviewItem, index) => (
                                 <div className="review-card" key={index}>
                                     <div className="review-header">
-                                        {/* Display the stars based on the rating. This assumes a rating out of 5 */}
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
-                                        {/* You might want to fetch the username using reviewItem.userId */}
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : 'unknown date'}
+                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -483,28 +496,24 @@ function ServiceShopHomePage() {
                                 </div>
                             ))
                         ) : (
-                            <p>No reviews available</p>
+                            <p>{t('No reviews available')}</p>
                         )}
                     </div>
-
-
-
                 </div>
-                <div className="review-pagination">
-                    <button className="pagination-button">Previous</button>
-                    {[1, 2, 3, 4, 5].map((page, index) => (
-                        <button className="pagination-button" key={index}>{page}</button>
-                    ))}
-                    <button className="pagination-button">Next</button>
+                <div id="pagination">
+                    {reviewPaging && reviewPaging.TotalPages > 0 &&
+                        <>
+                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                        </>
+                    }
                 </div>
-
             </div>
 
 
-            <div className="about-us-section">
+            <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>Working Schedule</h2>
+                    <h2>{t('Working Schedule')}</h2>
                 </div>
 
                 <div className="about-us-section">
@@ -512,12 +521,12 @@ function ServiceShopHomePage() {
 
                     <div className="operation-hours">
                         {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>No work schedule present</p>
+                            <p>{t('No work schedule present')}</p>
                         ) : (
                             userDetails.workingTimes.map((day, index) => (
                                 <p key={index}>
                                     {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? 'Closed' : `${String(day.startHour).padStart(2, '0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
+                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
                                 </p>
                             ))
                         )}
@@ -528,9 +537,9 @@ function ServiceShopHomePage() {
             </div>
             {editDealerProfile && (
                 <div className="dealer-car-sales-modal">
-                    <div className="dealer-car-sales-modal-content">
+                    <div className="dealer-car-sales-modal-content-2">
                         <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Profile</h2>
+                        <h2>{t('Edit Profile')}</h2>
                         {modalPage === 1 && (
                             <CarDealerProfilePage
                                 action="Edit"
@@ -542,17 +551,17 @@ function ServiceShopHomePage() {
                             <CarDealerProfileImage
                                 model={editDealerProfile}
                                 handleAddImages={handleAddImages}
-                                handleRemoveImages={handleRemoveImage}
+                                imageUrl={imageUrl}
                             />
                         )}
                         {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
                             <>
                                 <div>
                                     <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
+                                        {t('Previous')}
                                     </button>
                                     <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
+                                        {modalPage < 2 ? t('Next') : t('Edit')}
                                     </button>
                                 </div>
                             </>

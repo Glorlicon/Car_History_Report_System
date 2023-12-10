@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { GetCarForSale, SendContactMail } from '../../services/api/CarForSale';
+import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
@@ -35,6 +36,35 @@ function CarSalesDetailPage() {
         }
         
         setLoading(false)
+    }
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const handlePrevImage = () => {
+        if (!car || !car.carImages) {
+            return
+        }
+        if (currentImageIndex === 0) {
+            setCurrentImageIndex(car.carImages!.length - 1)
+        } else {
+            setCurrentImageIndex((prev) => (prev - 1))
+        }
+    };
+
+    const handleNextImage = () => {
+        if (!car || !car.carImages) {
+            return
+        }
+        if (currentImageIndex === car.carImages!.length - 1) {
+            setCurrentImageIndex(0)
+        } else {
+            setCurrentImageIndex((prev) => (prev + 1))
+        }
+    };
+    const handleChangeIndex = () => {
+        if (currentImageIndex > 0) {
+            setCurrentImageIndex(currentImageIndex - 1)
+        }
     }
 
     const handleMessageSend= async () => {
@@ -76,23 +106,28 @@ function CarSalesDetailPage() {
             <div className="car-detail-container">
                 <div className="content-wrapper">
                     <div className="car-detail-main">
-                        <div className="car-image">
-                            <img src="#" alt="Car Image" />
-                        </div>
-                        <div>
-                        </div>
-                        <div className="box">
-                            <div className="nameprice">
-                                <p>{t('Used')} {car?.modelId}</p>
-                                <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer}</p>
+                        {/* Car Image Section */}
+                        <div className="car-image-section">
+                            <div className="box">
+                                <div className="car-detail-image">
+                                    <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
+                                    <img src={
+                                        car?.carImages?.at(currentImageIndex)?.id != -1 ?
+                                            GetImages(car?.carImages?.at(currentImageIndex)?.imageLink as string) :
+                                            car?.carImages?.at(currentImageIndex)?.imageLink
+                                    } alt="Car Image" />
+                                    <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
+                                    {/* Image counter */}
+                                    <div className="image-count">
+                                        {car?.carSalesInfo?.carImages?.length || 0} Photos
+                                    </div>
+                                </div>
+                                <div className="vehicle-info">
+                                    <h1>{t('Used')} {car?.modelId}</h1>
+                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} km</p>
+                                    <p>VIN: {car?.vinId}</p>
+                                </div>
                             </div>
-                            <div>
-
-                            </div>
-                            <div className="vin">
-                                <p>{t('VIN')}: {car?.vinId}</p>
-                            </div>
-                            
                         </div>
 
                         <div className="vehicle-highlights-box">
@@ -130,7 +165,7 @@ function CarSalesDetailPage() {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div className="top-features">
                                     <p className="top-features-header">{t('Top Features')}</p>
                                     <div className="tags-container">
@@ -148,7 +183,6 @@ function CarSalesDetailPage() {
                                             </span>
                                         </div>
                                     )}
-
                                 </div>
                                 <div className="sales-description">
                                     <p className="sales-description-header">{t('Description')}</p>
@@ -167,50 +201,51 @@ function CarSalesDetailPage() {
                                 <a href={`../dealer/${car?.carSalesInfo?.dataProvider?.id}`}>{t('Dealer Profile')}</a>
                             </div>
                         </div>
-                        
+
                     </div>
 
-                    <div className="availability-section">
-                        <div className="info-header">
-                            <p>{t('Check Availability')}</p>
-                            <p>Phone Number: {car?.carSalesInfo?.dataProvider?.phoneNumber}</p>
-                        </div>
-                        
-                        <div className="interest-message">
-                            <div className="contact-context">
-                                <div className="contact-image">
-                                    <img src="#" alt="Car Image" />
+                    {/* Contact Form Section */}
+                    <div className="availability-section narrow-section">
+                        <div className="box">
+                            <div className="info-header">
+                                <p>{t('Check Availability')}</p>
+                                <p>Phone Number: {car?.carSalesInfo?.dataProvider?.phoneNumber}</p>
+                            </div>
+
+                            <div className="interest-message">
+                                <div className="contact-context">
+                                    <div className="contact-image">
+                                        <img src={GetImages(car?.carImages?.[0]?.imageLink || '')} alt="Car" style={{ width: '75%' }} />
+                                    </div>
+
+                                    <div className="contact-description">
+                                        <p>{t('Mail Intro')}</p>
+                                        <h3>{t('Used')} {car?.modelId}</h3>
+                                        <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer}</p>
+                                    </div>
                                 </div>
 
-                                <div className="contact-description">
-                                    <p>{t('Mail Intro')}</p>
-                                    <h3>{t('Used')} {car?.modelId}</h3>
-                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer}</p>
+                                <div className="contact-form">
+                                    <div className="name-input">
+                                        <input onChange={handleInputChange} name="firstName" type="text" placeholder={t('First Name')} />
+                                        <input onChange={handleInputChange} name="lastName" type="text" placeholder={t('Last Name')} />
+                                    </div>
+                                    <div className="info-input">
+                                        <input onChange={handleInputChange} name="zipCode" type="text" placeholder={t('Zip Code')} />
+                                        <input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder={t('Phone Number')} />
+                                    </div>
+                                    <div className="email-input">
+                                        <input onChange={handleInputChange} name="email" type="email" placeholder={t('Email')} />
+                                        <input type="hidden" value={car?.vinId} name="vinId" />
+                                    </div>
+                                    <div className="button-submit">
+                                        <button onClick={handleMessageSend}>{t('Send Message')}</button>
+                                    </div>
+                                    {addError && <p className="ad-car-error">{addError}</p>}
                                 </div>
-                            </div>
-                            
-                            <div className="contact-form">
-                                <div className="name-input">
-                                    <input onChange={handleInputChange} name="firstName" type="text" placeholder={t('First Name')} />
-                                    <input onChange={handleInputChange} name="lastName" type="text" placeholder={t('Last Name')} />
-                                </div>
-                                <div className="info-input">
-                                    <input onChange={handleInputChange} name="zipCode" type="text" placeholder={t('Zip Code')} />
-                                    <input onChange={handleInputChange} name="email" type="email" placeholder={t('Email')} />
-                                    <input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder={t('Phone Number')} />
-                                    <input type="hidden" value={car?.vinId} name="vinId"></input>
-                                </div>
-                                <div className="button-submit">
-                                    <button onClick={handleMessageSend}>{t('Send Message')}</button>
-                                </div>
-                                {addError && (
-                                    <p className="ad-car-error">{addError}</p>
-                                )}
-                                    
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </>

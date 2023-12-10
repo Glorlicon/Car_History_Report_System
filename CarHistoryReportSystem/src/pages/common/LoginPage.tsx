@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Login } from '../../services/auth/Login';
 import '../../styles/LoginPage.css'
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,9 @@ import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { SendVerifyToken } from '../../services/auth/Verify';
+import { t } from 'i18next';
+import i18n from '../../localization/config';
+import { RootState } from '../../store/State';
 
 function LoginPage() {
     const dispatch = useDispatch()
@@ -17,6 +20,10 @@ function LoginPage() {
     const [authenticationError, setAuthenticationError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const handleCreateAccountClick = () => {
+        navigate('/register');
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,37 +86,44 @@ function LoginPage() {
         setAuthenticationError(true)
         setErrorMessage(response.error as string)
     };
+
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, [])
+
     return (
         <div className="login-container">
             <form onSubmit={handleSubmit} className="login-form">
-                <h2>Login</h2>
-                <label htmlFor="username">Username</label>
+                <h2>{t('Login')}</h2>
                 <input
                     type="text"
-                    placeholder="Username"
+                    id="username"
+                    placeholder={t('Email address or username')}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
-                <label htmlFor="password">Password</label>
                 <input
                     type="password"
-                    placeholder="Password"
+                    id="password"
+                    placeholder={t('Password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <div className="register-link">
-                    <a href="/register"> Don't have an account? Register</a>
-                </div>
-                <div className="error">
-                    {authenticationError && (
-                        <div className="message">{errorMessage}</div>
-                    )}
-                </div>
-                {isLoading ? (
-                    <div className="logging"></div>
-                ): (
-                    <button type="submit">Login</button>
+                {authenticationError && (
+                    <div className="error message">{errorMessage}</div>
                 )}
+                {isLoading ? (
+                    <div className="logging-in"></div>
+                ) : (
+                        <button type="submit" className="login-button">{t('Log in')}</button>
+                )}
+                <div className="login-form-footer">
+                    <a href="/forgotpassword" className="forgot-password">{t('Forgotten password?')}</a>
+                    <div className="divider"></div>
+                    <button type="button" className="create-account-button" onClick={handleCreateAccountClick}>
+                        {t('Create new account')}
+                    </button>
+                </div>
             </form>
         </div>
     );

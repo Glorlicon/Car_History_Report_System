@@ -428,7 +428,7 @@ function AdminMonetizationPage() {
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>{t('No stolen car reports found')}</td>
+                                      <td colSpan={5}>{t('No Order Found')}</td>
                       </tr>
                   )}
               </tbody>
