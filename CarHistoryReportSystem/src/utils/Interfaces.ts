@@ -630,3 +630,14 @@ export interface PartialPlateSearchParams {
     manufacturer: string
     model: string
 }
+
+export interface VinAlert {
+    carId: string
+    userId: string
+    isFollowing: boolean
+    createdTime: string
+}
+export interface CarTracking {
+    carId: string
+    userId: string
+}

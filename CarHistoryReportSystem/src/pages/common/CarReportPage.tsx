@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { GetReport, GetReportExcel } from '../../services/api/Reports';
+import { GetReport } from '../../services/api/Reports';
 import { APIResponse, CarCrash, CarHistoryDetail, CarInspectionDetail, CarInspectionHistory, CarInsurance, CarRecallStatus, CarRegistration, CarReport, CarServiceHistory, CarStolen } from '../../utils/Interfaces';
 import '../../styles/CarReportPage.css'
 import generatePDF, { Resolution, Margin, Options} from 'react-to-pdf';

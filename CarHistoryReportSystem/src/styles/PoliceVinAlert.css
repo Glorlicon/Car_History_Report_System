@@ -1,0 +1,16 @@
+.pol-alert-action {
+    border-radius: 20px;
+    margin: 5px;
+    box-shadow: 5px 10px #888888;
+    width: 100%;
+    margin-bottom: 30px;
+    text-align: left;
+}
+.MuiTypography-root{
+    font-weight: bold;
+}
+.plate-alert-page-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}

@@ -282,7 +282,7 @@ function PoliceStolenCarList() {
                       </tr>
                   ) : error ? (
                       <tr>
-                          <td colSpan={5} style={{ textAlign: 'center' }}>
+                          <td colSpan={4} style={{ textAlign: 'center' }}>
                               {error}
                                   <button onClick={fetchData} className="pol-stolen-retry-btn">{t('Retry')}</button>
                           </td>
@@ -298,7 +298,7 @@ function PoliceStolenCarList() {
                       ))
                   ) : (
                       <tr>
-                          <td colSpan={5}>{t('No stolen car reports found')}</td>
+                          <td colSpan={4}>{t('No stolen car reports found')}</td>
                       </tr>
                   )}
               </tbody>

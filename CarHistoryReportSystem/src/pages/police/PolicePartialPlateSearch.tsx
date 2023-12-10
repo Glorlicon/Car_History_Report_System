@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -34,11 +33,6 @@ const getSearchPlate = (plateCharacters: string[]) => {
     let result = plateArrayCopy.join('')
     return result
 }
-const columns: readonly Column[] = [
-    { id: 'licensePlateNumber', label: 'License Plate Number', minWidth: 170 },
-    { id: 'vinId', label: 'VIN', minWidth: 100 },
-    { id: 'modelId', label: 'modelId', minWidth: 100 }
-];
 
 function PolicePartialPlateSearch() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -52,10 +46,14 @@ function PolicePartialPlateSearch() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [carList, setCarList] = useState<Car[]>([])
-    const [paging, setPaging] = useState<Paging>()
     const [plateLength, setPlateLength] = useState(7)
     const [plateCharacters, setPlateCharacters] = useState<string[]>(Array(plateLength).fill('*'));
-    const [selectedRow, setSelectedRow] = useState<Car|null>();
+    const [selectedRow, setSelectedRow] = useState<Car | null>();
+    const columns: readonly Column[] = [
+        { id: 'licensePlateNumber', label: t('License Plate Number'), minWidth: 170 },
+        { id: 'vinId', label: t('VIN'), minWidth: 100 },
+        { id: 'modelId', label: t('modelId'), minWidth: 100 }
+    ];
     const handleCharacterChange = (value: string, position: number) => {
         if (value.length <= 1) {
             const updatedCharacters = [...plateCharacters];
@@ -113,7 +111,6 @@ function PolicePartialPlateSearch() {
             setError(response.error)
         } else {
             setCarList(response.data)
-            setPaging(response.pages)
         }
     }
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -125,10 +122,10 @@ function PolicePartialPlateSearch() {
     return (
         <div className="pol-plate-search-page">
             <div className="pol-plate-search-action">
-                <h2>Search by Partial Plate</h2>
+                <h2>{t('Search by Partial Plate')}</h2>
                 <div className="plate-length-selector">
                     <label>
-                        Number of Plate Characters:
+                        {t('Number of Plate Characters')}:
                         <input
                             type='number'
                             value={plateLength}
@@ -184,8 +181,8 @@ function PolicePartialPlateSearch() {
                     </div>
                 </div>
                 <div className="search-actions">
-                    <button onClick={handleSearch}>Search License Plates</button>
-                    <button onClick={handleClearSearch}>Clear Search</button>
+                    <button onClick={handleSearch}>{t('Search License Plates')}</button>
+                    <button onClick={handleClearSearch}>{t('Clear Search')}</button>
                 </div>
             </div>
             <div className="plate-search-page-row">
@@ -241,43 +238,43 @@ function PolicePartialPlateSearch() {
                         />
                     </div>
                     <div className="plate-search-page-item-4">
-                        <h3>Car Report</h3>
+                        <h3>{t('Car Report')}</h3>
                         <div className="plate-view-report-button-div">
-                            <button className="plate-view-report-button" onClick={handleViewReport}>View Report For Car</button>
+                            <button className="plate-view-report-button" onClick={handleViewReport}>{t('View Report For Car')}</button>
                         </div>
                     </div>
                 </div>
                 <div className="plate-search-page-item">
-                    <h3>Car Details</h3>
+                    <h3>{t('Car Details')}</h3>
                     {selectedRow ?
                         <div className="dealer-car-sales-details-section">
                             <p>
-                                <strong>VIN ID:</strong> {selectedRow.vinId}
+                                <strong>{t('VIN')}:</strong> {selectedRow.vinId}
                             </p>
                             <p>
-                                <strong>License Plate Number:</strong> {selectedRow.licensePlateNumber}
+                                <strong>{t('License Plate Number')}:</strong> {selectedRow.licensePlateNumber}
                             </p>
                             <p>
-                                <strong>Color:</strong> {selectedRow.colorName}
+                                <strong>{t('Color')}:</strong> {selectedRow.colorName}
                             </p>
                             <p>
-                                <strong>Current Odometer:</strong> {selectedRow.currentOdometer}
+                                <strong>{t('Current Odometer')}:</strong> {selectedRow.currentOdometer}
                             </p>
                             <p>
-                                <strong>Engine Number:</strong> {selectedRow.engineNumber}
+                                <strong>{t('Engine Number')}:</strong> {selectedRow.engineNumber}
                             </p>
                             <p>
-                                <strong>Modified:</strong> {selectedRow.isModified ? "Yes" : "No"}
+                                <strong>{t('Modified')}:</strong> {selectedRow.isModified ? "Yes" : "No"}
                             </p>
                             <p>
-                                <strong>CommercialUse:</strong> {selectedRow.isCommercialUse ? "Yes" : "No"}
+                                <strong>{t('Commercial Use')}:</strong> {selectedRow.isCommercialUse ? "Yes" : "No"}
                             </p>
                             <p>
-                                <strong>Model ID:</strong> {selectedRow.modelId}
+                                <strong>{t('Model ID')}:</strong> {selectedRow.modelId}
                             </p>
                         </div> :
                         <a>
-                        Click on the car to see the details
+                            {t('Click on the car to see the details')}
                         </a>}
                 </div>
             </div>
