@@ -145,9 +145,11 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
 
                     )}
                     {!token && (
-                        <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
-                            {t('Search Shop')}
-                        </a>
+                        <li>
+                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
+                                {t('Search Shop')}
+                            </a>
+                        </li>
                     )}
                     <li>
                         <Menu
