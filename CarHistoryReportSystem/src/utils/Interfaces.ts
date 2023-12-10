@@ -624,3 +624,9 @@ export interface OrderResponse {
     createdDate: string
 }
 
+export interface PartialPlateSearchParams {
+    partialPlate: string
+    partialVin: string
+    manufacturer: string
+    model: string
+}

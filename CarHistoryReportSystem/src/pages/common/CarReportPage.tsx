@@ -12,22 +12,18 @@ import { CAR_SIDES } from '../../utils/const/CarSides';
 function CarReportPage() {
     type RouteParams = {
         vin: string
+        date: string
     }
     const verifyToken = useSelector((state: RootState) => state.auth.verifyToken) as unknown as string
     const token = useSelector((state: RootState) => state.auth.token)
     const dispatch = useDispatch()
-    const { vin } = useParams<RouteParams>()
+    const { vin, date } = useParams<RouteParams>()
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [report, setReport] = useState<CarReport|null>(null)
     const getReport = () => document.getElementById('report')
-    const [data, setData] = useState("")
     const handleDownloadPdf = () => {
         generatePDF(getReport, options)
-    }
-    const handleDownloadCsv = () => {
-        const element = document.getElementById('excel')
-        element?.click()
     }
 
     const options: Options = {
@@ -64,22 +60,20 @@ function CarReportPage() {
 
     const fetchData = async () => {
         setLoading(true);
-        setError(null);
+        setError(null); 
+        let reportDate = date ? date : new Date().toISOString().split('T')[0]
         let response: APIResponse
         if (token) {
-            response = await GetReport(vin as string, token)
+            response = await GetReport(vin as string, token, reportDate)
         } else {
-            response = await GetReport(vin as string, verifyToken)
-            dispatch(clearVerifyToken())
+            response = await GetReport(vin as string, verifyToken, reportDate)
         }
-        const responseCsv: APIResponse = await GetReportExcel(vin as string)
-        setData(responseCsv.data)
         setLoading(false);
         if (response.error) {
             setError(response.error);
         } else {
             setReport(response.data)
-            console.log(response.data)
+            dispatch(clearVerifyToken())
         }
     }
     useEffect(() => {
@@ -89,17 +83,14 @@ function CarReportPage() {
   return (
       <div className="car-report-details-page">
           <button onClick={handleDownloadPdf}>Export PDF</button>
-          <button onClick={handleDownloadCsv}>Export Excel</button>
-          <a
-              href={`data:text/csv;charset=utf-8,${escape(data)}`}
-              download="filename.csv"
-              hidden
-              id="excel"
-          >
-          </a>
           <div className="car-report-details-container" id="report">
               {loading ? (
                   <div className="car-report-details-spinner"></div>
+              ) : error ? (
+                      <>
+                          {error}
+                          <button onClick={fetchData} className="dealer-car-sales-details-retry-btn">Retry</button>
+                      </>
               ) : (
                   <>
                       <h3>Car General Information</h3>

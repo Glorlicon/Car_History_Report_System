@@ -39,7 +39,7 @@ const UserReportListPage: React.FC<UserReportListPageProps> = ({
                                       <label>{item.createdDate}</label>
                                   </td>
                                   <td>
-                                      <button className="reg-inspec-remove-inspec-category-btn" type="button" onClick={() => { }}>{t('See Report')}</button>
+                                      <button className="reg-inspec-remove-inspec-category-btn" type="button" onClick={() => { navigate(`/car-report/${item.carId}/${item.createdDate}`) }}>{t('See Report')}</button>
                                   </td>
                               </tr>
                           ))
