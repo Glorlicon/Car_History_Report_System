@@ -7,6 +7,7 @@ import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
+import cardefaultimage from '../../car-default.jpg';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -112,9 +113,9 @@ function CarSalesDetailPage() {
                                 <div className="car-detail-image">
                                     <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
                                     <img src={
-                                        car?.carImages?.at(currentImageIndex)?.id != -1 ?
-                                            GetImages(car?.carImages?.at(currentImageIndex)?.imageLink as string) :
-                                            car?.carImages?.at(currentImageIndex)?.imageLink
+                                        car?.carImages && car.carImages.length > 0 && car.carImages[currentImageIndex]?.id !== -1 ?
+                                            GetImages(car.carImages[currentImageIndex].imageLink) :
+                                            cardefaultimage
                                     } alt="Car Image" />
                                     <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
                                     {/* Image counter */}
