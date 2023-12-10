@@ -20,11 +20,11 @@ namespace Application.Interfaces
 
         Task<RegisterResult> RegisterAsync(RegistrationRequestDTO request);
 
-        Task<bool> ChangePassword(string id, ChangePasswordUserRequestDTO request);
+        Task<bool> ChangePassword(ChangePasswordUserRequestDTO request);
 
         Task<string> ForgotPassword(ForgotPasswordRequestDTO request);
 
-        Task<bool> ResetPassword(ResetPasswordRequestDTO request, string token);
+        Task<string> ResetPassword(ResetPasswordRequestDTO request);
 
         Task<LoginResult> Login(LoginRequestDTO loginRequest);
 

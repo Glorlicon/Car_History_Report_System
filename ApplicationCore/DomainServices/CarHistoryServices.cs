@@ -97,13 +97,27 @@ namespace Application.DomainServices
             }
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
+            // Send Notification to insurance if it's accident or stolen
+            if(typeof(T) == typeof(CarAccidentHistory) || typeof(T) == typeof(CarStolenHistory))
+            {
+                var historyTypeName = typeof(T) == typeof(CarAccidentHistory) ? "Car Accident History" : "Car Stolen History";
+                var insuranceAlertNotification = new NotificationCreateRequestDTO
+                {
+                    Title = $"New {historyTypeName} of car with insurance has beed added",
+                    RelatedCarId = carHistory.CarId,
+                    Description = $"New {historyTypeName} of car with insurance has beed added",
+                    RelatedLink = $"{carHistory.Id}",
+                    Type = NotificationType.InsuranceAlert
+                };
+                await _notificationServices.CreateNotification(insuranceAlertNotification);
+            }
             // Send Notification to police
             var policeAlertNotification = new NotificationCreateRequestDTO
             {
                 Title = $"New Car History of car {carHistory.CarId} has beed added",
                 RelatedCarId = carHistory.CarId,
                 Description = $"Car {carHistory.CarId} have beed added new {typeof(T).Name}",
-                RelatedLink = $"/{carHistory.CarId}",
+                RelatedLink = $"{carHistory.CarId}",
                 Type = NotificationType.PoliceAlert
             };
             await _notificationServices.CreateNotification(policeAlertNotification);

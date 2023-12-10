@@ -13,6 +13,7 @@ namespace Domain.Enum
         SystemInformation,
         Maintainance,
         Request,
-        RequestInfoUpdate
+        RequestInfoUpdate,
+        InsuranceAlert
     }
 }

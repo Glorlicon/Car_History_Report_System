@@ -623,7 +623,13 @@ export interface OrderResponse {
     transactionId: string
     createdDate: string
 }
-
+export interface CarSearchParams {
+    make: string
+    model: string
+    yearstart?: number
+    pricemax?: number
+    milagemax?: number
+}
 export interface PartialPlateSearchParams {
     partialPlate: string
     partialVin: string
