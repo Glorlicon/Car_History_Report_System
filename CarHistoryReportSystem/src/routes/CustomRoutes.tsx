@@ -49,7 +49,7 @@ import PoliceCarCrashList from '../pages/police/PoliceCarCrashList';
 import InsuranceCompanyCrashList from '../pages/insurance_company/InsuranceCompanyCrashList';
 import InsuranceCompanyStolenList from '../pages/insurance_company/InsuranceCompanyStolenList';
 import SearchCarDealer from '../pages/common/SearchDealer';
-import SearchServiceShop from '../pages/common/SearchServiceShop';
+import SearchServiceShop from '../pages/common/SearchService';
 import UserNotification from '../pages/user/UserNotification';
 import AdminMonetizationPage from '../pages/admin/AdminMonetizationPage';
 import ForgotPassword from '../pages/common/ForgottenPassword';

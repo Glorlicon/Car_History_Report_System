@@ -24,7 +24,6 @@ function ManufacturerCarRecallList() {
     const [paging, setPaging] = useState<Paging>()
     const [resetTrigger, setResetTrigger] = useState(0);
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    const [editRecalModel, setEditRecallModel] = useState<CarRecalls | null>(null)
     const [newRecall, setNewRecall] = useState<CarRecalls>({
         modelId: "",
         description: "",
@@ -126,7 +125,6 @@ function ManufacturerCarRecallList() {
         } else if (carModelResponse.error) {
             setError(carModelResponse.error)
         } else {
-            console.log("Model", carModelResponse.data)
             setRecallList(CarRecallReponse.data)
             setModelList(carModelResponse.data)
             setPaging(CarRecallReponse.pages)
@@ -219,7 +217,7 @@ function ManufacturerCarRecallList() {
                     ) : recallList.length > 0 ? (
                         recallList.map((model: CarRecalls, index: number) => (
                             <tr key={index}>
-                                <td onClick={() => { setEditRecallModel(model) }}>{model.modelId} &#x270E;</td>
+                                <td onClick={() => { setEditRecall(model) }}>{model.modelId} &#x270E;</td>
                                 <td>{model.description}</td>
                                 <td>{model.recallDate ? new Date(model.recallDate).toLocaleDateString() : 'Date not available'}</td>
                             </tr>
@@ -250,14 +248,14 @@ function ManufacturerCarRecallList() {
                     </div>
                 </div>
             )}
-            {editRecalModel && (
+            {editRecall && (
                 <div className="reg-reg-modal">
                     <div className="reg-reg-modal-content">
-                        <span className="reg-reg-close-btn" onClick={() => { setShowModal(false); setEditRecallModel(null) }}>&times;</span>
+                        <span className="reg-reg-close-btn" onClick={() => { setShowModal(false); setEditRecall(null) }}>&times;</span>
                         <h2>{t('Edit Car Registration')}</h2>
                         <CarRecallEditModal
                             action="Edit"
-                            model={editRecalModel}
+                            model={editRecall}
                             handleInputChange={handleInputChange}
                         />
                         <button onClick={handleEditCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
