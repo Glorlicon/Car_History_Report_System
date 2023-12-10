@@ -1,8 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { AddReport, APIResponse, Order } from "../../utils/Interfaces";
 
-export async function GetReport(vin: string, token: string): Promise<APIResponse> {
-    const date = new Date().toISOString().split('T')[0]
+export async function GetReport(vin: string, token: string, date: string): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarReport/${vin}/${date}`,
             {
@@ -22,26 +21,6 @@ export async function GetReport(vin: string, token: string): Promise<APIResponse
     }
 }
 
-export async function GetReportExcel(vin: string): Promise<APIResponse> {
-    try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory`,
-            {
-                headers: {
-                    'Accept': 'text/csv'
-                }
-            })
-        console.log("Response", response)
-        return { data: response.data }
-    } catch (error) {
-        const axiosError = error as AxiosError
-        if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
-        } else {
-            console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
-        }
-    }
-}
 
 export async function CreateOrder(data: any): Promise<APIResponse> {
     try {

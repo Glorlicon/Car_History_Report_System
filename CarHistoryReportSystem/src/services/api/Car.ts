@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { APIResponse, Car, CarSaleDetails, CarSaleSearchParams, CarSalesInfo, CarStorageSearchParams } from "../../utils/Interfaces";
+import { APIResponse, Car, CarSaleDetails, CarSaleSearchParams, CarSalesInfo, CarStorageSearchParams, CarTracking, PartialPlateSearchParams } from "../../utils/Interfaces";
 
 export async function ListCarDealerCarForSale(dealerId: number, token: string, pageNumber: number, connectAPIError: string, language: string, searchParams: CarSaleSearchParams): Promise<APIResponse> {
     try {
@@ -242,6 +242,99 @@ export async function AddOldCarToStorage(dataProviderId: number, vin: string, to
             {
                 dataProviderId: dataProviderId
             },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
+                }
+            }
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log("Add Error!: ", error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function PlateSearch(pageNumber: number, token: string, connectAPIError: string, language: string, partialPlateSearchParams: PartialPlateSearchParams): Promise<APIResponse> {
+    try {
+        let plate = partialPlateSearchParams.partialPlate.replace(/\*/g, '%2A')
+        console.log("Plate",plate)
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/partial-plate-search?searchString=${plate}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                }
+            })
+            console.log(response)
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log(error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+export async function GetVinAlertList(id: string, pageNumber: number, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Notifications/car-tracking/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    PageSize: 5
+                }
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log(error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function AddCarToAlertList(data: CarTracking, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Notifications/car-tracking`,data,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
+                }
+            }
+        )
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        console.log("Add Error!: ", error)
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+export async function RemoveCarFromAlertList(data: CarTracking, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/Notifications/car-tracking/untrack`, data,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,

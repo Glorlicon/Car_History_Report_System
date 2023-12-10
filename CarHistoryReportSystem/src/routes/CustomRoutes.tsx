@@ -52,6 +52,8 @@ import SearchCarDealer from '../pages/common/SearchDealer';
 import SearchServiceShop from '../pages/common/SearchService';
 import UserNotification from '../pages/user/UserNotification';
 import AdminMonetizationPage from '../pages/admin/AdminMonetizationPage';
+import PolicePartialPlateSearch from '../pages/police/PolicePartialPlateSearch';
+import PoliceVinAlertPage from '../pages/police/PoliceVinAlertPage';
 import ForgotPassword from '../pages/common/ForgottenPassword';
 import ForgotPasswordInitiate from '../pages/common/ForgottenPasswordInitiate';
 import ForgottenPasswordSuccess from '../pages/common/ForgottenPasswordSucess'
@@ -71,6 +73,7 @@ const CustomRoutes = () => {
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 <Route path="/report" element={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>} />
                 <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
+                <Route path="/car-report/:vin/:date" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
                 <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
                 <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
@@ -116,6 +119,8 @@ const CustomRoutes = () => {
                 <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceStolenCarList /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/crash" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceCarCrashList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/plate-search" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PolicePartialPlateSearch /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/vin-alert" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceVinAlertPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/requests" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><RequestPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/profile" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/notification" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />

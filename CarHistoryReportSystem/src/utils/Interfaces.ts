@@ -632,7 +632,6 @@ export interface OrderResponse {
     transactionId: string
     createdDate: string
 }
-
 export interface CarSearchParams {
     make: string
     model: string
@@ -640,7 +639,23 @@ export interface CarSearchParams {
     pricemax?: number
     milagemax?: number
 }
+export interface PartialPlateSearchParams {
+    partialPlate: string
+    partialVin: string
+    manufacturer: string
+    model: string
+}
 
+export interface VinAlert {
+    carId: string
+    userId: string
+    isFollowing: boolean
+    createdTime: string
+}
+export interface CarTracking {
+    carId: string
+    userId: string
+}
 export interface ReviewSearchParams {
     dataproviderId: number
     rating: number
