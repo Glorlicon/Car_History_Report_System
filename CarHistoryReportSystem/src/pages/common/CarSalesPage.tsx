@@ -214,19 +214,19 @@ function CarSalesPage() {
                                             <div className="car-image">
                                                 <img src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
                                                     alt="Car" />
-                                                <span className="image-count">{model.carImages.length} Photos</span>
+                                                <span className="image-count">{model.carImages.length} {t('Photos')}</span>
                                             </div>
                                             <div className="car-details">
-                                                <h3>Used {model.modelId}</h3>
-                                                <div className="price">Price: {model.carSalesInfo.price}</div>
+                                                <h3>{t('Used')} {model.modelId}</h3>
+                                                <div className="price">{t('Price')}: {model.carSalesInfo.price}</div>
                                                 <div className="details">
-                                                    <p>Color: {model.colorName}</p>
-                                                    <p>Mileage: {model.currentOdometer}</p>
+                                                    <p>{t('Color')}: {t(model.colorName)}</p>
+                                                    <p>{t('Milage')}: {model.currentOdometer}</p>
                                                     {/* Other details */}
                                                 </div>
                                                 <div className="dealer-info">
                                                     <p>
-                                                        Dealer:
+                                                        {t('Car Dealer')}: 
                                                         <a
                                                             href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
                                                             className="dealer-link"

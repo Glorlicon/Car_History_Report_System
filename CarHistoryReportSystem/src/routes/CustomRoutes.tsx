@@ -95,8 +95,8 @@ const CustomRoutes = () => {
                 <Route path="/admin/car-models" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarModelList /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminRequestPage /></SpecialLayout>}></ProtectedRoute>} />
                 <Route path="/admin/monetization" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminMonetizationPage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/profile" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={ServiceShopNavigation}><UserProfile /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={ServiceShopNavigation}><UserNotification /></SpecialLayout>}></ProtectedRoute>} />
+                <Route path="/admin/profile" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserProfile /></SpecialLayout>}></ProtectedRoute>} />
+                <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserNotification /></SpecialLayout>}></ProtectedRoute>} />
                 {/*Service Shop*/}
                 <Route path="/service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/car-service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHistory /></UserLayout>}></ProtectedRoute>} />

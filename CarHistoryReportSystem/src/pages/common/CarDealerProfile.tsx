@@ -13,6 +13,8 @@ import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } 
 import { t } from 'i18next';
 import i18n from '../../localization/config';
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
+import cardefaultimage from '../../car-default.jpg';
+
 function CarDealerProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
@@ -484,7 +486,7 @@ function CarDealerProfile() {
                                             objectFit: 'cover',
                                         }}
                                         alt="The house from the offer."
-                                        src={GetImages(model.carImages[0].imageLink)}
+                                        src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
                                     />
                                 </div>
                                 <p>{t('Used')} <span>{model.modelId}</span></p>

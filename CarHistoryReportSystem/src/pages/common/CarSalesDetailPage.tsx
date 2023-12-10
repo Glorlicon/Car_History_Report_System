@@ -7,6 +7,7 @@ import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
+import cardefaultimage from '../../car-default.jpg';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -112,20 +113,20 @@ function CarSalesDetailPage() {
                                 <div className="car-detail-image">
                                     <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
                                     <img src={
-                                        car?.carImages?.at(currentImageIndex)?.id != -1 ?
-                                            GetImages(car?.carImages?.at(currentImageIndex)?.imageLink as string) :
-                                            car?.carImages?.at(currentImageIndex)?.imageLink
+                                        car?.carImages && car.carImages.length > 0 && car.carImages[currentImageIndex]?.id !== -1 ?
+                                            GetImages(car.carImages[currentImageIndex].imageLink) :
+                                            cardefaultimage
                                     } alt="Car Image" />
                                     <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
                                     {/* Image counter */}
                                     <div className="image-count">
-                                        {car?.carSalesInfo?.carImages?.length || 0} Photos
+                                        {car?.carSalesInfo?.carImages?.length || 0} {t('Photos')}
                                     </div>
                                 </div>
                                 <div className="vehicle-info">
                                     <h1>{t('Used')} {car?.modelId}</h1>
-                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} km</p>
-                                    <p>VIN: {car?.vinId}</p>
+                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
+                                    <p>{t('VIN')}: {car?.vinId}</p>
                                 </div>
                             </div>
                         </div>
@@ -209,19 +210,24 @@ function CarSalesDetailPage() {
                         <div className="box">
                             <div className="info-header">
                                 <p>{t('Check Availability')}</p>
-                                <p>Phone Number: {car?.carSalesInfo?.dataProvider?.phoneNumber}</p>
+                                <p>{t('Phone Number')}: {car?.carSalesInfo?.dataProvider?.phoneNumber}</p>
                             </div>
 
                             <div className="interest-message">
                                 <div className="contact-context">
                                     <div className="contact-image">
-                                        <img src={GetImages(car?.carImages?.[0]?.imageLink || '')} alt="Car" style={{ width: '75%' }} />
+                                        <img
+                                            src={car?.carImages?.[0]?.imageLink ? GetImages(car.carImages[0].imageLink) : cardefaultimage}
+                                            alt="Car"
+                                            style={{ width: '75%' }}
+                                        />
+
                                     </div>
 
                                     <div className="contact-description">
                                         <p>{t('Mail Intro')}</p>
                                         <h3>{t('Used')} {car?.modelId}</h3>
-                                        <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer}</p>
+                                        <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
                                     </div>
                                 </div>
 
