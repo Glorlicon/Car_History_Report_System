@@ -138,13 +138,18 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     {role === "User" && (
                         <li>
                             <a href='/request'>{t('Admin Request')}</a>
+                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
+                                {t('Search Shop')}
+                            </a>
                         </li>
+
                     )}
-                    <li>
+                    {!token && (
                         <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
                             {t('Search Shop')}
                         </a>
-                        
+                    )}
+                    <li>
                         <Menu
                             id="fade-menu"
                             MenuListProps={{
@@ -156,7 +161,6 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                             TransitionComponent={Fade}
                         >
                             <MenuItem onClick={() => navigate("/dealers/search")}>{t('Dealer Shop')}</MenuItem>
-                            <MenuItem onClick={() => navigate(notificationPath)}>My account</MenuItem>
                         </Menu>
                     </li>
                 </ul>
