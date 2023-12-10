@@ -97,10 +97,8 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     //})
     //TODO: bug redirect to register when logout
     function Logout() {
-        console.log("Logging out...");
         dispatch(logout())
         navigate('/login')
-        console.log("Should have navigated to /");
         return
     }
     return (

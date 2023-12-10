@@ -7,6 +7,8 @@ import '../../styles/CarForSale.css'
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
+import cardefaultimage from '../../car-default.jpg';
+
 
 function CarSalesPage() {
     const data = useSelector((state: RootState) => state.auth.token);
@@ -210,7 +212,8 @@ function CarSalesPage() {
                                     <a className="carlink" href={`/sales/details/${model.vinId}`}>
                                         <div className="car-card" key={index}>
                                             <div className="car-image">
-                                                <img src={GetImages(model.carImages[0].imageLink)} alt="Car" />
+                                                <img src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
+                                                    alt="Car" />
                                                 <span className="image-count">{model.carImages.length} Photos</span>
                                             </div>
                                             <div className="car-details">

@@ -15,6 +15,7 @@ import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProvider, editWorkingTime, Manufacturer, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import i18n from '../../localization/config';
+import cardefaultimage from '../../car-default.jpg'
 
 function CarDealerHomePage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -526,8 +527,8 @@ function CarDealerHomePage() {
                                             width: '100%',
                                             objectFit: 'cover',
                                         }}
-                                        alt="The house from the offer."
-                                        src={GetImages(model.carImages[0].imageLink)}
+                                        src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
+                                        alt="Car"
                                     />
                                 </div>
                                 <p>{t('Used')} <span>{model.modelId}</span></p>
