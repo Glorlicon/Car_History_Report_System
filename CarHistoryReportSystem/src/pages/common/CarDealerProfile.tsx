@@ -484,7 +484,7 @@ function CarDealerProfile() {
                                             objectFit: 'cover',
                                         }}
                                         alt="The house from the offer."
-                                        src={GetImages(model.carImages[0].imageLink)}
+                                        src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
                                     />
                                 </div>
                                 <p>{t('Used')} <span>{model.modelId}</span></p>
