@@ -377,6 +377,7 @@ function ManufacturerCarModelList() {
                       <th>{t('Manufacturer Name')}</th>
                       <th>{t('Released Date')}</th>
                       <th>{t('Country')}</th>
+                      <th>{t('Action')}</th>
                   </tr>
               </thead>
               <tbody>
