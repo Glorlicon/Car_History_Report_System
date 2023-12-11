@@ -46,7 +46,6 @@ function CarDealerCarList() {
     const [removedImages, setRemovedImages] = useState<string[]>([])
     const [newCarSales, setNewCarSales] = useState<CarSalesInfo>(basicCarSale);
     const [feature, setFeature] = useState<string>('');
-    const [searchQuery, setSearchQuery] = useState('');
     const [editCarSales, setEditCarSales] = useState<CarSalesInfo|null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
@@ -119,6 +118,7 @@ function CarDealerCarList() {
                 setAddError(response.error);
             } else {
                 setShowModal(false);
+                setNewCarSales(basicCarSale)
                 setModalPage(1)
                 fetchData();
             }

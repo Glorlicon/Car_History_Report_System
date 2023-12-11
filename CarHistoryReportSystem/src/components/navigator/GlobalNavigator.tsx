@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/GlobalNavigator.css'
-import logo from '../../logo512.png';
+import logo from '../../logoCHRS.png';
 import { APIResponse, NavItem, UserNotification } from '../../utils/Interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';

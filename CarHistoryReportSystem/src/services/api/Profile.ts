@@ -13,7 +13,7 @@ export async function GetDealerProfileData(Id: String) {
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] }
+            return { error: (axiosError.response.data as any).error[0] }
         } else {
             return { error: "Something went wrong. Please try again" }
         }
@@ -35,7 +35,7 @@ export async function GetUserById(Id: String) {
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" };
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] };
+            return { error: (axiosError.response.data as any).error[0] };
         } else {
             return { error: "Something went wrong. Please try again" };
         }
@@ -65,7 +65,7 @@ export async function GetCarForSaleBySellerID(Id: string, pageNumber: number, co
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -88,7 +88,7 @@ export async function GetAllCarForSaleBySellerID(Id: string, connectAPIError: st
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -163,7 +163,7 @@ export async function GetReviewByDataProvider(pageNumber: number, connectAPIErro
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -187,7 +187,7 @@ export async function GetReviewAllByDataProvider(connectAPIError: string, langua
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -204,7 +204,7 @@ export async function GetCarServiceByDataprovider(Id: number) {
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] }
+            return { error: (axiosError.response.data as any).error[0] }
         } else {
             return { error: "Something went wrong. Please try again" }
         }
@@ -223,7 +223,7 @@ export async function GetDataProviderByID(Id: number) {
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] }
+            return { error: (axiosError.response.data as any).error[0] }
         } else {
             return { error: "Something went wrong. Please try again" }
         }
@@ -245,7 +245,7 @@ export async function GetUserComment(DataProviderId: number, UserId: string, tok
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] }
+            return { error: (axiosError.response.data as any).error[0] }
         } else {
             return { error: "Something went wrong. Please try again" }
         }

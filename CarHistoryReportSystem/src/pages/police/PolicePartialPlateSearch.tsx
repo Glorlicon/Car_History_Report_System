@@ -246,7 +246,7 @@ function PolicePartialPlateSearch() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
+                                        <TableCell colSpan={4} style={{ width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
                                             {t('Cars Found')}
                                             </TableCell>
                                     </TableRow>
@@ -255,7 +255,7 @@ function PolicePartialPlateSearch() {
                                             <TableCell
                                                 key={column.id}
                                                 align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
                                             >
                                                 {column.label}
                                             </TableCell>
@@ -265,9 +265,9 @@ function PolicePartialPlateSearch() {
                                 <TableBody>
                                     {carList.length > 0 ? carList
                                         .map((row, index) => {
-                                            if (index === 2 * page || index === 2*page+1)
+                                            if (index >= 3 * page && index < 3*(page+1))
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId} onClick={() => setSelectedRow(row)}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId} onClick={() => setSelectedRow(row)} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
                                                     {columns.map((column) => {
                                                         const value = row[column.id] ? row[column.id]?.toString() : 'Unknown';
                                                         return (
@@ -289,10 +289,10 @@ function PolicePartialPlateSearch() {
                             </Table>
                         </TableContainer>
                         <TablePagination
-                            rowsPerPageOptions={[2]}
+                            rowsPerPageOptions={[3]}
                             component="div"
                             count={carList.length > 0 ? carList.length : 0}
-                            rowsPerPage={2}
+                            rowsPerPage={3}
                             page={page}
                             onPageChange={handleChangePage}
                             labelDisplayedRows={
@@ -334,10 +334,10 @@ function PolicePartialPlateSearch() {
                                 <strong>{t('Engine Number')}:</strong> {selectedRow.engineNumber}
                             </p>
                             <p>
-                                <strong>{t('Modified')}:</strong> {selectedRow.isModified ? "Yes" : "No"}
+                                <strong>{t('Modified')}:</strong> {selectedRow.isModified ? t('Yes') : t('No')}
                             </p>
                             <p>
-                                <strong>{t('Commercial Use')}:</strong> {selectedRow.isCommercialUse ? "Yes" : "No"}
+                                <strong>{t('Commercial Use')}:</strong> {selectedRow.isCommercialUse ? t('Yes') : t('No')}
                             </p>
                             <p>
                                 <strong>{t('Model ID')}:</strong> {selectedRow.modelId}

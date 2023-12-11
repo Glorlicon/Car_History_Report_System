@@ -1,6 +1,6 @@
 .pol-plate-search-page {
     padding: 20px;
-    padding-top: 120px;
+    padding-top: 200px;
     display: flex;
     flex-direction: column;
 }
@@ -25,26 +25,24 @@
     border-radius: 20px;
     margin: 5px;
     box-shadow: 5px 10px #888888;
-    height: 60%;
-    min-height: 300px;
+    height: 100%;
 }
 .plate-search-page-item-4 {
     border: 1px solid black;
     border-radius: 20px;
     margin: 5px;
     box-shadow: 5px 10px #888888;
-    height: 40%;
 }
 .plate-search-page-row{
     display: flex;
     flex-direction: row;
 }
-.MuiTableRow-root th:first-child {
+/*.MuiTableRow-root th:first-child {
     border-top-left-radius: 20px;
 }
 .MuiTableRow-root th:last-child {
     border-top-right-radius: 20px;
-}
+}*/
 .plate-length-selector input {
     border-radius: 5px;
     border: 1px solid #ccc;

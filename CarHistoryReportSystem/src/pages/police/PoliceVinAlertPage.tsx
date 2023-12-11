@@ -127,7 +127,7 @@ function PoliceVinAlertPage() {
         setLoading(false)
     }
     const handleViewReport = (vin: string) => {
-        navigate(`/car-report/${vin}`)
+        navigate(`/police/car-report/${vin}`)
     }
     useEffect(() => {
         fetchData();
@@ -146,7 +146,7 @@ function PoliceVinAlertPage() {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >
-                        <Typography>{t('Create a VIN Alert')}</Typography>
+                        <Typography style={{ fontWeight:'bold' }}>{t('Create a VIN Alert')}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
@@ -184,8 +184,8 @@ function PoliceVinAlertPage() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
-                                            VIN Alert List
+                                        <TableCell colSpan={4} style={{ width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color:'white' }}>
+                                            {t('VIN Alert List')}
                                         </TableCell>
                                     </TableRow>
                                     <TableRow>
@@ -193,7 +193,7 @@ function PoliceVinAlertPage() {
                                             <TableCell
                                                 key={column.id}
                                                 align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign:'center' }}
                                             >
                                                 {column.label}
                                             </TableCell>
@@ -215,14 +215,14 @@ function PoliceVinAlertPage() {
                                                 </TableCell>
                                             </TableRow>
                                     ) : carList.length > 0 ? carList
-                                        .map((row) => {
+                                        .map((row, index) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId} style={{ backgroundColor: index % 2 === 1 ? 'white' :'#E1E1E1'}}>
                                                     {columns.map((column) => {
                                                         if (column.id === 'isFollowing') {
                                                             const value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id} align={column.align}>
+                                                                <TableCell key={column.id} align={column.align} style={{ textAlign: 'center' }}>
                                                                     {value ? (
                                                                         <button className="ad-user-suspend-btn" onClick={() => handleRemoveAlertButtonClick(row.carId)}>{t('Stop tracking')}</button>
                                                                     ) : (
@@ -232,9 +232,11 @@ function PoliceVinAlertPage() {
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id !== 'actionStatus') {
-                                                            const value = row[column.id] ? row[column.id]?.toString() : 'Unknown';
+                                                            let value;
+                                                            if (column.id === 'createdTime') value = row[column.id].split('T')[0]
+                                                            else value = row[column.id];
                                                             return (
-                                                                <TableCell key={column.id} align={column.align}>
+                                                                <TableCell key={column.id} align={column.align} style={{ textAlign: 'center' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
@@ -267,6 +269,11 @@ function PoliceVinAlertPage() {
                             rowsPerPage={5}
                             page={page}
                             onPageChange={handleChangePage}
+                            labelDisplayedRows={
+                                ({ from, to, count }) => {
+                                    return '' + from + '-' + to + ' ' + t('of') + ' ' + count
+                                }
+                            }
                         />
                     </div>
                 </div>
