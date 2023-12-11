@@ -57,6 +57,7 @@ import PoliceVinAlertPage from '../pages/police/PoliceVinAlertPage';
 import ForgotPassword from '../pages/common/ForgottenPassword';
 import ForgotPasswordInitiate from '../pages/common/ForgottenPasswordInitiate';
 import ForgottenPasswordSuccess from '../pages/common/ForgottenPasswordSucess'
+import PoliceSearchCarReport from '../pages/police/PoliceSearchCarReport';
 
 
 const CustomRoutes = () => {
@@ -124,6 +125,8 @@ const CustomRoutes = () => {
                 <Route path="/police/requests" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><RequestPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/profile" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/notification" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/reports" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceSearchCarReport /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/car-report/:vin" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
                 {/*Manufacturer*/}
                 <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />
