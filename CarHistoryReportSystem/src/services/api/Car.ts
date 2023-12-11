@@ -124,7 +124,7 @@ export async function CreateCarForSale(data: CarSalesInfo, token: string, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         }  else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }

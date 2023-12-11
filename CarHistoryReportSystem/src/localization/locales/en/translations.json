@@ -502,5 +502,7 @@
   "Search Description": "CHRS provides accurate service data with customer reviews to help you find the right center.",
   "Find Service Shop Near Me": "Find Service Shop Near Me",
   "Milage": "Milage",
-  "Photos": "Photos"
+  "Photos": "Photos",
+  "Loading": "Loading",
+  "Data provider must be chosen": "Data provider must be chosen"
 }

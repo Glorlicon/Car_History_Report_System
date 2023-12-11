@@ -7,14 +7,13 @@ import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { SendVerifyToken } from '../../services/auth/Verify';
-import { t } from 'i18next';
-import i18n from '../../localization/config';
 import { RootState } from '../../store/State';
+import { useTranslation } from 'react-i18next';
 
 function LoginPage() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
+    const { t, i18n } = useTranslation()
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [authenticationError, setAuthenticationError] = useState(false);
@@ -113,14 +112,14 @@ function LoginPage() {
                     <div className="error message">{errorMessage}</div>
                 )}
                 {isLoading ? (
-                    <div className="logging-in"></div>
+                    <div className="logging"></div>
                 ) : (
                         <button type="submit" className="login-button">{t('Log in')}</button>
                 )}
                 <div className="login-form-footer">
-                    <a href="/forgotpassword" className="forgot-password">{t('Forgotten password?')}</a>
+                    <a href={isLoading ? "/" : "/forgotpassword"} className="forgot-password">{t('Forgotten password?')}</a>
                     <div className="divider"></div>
-                    <button type="button" className="create-account-button" onClick={handleCreateAccountClick}>
+                    <button type="button" className="create-account-button" onClick={handleCreateAccountClick} disabled={isLoading}>
                         {t('Create new account')}
                     </button>
                 </div>
