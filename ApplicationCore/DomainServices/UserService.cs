@@ -60,11 +60,16 @@ namespace Application.DomainServices
         public async Task<RegisterResult> CreateAsync(CreateUserRequestDTO request)
         {
             var user = _mapper.Map<User>(request);
-            user.EmailConfirmed = true;
+
+
             //password generate move to Helper
             var password = UserUtility.GenerateRandomPassword(20);
-
+            user.EmailConfirmed = true;
             var result = await _identityServices.RegisterAsync(user, password);
+            if (result.UserId == "")
+            {
+                return result;
+            }
             //Gui mail password toi user
             await _emailServices.SendEmailAsync(request.Email, "Welcome to CarReportHistorySystem", "Hello!\n" +
                 "Your account has been created. Please login using the following credentials:\n" +
