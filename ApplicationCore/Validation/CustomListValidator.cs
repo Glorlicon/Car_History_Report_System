@@ -20,7 +20,7 @@ namespace Application.Validation
                 {
                     foreach (var error in validationResult.Errors)
                     {
-                        errors.Error.Add(error.ErrorMessage);
+                        errors.error.Add(error.ErrorMessage);
                     }
                 }
             }
