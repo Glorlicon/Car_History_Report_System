@@ -504,5 +504,9 @@
   "Milage": "Milage",
   "Photos": "Photos",
   "Loading": "Loading",
-  "Data provider must be chosen": "Data provider must be chosen"
+  "Data provider must be chosen": "Data provider must be chosen",
+  "Click on button to see report for car": "Click on button to see report for car",
+  "Click on the car to see able to access car report": "Click on the car to see able to access car report",
+  "Cars Found": "Cars Found",
+  "of": "of"
 }

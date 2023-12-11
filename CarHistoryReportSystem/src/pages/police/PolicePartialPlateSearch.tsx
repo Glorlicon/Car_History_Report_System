@@ -13,7 +13,6 @@ import { APIResponse, Car, CarModel, Manufacturer, Paging, PartialPlateSearchPar
 import { PlateSearch } from '../../services/api/Car';
 import '../../styles/PolicePlateSearch.css'
 import { useNavigate } from 'react-router-dom';
-import { GetDataProviderByType } from '../../services/api/SearchShop';
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 
 interface Column {
@@ -127,6 +126,8 @@ function PolicePartialPlateSearch() {
         setSearchManufacturer('')
         setSearchModel('')
         setSearchVin('')
+        setModelList([])
+        setSelectedManu(0)
     };
     const handleSearch = async () => {
         if (!validatePlateSearch(getSearchPlate(plateCharacters))) {
@@ -148,6 +149,7 @@ function PolicePartialPlateSearch() {
             setError(response.error)
         } else {
             setCarList(response.data)
+            setPage(0)
         }
     }
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -244,6 +246,11 @@ function PolicePartialPlateSearch() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
+                                            {t('Cars Found')}
+                                            </TableCell>
+                                    </TableRow>
+                                    <TableRow>
                                         {columns.map((column) => (
                                             <TableCell
                                                 key={column.id}
@@ -288,13 +295,23 @@ function PolicePartialPlateSearch() {
                             rowsPerPage={2}
                             page={page}
                             onPageChange={handleChangePage}
+                            labelDisplayedRows={
+                                ({ from, to, count }) => {
+                                    return '' + from + '-' + to +' '+ t('of') + ' ' +count
+                                }
+                            }
                         />
                     </div>
                     <div className="plate-search-page-item-4">
                         <h3>{t('Car Report')}</h3>
-                        <div className="plate-view-report-button-div">
-                            <button className="plate-view-report-button" onClick={handleViewReport} disabled={selectedRow ? false : true}>{t('View Report For Car')}</button>
-                        </div>
+                        {selectedRow ? 
+                            <div className="plate-view-report-button-div">
+                                {t('Click on button to see report for car ') + selectedRow.vinId}
+                                <button className="plate-view-report-button" onClick={handleViewReport} disabled={selectedRow ? false : true}>{t('View Report For Car')}</button>
+                            </div> :
+                        <a>
+                                {t('Click on the car to see able to access car report')}
+                        </a>}
                     </div>
                 </div>
                 <div className="plate-search-page-item">

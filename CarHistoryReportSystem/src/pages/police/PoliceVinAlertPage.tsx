@@ -183,9 +183,7 @@ function PoliceVinAlertPage() {
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
-                                    <TableRow
-                                        style={{ backgroundColor: 'blue', width: '100%' }}
-                                    >
+                                    <TableRow>
                                         <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
                                             VIN Alert List
                                         </TableCell>

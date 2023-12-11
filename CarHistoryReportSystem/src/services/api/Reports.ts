@@ -16,7 +16,7 @@ export async function GetReport(vin: string, token: string, date: string): Promi
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -32,7 +32,7 @@ export async function CreateOrder(data: any): Promise<APIResponse> {
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -53,7 +53,7 @@ export async function AddUserReport(reportData: AddReport, token: string): Promi
             return { error: "Network error. Please check your internet connection!" }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -76,7 +76,7 @@ export async function CheckReportExist(reportData: AddReport, token: string): Pr
             return { data: "Report doesn't exist"}
         } else  {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -97,7 +97,7 @@ export async function GetUserReports(id: string, token: string, connectAPIError:
             return { error: connectAPIError }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
