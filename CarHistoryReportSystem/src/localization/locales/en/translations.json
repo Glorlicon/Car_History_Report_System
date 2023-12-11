@@ -161,6 +161,7 @@
   "Model ID": "Model ID",
   "Model ID must be filled out": "Model ID must be filled out",
   "ModelID": "Model ID",
+  "modelId": "Model ID",
   "Monetization Information": "Monetization Information",
   "My Reports": "My Reports",
   "My Requests": "My Requests",
@@ -508,5 +509,11 @@
   "Click on button to see report for car": "Click on button to see report for car",
   "Click on the car to see able to access car report": "Click on the car to see able to access car report",
   "Cars Found": "Cars Found",
-  "of": "of"
+  "of": "of",
+  "VIN Alert List": "VIN Alert List",
+  "Car History Reports": "Car History Reports",
+  "View detailed information about the car using CHRS Report": "View detailed information about the car using CHRS Report",
+  "Search by VIN": "Search by VIN",
+  "Get CHRS Report": "Get CHRS Report",
+  "Partial Plate Search": "Partial Plate Search"
 }

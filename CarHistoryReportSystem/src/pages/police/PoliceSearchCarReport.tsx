@@ -32,16 +32,16 @@ function PoliceSearchCarReport() {
     };
     return (
         <div className="report-container">
-            <h2>Car History Reports</h2>
-            <a>View detailed information about the car using CHRS Report</a>
+            <h2>{t('Car History Reports')}</h2>
+            <a>{t('View detailed information about the car using CHRS Report')}</a>
             <div className="report-search-section">
-                <label>Search by VIN</label>
-                <input type="text" value={vin} onChange={(e) => setVin(e.target.value)} placeholder="Enter VIN" />
+                <label>{t('Search by VIN')}</label>
+                <input type="text" value={vin} onChange={(e) => setVin(e.target.value)} placeholder={t('Enter VIN')} />
                 <button onClick={handleVINCheck}>
                     {isLoading ? (
                         <div className="report-loading-spinner"></div>
                     ) : (
-                        'Get CHRS Report'
+                        t('Get CHRS Report')
                     )}
                 </button>
                 {vinError && <div className="report-search-error">{vinError}</div>}

@@ -161,6 +161,7 @@
   "Model ID": "Mẫu xe",
   "Model ID must be filled out": "Hãy điền số loại mẫu xe",
   "ModelID": "Mẫu xe",
+  "modelId": "Mẫu xe",
   "Monetization Information": "Thông tin thu nhập",
   "My Reports": "Báo cáo của tôi",
   "My Requests": "Hỗ trợ",
@@ -509,5 +510,11 @@
   "Click on button to see report for car": "Bấm để xem báo cáo cho xe ",
   "Click on the car to see able to access car report": "Bấm vào xe để có thể truy cập báo cáo của xe",
   "Cars Found": "Xe được tìm thấy",
-  "of": "trong"
+  "of": "trong",
+  "VIN Alert List": "Danh sách cảnh báo",
+  "Car History Reports": "Báo cáo ô tô",
+  "View detailed information about the car using CHRS Report": "Xem thông tin chi tiết của ô tô bằng báo cáo CHRS",
+  "Search by VIN": "Số khung số máy",
+  "Get CHRS Report": "Lấy báo cáo CHRS",
+  "Partial Plate Search": "Tìm xe theo biển số"
 }

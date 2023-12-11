@@ -33,6 +33,7 @@
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background-color 0.3s;
+    display: inline-flex;
  }
 
 .nav-list a:hover{
@@ -147,7 +148,7 @@
 }
 
 .logo {
-    height: 40px;
+    height: 65px;
     margin-right: 0px; 
 }
 .left-section {

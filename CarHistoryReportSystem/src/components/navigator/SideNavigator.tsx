@@ -5,7 +5,7 @@ import '../../styles/SideNavigator.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import logo from '../../logo512.png'
+import logo from '../../logoCHRS.png'
 import { logout, setLanguage } from '../../store/authSlice';
 import { useTranslation } from 'react-i18next';
 import { Badge, IconButton } from '@mui/material';

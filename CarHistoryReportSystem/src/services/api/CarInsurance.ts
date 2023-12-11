@@ -26,7 +26,7 @@ export async function ListCarInsurance(dataprovider: number, token: string, page
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -56,7 +56,7 @@ export async function GetInsuranceExcel(dataprovider: number, token: string, pag
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -76,7 +76,7 @@ export async function ImportInsuranceFromExcel(token: string, data: FormData, co
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -99,7 +99,7 @@ export async function DownloadInsuranceExcelFile(token: string, connectAPIError:
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -120,7 +120,7 @@ export async function AddCarInsurance(data: CarInsurance, token: string, connect
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -142,7 +142,7 @@ export async function EditCarInsurance(id: number, data: CarInsurance, token: st
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

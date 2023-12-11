@@ -63,7 +63,7 @@ export async function EditCarRecall(id: number, data: CarRecalls, token: string,
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -90,7 +90,7 @@ export async function ListServiceShopCarRecall(token: string, pageNumber: number
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -117,7 +117,7 @@ export async function ListManufacturerRecallss(id: number, token: string, pageNu
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -139,7 +139,7 @@ export async function AddCarRecalls(data: CarRecalls, token: string, connectAPIE
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -161,7 +161,7 @@ export async function ImportRegistrationFromExcel(token: string, data: FormData,
             return { error: connectAPIError }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

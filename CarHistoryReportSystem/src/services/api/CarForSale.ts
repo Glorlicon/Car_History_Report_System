@@ -25,7 +25,7 @@ export async function ListCarForSale(pageNumber: number, connectAPIError: string
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
@@ -77,7 +77,7 @@ export async function GetDealerProfile(Id: String, token: string) {
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).Error[0] }
+            return { error: (axiosError.response.data as any).error[0] }
         } else {
             return { error: "Something went wrong. Please try again" }
         }
@@ -132,7 +132,7 @@ export async function ListManufacturerModel(connectAPIError: string, language: s
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).Error[0] }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }
