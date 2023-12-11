@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="An error occurred while saving the entity changes. See the inner exception for details." xml:space="preserve">
+    <value>Có lỗi bất ngờ xảy ra. Thử lại hoặc liên hệ quản trị viên nếu lặp lại nhiều lần</value>
+  </data>
   <data name="Can only be -1 for descending, 1 for ascending, 0 for not sorting" xml:space="preserve">
     <value>Chọn -1 cho giảm dần, 1 cho tăng dần và 0 cho việc không sắp xếp</value>
   </data>

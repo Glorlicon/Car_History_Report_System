@@ -50,7 +50,7 @@ namespace CarHistoryReportSystemAPI.Middlewares
             };
             var response = new ErrorDetails
             {
-                Error = new List<string> { localizedMessage }
+                error = new List<string> { localizedMessage }
             };
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

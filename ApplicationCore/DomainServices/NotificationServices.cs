@@ -143,6 +143,11 @@ namespace Application.DomainServices
 
         public async Task TrackCar(string userId, string carId)
         {
+            var isCarExist = await _unitOfWork.CarRepository.IsExist(x => x.VinId == carId);
+            if(!isCarExist)
+            {
+                throw new CarNotFoundException();
+            }
             var carTracking = await _unitOfWork.CarTrackingRepository.GetCarTracking(userId, carId, trackChange: true);
             if(carTracking is not null)
             {

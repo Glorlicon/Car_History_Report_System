@@ -117,50 +117,56 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Car Model with id {0} was not found" xml:space="preserve">
-    <value>Car Model with id {0} was not found</value>
+  <data name="An error occurred while saving the entity changes. See the inner exception for details." xml:space="preserve">
+    <value>Unexpected error, please try again or contact admin if it repeat</value>
   </data>
-  <data name="Car recall status of car with id {0} and recall Id {1} Not Found" xml:space="preserve">
-    <value>Car recall status of car with id {0} and recall Id {1} Not Found</value>
+  <data name="car have already been tracked by user" xml:space="preserve">
+    <value>car have already been tracked by user</value>
   </data>
-  <data name="Car Recall with id {0} Not Found" xml:space="preserve">
-    <value>Car Recall with id {0} Not Found</value>
+  <data name="car haven't been sold from other data provider" xml:space="preserve">
+    <value>Car not in your garage</value>
   </data>
-  <data name="car with id {0} have already been tracked by user {1}" xml:space="preserve">
-    <value>car with id {0} have already been tracked by user {1}</value>
+  <data name="Car Model not found" xml:space="preserve">
+    <value>Car Model not found</value>
   </data>
-  <data name="car with id {0} in haven't been sold from other data provider" xml:space="preserve">
-    <value>car with id {0} in haven't been sold from other data provider</value>
+  <data name="Car Not Found" xml:space="preserve">
+    <value>Car Not Found</value>
   </data>
-  <data name="Car with VinId {0} Not Found" xml:space="preserve">
-    <value>Car with VinId {0} Not Found</value>
+  <data name="Car Recall Not Found" xml:space="preserve">
+    <value>Car Recall Not Found</value>
   </data>
   <data name="Collection is null" xml:space="preserve">
     <value>Collection is null</value>
   </data>
-  <data name="Data Provider with id {0} was not found" xml:space="preserve">
-    <value>Data Provider with id {0} was not found</value>
+  <data name="Data Provider not found" xml:space="preserve">
+    <value>Data Provider not found</value>
   </data>
   <data name="Login failed because username/email or password is wrong" xml:space="preserve">
     <value>Login failed because username/email or password is wrong</value>
   </data>
-  <data name="Notification with id {0} Not Found" xml:space="preserve">
-    <value>Notification with id {0} Not Found</value>
+  <data name="Notification Not Found" xml:space="preserve">
+    <value>Notification Not Found</value>
   </data>
-  <data name="Order Option with id {0} not found" xml:space="preserve">
-    <value>Order Option with id {0} not found</value>
+  <data name="object already exist in list" xml:space="preserve">
+    <value>object already exist in list</value>
   </data>
-  <data name="Order with id {0} not found" xml:space="preserve">
-    <value>Order with id {0} not found</value>
+  <data name="object not exist in list" xml:space="preserve">
+    <value>object not exist in list</value>
   </data>
-  <data name="Request with id {0} was not found" xml:space="preserve">
-    <value>Request with id {0} was not found</value>
+  <data name="Order not found" xml:space="preserve">
+    <value>Order not found</value>
   </data>
-  <data name="Review with userId {0} and dataProviderId {1} already existed" xml:space="preserve">
-    <value>Review with userId {0} and dataProviderId {1} already existed</value>
+  <data name="Order Option not found" xml:space="preserve">
+    <value>Order Option not found</value>
   </data>
-  <data name="Review with userid {0} and dataProviderId {1} was not found" xml:space="preserve">
-    <value>Review with userid {0} and dataProviderId {1} was not found</value>
+  <data name="Request was not found" xml:space="preserve">
+    <value>Request was not found</value>
+  </data>
+  <data name="Review for this data provider already existed" xml:space="preserve">
+    <value>Review for this data provider already existed</value>
+  </data>
+  <data name="Review for this data provider was not found" xml:space="preserve">
+    <value>Review for this data provider was not found</value>
   </data>
   <data name="Test" xml:space="preserve">
     <value>Test123</value>
@@ -168,31 +174,22 @@
   <data name="Transaction id must be unique" xml:space="preserve">
     <value>Transaction id must be unique</value>
   </data>
+  <data name="User currently not tracking this car" xml:space="preserve">
+    <value>User currently not tracking this car</value>
+  </data>
   <data name="User dont have enough report number to get a new report of car, please buy more" xml:space="preserve">
     <value>User dont have enough report number to get a new report of car, please buy more</value>
+  </data>
+  <data name="User dont have this notification" xml:space="preserve">
+    <value>User dont have this notification</value>
+  </data>
+  <data name="User dont own car report for this Car" xml:space="preserve">
+    <value>User dont own car report for this Car</value>
   </data>
   <data name="User not found" xml:space="preserve">
     <value>User not found</value>
   </data>
-  <data name="User with id {0} dont have notification with id {1}" xml:space="preserve">
-    <value>User with id {0} dont have notification with id {1}</value>
-  </data>
-  <data name="User with id {0} dont own car report for Car with Id {1}" xml:space="preserve">
-    <value>User with id {0} dont own car report for Car with Id {1}</value>
-  </data>
-  <data name="User with id {0} dont track car with id {1}" xml:space="preserve">
-    <value>User with id {0} dont track car with id {1}</value>
-  </data>
-  <data name="You don't own or don't have right to access car report for car with ID {1}" xml:space="preserve">
-    <value>You don't own or don't have right to access car report for car with ID {1}</value>
-  </data>
-  <data name="{0} already exist in list" xml:space="preserve">
-    <value>{0} already exist in list</value>
-  </data>
-  <data name="{0} not exist in list" xml:space="preserve">
-    <value>{0} not exist in list</value>
-  </data>
-  <data name="{0} of car with vinId {1} Not Found" xml:space="preserve">
-    <value>{0} of car with vinId {1} Not Found</value>
+  <data name="You don't own or don't have right to access this car report" xml:space="preserve">
+    <value>You don't own or don't have right to access this car report</value>
   </data>
 </root>

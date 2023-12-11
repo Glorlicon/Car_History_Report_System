@@ -142,7 +142,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(error.ErrorMessage);
                 }
                 return BadRequest(errors);
             }
@@ -167,7 +167,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             CarStolenHistoryCreateRequestDTOValidator validator = new CarStolenHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carStolenHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -195,7 +195,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             //validate
             CarStolenHistoryCreateRequestDTOValidator validator = new CarStolenHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carStolenHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -224,7 +224,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(error.ErrorMessage);
                 }
                 return BadRequest(errors);
             }

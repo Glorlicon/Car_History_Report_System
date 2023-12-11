@@ -16,9 +16,9 @@ namespace Application.Common.Models
 
         public ErrorDetails(string errorMessage)
         {
-            Error = new List<string> { errorMessage };
+            error = new List<string> { errorMessage };
         }
-        public List<string> Error { get; set; } = new List<string>();
+        public List<string> error { get; set; } = new List<string>();
         public override string ToString() => JsonSerializer.Serialize(this);
     }
 }
