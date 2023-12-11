@@ -42,7 +42,6 @@ const SearchDealerForm: React.FC<SearchDealerFormProps> = ({
                   {/* ... */}
               </select>
           </div>
-          );
       </>
   );
 }

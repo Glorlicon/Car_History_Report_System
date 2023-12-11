@@ -3,11 +3,23 @@
     padding: 20px;
     background-color: #f9f9f9;
 }
-
-.search-header {
-    text-align: center;
-    margin-bottom: 20px;
+.dealer-card{
+    display:flex;
+    flex-direction:row;
 }
+
+    .dealer-card .profile-image {
+        margin: auto;
+    }
+
+    .dealer-card .shop-information{
+        flex: 1
+    }
+
+    .search-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
     .search-header input[type="text"] {
         width: 50%;
@@ -53,10 +65,6 @@
     cursor: pointer;
 }
 
-    .phone-button:hover {
-        background-color: #0056b3;
-    }
-
 .pagination {
     display: flex;
     justify-content: center;
@@ -90,7 +98,6 @@
 }
 
 .map-placeholder {
-    flex: 0 0 30%;
     background-color: #333;
     color: white;
     display: flex;
@@ -106,8 +113,7 @@
 .dealer-search-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px;
+    padding: 10px;  
     background-color: #f1f1f1;
     border-bottom: 1px solid #ccc;
     margin-bottom: 20px;
@@ -126,10 +132,12 @@
         outline: none;
     }
 
+
     .dealer-search-bar button {
         cursor: pointer;
         background-color: #e7e7e7; /* Light grey background for the button */
         transition: background-color 0.2s;
+        margin-top:18px;
     }
 
         .dealer-search-bar button:hover {
@@ -138,7 +146,6 @@
 
         /* Style for the search icon */
         .dealer-search-bar button::before {
-            content: '🔍';
             margin-right: 5px;
         }
 
@@ -243,6 +250,6 @@
 }
 
 .map-container {
-    flex: 0 0 30%;
+    flex: 1;
     height: 400px;
 }

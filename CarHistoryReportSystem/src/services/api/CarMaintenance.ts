@@ -36,7 +36,7 @@ export async function AddCarMaintenance(data: CarMaintenance, token: string, con
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         }  else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -57,7 +57,7 @@ export async function RemoveCarMaintenance(data: CarMaintenance, token: string, 
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -78,7 +78,7 @@ export async function GetMaintenanceDetails(carId: string, token: string, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -102,7 +102,7 @@ export async function GetCarServiceHistory(vin: string, token: string, connectAP
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }

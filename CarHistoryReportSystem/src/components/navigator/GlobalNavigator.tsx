@@ -8,7 +8,7 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 import { useNavigate } from 'react-router-dom';
 import { logout, setLanguage } from '../../store/authSlice';
 import { useTranslation } from 'react-i18next';
-import { Badge, IconButton } from '@mui/material';
+import { Badge, Button, Fade, IconButton, Menu, MenuItem } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { GetAllUserNotification, GetUserNotification } from '../../services/api/Notification';
 
@@ -51,7 +51,14 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     };
     const profilePath = roleProfilePath[role as UserRole] || '/profile';
     const notificationPath = roleNotificationPath[role as UserRole] || '/notification';
-
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     const getLanguage = () => {
         let currentLanguage = i18n.language;
         if (currentLanguage === 'vn') {
@@ -90,10 +97,8 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     //})
     //TODO: bug redirect to register when logout
     function Logout() {
-        console.log("Logging out...");
         dispatch(logout())
         navigate('/login')
-        console.log("Should have navigated to /");
         return
     }
     return (
@@ -133,8 +138,33 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     {role === "User" && (
                         <li>
                             <a href='/request'>{t('Admin Request')}</a>
+                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
+                                {t('Search Shop')}
+                            </a>
+                        </li>
+
+                    )}
+                    {!token && (
+                        <li>
+                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
+                                {t('Search Shop')}
+                            </a>
                         </li>
                     )}
+                    <li>
+                        <Menu
+                            id="fade-menu"
+                            MenuListProps={{
+                                'aria-labelledby': 'fade-button',
+                            }}
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            TransitionComponent={Fade}
+                        >
+                            <MenuItem onClick={() => navigate("/dealers/search")}>{t('Dealer Shop')}</MenuItem>
+                        </Menu>
+                    </li>
                 </ul>
             </div>
             {token ? (

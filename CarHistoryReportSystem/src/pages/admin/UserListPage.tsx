@@ -86,6 +86,9 @@ function UserListPage() {
     };
 
     const handleInputDataProviderChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        if (e.target.value === "-1") {
+            setAddError(t('Data provider must be chosen'))
+        }
         setNewUser({
             ...newUser,
             dataProvider: {

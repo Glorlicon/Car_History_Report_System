@@ -24,7 +24,7 @@ export async function ListCarInspection(dataprovider: number, token: string, pag
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -53,7 +53,7 @@ export async function GetInspectionExcel(dataprovider: number, token: string, pa
             return { error: connectAPIError }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -75,7 +75,7 @@ export async function ImportInspectionFromExcel(token: string, data: FormData, c
             return { error: connectAPIError }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -96,7 +96,7 @@ export async function DownloadInpectionExcelFile(token: string, connectAPIError:
             return { error: connectAPIError }
         } else {
             console.log(axiosError)
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -117,7 +117,7 @@ export async function AddCarInspection(data: CarInspectionHistory, token: string
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -139,7 +139,7 @@ export async function EditCarInspection(id: string, data: CarInspectionHistory, 
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }

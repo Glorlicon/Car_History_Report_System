@@ -7,6 +7,8 @@ import '../../styles/CarForSale.css'
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
+import cardefaultimage from '../../car-default.jpg';
+
 
 function CarSalesPage() {
     const data = useSelector((state: RootState) => state.auth.token);
@@ -30,6 +32,8 @@ function CarSalesPage() {
     const handleResetFilters = () => {
         setCarMake('')
         setCarModel('')
+        setSelectedMake(0)
+        setModelList([])
         setYearStart(0)
         setPriceMax(9999999999)
         setMilageMax(9999999999)
@@ -39,6 +43,8 @@ function CarSalesPage() {
     const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = Number(e.target.value);
         setSelectedMake(selectedValue);
+        let make = manufacturerList.find(m => m.id === selectedValue)
+        setCarMake(make ? make.name : '')
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
@@ -58,6 +64,7 @@ function CarSalesPage() {
             pricemax: priceMax,
             milagemax: milageMax
         }
+        console.log(searchParams.make)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const carListResponse: APIResponse = await ListCarForSale(page, connectAPIError, language, searchParams)
@@ -108,7 +115,7 @@ function CarSalesPage() {
                                         <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
                                     ))
                                 ) : (
-                                    <option value="" disabled>Loading...</option>
+                                    <option value="" disabled>{t('Loading')}...</option>
                                 )}
                             </select>
                         </div>
@@ -179,7 +186,7 @@ function CarSalesPage() {
                 <section id="car-listings">
                     <div id="sorting">
                         <div className="paging-result">
-                            <p>Showing {paging?.CurrentPage} out of {paging?.TotalPages} pages</p>
+                            <p>Showing {paging && paging.TotalPages > 0 ? paging?.CurrentPage : paging?.TotalPages} out of {paging?.TotalPages} pages</p>
                         </div>
                         <div className="sorting-option">
                             {/*<label htmlFor="sort-by">Sort By: </label>*/}
@@ -210,20 +217,21 @@ function CarSalesPage() {
                                     <a className="carlink" href={`/sales/details/${model.vinId}`}>
                                         <div className="car-card" key={index}>
                                             <div className="car-image">
-                                                <img src={GetImages(model.carImages[0].imageLink)} alt="Car" />
-                                                <span className="image-count">{model.carImages.length} Photos</span>
+                                                <img src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
+                                                    alt="Car" />
+                                                <span className="image-count">{model.carImages.length} {t('Photos')}</span>
                                             </div>
                                             <div className="car-details">
-                                                <h3>Used {model.modelId}</h3>
-                                                <div className="price">Price: {model.carSalesInfo.price}</div>
+                                                <h3>{t('Used')} {model.modelId}</h3>
+                                                <div className="price">{t('Price')}: {model.carSalesInfo.price}</div>
                                                 <div className="details">
-                                                    <p>Color: {model.colorName}</p>
-                                                    <p>Mileage: {model.currentOdometer}</p>
+                                                    <p>{t('Color')}: {t(model.colorName)}</p>
+                                                    <p>{t('Milage')}: {model.currentOdometer}</p>
                                                     {/* Other details */}
                                                 </div>
                                                 <div className="dealer-info">
                                                     <p>
-                                                        Dealer:
+                                                        {t('Car Dealer')}: 
                                                         <a
                                                             href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
                                                             className="dealer-link"

@@ -23,6 +23,6 @@ export function isValidVIN(vin: string): boolean {
 }
 
 export function isValidPlateNumber(plate: string): boolean {
-    const plateRegex = /^(1[1-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])(A|B|C|D|E|F|G|H|R|LD)\s(\d{4}|\d{3}\.\d{2})$/;
+    const plateRegex = /^(1[1-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-9])(A|B|C|D|E|F|G|H|R|LD)\s(\d{4}|\d{5})$/;
     return plateRegex.test(plate) || plate.length === 0;
 }

@@ -17,7 +17,7 @@ import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const DataProviderid = JWTDecoder(token).dataprovider
+    const LoggedUserID = token ? JWTDecoder(token).nameidentifier : null
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
@@ -60,7 +60,7 @@ function ServiceShopProfile() {
             isClosed: true
         })
     });
-    const LoggedUserID = JWTDecoder(token).nameidentifier
+    
     const [open, setOpen] = React.useState(false);
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -265,7 +265,7 @@ function ServiceShopProfile() {
     };
 
     const handleCheckUserReview = async () => {
-        if (id != null) {
+        if (LoggedUserID != null) {
             const reviewResponse: APIResponse = await GetUserComment(id as unknown as number, LoggedUserID, token);
             if (!reviewResponse.error && reviewResponse != null) {
                 setExistingReview(reviewResponse.data);
@@ -339,13 +339,11 @@ function ServiceShopProfile() {
                 </div>
                 <div>
                     <div className="profile-image">
-                        <Tooltip title={t('Click to edit')}>
                             <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
                                 sx={{ width: 100, height: 100, cursor: 'pointer' }}
                             />
-                        </Tooltip>
                     </div>
                 </div>
             </div>

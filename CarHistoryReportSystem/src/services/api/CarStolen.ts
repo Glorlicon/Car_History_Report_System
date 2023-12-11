@@ -22,7 +22,7 @@ export async function ListCarStolen(dataprovider: number, token: string, pageNum
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -48,7 +48,7 @@ export async function ListCarStolenInsurance(token: string, pageNumber: number, 
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -74,7 +74,7 @@ export async function GetStolenInsuranceExcel(token: string, pageNumber: number,
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -100,7 +100,7 @@ export async function GetStolenExcel(dataprovider: number, token: string, pageNu
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -120,7 +120,7 @@ export async function ImportStolenFromExcel(token: string, data: FormData, conne
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -143,7 +143,7 @@ export async function DownloadStolenExcelFile(token: string, connectAPIError: st
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -167,7 +167,7 @@ export async function AddCarStolenHistory(data: CarStolen, token: string, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }

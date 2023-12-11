@@ -49,6 +49,7 @@ export const PoliceNavigation = [
     { label: 'VIN Alert', link: '/police/vin-alert' },
     { label: 'Car Crash Reports', link: '/police/crash' },
     { label: 'Car Stolen Reports', link: '/police/stolen' },
+    { label: 'Car Reports', link: '/police/reports' },
     { label: 'Admin Request', link: '/police/requests' }
 ]
 

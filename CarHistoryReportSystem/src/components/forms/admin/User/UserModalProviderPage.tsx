@@ -106,6 +106,7 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
                               <>
                                   <label>{t('Data Provider')}</label>
                                   <select name="dataProviderId" value={model?.id} disabled={edit} onChange={handleInputDataProviderSelect}>
+                                      <option value={-1}>{t('Not chosen')}</option>
                                       {providerList && (
                                           providerList.map((provider: DataProvider) => (
                                               <option value={provider.id}>{provider.name}</option>

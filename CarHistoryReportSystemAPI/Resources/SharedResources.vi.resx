@@ -127,7 +127,7 @@
     <value>Xe đã được theo dõi</value>
   </data>
   <data name="car haven't been sold from other data provider" xml:space="preserve">
-    <value>Xe vẫn thuộc về bên cung cấp khác</value>
+    <value>Xe này không nằm trong kho của bạn</value>
   </data>
   <data name="car history record Not Found" xml:space="preserve">
     <value>Bản ghi Lịch sử này của xe không tìm thấy</value>
