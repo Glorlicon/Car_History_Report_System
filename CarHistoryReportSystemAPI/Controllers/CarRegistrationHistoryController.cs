@@ -142,7 +142,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -167,7 +167,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             CarRegistrationHistoryCreateRequestDTOValidator validator = new CarRegistrationHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carRegistrationHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -195,7 +195,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             //validate
             CarRegistrationHistoryCreateRequestDTOValidator validator = new CarRegistrationHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carRegistrationHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -224,7 +224,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(_sharedLocalizer[error.ErrorMessage]);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
