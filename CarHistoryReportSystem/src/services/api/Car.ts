@@ -124,7 +124,7 @@ export async function CreateCarForSale(data: CarSalesInfo, token: string, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         }  else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -271,6 +271,11 @@ export async function PlateSearch(pageNumber: number, token: string, connectAPIE
                     'Authorization': `Bearer ${token}`,
                     'Accept-Language': `${language}`,
                     'Cache-Control': 'no-cache'
+                },
+                params: {
+                    VinId: partialPlateSearchParams.partialVin,
+                    Make: partialPlateSearchParams.manufacturer,
+                    Model: partialPlateSearchParams.model
                 }
             })
             console.log(response)
@@ -281,7 +286,7 @@ export async function PlateSearch(pageNumber: number, token: string, connectAPIE
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -306,7 +311,7 @@ export async function GetVinAlertList(id: string, pageNumber: number, token: str
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -328,7 +333,7 @@ export async function AddCarToAlertList(data: CarTracking, token: string, connec
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -349,7 +354,7 @@ export async function RemoveCarFromAlertList(data: CarTracking, token: string, c
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }

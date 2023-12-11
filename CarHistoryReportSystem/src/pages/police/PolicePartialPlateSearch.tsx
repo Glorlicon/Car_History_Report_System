@@ -9,10 +9,11 @@ import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { useTranslation } from 'react-i18next';
-import { Car, Paging, PartialPlateSearchParams } from '../../utils/Interfaces';
+import { APIResponse, Car, CarModel, Manufacturer, Paging, PartialPlateSearchParams } from '../../utils/Interfaces';
 import { PlateSearch } from '../../services/api/Car';
 import '../../styles/PolicePlateSearch.css'
 import { useNavigate } from 'react-router-dom';
+import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 
 interface Column {
     id: 'licensePlateNumber' | 'vinId' | 'modelId';
@@ -43,8 +44,11 @@ function PolicePartialPlateSearch() {
     const [searchVin, setSearchVin] = useState('')
     const [searchManufacturer, setSearchManufacturer] = useState('')
     const [searchModel, setSearchModel] = useState('')
+    const [selectedManu, setSelectedManu] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [manufacturerList, setManufacturerList] = useState<Manufacturer[]>([]);
+    const [modelList, setModelList] = useState<CarModel[]>([]);
     const [carList, setCarList] = useState<Car[]>([])
     const [plateLength, setPlateLength] = useState(7)
     const [plateCharacters, setPlateCharacters] = useState<string[]>(Array(plateLength).fill('*'));
@@ -55,7 +59,9 @@ function PolicePartialPlateSearch() {
         { id: 'modelId', label: t('modelId'), minWidth: 100 }
     ];
     const handleCharacterChange = (value: string, position: number) => {
-        if (value.length <= 1) {
+        console.log("Value", value.length)
+        if (value.length === 1) {
+            console.log('Here1')
             const updatedCharacters = [...plateCharacters];
             updatedCharacters[position] = value.toUpperCase();
             setPlateCharacters(updatedCharacters);
@@ -66,6 +72,7 @@ function PolicePartialPlateSearch() {
                 }
             }
         } else if (value.charAt(0) === '*') {
+            console.log('Here2')
             const updatedCharacters = [...plateCharacters];
             updatedCharacters[position] = value.charAt(1).toUpperCase();
             setPlateCharacters(updatedCharacters);
@@ -75,27 +82,58 @@ function PolicePartialPlateSearch() {
                     (nextInput as HTMLInputElement).focus();
                 }
             }
+        } else if (value.length === 0) {
+            console.log("empty")
+            const updatedCharacters = [...plateCharacters];
+            updatedCharacters[position] = "*";
+            setPlateCharacters(updatedCharacters);
         }
     };
 
     const updatePlateLength = (newLength: number) => {
         if (newLength !== plateLength) {
             setPlateLength(newLength);
-            setPlateCharacters(Array(newLength).fill(''));
+            setPlateCharacters(Array(newLength).fill('*'));
         }
     };
     const handleViewReport = () => {
         navigate(`/car-report/${selectedRow?.vinId}`)
     }
+    const fetchData = async() => {
+        const response: APIResponse = await ListManufacturer()
+        setManufacturerList(response.data)
+    }
+    const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = Number(e.target.value);
+        setSelectedManu(selectedValue);
+        let make = manufacturerList.find(m => m.id === selectedValue)
+        setSearchManufacturer(make ? make.name : '')
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
 
-
+        if (!ManufacturerModelResponse.error) {
+            setModelList(ManufacturerModelResponse.data);
+        }
+    };
+    const validatePlateSearch = (plate: string): boolean => {
+        const wildCharacterCount = plate.split('*').length - 1
+        if (wildCharacterCount > 2) return false
+        else return true
+    }
     const handleClearSearch = () => {
-        setPlateCharacters(Array(plateLength).fill(''));
+        setPlateCharacters(Array(plateLength).fill('*'));
         setSearchManufacturer('')
         setSearchModel('')
         setSearchVin('')
+        setModelList([])
+        setSelectedManu(0)
     };
-    const handleSearch = async() => {
+    const handleSearch = async () => {
+        if (!validatePlateSearch(getSearchPlate(plateCharacters))) {
+            setError('Invalid number of wildcard characters')
+            return
+        }
         setLoading(true);
         setError(null);
         let connectAPIError = t('Cannot connect to API! Please try again later')
@@ -111,12 +149,14 @@ function PolicePartialPlateSearch() {
             setError(response.error)
         } else {
             setCarList(response.data)
+            setPage(0)
         }
     }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
     useEffect(() => {
+        fetchData()
         i18n.changeLanguage(currentLanguage)
     }, []);
     return (
@@ -161,25 +201,39 @@ function PolicePartialPlateSearch() {
                     </div>
                     <div className="reg-inspec-search-filter-item">
                         <label>{t('Manufacturer')}</label>
-                        <input
-                            type="text"
-                            className="reg-inspec-search-bar"
-                            placeholder={t('Search by Manufacturer Name')}
-                            value={searchManufacturer}
-                            onChange={(e) => setSearchManufacturer(e.target.value)}
-                        />
+                        <select onChange={handleSelectChange} value={selectedManu} className="reg-inspec-search-bar">
+                            <option value="">{t('All')}</option>
+                            {manufacturerList.length > 0 ? (
+                                manufacturerList.map((manufacturer, index) => (
+                                    <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
+                                ))
+                            ) : (
+                                <option value="" disabled>{t('Loading')}...</option>
+                            )}
+                        </select>
                     </div>
                     <div className="reg-inspec-search-filter-item">
                         <label>{t('Model')}</label>
-                        <input
-                            type="text"
-                            className="reg-inspec-search-bar"
-                            placeholder={t('Search by Car Model')}
-                            value={searchModel}
+                        <select
                             onChange={(e) => setSearchModel(e.target.value)}
-                        />
+                            disabled={modelList.length === 0}
+                            value={searchModel}
+                            className="reg-inspec-search-bar"
+                        >
+                            <option value="">{t('Any Model')}</option>
+                            {modelList.length > 0 ? (
+                                modelList.map((model, index) => (
+                                    <option key={index} value={model.modelID}>{model.modelID}</option>
+                                ))
+                            ) : (
+                                <option value="" disabled>{t('Loading')}...</option>
+                            )}
+                        </select>
                     </div>
                 </div>
+                {error && (
+                    <p className="pol-stolen-error">{error}</p>
+                )}
                 <div className="search-actions">
                     <button onClick={handleSearch}>{t('Search License Plates')}</button>
                     <button onClick={handleClearSearch}>{t('Clear Search')}</button>
@@ -191,6 +245,11 @@ function PolicePartialPlateSearch() {
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
+                                    <TableRow>
+                                        <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
+                                            {t('Cars Found')}
+                                            </TableCell>
+                                    </TableRow>
                                     <TableRow>
                                         {columns.map((column) => (
                                             <TableCell
@@ -205,7 +264,8 @@ function PolicePartialPlateSearch() {
                                 </TableHead>
                                 <TableBody>
                                     {carList.length > 0 ? carList
-                                        .map((row) => {
+                                        .map((row, index) => {
+                                            if (index === 2 * page || index === 2*page+1)
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId} onClick={() => setSelectedRow(row)}>
                                                     {columns.map((column) => {
@@ -235,13 +295,23 @@ function PolicePartialPlateSearch() {
                             rowsPerPage={2}
                             page={page}
                             onPageChange={handleChangePage}
+                            labelDisplayedRows={
+                                ({ from, to, count }) => {
+                                    return '' + from + '-' + to +' '+ t('of') + ' ' +count
+                                }
+                            }
                         />
                     </div>
                     <div className="plate-search-page-item-4">
                         <h3>{t('Car Report')}</h3>
-                        <div className="plate-view-report-button-div">
-                            <button className="plate-view-report-button" onClick={handleViewReport}>{t('View Report For Car')}</button>
-                        </div>
+                        {selectedRow ? 
+                            <div className="plate-view-report-button-div">
+                                {t('Click on button to see report for car ') + selectedRow.vinId}
+                                <button className="plate-view-report-button" onClick={handleViewReport} disabled={selectedRow ? false : true}>{t('View Report For Car')}</button>
+                            </div> :
+                        <a>
+                                {t('Click on the car to see able to access car report')}
+                        </a>}
                     </div>
                 </div>
                 <div className="plate-search-page-item">

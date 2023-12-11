@@ -503,5 +503,11 @@
   "Search Description": "CHRS cung cấp dữ liệu chuẩn xác đi kèm với đánh giá của khách hàng để giúp bạn tìm nơi hợp lí",
   "Find Service Shop Near Me": "Tìm gara sửa chữa ở gần tôi",
   "Milage": "Số dặm đã đi được",
-  "Photos": "Ảnh"
+  "Photos": "Ảnh",
+  "Loading": "Đang tải",
+  "Data provider must be chosen": "Hãy chọn nhà cung cấp dữ liệu",
+  "Click on button to see report for car": "Bấm để xem báo cáo cho xe ",
+  "Click on the car to see able to access car report": "Bấm vào xe để có thể truy cập báo cáo của xe",
+  "Cars Found": "Xe được tìm thấy",
+  "of": "trong"
 }

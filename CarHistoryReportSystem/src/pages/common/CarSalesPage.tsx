@@ -32,6 +32,8 @@ function CarSalesPage() {
     const handleResetFilters = () => {
         setCarMake('')
         setCarModel('')
+        setSelectedMake(0)
+        setModelList([])
         setYearStart(0)
         setPriceMax(9999999999)
         setMilageMax(9999999999)
@@ -41,6 +43,8 @@ function CarSalesPage() {
     const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = Number(e.target.value);
         setSelectedMake(selectedValue);
+        let make = manufacturerList.find(m => m.id === selectedValue)
+        setCarMake(make ? make.name : '')
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
@@ -60,6 +64,7 @@ function CarSalesPage() {
             pricemax: priceMax,
             milagemax: milageMax
         }
+        console.log(searchParams.make)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const carListResponse: APIResponse = await ListCarForSale(page, connectAPIError, language, searchParams)
@@ -110,7 +115,7 @@ function CarSalesPage() {
                                         <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
                                     ))
                                 ) : (
-                                    <option value="" disabled>Loading...</option>
+                                    <option value="" disabled>{t('Loading')}...</option>
                                 )}
                             </select>
                         </div>
@@ -181,7 +186,7 @@ function CarSalesPage() {
                 <section id="car-listings">
                     <div id="sorting">
                         <div className="paging-result">
-                            <p>Showing {paging?.CurrentPage} out of {paging?.TotalPages} pages</p>
+                            <p>Showing {paging && paging.TotalPages > 0 ? paging?.CurrentPage : paging?.TotalPages} out of {paging?.TotalPages} pages</p>
                         </div>
                         <div className="sorting-option">
                             {/*<label htmlFor="sort-by">Sort By: </label>*/}

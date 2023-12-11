@@ -184,6 +184,11 @@ function PoliceVinAlertPage() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell colSpan={4} style={{ backgroundColor: 'cadetblue', width: '100%', fontWeight: 'bold' }}>
+                                            VIN Alert List
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
                                         {columns.map((column) => (
                                             <TableCell
                                                 key={column.id}

@@ -43,7 +43,7 @@ export async function GetUserRequests(id: string, token: string, pageNumber: num
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
@@ -72,7 +72,7 @@ export async function GetAllUserRequest(token: string, pageNumber: number, conne
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
-            return { error: (axiosError.response?.data as any).error[0] }
+            return { error: (axiosError.response?.data as any).Error[0] }
         }
     }
 }
