@@ -1,6 +1,6 @@
 .pol-crash-list-page {
     padding: 20px;
-    padding-top: 120px;
+    padding-top: 200px;
 }
 
 .pol-crash-top-bar {
@@ -104,6 +104,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1300;
 }
 
 .pol-crash-modal-content {
@@ -111,7 +112,28 @@
     padding: 20px;
     border-radius: 5px;
     position: relative;
-    width: 400px;
+    width: 600px;
+    height: 600px; 
+}
+.pol-crash-modal-content-2 {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 550px;
+    width: 100%;
+    height: 100%;
+    padding-top: 2%;
+    align-items: center;
+}
+.pol-crash-modal-content h2 {
+    border-bottom: 1px solid black;
+    margin: 0;
+    width: 100%;
+}
+.pol-crash-modal-content-2-buttons{
+    display: flex;
+    flex-direction: row;
 }
 
 .pol-crash-close-btn {
@@ -147,17 +169,24 @@
 
 .pol-crash-form-column {
     flex: 1;
-    min-width: 75px;
+    width: 90%;
+    padding-bottom:10px;
 }
 
     .pol-crash-form-column label,
-    .pol-crash-form-column input,
+    .pol-crash-form-column input:not([type=checkbox]),
     .pol-crash-form-column select {
         display: block;
         width: 100%;
-        margin-bottom: 10px;
+        height: 20px;
+        min-height: 20px
     }
-
+.pol-crash-form-column label{
+    text-align: left;
+}
+.pol-crash-form-column input[type="checkbox"]{
+    zoom: 1.5;
+}
 .pol-crash-model-prev-btn {
     background-color: #3498db;
     color: #fff;
@@ -191,6 +220,7 @@
 .pol-crash-car-container {
     display: flex; /* Or flex, depending on your layout needs */
     padding: 1px; /* Adjust the padding to match the border width for visual consistency */
+    flex-direction: row;
 }
 
 .pol-crash-car-image {
@@ -201,12 +231,39 @@
 }
 
 .pol-crash-checkboxes {
-    margin-top: 20px; /* Space out the checkboxes from the image */
     display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
     .pol-crash-checkboxes label {
-        margin-right: 3px; /* Space out the labels if needed */
-        margin-left: 3px; /* Space out the labels if needed */
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
+.pol-crash-action-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.pol-crash-action-button:hover {
+    background-color: #2980b9;
+}
+.export-pol-crash-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 12px;
+    border: 1px solid black;
+    border-radius: 20px;
+    margin: 5px;
+    margin-top: 1%;
+    box-shadow: 2px 5px #888888;
+    height: 100%;
+}
+.export-pol-crash-btn:hover {
+    background-color: #45a049;
+}

@@ -49,8 +49,18 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         "VehicleRegistry": "/registry/notification",
         "PoliceOffice": "/police/notification",
     };
+    const roleHomepagePath: { [key in UserRole]: string } = {
+        "User": "/",
+        "CarDealer": "/dealer",
+        "InsuranceCompany": "/insurance",
+        "ServiceShop": "/service",
+        "Manufacturer": "/manufacturer",
+        "VehicleRegistry": "/registry",
+        "PoliceOffice": "/police",
+    }
     const profilePath = roleProfilePath[role as UserRole] || '/profile';
     const notificationPath = roleNotificationPath[role as UserRole] || '/notification';
+    const homepagePath = roleHomepagePath[role as UserRole] || '/'
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -105,7 +115,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         <nav className="global-nav">
             <div className="left-section">
                 <div className="logo-container">
-                    <a href="/">
+                    <a href={role ? homepagePath :"/"}>
                         <img src={logo} alt="Company Logo" className="logo" />
                     </a>
                 </div>

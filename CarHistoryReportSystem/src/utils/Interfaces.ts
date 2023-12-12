@@ -474,6 +474,15 @@ export interface CarStolen {
     lastModified?: string
 }
 
+export interface CarStolenExcel {
+    description?: string,
+    carId: string,
+    note?: string,
+    odometer: number,
+    reportDate: string,
+    status: string,
+}
+
 export interface CarCrash {
     id?: number,
     source?: string,
@@ -482,8 +491,8 @@ export interface CarCrash {
     serverity: number,
     damageLocation: number,
     accidentDate: string,
-    description: string,
-    note: string,
+    description?: string,
+    note?: string,
     odometer?: number,
     reportDate: string,
     createdByUserId?: string,
