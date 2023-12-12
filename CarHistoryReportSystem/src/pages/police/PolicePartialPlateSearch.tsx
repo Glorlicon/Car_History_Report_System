@@ -14,6 +14,8 @@ import { PlateSearch } from '../../services/api/Car';
 import '../../styles/PolicePlateSearch.css'
 import { useNavigate } from 'react-router-dom';
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 interface Column {
     id: 'licensePlateNumber' | 'vinId' | 'modelId';
@@ -53,15 +55,14 @@ function PolicePartialPlateSearch() {
     const [plateLength, setPlateLength] = useState(7)
     const [plateCharacters, setPlateCharacters] = useState<string[]>(Array(plateLength).fill('*'));
     const [selectedRow, setSelectedRow] = useState<Car | null>();
+    const [message, setMessage] = useState('')
     const columns: readonly Column[] = [
         { id: 'licensePlateNumber', label: t('License Plate Number'), minWidth: 170 },
         { id: 'vinId', label: t('VIN'), minWidth: 100 },
         { id: 'modelId', label: t('modelId'), minWidth: 100 }
     ];
     const handleCharacterChange = (value: string, position: number) => {
-        console.log("Value", value.length)
         if (value.length === 1) {
-            console.log('Here1')
             const updatedCharacters = [...plateCharacters];
             updatedCharacters[position] = value.toUpperCase();
             setPlateCharacters(updatedCharacters);
@@ -72,7 +73,6 @@ function PolicePartialPlateSearch() {
                 }
             }
         } else if (value.charAt(0) === '*') {
-            console.log('Here2')
             const updatedCharacters = [...plateCharacters];
             updatedCharacters[position] = value.charAt(1).toUpperCase();
             setPlateCharacters(updatedCharacters);
@@ -83,7 +83,6 @@ function PolicePartialPlateSearch() {
                 }
             }
         } else if (value.length === 0) {
-            console.log("empty")
             const updatedCharacters = [...plateCharacters];
             updatedCharacters[position] = "*";
             setPlateCharacters(updatedCharacters);
@@ -97,7 +96,7 @@ function PolicePartialPlateSearch() {
         }
     };
     const handleViewReport = () => {
-        navigate(`/car-report/${selectedRow?.vinId}`)
+        navigate(`/police/car-report/${selectedRow?.vinId}`)
     }
     const fetchData = async() => {
         const response: APIResponse = await ListManufacturer()
@@ -131,7 +130,8 @@ function PolicePartialPlateSearch() {
     };
     const handleSearch = async () => {
         if (!validatePlateSearch(getSearchPlate(plateCharacters))) {
-            setError('Invalid number of wildcard characters')
+            setError(t('Only maximum of 2 wildcard characters allowed'))
+            setOpenError(true)
             return
         }
         setLoading(true);
@@ -147,13 +147,25 @@ function PolicePartialPlateSearch() {
         const response = await PlateSearch(page, token, connectAPIError, language, searchParams)
         if (response.error) {
             setError(response.error)
+            setOpenError(true)
         } else {
             setCarList(response.data)
+            setMessage(t('Search succesfully. Please check the results'))
+            setOpenSuccess(true)
             setPage(0)
         }
     }
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
+    };
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [openError, setOpenError] = useState(false)
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccess(false);
+        setOpenError(false);
     };
     useEffect(() => {
         fetchData()
@@ -161,6 +173,16 @@ function PolicePartialPlateSearch() {
     }, []);
     return (
         <div className="pol-plate-search-page">
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex:'2000' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                    {error}
+                </MuiAlert>
+            </Snackbar>
             <div className="pol-plate-search-action">
                 <h2>{t('Search by Partial Plate')}</h2>
                 <div className="plate-length-selector">
@@ -231,9 +253,6 @@ function PolicePartialPlateSearch() {
                         </select>
                     </div>
                 </div>
-                {error && (
-                    <p className="pol-stolen-error">{error}</p>
-                )}
                 <div className="search-actions">
                     <button onClick={handleSearch}>{t('Search License Plates')}</button>
                     <button onClick={handleClearSearch}>{t('Clear Search')}</button>

@@ -20,9 +20,11 @@ import TableRow from '@mui/material/TableRow';
 import { APIResponse, CarTracking, Paging, VinAlert } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { GetVinAlertList, AddCarToAlertList, RemoveCarFromAlertList } from '../../services/api/Car';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 interface Column {
-    id: 'carId' | 'isFollowing' | 'createdTime' | 'actionStatus';
+    id: 'carId' | 'isFollowing' | 'createdTime';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -42,24 +44,23 @@ function PoliceVinAlertPage() {
     const [carList, setCarList] = useState<VinAlert[]>([])
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [actionStatus, setActionStatus] = useState('')
-    const [currentActionId, setCurrentActionId] = useState('')
     const columns: readonly Column[] = [
         { id: 'carId', label: t('VIN'), minWidth: 170 },
         { id: 'createdTime', label: t('Created Time'), minWidth: 100 },
-        { id: 'isFollowing', label: t('Actions'), minWidth: 100 },
-        { id: 'actionStatus', label: t('Actions Status'), minWidth: 100 }
+        { id: 'isFollowing', label: t('Actions'), minWidth: 100 }
     ];
     const handleAddNewAlert = async() => {
         setAdding(true);
         setAddError(null);
         if (!isValidVIN(alertVin)) {
             setAddError(t('VIN is invalid'));
+            setOpenError(true)
             setAdding(false);
             return;
         }
         if (!alertVin) {
             setAddError(t('VIN must be filled out'));
+            setOpenError(true)
             setAdding(false);
             return;
         }
@@ -72,40 +73,44 @@ function PoliceVinAlertPage() {
         setAdding(false);
         if (response.error) {
             setAddError(response.error);
+            setOpenError(true)
         } else {
             setAlertVin('')
+            setMessage(t('Add alert successfully'))
+            setOpenSuccess(true)
             fetchData();
         }
     }
     const handleAddAlertButtonClick = async (carId: string) => {
-        setCurrentActionId(carId)
+        setAddError(null);
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const response: APIResponse = await AddCarToAlertList({
             carId: carId,
             userId: id
         } as CarTracking, token, connectAPIError, language);
-        setActionStatus(t('Running'))
         if (response.error) {
-            setActionStatus(response.error);
+            setAddError(response.error);
+            setOpenError(true)
         } else {
-            setActionStatus('');
+            setMessage(t('Add alert successfully'))
+            setOpenSuccess(true)
             fetchData();
         }
     }
     const handleRemoveAlertButtonClick = async (carId: string) => {
-        setCurrentActionId(carId)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const response: APIResponse = await RemoveCarFromAlertList({
             carId: carId,
             userId: id
         } as CarTracking, token, connectAPIError, language);
-        setActionStatus(t('Running'))
         if (response.error) {
-            setActionStatus(response.error);
+            setAddError(response.error);
+            setOpenError(true)
         } else {
-            setActionStatus('');
+            setMessage(t('Remove alert successfully'))
+            setOpenSuccess(true)
             fetchData();
         }
     }
@@ -120,6 +125,7 @@ function PoliceVinAlertPage() {
         const response: APIResponse = await GetVinAlertList(id, page+1, token, connectAPIError, language)
         if (response.error) {
             setError(response.error)
+            setOpenError(true)
         } else {
             setCarList(response.data)
             setPaging(response.pages)
@@ -129,6 +135,16 @@ function PoliceVinAlertPage() {
     const handleViewReport = (vin: string) => {
         navigate(`/police/car-report/${vin}`)
     }
+    const [message, setMessage] = useState('')
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [openError, setOpenError] = useState(false)
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccess(false);
+        setOpenError(false);
+    };
     useEffect(() => {
         fetchData();
         i18n.changeLanguage(currentLanguage)
@@ -139,6 +155,16 @@ function PoliceVinAlertPage() {
     }, [page])
     return (
       <div className="pol-plate-search-page">
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                    {error ? error : addError}
+                </MuiAlert>
+            </Snackbar>
             <div className="pol-alert-action">
                 <Accordion>
                     <AccordionSummary
@@ -157,9 +183,6 @@ function PoliceVinAlertPage() {
                         <div className="reg-inspec-search-filter-item">
                             <label>
                                 {t('Car VIN')}
-                                {addError && (
-                                    <p className="pol-stolen-error">{addError}</p>
-                                )}
                             </label>
                             <input
                                 type="text"
@@ -210,7 +233,6 @@ function PoliceVinAlertPage() {
                                     ) : error ? (
                                             <TableRow>
                                                 <TableCell colSpan={3}>
-                                                    {error}
                                                     <button onClick={fetchData} className="pol-stolen-retry-btn">{t('Retry')}</button>
                                                 </TableCell>
                                             </TableRow>
@@ -231,21 +253,13 @@ function PoliceVinAlertPage() {
                                                                     <button className="plate-view-report-button" onClick={() => { handleViewReport(row.carId) }}>{t('View Report For Car')}</button>
                                                                 </TableCell>
                                                             )
-                                                        } else if (column.id !== 'actionStatus') {
+                                                        } else {
                                                             let value;
                                                             if (column.id === 'createdTime') value = row[column.id].split('T')[0]
                                                             else value = row[column.id];
                                                             return (
                                                                 <TableCell key={column.id} align={column.align} style={{ textAlign: 'center' }}>
                                                                     {value}
-                                                                </TableCell>
-                                                            )
-                                                        } else {
-                                                            return (
-                                                                <TableCell key={column.id} align={column.align}>
-                                                                    {currentActionId === row.carId && (
-                                                                        <p className="pol-stolen-error">{actionStatus}</p>
-                                                                    )}
                                                                 </TableCell>
                                                             )
                                                         }

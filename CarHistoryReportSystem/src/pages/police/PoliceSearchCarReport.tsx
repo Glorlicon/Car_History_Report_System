@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { RootState } from '../../store/State';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
-
+import MuiAlert from '@mui/material/Alert';
 function PoliceSearchCarReport() {
     const { t, i18n } = useTranslation()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
@@ -21,15 +21,18 @@ function PoliceSearchCarReport() {
         let unknownError = t('Something went wrong. Please try again')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         if (!vin) {
-            setVinError('Please enter VIN.');
+            setVinError(t('Please enter VIN'));
         } else if (!isValidVIN(vin)) {
-            setVinError('The VIN entered is invalid. Please check and try again.');
+            setVinError(t('The VIN entered is invalid. Please check and try again'));
         } else {
             setVinError(null);
             setIsLoading(true);
             navigate(`/police/car-report/${vin}`)
         }
     };
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     return (
         <div className="report-container">
             <h2>{t('Car History Reports')}</h2>
@@ -44,7 +47,10 @@ function PoliceSearchCarReport() {
                         t('Get CHRS Report')
                     )}
                 </button>
-                {vinError && <div className="report-search-error">{vinError}</div>}
+                {vinError &&
+                    <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000', marginTop:'5px' }}>
+                    {vinError}
+                </MuiAlert>}
             </div>
         </div>
     );

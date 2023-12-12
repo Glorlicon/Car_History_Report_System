@@ -1,6 +1,6 @@
 .pol-stolen-list-page {
     padding: 20px;
-    padding-top: 120px;
+    padding-top: 200px;
 }
 
 .pol-stolen-top-bar {
@@ -108,6 +108,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1300;
 }
 
 .pol-stolen-modal-content {
@@ -115,7 +116,8 @@
     padding: 20px;
     border-radius: 5px;
     position: relative;
-    width: 400px;
+    width: 600px;
+    height: 600px;
 }
 
 .pol-stolen-close-btn {
@@ -151,7 +153,8 @@
 
 .pol-stolen-form-column {
     flex: 1;
-    min-width: 75px;
+    width: 90%;
+    padding-bottom: 10px;
 }
 
     .pol-stolen-form-column label,
@@ -159,9 +162,12 @@
     .pol-stolen-form-column select {
         display: block;
         width: 100%;
-        margin-bottom: 10px;
+        height: 20px;
+        min-height: 20px
     }
-
+.pol-stolen-form-column label{
+    text-align: left;
+}
 .pol-stolen-model-add-btn {
     background-color: #3498db;
     color: #fff;
