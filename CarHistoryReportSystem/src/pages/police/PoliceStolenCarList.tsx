@@ -24,6 +24,7 @@ import TableRow from '@mui/material/TableRow';
 import Papa from 'papaparse';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 interface Column {
     id: 'id' | 'carId' | 'description' | 'status' |'odometer' | 'reportDate' | 'note' | 'actions';
@@ -33,6 +34,7 @@ interface Column {
     format?: (value: number) => string;
 }
 function PoliceStolenCarList() {
+    const navigate = useNavigate()
     const { t, i18n } = useTranslation()
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
@@ -405,10 +407,10 @@ function PoliceStolenCarList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                          {t('Car Stolen List')}
+                      </span>
                       <TableContainer>
-                          <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                              {t('Car Stolen List')}
-                          </span>
                           <Table stickyHeader aria-label="sticky table">
                               <TableHead>
                                   <TableRow>
@@ -426,13 +428,13 @@ function PoliceStolenCarList() {
                               <TableBody>
                                   {loading ? (
                                       <TableRow>
-                                          <TableCell colSpan={7}>
+                                          <TableCell colSpan={8}>
                                               <div className="pol-crash-spinner"></div>
                                           </TableCell>
                                       </TableRow>
                                   ) : error ? (
                                       <TableRow>
-                                          <TableCell colSpan={7}>
+                                          <TableCell colSpan={8}>
                                               {error}
                                               <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
                                           </TableCell>
@@ -459,9 +461,14 @@ function PoliceStolenCarList() {
                                                       } else if (column.id === 'actions') {
                                                           return (
                                                               <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditCarStolenReport(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                      {t('Edit1')}
+                                                                      {t('Edit1')} &#x270E;
                                                                   </button>
+                                                                  <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                      {t('View Report For Car')}
+                                                                  </button>
+                                                                  </div>
                                                               </TableCell>
                                                           )
                                                       }
@@ -470,7 +477,7 @@ function PoliceStolenCarList() {
                                           );
                                       }) :
                                       <TableRow>
-                                          <TableCell colSpan={7}>
+                                          <TableCell colSpan={8}>
                                               {t('No stolen car reports found')}
                                           </TableCell>
                                       </TableRow>
@@ -518,7 +525,6 @@ function PoliceStolenCarList() {
                               <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                   {addError}
                               </MuiAlert>
-                              /*<p className="pol-stolen-error">{addError}</p>*/
                           )}
                           <button onClick={handleAddCarStolenReport} disabled={adding} className="pol-stolen-model-add-btn">
                               {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Finish')}
@@ -608,7 +614,7 @@ function PoliceStolenCarList() {
                                               );
                                           }) :
                                           <TableRow>
-                                              <TableCell colSpan={11}>
+                                              <TableCell colSpan={6}>
                                                   {t('No stolen car reports found')}
                                               </TableCell>
                                           </TableRow>
@@ -620,7 +626,6 @@ function PoliceStolenCarList() {
                               {t('Import file must have all data correct to be able to import')} !
                           </MuiAlert>
                           {addError && (
-                              /*<p className="pol-crash-error">{addError}</p>*/
                               <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                   {addError}
                               </MuiAlert>

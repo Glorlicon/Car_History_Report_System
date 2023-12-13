@@ -535,5 +535,13 @@
   "Car Stolen List": "Car Stolen List",
   "Please enter VIN": "Please enter VIN",
   "The VIN entered is invalid. Please check and try again": "The VIN entered is invalid. Please check and try again",
-  "No car crash report found": "No car crash report found"
+  "No car crash report found": "No car crash report found",
+  "Add car registration successfully": "Add car registration successfully",
+  "Edit car registration successfully": "Edit car registration successfully",
+  "Car Registration List": "Car Registration List",
+  "Add car inspection successfully": "Add car inspection successfully",
+  "Edit car inspection successfully": "Edit car inspection successfully",
+  "Car Inspection List": "Car Inspection List",
+  "Source": "Source",
+  "Car Insurance List": "Car Insurance List"
 }
