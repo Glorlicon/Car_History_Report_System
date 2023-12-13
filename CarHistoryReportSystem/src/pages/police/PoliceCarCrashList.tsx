@@ -25,6 +25,7 @@ import TableRow from '@mui/material/TableRow';
 import Papa from 'papaparse';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 interface Column {
     id: 'id' | 'carId' | 'location' | 'serverity' | 'description' | 'damageLocation' | 'accidentDate' | 'odometer' | 'reportDate' | 'note' | 'actions';
@@ -34,6 +35,7 @@ interface Column {
     format?: (value: number) => string;
 }
 function PoliceCarCrashList() {
+    const navigate = useNavigate()
     const { t, i18n } = useTranslation()
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
@@ -553,10 +555,10 @@ function PoliceCarCrashList() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                            {t('Car Crash List')}
+                        </span>
                         <TableContainer>
-                            <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                                {t('Car Crash List')}
-                            </span>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
@@ -607,9 +609,15 @@ function PoliceCarCrashList() {
                                                         } else if (column.id === 'actions') {
                                                             return (
                                                                 <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                    <button onClick={() => { setEditCarCrashReport(row) }} disabled={adding} className="pol-crash-action-button">
+                                                                    <div className="pol-crash-modal-content-2-buttons">
+                                                                        <button onClick={() => { setEditCarCrashReport(row) }} disabled={adding} className="pol-crash-action-button">
                                                                         {t('Edit1')} &#x270E;
-                                                                    </button>
+                                                                        </button>
+                                                                        <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                            {t('View Report For Car')}
+                                                                        </button>
+                                                                    </div>
+
                                                                 </TableCell>
                                                             )
                                                         }
@@ -719,7 +727,6 @@ function PoliceCarCrashList() {
                                 />
                             )}
                             {addError && (
-                                /*<p className="pol-crash-error">{addError}</p>*/
                                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                     {addError}
                                 </MuiAlert>
@@ -795,7 +802,7 @@ function PoliceCarCrashList() {
                                                 );
                                             }) :
                                             <TableRow>
-                                                <TableCell colSpan={11}>
+                                                <TableCell colSpan={9}>
                                                     {t('No car crash report found')}
                                                 </TableCell>
                                             </TableRow>

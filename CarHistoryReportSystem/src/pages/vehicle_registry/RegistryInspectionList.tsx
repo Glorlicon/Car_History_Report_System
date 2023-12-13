@@ -25,6 +25,7 @@ import TableRow from '@mui/material/TableRow';
 import Papa from 'papaparse';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 interface Column {
     id: 'id' | 'carId' | 'note' | 'odometer' | 'reportDate' | 'description' | 'inspectionNumber' | 'inspectDate' | 'carInspectionHistoryDetail' | 'actions';
@@ -34,6 +35,7 @@ interface Column {
     format?: (value: number) => string;
 }
 function RegistryInspectionList() {
+    const navigate = useNavigate()
     const { t, i18n } = useTranslation();
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
@@ -494,10 +496,10 @@ function RegistryInspectionList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                          {t('Car Inspection List')}
+                      </span>
                       <TableContainer>
-                          <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                              {t('Car Inspection List')}
-                          </span>
                           <Table stickyHeader aria-label="sticky table">
                               <TableHead>
                                   <TableRow>
@@ -541,9 +543,14 @@ function RegistryInspectionList() {
                                                       } else if (column.id === 'actions') {
                                                           return (
                                                               <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditInspection(row) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Edit1')} &#x270E;
                                                                   </button>
+                                                                  <button onClick={() => { navigate(`/registry/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                      {t('View Report For Car')}
+                                                                      </button>
+                                                                  </div>
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'carInspectionHistoryDetail') {

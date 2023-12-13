@@ -118,6 +118,7 @@ const CustomRoutes = () => {
                 <Route path="/insurance/stolen" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceCompanyStolenList /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/insurance/profile" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/insurance/notification" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/insurance/car-report/:vin" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
                 {/*Police*/}
                 <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceStolenCarList /></UserLayout>}></ProtectedRoute>} />
