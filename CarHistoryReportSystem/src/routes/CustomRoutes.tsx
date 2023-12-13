@@ -58,6 +58,8 @@ import ForgotPassword from '../pages/common/ForgottenPassword';
 import ForgotPasswordInitiate from '../pages/common/ForgottenPasswordInitiate';
 import ForgottenPasswordSuccess from '../pages/common/ForgottenPasswordSucess'
 import PoliceSearchCarReport from '../pages/police/PoliceSearchCarReport';
+import RegistrySearchCarReport from '../pages/vehicle_registry/RegistrySearchCarReport';
+import TestInput from '../pages/vehicle_registry/test';
 
 
 const CustomRoutes = () => {
@@ -150,6 +152,9 @@ const CustomRoutes = () => {
                 <Route path="/registry/requests" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RequestPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/registry/profile" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/registry/notification" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/registry/reports" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RegistrySearchCarReport /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/registry/car-report/:vin" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/test" element={<TestInput />}/>
             </Routes>
         </Router>
     )

@@ -3,60 +3,76 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/State';
 import { CarRegistration } from '../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
+import TextField from '@mui/material/TextField'
+import dayjs, { Dayjs } from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import moment from "moment";
 interface RegistryRegistrationDetailsFormProps {
     action: "Add" | "Edit"
     model: CarRegistration
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
+    handleDateChange: (date: string, type: string) => void
 }
 const RegistryRegistrationDetailsForm: React.FC<RegistryRegistrationDetailsFormProps> = ({
     action,
     model,
-    handleInputChange
+    handleInputChange,
+    handleDateChange
 }) => {
     const { t, i18n } = useTranslation();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const handleFormatDateChange = (value: Dayjs, type: string) => {
+        let newDate = moment(value.toDate()).format('YYYY-MM-DD');
+        handleDateChange(newDate, type)
+    }
     const edit = action === "Edit"
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, []);
   return (
       <>
-          <div className="reg-reg-form-columns">
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Car ID')}</label>
-                  <input type="text" name="carId" value={model.carId} onChange={handleInputChange} disabled={edit} />
+                  <TextField type="text" name="carId" value={model.carId} onChange={handleInputChange} disabled={edit} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Owner Name')}</label>
-                  <input type="text" name="ownerName" value={model.ownerName} onChange={handleInputChange} />
+                  <TextField type="text" name="ownerName" value={model.ownerName} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Odometer')}</label>
-                  <input type="number" name="odometer" value={model.odometer} onChange={handleInputChange} min="0" />
+                  <TextField type="number" name="odometer" value={model.odometer} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }}/>
               </div>
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Note')}</label>
-                  <input type="text" name="note" value={model.note} onChange={handleInputChange} />
+                  <TextField type="text" name="note" value={model.note} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-          </div>
-          <div className="reg-reg-form-columns">
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Registration Number')}</label>
-                  <input type="text" name="registrationNumber" value={model.registrationNumber} onChange={handleInputChange} disabled={edit} />
+                  <TextField type="text" name="registrationNumber" value={model.registrationNumber} onChange={handleInputChange} disabled={edit} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="reg-reg-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('License Plate Number')}</label>
-                  <input type="text" name="licensePlateNumber" value={model.licensePlateNumber} onChange={handleInputChange}/>
+                  <TextField type="text" name="licensePlateNumber" value={model.licensePlateNumber} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="reg-reg-form-column">
-                  <label>{t('Report Date')}</label>
-                  <input type="date" name="reportDate" value={model.reportDate} onChange={handleInputChange} />
+              <div className="pol-crash-form-column">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={['DatePicker', 'DatePicker']}>
+                          <DatePicker label={t('Report Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
+                      </DemoContainer>
+                  </LocalizationProvider>
               </div>
-              <div className="reg-reg-form-column">
-                  <label>{t('Expire Date')}</label>
-                  <input type="date" name="expireDate" value={model.expireDate} onChange={handleInputChange} />
+              <div className="pol-crash-form-column">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={['DatePicker', 'DatePicker']}>
+                          <DatePicker label={t('Expire Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'expireDate') }} />
+                      </DemoContainer>
+                  </LocalizationProvider>
               </div>
-          </div>
       </>
   );
 }

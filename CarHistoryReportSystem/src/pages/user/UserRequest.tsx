@@ -6,11 +6,12 @@ import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, 
 import '../../styles/Reqeuest.css'
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import RequestCharacteristicPage from '../../components/forms/admin/User/RequestCharacteristicPage';
-import { t } from 'i18next';
 import { Pagination } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 function UserRequest() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const { t, i18n } = useTranslation()
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [modalPage, setModalPage] = useState(1);
@@ -40,10 +41,8 @@ function UserRequest() {
     const id = JWTDecoder(token).nameidentifier
     const handleResponseRequest = async () => {
         if (editRequest != null) {
-
             setAdding(true);
             setAddError(null);
-            console.log(editRequest);
             const response: APIResponse = await ResponseRequest(editRequest, token);
             setAdding(false);
             if (response.error) {
@@ -118,7 +117,15 @@ function UserRequest() {
 
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
 
     return (
         <div className="ad-car-list-page">

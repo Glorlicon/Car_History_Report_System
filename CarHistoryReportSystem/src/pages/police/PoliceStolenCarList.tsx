@@ -460,7 +460,7 @@ function PoliceStolenCarList() {
                                                           return (
                                                               <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
                                                                   <button onClick={() => { setEditCarStolenReport(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                      {t('Edit1')}
+                                                                      {t('Edit1')} &#x270E;
                                                                   </button>
                                                               </TableCell>
                                                           )

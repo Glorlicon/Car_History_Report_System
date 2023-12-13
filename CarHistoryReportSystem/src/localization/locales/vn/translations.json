@@ -536,5 +536,11 @@
   "Car Stolen List": "Danh sách xe bị trộm",
   "Please enter VIN": "Hãy nhập số khung số máy",
   "The VIN entered is invalid. Please check and try again": "Số khung số máy không hợp lệ. Hãy kiểm tra lại",
-  "No car crash report found": "Không tìm thấy báo cáo tai nạn nào"
+  "No car crash report found": "Không tìm thấy báo cáo tai nạn nào",
+  "Add car registration successfully": "Thêm thông tin đăng ký xe thành công",
+  "Edit car registration successfully": "Chỉnh sửa thông tin đăng ký xe thành công",
+  "Car Registration List": "Danh sách thông tin đăng ký xe",
+  "Add car inspection successfully": "Thêm thông tin đăng kiểm thành công",
+  "Edit car inspection successfully": "Chỉnh sửa thông tin đăng kiểm thành công",
+  "Car Inspection List": "Danh sách đăng kiểm ô tô"
 }

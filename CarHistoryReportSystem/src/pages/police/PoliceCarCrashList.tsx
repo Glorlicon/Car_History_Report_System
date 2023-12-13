@@ -608,7 +608,7 @@ function PoliceCarCrashList() {
                                                             return (
                                                                 <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
                                                                     <button onClick={() => { setEditCarCrashReport(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                        {t('Edit1')}
+                                                                        {t('Edit1')} &#x270E;
                                                                     </button>
                                                                 </TableCell>
                                                             )
@@ -677,8 +677,7 @@ function PoliceCarCrashList() {
                                 />
                             )}
                             {addError && (
-                                /*<p className="pol-crash-error">{addError}</p>*/
-                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000', marginTop: '20px' }}>
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                     {addError}
                                 </MuiAlert>
                             )}
@@ -721,7 +720,7 @@ function PoliceCarCrashList() {
                             )}
                             {addError && (
                                 /*<p className="pol-crash-error">{addError}</p>*/
-                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000', marginTop: '20px' }}>
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                     {addError}
                                 </MuiAlert>
                             )}
@@ -808,8 +807,7 @@ function PoliceCarCrashList() {
                                 {t('Import file must have all data correct to be able to import')} !
                             </MuiAlert>
                             {addError && (
-                                /*<p className="pol-crash-error">{addError}</p>*/
-                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000', marginTop: '20px' }}>
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                     {addError}
                                 </MuiAlert>
                             )}
