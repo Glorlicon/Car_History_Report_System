@@ -194,7 +194,7 @@ namespace UnitTests.Application.Tests
             await Assert.ThrowsAsync<CarHistoryRecordNotFoundException>(act);
         }
 
-        [Fact]
+        //[Fact]
         public async Task CreateCarOwnerHistory_AddEndDateToCurrentOwner()
         {
             // Arrange

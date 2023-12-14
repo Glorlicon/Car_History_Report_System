@@ -165,6 +165,7 @@ namespace UnitTests.Application.Tests
             };
         }
 
+        [Fact]
         public async Task GetUserNotifications_ReturnsUserNotificationsList()
         {
             // Arrange
