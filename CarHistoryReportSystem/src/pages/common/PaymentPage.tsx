@@ -72,7 +72,7 @@ function PaymentPage() {
             vnp_TxnRef: Date.now(),
             vnp_OrderInfo: description+"-"+vin,
             vnp_OrderType: 'billpayment',
-            vnp_ReturnUrl: 'http://localhost:3000/payment-return', 
+            vnp_ReturnUrl: `${process.env.REACT_APP_PAYMENT_RETURN}`, 
             vnp_IpAddr: '58.186.167.116',
         }
         vnp_Params = sortObject(vnp_Params)
