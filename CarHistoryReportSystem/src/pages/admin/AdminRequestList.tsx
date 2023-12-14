@@ -226,7 +226,7 @@ function AdminRequestList() {
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
                       <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                          {t('Data Providers List')}
+                          {t('Request List')}
                       </span>
                       <TableContainer>
                           <Table stickyHeader aria-label="sticky table">
