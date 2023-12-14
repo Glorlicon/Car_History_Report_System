@@ -14,6 +14,7 @@ namespace UnitTests.Application.Tests.Validator
         private readonly CarParameterValidator _carParameterValidator;
         private readonly CarCreateRequestDTOValidator _carCreateRequestDTOValidator;
         private readonly CarUpdateRequestDTOValidator _carUpdateRequestDTOValidator;
+
         public CarValidatorTest()
         {
             _carParameterValidator = new CarParameterValidator();
@@ -261,6 +262,94 @@ namespace UnitTests.Application.Tests.Validator
             var result = _carUpdateRequestDTOValidator.TestValidate(model);
             //Assert
             result.ShouldHaveValidationErrorFor(m => m.EngineNumber);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_Null()
+        {
+            //Arrange
+            string searchString = null;
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_Empty()
+        {
+            //Arrange
+            string searchString = "";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_WrongFormat_TooLong()
+        {
+            //Arrange
+            string searchString = "12A-123456";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_WrongFormat_TooShort()
+        {
+            //Arrange
+            string searchString = "12A-123";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_WrongFormat_ContainInvalidChar()
+        {
+            //Arrange
+            string searchString = "12A-1234#";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldGaveError_WrongFormat_TooManyWildcard()
+        {
+            //Arrange
+            string searchString = "1*A-**345";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldNotGaveError_WithoutWildcard()
+        {
+            //Arrange
+            string searchString = "12A-12345";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void LicensePlate_ShouldNotGaveError_WithWildcard()
+        {
+            //Arrange
+            string searchString = "12A-123**";
+            //Act
+            var result = LicensePlateValidator.Validate(searchString);
+            //Assert
+            Assert.True(result);
         }
     }
 }
