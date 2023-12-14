@@ -132,7 +132,7 @@ function CarSalesPage() {
                                         <option key={index} value={model.modelID}>{model.modelID}</option>
                                     ))
                                 ) : (
-                                    <option value="" disabled>Loading...</option>
+                                    <option value="" disabled>{t('Loading')}...</option>
                                 )}
                             </select>
                         </div>

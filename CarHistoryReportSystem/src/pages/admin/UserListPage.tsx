@@ -93,8 +93,28 @@ function UserListPage() {
             setOpenError(true)
             return false;
         }
-        if (!user.email || !user.userName || !user.firstName || !user.lastName || !user.phoneNumber || !user.address) {
-            setAddError(t('All fields must be filled out'));
+        if (!user.email) {
+            setAddError(t('Please enter email'));
+            setOpenError(true)
+            return false;
+        }
+        if (!user.userName) {
+            setAddError(t('Please enter username'));
+            setOpenError(true)
+            return false;
+        }
+        if (!user.firstName) {
+            setAddError(t('Please enter first name'));
+            setOpenError(true)
+            return false;
+        }
+        if (!user.lastName) {
+            setAddError(t('Please enter last name'));
+            setOpenError(true)
+            return false;
+        }
+        if (!user.phoneNumber) {
+            setAddError(t('Please enter phone number'));
             setOpenError(true)
             return false;
         }
@@ -522,7 +542,6 @@ function UserListPage() {
                                                                           {t('Edit1')} &#x270E;
                                                                       </button>
                                                                   </div>
-
                                                               </TableCell>
                                                           )
                                                       }
