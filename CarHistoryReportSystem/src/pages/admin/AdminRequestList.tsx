@@ -21,8 +21,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField'
-import Textarea from '@mui/joy/Textarea';
 
 interface Column {
     id: 'type' | 'description' | 'createdTime' | 'createdByUserId' | 'status' | 'response' | 'actions';
@@ -57,18 +55,9 @@ function AdminRequestList() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [showModal, setShowModal] = useState(false);
-    const [editRq, setEditRq] = useState<AdminRequest | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [list, setList] = useState<AdminRequest[]>([])
-    const filteredRequest = RequestList.filter((request: any) => {
-        const matchingQuery = RequestList
-        return matchingQuery
-    })
-    const emptyAdminRequestValue: AdminRequest = {
-        status: "1",
-        response: ""
-    }
 
 
     const handleResponseRequest = async () => {

@@ -638,5 +638,8 @@
   "Add Car Recall": "Thêm thông tin thu hồi xe",
   "Add car recall successfully": "Thêm thông tin thu hồi xe thành công",
   "Recall Date must be chosen": "Hãy chọn ngày thu hồi xe",
-  "Edit car recall successfully": "Chỉnh sửa thông tin hồi xe thành công"
+  "Edit car recall successfully": "Chỉnh sửa thông tin hồi xe thành công",
+  "Submit successfully": "Đăng thành công",
+  "Add New Request": "Đăng yêu cầu hỗ trợ",
+  "DataCorrection": "Sửa dữ liệu"
 }
