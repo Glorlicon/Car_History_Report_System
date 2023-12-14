@@ -226,7 +226,7 @@ function InsuranceCompanyCrashList() {
                             </div>
                             <button
                                 className="search-reg-inspec-btn"
-                                onClick={fetchData}
+                                onClick={() => { setPage(0); fetchData(); }}
                             >
                                 {t('Search...')}
                             </button>

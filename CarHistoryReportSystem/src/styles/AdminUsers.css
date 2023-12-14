@@ -144,6 +144,9 @@
     width: 400px;
     position: relative;
 }
+.ad-user-modal-content h2{
+    border-bottom: 1px solid black;
+}
 
 .ad-user-close-btn {
     position: absolute;

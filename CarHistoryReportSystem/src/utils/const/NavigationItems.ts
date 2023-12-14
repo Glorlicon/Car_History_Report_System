@@ -17,7 +17,7 @@ export const RequestNavigation = [
 export const AdminNavigation = [
     { label: 'Users List', link: '/admin/users' },
     { label: 'Admin Car Model List', link: '/admin/car-models' },
-    { label: 'Admin Manufacturer List', link: '/admin/manufacturers' },
+    { label: 'Data Providers List', link: '/admin/dataproviders' },
     { label: 'Request List', link: '/admin/requests' },
     { label: 'Monetization Information', link: '/admin/monetization' }
 ]

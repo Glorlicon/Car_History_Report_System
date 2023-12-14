@@ -9,10 +9,36 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { ReportPackages } from '../../utils/const/ReportPackages';
 import '../../styles/AdminMonetization.css'
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 
+interface Column {
+    id: 'id' | 'orderOptionId' | 'userId' | 'transactionId' | 'createdDate';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+}
 function AdminMonetizationPage() {
     const { t, i18n } = useTranslation()
-    const [page, setPage] = useState(1)
+    const columns: readonly Column[] = [
+        { id: 'id', label: 'ID', minWidth: 10 },
+        { id: 'orderOptionId', label: t('Order Option'), minWidth: 100 },
+        { id: 'userId', label: t('User ID'), minWidth: 100 },
+        { id: 'transactionId', label: t('Transaction ID'), minWidth: 100 },
+        { id: 'createdDate', label: t('Transaction Date'), minWidth: 100 }
+    ];
+    const [page, setPage] = useState(0)
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [paging, setPaging] = useState<Paging>()
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -27,7 +53,6 @@ function AdminMonetizationPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [orderList, setOrderList] = useState<OrderResponse[]>([])
     const [showOrderDetails, setShowOrderDetails] = useState<OrderResponse | null>(null)
-    const [orderOptions, setOrderOptions] = useState<number[]>([])
     const [months, setMonths] = useState<string[]>([])
     const [periodIncomes, setPeriodIncomes] = useState<number[]>([])
     const [periodPackageCount, setPeriodPackageCount] = useState<number[]>([])
@@ -48,17 +73,6 @@ function AdminMonetizationPage() {
         setSearchTransactionId('')
         setSearchUserId('')
         setResetTrigger(prev => prev + 1);
-    }
-
-    const countOrderOptions = (orders: OrderResponse[]): number[] => {
-        let counts = new Array(ReportPackages.length).fill(0)
-
-        orders.forEach(order => {
-            if (order.orderOptionId >= 1 && order.orderOptionId <= ReportPackages.length) {
-                counts[order.orderOptionId - 1]++;
-            }
-        })
-        return counts
     }
 
     const getMonthlyIncomeAndPackageCounts = (orders: OrderResponse[]): { months: string[], periodIncomes: number[], periodPackageCount: number[] } => {
@@ -159,7 +173,9 @@ function AdminMonetizationPage() {
     const getOrderOption = (type: number): string => {
         return ReportPackages[type-1].type
     }
-
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
     const fetchData = async () => {
         setLoading(true);
         setError(null);
@@ -172,7 +188,7 @@ function AdminMonetizationPage() {
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const response: APIResponse = await ListOrders(token, page, connectAPIError, language, searchParams)
+        const response: APIResponse = await ListOrders(token, page+1, connectAPIError, language, searchParams)
         if (response.error) {
             setError(response.error)
         } else {
@@ -209,241 +225,362 @@ function AdminMonetizationPage() {
         fetchData();
     }, [resetTrigger]);
   return (
-      <div className="monetization-page">
-          <div className="monetization-graphs">
-              <div className="monetization-items-2">
-                  <div className="monetization-items">
-                      <label>{t('Number of transactions this month')}</label>
-                      <LineChart
-                          width={600}
-                          height={150}
-                          series={[
-                              { data: dailyTransactions, showMark: false }
-                          ]}
-                          xAxis={[{ scaleType: 'linear', data: days }]}
-                      />
-                  </div>
-                  <div className="monetization-items">
-                      <label>{t('Daily income this month')}</label>
-                      <LineChart
-                          width={600}
-                          height={150}
-                          series={[
-                              { data: dailyIncome, label: t('nghin VND'), showMark: false }
-                          ]}
-                          xAxis={[{ scaleType: 'linear', data: days }]}
-                      />
-                  </div>
-              </div>
-              <div className="monetization-items">
-                  <label>{t('Monthly Income')}</label>
-                  <LineChart
-                      width={750}
-                      height={300}
-                      series={[
-                          { data: periodIncomes, label: t('nghin VND') }
-                      ]}
-                      xAxis={[{ scaleType: 'point', data: months }]}
-                  />
-              </div>
-          </div>
-          <div className="monetization-graphs">
-              <div className="monetization-items">
-                  <label>{t('Package Popularity This Month')}</label>
-                  <PieChart
-                      series={[
-                          {
-                              data: [
-                                  { id: 0, value: monthlyPackageCounts[0], label: t('STANDARD') },
-                                  { id: 1, value: monthlyPackageCounts[1], label: t('GOOD DEAL') },
-                                  { id: 2, value: monthlyPackageCounts[2], label: t('BEST DEAL') }
-                              ]
-                          }
-                      ]}
-                      width={300}
-                      height={100}
-                      margin={{
-                          left: -30
-                      }}
-                  />
-              </div>
-              <div className="monetization-items">
-                  <label>{t('Packages Income This Month')}</label>
-                  <PieChart
-                      series={[
-                          {
-                              data: [
-                                  { id: 0, value: monthlyPackageCounts[0] * ReportPackages[0].price, label: t('STANDARD') },
-                                  { id: 1, value: monthlyPackageCounts[1] * ReportPackages[1].price, label: t('GOOD DEAL') },
-                                  { id: 2, value: monthlyPackageCounts[2] * ReportPackages[2].price, label: t('BEST DEAL') }
-                              ]
-                          }
-                      ]}
-                      width={300}
-                      height={100}
-                      margin={{
-                          left: -30
-                      }}
-                  />
-              </div>
-              <div className="monetization-items">
-                  <label>{t('Package Popularity Over Past 6 Months')}</label>
-                  <PieChart
-                      series={[
-                          {
-                              data: [
-                                  { id: 0, value: periodPackageCount[0], label: t('STANDARD') },
-                                  { id: 1, value: periodPackageCount[1], label: t('GOOD DEAL') },
-                                  { id: 2, value: periodPackageCount[2], label: t('BEST DEAL') }
-                              ]
-                          }
-                      ]}
-                      width={300}
-                      height={100}
-                      margin={{
-                          left: -30
-                      }}
-                  />
-              </div>
-              <div className="monetization-items">
-                  <label>{t('Packages Income Over 6 Months')}</label>
-                  <PieChart
-                      series={[
-                          {
-                              data: [
-                                  { id: 0, value: periodPackageCount[0] * ReportPackages[0].price, label: t('STANDARD') },
-                                  { id: 1, value: periodPackageCount[1] * ReportPackages[1].price, label: t('GOOD DEAL') },
-                                  { id: 2, value: periodPackageCount[2] * ReportPackages[2].price, label: t('BEST DEAL') }
-                              ]
-                          }
-                      ]}
-                      width={300}
-                      height={100}
-                      margin={{
-                          left: -30
-                      }}
-                  />
-              </div>
-          </div>
-
-          <div className="monetization-top-bar">
-              <div className="reg-inspec-search-filter-container">
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('User ID')}</label>
-                      <input
-                          type="text"
-                          className="reg-inspec-search-bar"
-                          placeholder={t('Search by User ID')}
-                          value={searchUserId}
-                          onChange={(e) => setSearchUserId(e.target.value)}
-                      />
-                  </div>
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('Transaction ID')}</label>
-                      <input
-                          type="text"
-                          className="reg-inspec-search-bar"
-                          placeholder={t('Search by Transaction ID')}
-                          value={searchTransactionId}
-                          onChange={(e) => setSearchTransactionId(e.target.value)}
-                      />
-                  </div>
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('Order Option')}</label>
-                      <select className="reg-inspec-search-bar" value={searchOption} onChange={(e) => setSearchOption(e.target.value)}>
-                          <option value=''>{t('All')}</option>
-                          <option value='1'>{t('STANDARD')}</option>
-                          <option value='2'>{t('GOOD DEAL')}</option>
-                          <option value='3'>{t('BEST DEAL')}</option>
-                      </select>
-                  </div>
-                  <div className="reg-inspec-search-filter-item-2">
-                      <label>{t('Transaction Date')}</label>
-                      <div className="reg-inspec-search-filter-item-2-dates">
-                          <label>{t('From')}: </label>
-                          <input
-                              type="date"
-                              className="reg-inspec-search-bar"
-                              placeholder="Inspection Start Date"
-                              value={searchCreatedDateStart}
-                              onChange={(e) => setSearchCreatedDateStart(e.target.value)}
-                          />
-                          <label>{t('To')}: </label>
-                          <input
-                              type="date"
-                              className="reg-inspec-search-bar"
-                              placeholder="Inspection End Date"
-                              value={searchCreatedDateEnd}
-                              onChange={(e) => setSearchCreatedDateEnd(e.target.value)}
-                          />
+      <div className="pol-crash-list-page">
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                      <Typography style={{ fontWeight: 'bold' }}>{t('Income and Transactions')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <div className="monetization-graphs">
+                          <div className="monetization-items-2">
+                              <div className="monetization-items">
+                                  <label>{t('Number of transactions this month')}</label>
+                                  <LineChart
+                                      width={600}
+                                      height={150}
+                                      series={[
+                                          { data: dailyTransactions, showMark: false }
+                                      ]}
+                                      xAxis={[{ scaleType: 'linear', data: days }]}
+                                  />
+                              </div>
+                              <div className="monetization-items">
+                                  <label>{t('Daily income this month')}</label>
+                                  <LineChart
+                                      width={600}
+                                      height={150}
+                                      series={[
+                                          { data: dailyIncome, label: t('nghin VND'), showMark: false }
+                                      ]}
+                                      xAxis={[{ scaleType: 'linear', data: days }]}
+                                  />
+                              </div>
+                          </div>
+                          <div className="monetization-items">
+                              <label>{t('Monthly Income')}</label>
+                              <LineChart
+                                  width={750}
+                                  height={300}
+                                  series={[
+                                      { data: periodIncomes, label: t('nghin VND') }
+                                  ]}
+                                  xAxis={[{ scaleType: 'point', data: months }]}
+                              />
+                          </div>
                       </div>
-                  </div>
-                  <button
-                      className="search-reg-inspec-btn"
-                      onClick={fetchData}
-                  >
-                      {t('Search...')}
-                  </button>
-                  <button
-                      className="reset-reg-inspec-btn"
-                      onClick={handleResetFilters}
-                  >
-                      {t('Reset Filters')}
-                  </button>
-              </div>
+                  </AccordionDetails>
+              </Accordion>
           </div>
-          <table className="pol-stolen-table">
-              <thead>
-                  <tr>
-                      <th>ID</th>
-                      <th>{t('Order Option')}</th>
-                      <th>{t('User ID')}</th>
-                      <th>{t('Transaction ID')}</th>
-                      <th>{t('Transaction Date')}</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {loading ? (
-                      <tr>
-                          <td colSpan={5} style={{ textAlign: 'center' }}>
-                              <div className="pol-stolen-spinner"></div>
-                          </td>
-                      </tr>
-                  ) : error ? (
-                      <tr>
-                          <td colSpan={5} style={{ textAlign: 'center' }}>
-                              {error}
-                              <button onClick={fetchData} className="pol-stolen-retry-btn">{t('Retry')}</button>
-                          </td>
-                      </tr>
-                  ) : orderList.length > 0 ? (
-                      orderList.map((model: OrderResponse, index: number) => (
-                          <tr key={index}>
-                              <td onClick={() => { setShowOrderDetails(model) }}>{model.id}</td>
-                              <td>{t(getOrderOption(model.orderOptionId))}</td>
-                              <td>{model.userId ? model.userId : "Guest"}</td>
-                              <td>{model.transactionId}</td>
-                              <td>{formatDate(model.createdDate)}</td>
-                          </tr>
-                      ))
-                  ) : (
-                      <tr>
-                                      <td colSpan={5}>{t('No Order Found')}</td>
-                      </tr>
-                  )}
-              </tbody>
-          </table>
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                      <Typography style={{ fontWeight: 'bold' }}>{t('Packages Popularity')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <div className="monetization-graphs">
+                          <div className="monetization-items">
+                              <label>{t('Package Popularity This Month')}</label>
+                              <PieChart
+                                  series={[
+                                      {
+                                          data: [
+                                              { id: 0, value: monthlyPackageCounts[0], label: t('STANDARD') },
+                                              { id: 1, value: monthlyPackageCounts[1], label: t('GOOD DEAL') },
+                                              { id: 2, value: monthlyPackageCounts[2], label: t('BEST DEAL') }
+                                          ]
+                                      }
+                                  ]}
+                                  width={300}
+                                  height={100}
+                                  margin={{
+                                      left: -30
+                                  }}
+                              />
+                          </div>
+                          <div className="monetization-items">
+                              <label>{t('Packages Income This Month')}</label>
+                              <PieChart
+                                  series={[
+                                      {
+                                          data: [
+                                              { id: 0, value: monthlyPackageCounts[0] * ReportPackages[0].price, label: t('STANDARD') },
+                                              { id: 1, value: monthlyPackageCounts[1] * ReportPackages[1].price, label: t('GOOD DEAL') },
+                                              { id: 2, value: monthlyPackageCounts[2] * ReportPackages[2].price, label: t('BEST DEAL') }
+                                          ]
+                                      }
+                                  ]}
+                                  width={300}
+                                  height={100}
+                                  margin={{
+                                      left: -30
+                                  }}
+                              />
+                          </div>
+                          <div className="monetization-items">
+                              <label>{t('Package Popularity Over Past 6 Months')}</label>
+                              <PieChart
+                                  series={[
+                                      {
+                                          data: [
+                                              { id: 0, value: periodPackageCount[0], label: t('STANDARD') },
+                                              { id: 1, value: periodPackageCount[1], label: t('GOOD DEAL') },
+                                              { id: 2, value: periodPackageCount[2], label: t('BEST DEAL') }
+                                          ]
+                                      }
+                                  ]}
+                                  width={300}
+                                  height={100}
+                                  margin={{
+                                      left: -30
+                                  }}
+                              />
+                          </div>
+                          <div className="monetization-items">
+                              <label>{t('Packages Income Over 6 Months')}</label>
+                              <PieChart
+                                  series={[
+                                      {
+                                          data: [
+                                              { id: 0, value: periodPackageCount[0] * ReportPackages[0].price, label: t('STANDARD') },
+                                              { id: 1, value: periodPackageCount[1] * ReportPackages[1].price, label: t('GOOD DEAL') },
+                                              { id: 2, value: periodPackageCount[2] * ReportPackages[2].price, label: t('BEST DEAL') }
+                                          ]
+                                      }
+                                  ]}
+                                  width={300}
+                                  height={100}
+                                  margin={{
+                                      left: -30
+                                  }}
+                              />
+                          </div>
+                      </div>
+                  </AccordionDetails>
+              </Accordion>
+          </div>
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                      <Typography style={{ fontWeight: 'bold' }}>{t('Packages Details')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <div className="monetization-graphs">
+                          {ReportPackages.map((item, index) => (
+                              <div className="monetization-items">
+                                  <label>{t(item.type)}</label>
+                                  <p>
+                                      <strong>{t('Title')}:</strong> {t(item.type)}
+                                  </p>
+                                  <p>
+                                      <strong>{t('Package Price')}:</strong> {item.price} {t('VND')}
+                                  </p>
+                                  <p>
+                                      <strong>{t('Price Per Report')}:</strong> {item.pricePerReport} {t('VND')}
+                                  </p>
+                              </div>
+                          ))}
+                      </div>
+                  </AccordionDetails>
+              </Accordion>
+          </div>
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                      <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <div className="reg-inspec-search-filter-container">
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('User ID')}</label>
+                              <input
+                                  type="text"
+                                  className="reg-inspec-search-bar"
+                                  placeholder={t('Search by User ID')}
+                                  value={searchUserId}
+                                  onChange={(e) => setSearchUserId(e.target.value)}
+                              />
+                          </div>
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('Transaction ID')}</label>
+                              <input
+                                  type="text"
+                                  className="reg-inspec-search-bar"
+                                  placeholder={t('Search by Transaction ID')}
+                                  value={searchTransactionId}
+                                  onChange={(e) => setSearchTransactionId(e.target.value)}
+                              />
+                          </div>
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('Order Option')}</label>
+                              <select className="reg-inspec-search-bar" value={searchOption} onChange={(e) => setSearchOption(e.target.value)}>
+                                  <option value=''>{t('All')}</option>
+                                  <option value='1'>{t('STANDARD')}</option>
+                                  <option value='2'>{t('GOOD DEAL')}</option>
+                                  <option value='3'>{t('BEST DEAL')}</option>
+                              </select>
+                          </div>
+                          <div className="reg-inspec-search-filter-item-2">
+                              <label>{t('Transaction Date')}</label>
+                              <div className="reg-inspec-search-filter-item-2-dates">
+                                  <label>{t('From')}: </label>
+                                  <input
+                                      type="date"
+                                      className="reg-inspec-search-bar"
+                                      placeholder="Inspection Start Date"
+                                      value={searchCreatedDateStart}
+                                      onChange={(e) => setSearchCreatedDateStart(e.target.value)}
+                                  />
+                                  <label>{t('To')}: </label>
+                                  <input
+                                      type="date"
+                                      className="reg-inspec-search-bar"
+                                      placeholder="Inspection End Date"
+                                      value={searchCreatedDateEnd}
+                                      onChange={(e) => setSearchCreatedDateEnd(e.target.value)}
+                                  />
+                              </div>
+                          </div>
+                          <button
+                              className="search-reg-inspec-btn"
+                              onClick={fetchData}
+                          >
+                              {t('Search...')}
+                          </button>
+                          <button
+                              className="reset-reg-inspec-btn"
+                              onClick={handleResetFilters}
+                          >
+                              {t('Reset Filters')}
+                          </button>
+                      </div>
+                  </AccordionDetails>
+              </Accordion>
+          </div>
+          <div className="plate-search-page-row">
+              <div className="plate-alert-page-item">
+                  <div className="plate-search-page-item-3">
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                          {t('Orders List')}
+                      </span>
+                      <TableContainer>
+                          <Table stickyHeader aria-label="sticky table">
+                              <TableHead>
+                                  <TableRow>
+                                      {columns.map((column, index) => (
+                                          <TableCell
+                                              key={column.id + '-' + index}
+                                              align={column.align}
+                                              style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                          >
+                                              {column.label}
+                                          </TableCell>
+                                      ))}
+                                  </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                  {loading ? (
+                                      <TableRow>
+                                          <TableCell colSpan={5}>
+                                              <div className="pol-crash-spinner"></div>
+                                          </TableCell>
+                                      </TableRow>
+                                  ) : error ? (
+                                      <TableRow>
+                                          <TableCell colSpan={5}>
+                                              {error}
+                                              <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
+                                          </TableCell>
+                                      </TableRow>
+                                  ) : orderList.length > 0 ? orderList
+                                      .map((row, index) => {
+                                          return (
+                                              <TableRow hover role="checkbox" tabIndex={-1} key={row.id + '-' + index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                  {columns.map((column, index) => {
+                                                      if (column.id !== 'orderOptionId' && column.id !== 'createdDate' && column.id !== 'userId') {
+                                                          let value = row[column.id]
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {value}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'userId') {
+                                                          let value = row[column.id];
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {value ? value : t('Guest')}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'orderOptionId') {
+                                                          let value = row[column.id];
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {getOrderOption(value)}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'createdDate') {
+                                                          let value = row[column.id];
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {formatDate(value)}
+                                                              </TableCell>
+                                                          )
+                                                      }
+                                                  })}
+                                              </TableRow>
+                                          );
+                                      }) :
+                                      <TableRow>
+                                          <TableCell colSpan={5}>
+                                                      {t('No Order Found')}
+                                          </TableCell>
+                                      </TableRow>
+                                  }
+                              </TableBody>
+                          </Table>
+                      </TableContainer>
+                      <TablePagination
+                          rowsPerPageOptions={[15]}
+                          component="div"
+                          count={paging ? paging.TotalCount : 0}
+                          rowsPerPage={15}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          labelDisplayedRows={
+                              ({ from, to, count }) => {
+                                  return '' + from + '-' + to + ' ' + t('of') + ' ' + count
+                              }
+                          }
+                      />
+                  </div>
+              </div>
+          </div>        
           {paging && paging.TotalPages > 0 &&
-              <>
-                  <button className="export-reg-inspec-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
+              <div className="plate-search-page-row">
+                  <button className="export-pol-crash-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
                   <a
                       href={`data:text/csv;charset=utf-8,${escape(data)}`}
                       download={`orders-${Date.now()}.csv`}
                       hidden
                       id="excel"
                   />
-                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
-              </>
+              </div>
           }
       </div>
   );

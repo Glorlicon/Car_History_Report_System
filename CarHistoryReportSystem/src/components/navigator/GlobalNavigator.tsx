@@ -29,7 +29,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(true);
-    type UserRole = 'User' | 'CarDealer' | 'InsuranceCompany' | 'ServiceShop' | 'Manufacturer' | 'VehicleRegistry' | 'PoliceOffice';
+    type UserRole = 'User' | 'CarDealer' | 'InsuranceCompany' | 'ServiceShop' | 'Manufacturer' | 'VehicleRegistry' | 'PoliceOffice' | 'Adminstrator';
 
     const roleProfilePath: { [key in UserRole]: string } = {
         "User": "/profile",
@@ -39,6 +39,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         "Manufacturer": "/manufacturer/profile",
         "VehicleRegistry": "/registry/profile",
         "PoliceOffice": "/police/profile",
+        "Adminstrator": "/admin/profile"
     };
     const roleNotificationPath: { [key in UserRole]: string } = {
         "User": "/notification",
@@ -48,6 +49,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         "Manufacturer": "/manufacturer/notification",
         "VehicleRegistry": "/registry/notification",
         "PoliceOffice": "/police/notification",
+        "Adminstrator": "/admin/notification"
     };
     const roleHomepagePath: { [key in UserRole]: string } = {
         "User": "/",
@@ -57,6 +59,7 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
         "Manufacturer": "/manufacturer",
         "VehicleRegistry": "/registry",
         "PoliceOffice": "/police",
+        "Adminstrator":"/admin"
     }
     const profilePath = roleProfilePath[role as UserRole] || '/profile';
     const notificationPath = roleNotificationPath[role as UserRole] || '/notification';

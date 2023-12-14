@@ -10,15 +10,49 @@ import { RootState } from '../../store/State';
 import '../../styles/AdminUsers.css'
 import { USER_ROLE } from '../../utils/const/UserRole';
 import { AdminUserSearchParams, APIResponse, DataProvider, Paging, User } from '../../utils/Interfaces';
-import { JWTDecoder } from '../../utils/JWTDecoder';
 import { isValidEmail, isValidNumber } from '../../utils/Validators';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Papa from 'papaparse';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+interface Column {
+    id: 'id' | 'userName' | 'email' | 'firstName' | 'lastName' | 'phoneNumber' | 'address' | 'roleName' | 'isSuspended' | 'dataProvider' | 'actions';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+}
 function UserListPage() {
     const { t, i18n } = useTranslation()
-    const [page, setPage] = useState(1)
+    const columns: readonly Column[] = [
+        { id: 'id', label: 'ID', minWidth: 10 },
+        { id: 'userName', label: t('Username'), minWidth: 100 },
+        { id: 'email', label: 'Email', minWidth: 100 },
+        { id: 'firstName', label: t('First Name'), minWidth: 100 },
+        { id: 'lastName', label: t('Last Name'), minWidth: 100 },
+        { id: 'phoneNumber', label: t('Phone number'), minWidth: 100 },
+        { id: 'address', label: t('Address'), minWidth: 100 },
+        { id: 'roleName', label: t('Role'), minWidth: 100 },
+        { id: 'dataProvider', label: t('Data Provider'), minWidth: 100 },
+        { id: 'isSuspended', label: t('Status'), minWidth: 100 },
+        { id: 'actions', label: t('Actions'), minWidth: 100 }
+    ];
+    const [page, setPage] = useState(0)
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [paging, setPaging] = useState<Paging>()
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [showModal, setShowModal] = useState(false);
@@ -51,14 +85,17 @@ function UserListPage() {
     const validateUser = (user: User): boolean => {
         if (!isValidEmail(user.email)) {
             setAddError(t('Invalid email address'));
+            setOpenError(true)
             return false;
         }
         if (!isValidNumber(user.phoneNumber)) {
             setAddError(t('Invalid phone number'));
+            setOpenError(true)
             return false;
         }
         if (!user.email || !user.userName || !user.firstName || !user.lastName || !user.phoneNumber || !user.address) {
             setAddError(t('All fields must be filled out'));
+            setOpenError(true)
             return false;
         }
         return true;
@@ -71,7 +108,7 @@ function UserListPage() {
 
 
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         if (editingUser) {
             setEditingUser({
                 ...editingUser,
@@ -85,9 +122,10 @@ function UserListPage() {
         }
     };
 
-    const handleInputDataProviderChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputDataProviderChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         if (e.target.value === "-1") {
             setAddError(t('Data provider must be chosen'))
+            setOpenError(true)
         }
         setNewUser({
             ...newUser,
@@ -110,6 +148,7 @@ function UserListPage() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
+                setOpenError(true)
             } else {
                 setShowModal(false);
                 setNewUser({
@@ -123,6 +162,8 @@ function UserListPage() {
                     role: 1,
                     address: ''
                 });
+                setMessage(t('Create user successfully'))
+                setOpenSuccess(true)
                 fetchData();
             }
         }
@@ -149,6 +190,8 @@ function UserListPage() {
             } else {
                 setShowModal(false);
                 setEditingUser(null);
+                setMessage(t('Edit user successfully'))
+                setOpenSuccess(true)
                 fetchData();
             }
         }
@@ -188,8 +231,11 @@ function UserListPage() {
             setAdding(false)
             if (response.error) {
                 setAddError(response.error)
+                setOpenError(true)
             } else {
                 setSuspendTab(false);
+                setMessage(userToSuspend.isSuspended ? t('User unsuspended successfully') : t('User suspended successfully'))
+                setOpenSuccess(true)
                 setUserToSuspend(null);
                 fetchData();
             }
@@ -208,7 +254,7 @@ function UserListPage() {
             email: searchEmail,
             role: searchRole
         }
-        const response: APIResponse = await List(token, page, connectAPIError, unknownError, language, searchParams);
+        const response: APIResponse = await List(token, page+1, connectAPIError, unknownError, language, searchParams);
         setLoading(false);
         if (response.error) {
             setError(response.error);
@@ -260,7 +306,19 @@ function UserListPage() {
             }
         }
     }
-
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
+    const [message, setMessage] = useState('')
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [openError, setOpenError] = useState(false)
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccess(false);
+        setOpenError(false);
+    };
     useEffect(() => {
          changeSize()
     }, [isDataProvider])
@@ -284,122 +342,224 @@ function UserListPage() {
         fetchData();
     }, [resetTrigger]);
   return (
-        <div className="ad-user-list-page">
-          <div className="ad-user-top-bar">
-              <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ {t('Add Account')}</button>
+      <div className="pol-crash-list-page">
+          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+              <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                  {message}
+              </MuiAlert>
+          </Snackbar>
+          <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                  {error ? error : addError}
+              </MuiAlert>
+          </Snackbar>
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                  >
+                      <Typography style={{ fontWeight: 'bold' }}>+ {t('Add Account')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <Typography>
+                          + {t('Add Manually')}
+                      </Typography>
+                      <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ {t('Add Account')}</button>
+                  </AccordionDetails>
+              </Accordion>
           </div>
-          <div className="ad-user-top-bar">
-              <div className="ad-user-search-filter-container">
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('Username')}</label>
-                      <input
-                          type="text"
-                          className="reg-inspec-search-bar"
-                          placeholder={t('Search by Username')}
-                          value={searchUsername}
-                          onChange={(e) => setSearchUsername(e.target.value)}
-                      />
-                  </div>
-                  <div className="reg-inspec-search-filter-item">
-                      <label>Email</label>
-                      <input
-                          type="text"
-                          className="reg-inspec-search-bar"
-                          placeholder={t('Search by Email')}
-                          value={searchEmail}
-                          onChange={(e) => setSearchEmail(e.target.value)}
-                      />
-                  </div>
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('Role')}</label>
-                      <select className="reg-inspec-search-bar" value={searchRole} onChange={(e) => setSearchRole(e.target.value)}>
-                          <option value=''>{t('All')}</option>
-                          <option value={USER_ROLE.ADMIN}>{t('Admin')}</option>
-                          <option value={USER_ROLE.USER}>{t('User')}</option>
-                          <option value={USER_ROLE.DEALER}>{t('Car Dealer')}</option>
-                          <option value={USER_ROLE.INSURANCE}>{t('Insurance Company')}</option>
-                          <option value={USER_ROLE.MANUFACTURER}>{t('Manufacturer')}</option>
-                          <option value={USER_ROLE.POLICE}>{t('Police')}</option>
-                          <option value={USER_ROLE.REGISTRY}>{t('Vehicle Registry Department')}</option>
-                          <option value={USER_ROLE.SERVICE}>{t('Service Shop')}</option>
-                      </select>
-                  </div>
-                  <div className="reg-inspec-search-filter-item">
-                      <label>{t('Data Provider Name')}</label>
-                      <input
-                          type="text"
-                          className="reg-inspec-search-bar"
-                          placeholder={t('Search by Data Provider Name')}
-                          value={searchDataProviderName}
-                          onChange={(e) => setSearchDataProviderName(e.target.value)}
-                      />
-                  </div>
-                  <button
-                      className="search-reg-inspec-btn"
-                      onClick={fetchData}
+          <div className="pol-alert-action">
+              <Accordion>
+                  <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
                   >
-                      {t('Search...')}
-                  </button>
-                  <button
-                      className="reset-reg-inspec-btn"
-                      onClick={handleResetFilters}
-                  >
-                      {t('Reset Filters')}
-                  </button>
-                </div>
-            </div>
-            <table className="ad-user-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>{t('Username')}</th>
-                        <th>{t('Email Address')}</th>
-                        <th>{t('Role')}</th>
-                        <th>{t('Action')}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                      <tr>
-                          <td colSpan={5} style={{ textAlign: 'center' }}>
-                              <div className="ad-user-spinner"></div>
-                          </td>
-                      </tr>
-                  ) : error ? (
-                      <tr>
-                          <td colSpan={5} style={{ textAlign: 'center' }}>
-                              {error}
-                                  <button onClick={fetchData} className="ad-user-retry-btn">{t('Retry')}</button>
-                          </td>
-                          </tr>
-                      ) : users.length > 0 ? (
-                          users.map((user: any, index: number) => (
-                              <tr key={index}>
-                                  <td onClick={() => { setEditingUser(user); setCurrentId(user.id)}}>{user.id}</td>
-                              <td>{user.userName}</td>
-                              <td>{user.email}</td>
-                              <td>{user.roleName}</td>
-                              <td>
-                                      {user.isSuspended ? (
-                                          <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(user)}>{t('Unsuspend')}</button>
-                                      ) : (
-                                          <button className="ad-user-suspend-btn" onClick={() => handleSuspendClick(user)}>{t('Suspend')}</button>
-                                      )}
-                              </td>
-                          </tr>
-                      ))
-                  ) : (
-                      <tr>
-                          <td colSpan={5}>{t('No users found')}</td>
-                      </tr>
-                  )}
-                </tbody>
-          </table>
+                      <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                      <div className="reg-inspec-search-filter-container">
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('Username')}</label>
+                              <input
+                                  type="text"
+                                  className="reg-inspec-search-bar"
+                                  placeholder={t('Search by Username')}
+                                  value={searchUsername}
+                                  onChange={(e) => setSearchUsername(e.target.value)}
+                              />
+                          </div>
+                          <div className="reg-inspec-search-filter-item">
+                              <label>Email</label>
+                              <input
+                                  type="text"
+                                  className="reg-inspec-search-bar"
+                                  placeholder={t('Search by Email')}
+                                  value={searchEmail}
+                                  onChange={(e) => setSearchEmail(e.target.value)}
+                              />
+                          </div>
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('Role')}</label>
+                              <select className="reg-inspec-search-bar" value={searchRole} onChange={(e) => setSearchRole(e.target.value)}>
+                                  <option value=''>{t('All')}</option>
+                                  <option value={USER_ROLE.ADMIN}>{t('Admin')}</option>
+                                  <option value={USER_ROLE.USER}>{t('User')}</option>
+                                  <option value={USER_ROLE.DEALER}>{t('Car Dealer')}</option>
+                                  <option value={USER_ROLE.INSURANCE}>{t('Insurance Company')}</option>
+                                  <option value={USER_ROLE.MANUFACTURER}>{t('Manufacturer')}</option>
+                                  <option value={USER_ROLE.POLICE}>{t('Police')}</option>
+                                  <option value={USER_ROLE.REGISTRY}>{t('Vehicle Registry Department')}</option>
+                                  <option value={USER_ROLE.SERVICE}>{t('Service Shop')}</option>
+                              </select>
+                          </div>
+                          <div className="reg-inspec-search-filter-item">
+                              <label>{t('Data Provider Name')}</label>
+                              <input
+                                  type="text"
+                                  className="reg-inspec-search-bar"
+                                  placeholder={t('Search by Data Provider Name')}
+                                  value={searchDataProviderName}
+                                  onChange={(e) => setSearchDataProviderName(e.target.value)}
+                              />
+                          </div>
+                          <button
+                              className="search-reg-inspec-btn"
+                              onClick={() => { setPage(0); fetchData(); }}
+                          >
+                              {t('Search...')}
+                          </button>
+                          <button
+                              className="reset-reg-inspec-btn"
+                              onClick={handleResetFilters}
+                          >
+                              {t('Reset Filters')}
+                          </button>
+                      </div>    
+                  </AccordionDetails>
+              </Accordion>
+          </div>
+          <div className="plate-search-page-row">
+              <div className="plate-alert-page-item">
+                  <div className="plate-search-page-item-3">
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                          {t('Users List')}
+                      </span>
+                      <TableContainer>
+                          <Table stickyHeader aria-label="sticky table">
+                              <TableHead>
+                                  <TableRow>
+                                      {columns.map((column, index) => (
+                                          <TableCell
+                                              key={column.id + '-' + index}
+                                              align={column.align}
+                                              style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                          >
+                                              {column.label}
+                                          </TableCell>
+                                      ))}
+                                  </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                  {loading ? (
+                                      <TableRow>
+                                          <TableCell colSpan={11}>
+                                              <div className="pol-crash-spinner"></div>
+                                          </TableCell>
+                                      </TableRow>
+                                  ) : error ? (
+                                      <TableRow>
+                                          <TableCell colSpan={11}>
+                                              {error}
+                                              <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
+                                          </TableCell>
+                                      </TableRow>
+                                  ) : users.length > 0 ? users
+                                      .map((row, index) => {
+                                          return (
+                                              <TableRow hover role="checkbox" tabIndex={-1} key={row.id + '-' + index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                  {columns.map((column, index) => {
+                                                      if (column.id !== 'actions' && column.id !== 'dataProvider' && column.id !== 'isSuspended' && column.id !== 'roleName') {
+                                                          let value = row[column.id]
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {value}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'isSuspended') {
+                                                          let value = row[column.id];
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center', color: value ? 'red' : 'green' }}>
+                                                                  {value ? t('Suspended') : t('Not Suspended')}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'roleName') {
+                                                          let value = row[column.id];
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center', color: value ? 'red' : 'green' }}>
+                                                                  {t(value)}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'dataProvider') {
+                                                          let value = row[column.id]?.name;
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  {value}
+                                                              </TableCell>
+                                                          )
+                                                      } else if (column.id === 'actions') {
+                                                          return (
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  <div className="pol-crash-modal-content-2-buttons">
+                                                                      {row.isSuspended ? (
+                                                                          <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(row)}>{t('Unsuspend')}</button>
+                                                                      ) : (
+                                                                              <button className="ad-user-suspend-btn" onClick={() => handleSuspendClick(row)}>{t('Suspend')}</button>
+                                                                      )}
+                                                                      <button onClick={() => { setEditingUser(row) }} disabled={adding} className="pol-crash-action-button">
+                                                                          {t('Edit1')} &#x270E;
+                                                                      </button>
+                                                                  </div>
+
+                                                              </TableCell>
+                                                          )
+                                                      }
+                                                  })}
+                                              </TableRow>
+                                          );
+                                      }) :
+                                      <TableRow>
+                                          <TableCell colSpan={11}>
+                                              {t('No users found')}
+                                          </TableCell>
+                                      </TableRow>
+                                  }
+                              </TableBody>
+                          </Table>
+                      </TableContainer>
+                      <TablePagination
+                          rowsPerPageOptions={[15]}
+                          component="div"
+                          count={paging ? paging.TotalCount : 0}
+                          rowsPerPage={15}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          labelDisplayedRows={
+                              ({ from, to, count }) => {
+                                  return '' + from + '-' + to + ' ' + t('of') + ' ' + count
+                              }
+                          }
+                      />
+                  </div>
+              </div>
+          </div>
           {/*Pop-up add window*/ }
           {showModal && (
-              <div className="ad-user-modal">
-                  <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => {
+              <div className="pol-crash-modal">
+                  <div className="pol-crash-modal-content">
+                      <span className="pol-crash-close-btn" onClick={() => {
                           setShowModal(false); setNewUser({
                               id: '',
                               userName: '',
@@ -410,99 +570,104 @@ function UserListPage() {
                               maxReportNumber: 0,
                               role: 1,
                               address: ''
-                          }) }}>&times;</span>
+                          }); setError(''); setAddError('') }}>&times;</span>
                       <h2>{t('Add Account')}</h2>
-                      <UserModalDetailsPage
-                          model={newUser}
-                          handleInputChange={handleInputChange}
-                      />
-                      <UserModalAccountPage
-                          model={newUser}
-                          handleInputChange={handleInputChange}
-                          action="Add"
-                      />
-                      {isDataProvider && providersList && (
-                          < UserModalProviderPage
-                              model={newUser.dataProvider as DataProvider}
-                              action="Add"
-                              isDataProvider={isDataProvider}
-                              providerList={providersList}
-                              handleCheckboxToggle={handleCheckboxToggle}
-                              handleInputDataProviderChange={handleInputDataProviderChange}
-                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                      <div className="pol-crash-modal-content-2">
+                          <UserModalDetailsPage
+                              model={newUser}
+                              handleInputChange={handleInputChange}
                           />
-                      )}
-                      <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
-                          {adding ? (
-                              <div className="ad-user-inline-spinner"></div>
-                          ) : t('Finish') }
-                      </button>
-                      {addError && (
-                          <p className="ad-user-error">{addError}</p>
-                      )}
+                          <UserModalAccountPage
+                              model={newUser}
+                              handleInputChange={handleInputChange}
+                              action="Add"
+                          />
+                          {isDataProvider && providersList && (
+                              < UserModalProviderPage
+                                  model={newUser.dataProvider as DataProvider}
+                                  action="Add"
+                                  isDataProvider={isDataProvider}
+                                  providerList={providersList}
+                                  handleCheckboxToggle={handleCheckboxToggle}
+                                  handleInputDataProviderChange={handleInputDataProviderChange}
+                                  handleInputDataProviderSelect={handleInputDataProviderSelect}
+                              />
+                          )}
+                          {addError && (
+                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                  {addError}
+                              </MuiAlert>
+                          )}
+                          <button onClick={handleAddUser} disabled={adding} className="ad-user-add-btn">
+                              {adding ? (
+                                  <div className="ad-user-inline-spinner"></div>
+                              ) : t('Finish')}
+                          </button>
+                      </div>
                   </div>
               </div>
           )}
           {editingUser && (
-              <div className="ad-user-modal">
-                  <div className="ad-user-modal-content">
-                      <span className="ad-user-close-btn" onClick={() => { setEditingUser(null); }}>&times;</span>
+              <div className="pol-crash-modal">
+                  <div className="pol-crash-modal-content">
+                      <span className="pol-crash-close-btn" onClick={() => { setEditingUser(null); setError(''); setAddError('') }}>&times;</span>
                       <h2>{t('Edit Account')}</h2>
-                      <UserModalDetailsPage
-                          model={editingUser}
-                          handleInputChange={handleInputChange}
-                      />
-                      <UserModalAccountPage
-                          model={editingUser}
-                          handleInputChange={handleInputChange}
-                          action="Edit"
-                      />
-                      {editingUser.dataProvider && (
-                          <UserModalProviderPage
-                              model={editingUser.dataProvider as DataProvider}
-                              action="Edit"
-                              isDataProvider={true}
-                              providerList={null}
-                              handleCheckboxToggle={handleCheckboxToggle}
-                              handleInputDataProviderChange={handleInputDataProviderChange}
-                              handleInputDataProviderSelect={handleInputDataProviderSelect}
+                      <div className="pol-crash-modal-content-2">
+                          <UserModalDetailsPage
+                              model={editingUser}
+                              handleInputChange={handleInputChange}
                           />
-                      )}
-                      <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
-                          {adding ? (
-                              <div className="ad-user-inline-spinner"></div>
-                          ) : t('Finish') }
-                      </button>
-                      {addError && (
-                          <p className="ad-user-error">{addError}</p>
-                      )}
+                          <UserModalAccountPage
+                              model={editingUser}
+                              handleInputChange={handleInputChange}
+                              action="Edit"
+                          />
+                          {editingUser.dataProvider && (
+                              <UserModalProviderPage
+                                  model={editingUser.dataProvider as DataProvider}
+                                  action="Edit"
+                                  isDataProvider={true}
+                                  providerList={null}
+                                  handleCheckboxToggle={handleCheckboxToggle}
+                                  handleInputDataProviderChange={handleInputDataProviderChange}
+                                  handleInputDataProviderSelect={handleInputDataProviderSelect}
+                              />
+                          )}
+                          {addError && (
+                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                  {addError}
+                              </MuiAlert>
+                          )}
+                          <button onClick={handleEditUser} disabled={adding} className="ad-user-add-btn">
+                              {adding ? (
+                                  <div className="ad-user-inline-spinner"></div>
+                              ) : t('Finish')}
+                          </button>
+                      </div>
                   </div>
               </div>
           )}
           {suspendTab && (
-              <div className="ad-user-modal">
+              <div className="pol-crash-modal">
                   <div className="ad-user-modal-content">
-                      <h2>Confirmation</h2>
-                      <p>Are you sure you want to {(userToSuspend && userToSuspend.isSuspended) ? 'unsuspend' : 'suspend'} user {userToSuspend?.userName} ?</p>
+                      <h2>{t('Confirmation')}</h2>
+                      <p>{t('Are you sure you want to')} {(userToSuspend && userToSuspend.isSuspended) ? t('unsuspend') : t('suspend')} {t('user')} {userToSuspend?.userName} ?</p>
+                      {addError && (
+                          <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                              {addError}
+                          </MuiAlert>
+                      )}
                       {adding ? (
                           <div className="ad-user-inline-spinner"></div>
                       ) : (
                               <>
-                                  <button onClick={handleConfirmSuspend} className="ad-user-add-btn">Yes</button>
-                                  <button onClick={handleCancel} className="ad-user-add-btn">No</button>
+                                  <button onClick={handleConfirmSuspend} className="ad-user-add-btn">{t('Confirm')}</button>
+                                  <button onClick={handleCancel} className="ad-user-add-btn">{t('Cancel')}</button>
                               </>
-                      )}
-                      {addError && (
-                          <p className="ad-user-error">{addError}</p>
                       )}
                   </div>
               </div>
           )}
-          {paging && paging.TotalPages > 0 &&
-              <>
-                  <Pagination count={paging.TotalPages} onChange={(e, value) => setPage(value)} />
-              </>
-          }
         </div>
   );
 }

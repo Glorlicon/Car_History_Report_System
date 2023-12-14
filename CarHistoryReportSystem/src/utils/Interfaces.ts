@@ -122,7 +122,7 @@ export interface CarModel {
 }
 
 export interface DataProvider {
-    id: number
+    id?: number
     name: string
     description?: string
     address?: string
@@ -131,7 +131,7 @@ export interface DataProvider {
     phoneNumber?: string
     email?: string
     type: number
-    typeName: string
+    typeName?: string
     imageLink: string
     workingTimes?: workingTimes[]
     reviews?: Reviews[]
@@ -579,6 +579,11 @@ export interface CarModelSearchParams {
     releasedDateEnd: string
 }
 
+export interface DataProviderSearchParams {
+    name: string
+    email: string
+    role: string
+}
 export interface ManufacturerSearchParams {
     name: string
     email: string

@@ -141,7 +141,7 @@ function InsuranceCompanyStolenList() {
                             </div>
                             <button
                                 className="search-reg-inspec-btn"
-                                onClick={fetchData}
+                                onClick={() => { setPage(0); fetchData(); }}
                             >
                                 {t('Search...')}
                             </button>
@@ -212,12 +212,14 @@ function InsuranceCompanyStolenList() {
                                                         } else if (column.id === 'actions') {
                                                             return (
                                                                 <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                    <div className="pol-crash-modal-content-2-buttons">
                                                                     <button onClick={() => { setShowCarStolenReport(row) }} className="pol-crash-action-button">
                                                                         {t('Details')} <InfoIcon />
                                                                     </button>
                                                                     <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} className="pol-crash-action-button">
                                                                         {t('View Report For Car')}
-                                                                    </button>
+                                                                        </button>
+                                                                    </div>
                                                                 </TableCell>
                                                             )
                                                         }

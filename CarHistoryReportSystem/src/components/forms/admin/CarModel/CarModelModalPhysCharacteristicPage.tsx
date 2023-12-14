@@ -4,10 +4,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/State';
 import { BODY_TYPES } from '../../../../utils/const/BodyTypes';
 import { CarModel } from '../../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
+import TextField from '@mui/material/TextField'
 
 interface CarModelModalPhysCharacteristicProps {
     model: CarModel,
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
 }
 const CarModelModalPhysCharacteristicPage: React.FC<CarModelModalPhysCharacteristicProps> = ({
     model,
@@ -20,32 +22,29 @@ const CarModelModalPhysCharacteristicPage: React.FC<CarModelModalPhysCharacteris
     }, []);
     return (
         <>
-            <div className="ad-car-model-form-columns">
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Dimension')} (mm)</label>
-                    <input type="text" name="dimension" value={model.dimension} onChange={handleInputChange} />
+                    <TextField type="text" name="dimension" value={model.dimension} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Wheel Formula')}</label>
-                    <input type="text" name="wheelFormula" value={model.wheelFormula} onChange={handleInputChange} />
+                    <TextField type="text" name="wheelFormula" value={model.wheelFormula} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Wheel Tread')} (mm)</label>
-                    <input type="text" name="wheelTread" value={model.wheelTread} onChange={handleInputChange} />
+                    <TextField type="text" name="wheelTread" value={model.wheelTread} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
                 </div>
-            </div>
-            <div className="ad-car-model-form-columns">
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Wheel Base')} (mm)</label>
-                    <input type="number" name="wheelBase" value={model.wheelBase} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="wheelBase" value={model.wheelBase} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Weight')} (kg)</label>
-                    <input type="number" name="weight" value={model.weight} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="weight" value={model.weight} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Body Type')}</label>
-                    <select name="bodyType" value={model.bodyType ? model.bodyType : -1} onChange={handleInputChange}>
+                    <select name="bodyType" value={model.bodyType ? model.bodyType : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                         <option value="-1">{t('Not chosen')}</option>
                         <option value={BODY_TYPES.Convertible}>Convertible</option>
                         <option value={BODY_TYPES.Coupe}>Coupe</option>
@@ -59,11 +58,10 @@ const CarModelModalPhysCharacteristicPage: React.FC<CarModelModalPhysCharacteris
                         <option value={BODY_TYPES.Van}>Van</option>
                     </select>
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Tire Number')}</label>
-                    <input type="number" name="tireNumber" value={model.tireNumber} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="tireNumber" value={model.tireNumber} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-            </div>
         </>
   );
 }
