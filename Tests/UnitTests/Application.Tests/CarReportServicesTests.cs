@@ -122,7 +122,7 @@ namespace UnitTests.Application.Tests
         }
 
         [Fact]
-        public async Task GetOrder_ThrowNotFoundException()
+        public async Task GetCarReportById_ThrowNotFoundException()
         {
             // Arrange
             bool trackChange = false;
