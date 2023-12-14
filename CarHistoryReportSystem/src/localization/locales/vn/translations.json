@@ -651,5 +651,9 @@
   "Edit selling car information successfully": "Chỉnh sửa xe đang được đăng bán thành công",
   "Car is sold successfully": "Xe đã được bán thành công",
   "Car Sales List": "Danh sách xe đang bán",
-  "Remove Current Image": "Bỏ ảnh này"
+  "Remove Current Image": "Bỏ ảnh này",
+  "Submit successfully": "Đăng thành công",
+  "Add New Request": "Đăng yêu cầu hỗ trợ",
+  "DataCorrection": "Sửa dữ liệu",
+  "TechnicalSupport": "Hỗ trợ kỹ thuật"
 }

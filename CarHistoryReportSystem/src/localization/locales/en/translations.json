@@ -430,8 +430,8 @@
   "Any Status": "Any Status",
   "Approved": "Accepted",
   "Rejected": "Rejected",
-  "Pending": "Đợi xử lí",
-  "Response": "Phản hồi",
+  "Pending": "Pending",
+  "Response": "Response",
   "Sort By Date": "Sort By Date",
   "Ascending": "Ascending",
   "Descending": "Descending",
@@ -651,5 +651,9 @@
   "Edit selling car information successfully": "Edit selling car information successfully",
   "Car is sold successfully": "Car is sold successfully",
   "Car Sales List": "Car Sales List",
-  "Remove Current Image": "Remove Current Image"
+  "Remove Current Image": "Remove Current Image",
+  "Submit successfully": "Submit successfully",
+  "Add New Request": "Add New Request",
+  "DataCorrection": "DataCorrection",
+  "TechnicalSupport": "TechnicalSupport"
 }
