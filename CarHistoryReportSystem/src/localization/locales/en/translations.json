@@ -430,8 +430,8 @@
   "Any Status": "Any Status",
   "Approved": "Accepted",
   "Rejected": "Rejected",
-  "Pending": "Đợi xử lí",
-  "Response": "Phản hồi",
+  "Pending": "Pending",
+  "Response": "Response",
   "Sort By Date": "Sort By Date",
   "Ascending": "Ascending",
   "Descending": "Descending",
@@ -638,5 +638,9 @@
   "Add Car Recall": "Add Car Recall",
   "Add car recall successfully": "Add car recall successfully",
   "Recall Date must be chosen": "Recall Date must be chosen",
-  "Edit car recall successfully": "Edit car recall successfully"
+  "Edit car recall successfully": "Edit car recall successfully",
+  "Submit successfully": "Submit successfully",
+  "Add New Request": "Add New Request",
+  "DataCorrection": "DataCorrection",
+  "TechnicalSupport": "TechnicalSupport"
 }

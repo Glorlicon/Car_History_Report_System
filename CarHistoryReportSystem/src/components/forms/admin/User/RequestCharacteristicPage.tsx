@@ -4,11 +4,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/State';
 import { COLORS } from '../../../../utils/const/Colors';
 import { AdminRequest, Car, UsersRequest } from '../../../../utils/Interfaces';
-
+import Textarea from '@mui/joy/Textarea';
+import TextField from '@mui/material/TextField'
 interface RequestCharacteristicFormProps {
     action: "Add" | "Edit"
     model: AdminRequest | UsersRequest,
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
 }
 const RequestCharacteristicPage: React.FC<RequestCharacteristicFormProps> = ({
     action,
@@ -23,10 +24,9 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicFormProps> = ({
     }, []);
   return (
       <>
-          <div className="ad-car-form-columns">
-              <div className="ad-car-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Type')}</label>
-                  <select name="type" onChange={handleInputChange}>
+                  <select name="type" onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                       <option value="0">{t('Data Correction')}</option>
                       <option value="1">{t('Technical Support')}</option>
                       <option value="2">{t('Report Inaccuracy')}</option>
@@ -34,18 +34,10 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicFormProps> = ({
                       <option value="4">{t('General')}</option>
                   </select>
               </div>
-              <div className="ad-car-form-column">
-                  <label>{t('Description')}</label>
-                  <input type="text" name="description" onChange={handleInputChange} className="TextField" />
+          <div className="pol-crash-form-column">
+              <label>{t('Description')}</label>
+              <Textarea name="description" onChange={handleInputChange} className="TextField"/>
               </div>
-          </div>
-          <div className="ad-car-form-columns">
-              
-          </div>
-          <div className="ad-car-form-column">
-              
-          </div>
-          
       </>
   );
 }
