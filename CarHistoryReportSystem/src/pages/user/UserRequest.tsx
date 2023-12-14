@@ -37,7 +37,7 @@ function UserRequest() {
     const columns: readonly Column[] = [
         { id: 'type', label: t('Type'), minWidth: 10 },
         { id: 'description', label: t('Description'), minWidth: 100 },
-        { id: 'createdTime', label: t('createdTime'), minWidth: 100 },
+        { id: 'createdTime', label: t('Created Date'), minWidth: 100 },
         { id: 'response', label: t('Process Note'), minWidth: 100 },
         { id: 'status', label: t('Status'), minWidth: 100 }
     ];
@@ -215,16 +215,16 @@ function UserRequest() {
                                     <option value="2">{t('Rejected')}</option>
                                 </select>
                             </div>
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Sort By Date')}</label>
-                                <select className="reg-inspec-search-bar"
-                                    onChange={(e) => setSortByDate(Number(e.target.value))}
-                                    value={sortByDate}
-                                >
-                                    <option value="0">{t('Descending')}</option>
-                                    <option value="1">{t('Ascending')}</option>
-                                </select>
-                            </div>
+                            {/*<div className="reg-inspec-search-filter-item">*/}
+                            {/*    <label>{t('Sort By Date')}</label>*/}
+                            {/*    <select className="reg-inspec-search-bar"*/}
+                            {/*        onChange={(e) => setSortByDate(Number(e.target.value))}*/}
+                            {/*        value={sortByDate}*/}
+                            {/*    >*/}
+                            {/*        <option value="0">{t('Descending')}</option>*/}
+                            {/*        <option value="1">{t('Ascending')}</option>*/}
+                            {/*    </select>*/}
+                            {/*</div>*/}
                             <button
                                 className="search-reg-inspec-btn"
                                 onClick={() => { setPage(0); fetchData(); }}

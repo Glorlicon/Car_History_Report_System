@@ -196,16 +196,16 @@ function AdminRequestList() {
                                   <option value="2">{t('Rejected')}</option>
                               </select>
                           </div>
-                          <div className="reg-inspec-search-filter-item">
-                              <label>{t('Sort By Date')}</label>
-                              <select className="reg-inspec-search-bar"
-                                  onChange={(e) => setSortByDate(Number(e.target.value))}
-                                  value={sortByDate}
-                              >
-                                  <option value="0">{t('Descending')}</option>
-                                  <option value="1">{t('Ascending')}</option>
-                              </select>
-                          </div>
+                          {/*<div className="reg-inspec-search-filter-item">*/}
+                          {/*    <label>{t('Sort By Date')}</label>*/}
+                          {/*    <select className="reg-inspec-search-bar"*/}
+                          {/*        onChange={(e) => setSortByDate(Number(e.target.value))}*/}
+                          {/*        value={sortByDate}*/}
+                          {/*    >*/}
+                          {/*        <option value="0">{t('Descending')}</option>*/}
+                          {/*        <option value="1">{t('Ascending')}</option>*/}
+                          {/*    </select>*/}
+                          {/*</div>*/}
                           <button
                               className="search-reg-inspec-btn"
                               onClick={() => { setPage(0); fetchData(); }}
