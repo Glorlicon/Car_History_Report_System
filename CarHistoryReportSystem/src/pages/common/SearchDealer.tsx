@@ -28,6 +28,7 @@ function SearchDealer() {
     const [dealerName, setDealerName] = useState('')
     const [sortByName, setSortByName] = useState(0)
     const [shouldGeocode, setShouldGeocode] = useState(false);
+    const apiKey = "AIzaSyBnnzmm550Bo1McFJZ_MCaQ5IKha6TH8G8"
     
     interface MarkerData {
         position: {
@@ -36,7 +37,32 @@ function SearchDealer() {
         };
         name: string;
         address?: string;
+        description?: string;
+        id: number;
+        imageLink?: string;
+        averageRating: number;
     }
+
+    const mapStyles = [
+        {
+            featureType: "administrative",
+            elementType: "geometry",
+            stylers: [{ visibility: "off" }]
+        },
+        {
+            featureType: "poi",
+            stylers: [{ visibility: "off" }]
+        },
+        {
+            featureType: "road",
+            elementType: "labels.icon",
+            stylers: [{ visibility: "off" }]
+        },
+        {
+            featureType: "transit",
+            stylers: [{ visibility: "off" }]
+        }
+    ];
 
     const [activeMarker, setActiveMarker] = useState<MarkerData | null>(null);
     const [markers, setMarkers] = useState<MarkerData[]>([]);
@@ -100,15 +126,20 @@ function SearchDealer() {
         }
     };
 
-    const geocodeDealerAddresses = async (dealers: DataProvider) => {
+    const geocodeDealerAddresses = async (dealers: DataProvider[]) => {
         const newMarkers = [];
-        for (const dealer of carDealerList) {
+        for (const dealer of dealers) {
             try {
                 if (dealer.address != null) {
                     const location = await geocodeAddress(dealer.address);
                     newMarkers.push({
                         position: location,
                         name: dealer.name,
+                        description: dealer.description,
+                        id: dealer.id ?? -1,
+                        address: dealer.address,
+                        imageLink: dealer.imageLink,
+                        averageRating: calculateAverageRating(dealer.reviews || [])
                     });
                 }
             } catch (error) {
@@ -119,13 +150,14 @@ function SearchDealer() {
     };
 
     const geocodeAddress = async (address: string) => {
-        const apiKey = "AIzaSyCRbVNvnE3sge__2-oH3x3xlVqMd-_TPOQ"
+        
         const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
         const response = await fetch(url);
         const data = await response.json();
         if (data.status === "OK") {
-            const { lat, lng } = data.results[0].geometry.location;
+            const lat = parseFloat(data.results[0].geometry.location.lat);
+            const lng = parseFloat(data.results[0].geometry.location.lng);
             return { lat, lng };
         } else {
             throw new Error(data.error_message || 'Failed to geocode address');
@@ -134,6 +166,7 @@ function SearchDealer() {
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
+        fetchData();
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -149,7 +182,6 @@ function SearchDealer() {
         } else {
             console.log('Geolocation is not supported by this browser.');
         }
-        fetchData();
     }, []);
 
     return (
@@ -192,7 +224,7 @@ function SearchDealer() {
                     {carDealerList.map((dealer, index) => {
                         const averageRating = calculateAverageRating(dealer.reviews || []);
                         return (
-                            <a href={`../sales/dealer/${dealer.id}`} key={index}>
+                            <a href={`../sales/dealer/${dealer.id}`} key={index} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <div className="dealer-card">
                                     <div className="profile-image">
                                         <Avatar
@@ -225,11 +257,13 @@ function SearchDealer() {
                     </div>
                 </div>
                 <div className="map-container">
-                    <LoadScript googleMapsApiKey="AIzaSyCRbVNvnE3sge__2-oH3x3xlVqMd-_TPOQ">
+                    <LoadScript googleMapsApiKey={apiKey}>
                         <GoogleMap
                             mapContainerStyle={mapContainerStyle}
                             center={currentLocation}
                             zoom={14}
+                            onClick={() => setActiveMarker(null)}
+                            options={{ styles: mapStyles }}
                         >
                             {markers.map((marker, index) => (
                                 <GoogleMapMarker
@@ -239,15 +273,36 @@ function SearchDealer() {
                                 >
                                     {activeMarker === marker && (
                                         <InfoWindow onCloseClick={() => setActiveMarker(null)}>
-                                            <div>
-                                                <h3>{activeMarker.name}</h3>
-                                                <p>{activeMarker.address}</p>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                textAlign: 'center',
+                                                width: '100%'
+                                            }}>
+                                                <Avatar
+                                                    alt="Dealer Shop"
+                                                    {...(activeMarker.imageLink && { src: GetImages(activeMarker.imageLink) })}
+                                                    sx={{ width: 100, height: 100 }}
+                                                />
+                                                <Typography component="legend">
+                                                    {activeMarker.averageRating ? `${t('Average Rating')}: ${activeMarker.averageRating.toFixed(1)}` : t('No Ratings')}
+                                                </Typography>
+                                                <Rating name="read-only" value={activeMarker.averageRating} precision={0.1} readOnly />
+                                                <div style={{
+                                                    width: '80%',
+                                                    wordWrap: 'break-word'
+                                                }}>
+                                                    <h3>{activeMarker.name}</h3>
+                                                    <p>{activeMarker.address}</p>
+                                                </div>
                                                 <a
-                                                    href={`https://www.google.com/maps/search/?api=1&query=${marker.position.lat},${marker.position.lng}`}
+                                                    href={`../sales/dealer/${activeMarker.id}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
-                                                    View on Google Maps
+                                                    {'View store on the website'}
                                                 </a>
                                             </div>
                                         </InfoWindow>

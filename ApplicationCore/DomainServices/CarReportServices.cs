@@ -250,7 +250,7 @@ namespace Application.DomainServices
                         }
                         break;
                     case Role.InsuranceCompany:
-                        if (!carReportData.CarInsurances.Any(x => x.CreatedByUserId != user.Id))
+                        if (!carReportData.CarInsurances.Any(x => x.CreatedByUserId == user.Id))
                         {
                             throw new CarReportAccessUnauthorized(carId);
                         }
