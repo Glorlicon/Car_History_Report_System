@@ -460,6 +460,26 @@ namespace UnitTests.Application.Tests
             // Assert
             Assert.Equal(5, result.Count());
             Assert.IsAssignableFrom<PagedList<DataProviderDetailsResponseDTO>>(result);
+        }        
+        
+        [Fact]
+        public async Task GetDataProviders_ReturnsDataProvidersListNull()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(repo => repo.GetAllDataProviders(parameter, trackChange))
+                    .ReturnsAsync(value: null);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(0);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetAllDataProviders(parameter);
+            // Assert
+            Assert.Equal(0, result.Count());
+            Assert.IsAssignableFrom<PagedList<DataProviderDetailsResponseDTO>>(result);
         }
 
         [Fact]
@@ -736,6 +756,29 @@ namespace UnitTests.Application.Tests
             var result = await service.GetAllReview(parameter);
             // Assert
             Assert.Equal(1, result.Count());
+            Assert.IsAssignableFrom<PagedList<DataProviderReviewsResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetReviews_ReturnsReviewsListNull()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            DataProviderReviewParameter parameter = new DataProviderReviewParameter();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockReviewRepository.Setup(repo => repo.GetAllReview(parameter, trackChange))
+                    .ReturnsAsync(value: null);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(0);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetAllReview(parameter);
+            // Assert
+            Assert.Equal(0, result.Count());
             Assert.IsAssignableFrom<PagedList<DataProviderReviewsResponseDTO>>(result);
         }
 
