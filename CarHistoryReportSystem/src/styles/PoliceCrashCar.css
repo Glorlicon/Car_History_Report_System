@@ -113,7 +113,7 @@
     border-radius: 5px;
     position: relative;
     width: 600px;
-    height: 600px; 
+    max-height: 600px; 
 }
 .pol-crash-modal-content-2 {
     display: flex;

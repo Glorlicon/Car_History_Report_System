@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import CarModelCapacityPage from '../../components/forms/admin/CarModel/CarModelCapacityPage';
-import CarModelModalEnginePage from '../../components/forms/admin/CarModel/CarModelModalEnginePage';
-import CarModelModalIdentificationPage from '../../components/forms/admin/CarModel/CarModelModalIdentificationPage';
-import CarModelModalPhysCharacteristicPage from '../../components/forms/admin/CarModel/CarModelModalPhysCharacteristicPage';
-import { AddCarModel, EditCarModel, ListAdminCarModels } from '../../services/api/CarModel';
-import { List, ListManu } from '../../services/api/DataProvider';
+import CarModelCapacityPage from '../../components/forms/manufacturer/CarModel/CarModelCapacityPage';
+import CarModelModalEnginePage from '../../components/forms/manufacturer/CarModel/CarModelModalEnginePage';
+import CarModelModalIdentificationPage from '../../components/forms/manufacturer/CarModel/CarModelModalIdentificationPage';
+import CarModelModalPhysCharacteristicPage from '../../components/forms/manufacturer/CarModel/CarModelModalPhysCharacteristicPage';
+import { AddCarModel, EditCarModel, ListManufaturerCarModels } from '../../services/api/CarModel';
 import { RootState } from '../../store/State';
-import { BODY_TYPES } from '../../utils/const/BodyTypes';
-import { FUEL_TYPES } from '../../utils/const/FuelTypes';
-import { APIResponse, CarModel, CarModelSearchParams, ManufacturerSearchParams, ModelMaintenance, Paging } from '../../utils/Interfaces';
-import '../../styles/AdminCarModels.css'
+import { APIResponse, CarModel, CarModelSearchParams, CarRecalls, ModelMaintenance, Paging } from '../../utils/Interfaces';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import '../../styles/ManufacturerCarModels.css'
+import { AddCarRecall } from '../../services/api/Recall';
+import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import { useTranslation } from 'react-i18next';
-import { Pagination } from '@mui/material';
-import CarModelMaintenancePage from '../../components/forms/admin/CarModel/CarModelMaintenancePage';
+import CarModelMaintenancePage from '../../components/forms/manufacturer/CarModel/CarModelMaintenancePage';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -28,9 +27,11 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { FUEL_TYPES } from '../../utils/const/FuelTypes';
+import { BODY_TYPES } from '../../utils/const/BodyTypes';
 
 interface Column {
-    id: 'modelID' | 'manufacturerName' | 'wheelFormula' | 'wheelTread' | 'dimension' | 'wheelBase'
+    id: 'modelID' | 'wheelFormula' | 'wheelTread' | 'dimension' | 'wheelBase'
     | 'weight' | 'releasedDate' | 'country' | 'fuelType' | 'bodyType' | 'personCarriedNumber'
     | 'seatNumber' | 'layingPlaceNumber' | 'maximumOutput' | 'engineDisplacement' | 'rpm' | 'tireNumber' | 'actions';
     label: string;
@@ -38,12 +39,10 @@ interface Column {
     align?: 'right';
     format?: (value: number) => string;
 }
-function AdminCarModelList() {
+function ManufacturerCarModelList() {
     const { t, i18n } = useTranslation()
-    const [page, setPage] = useState(0)
     const columns: readonly Column[] = [
         { id: 'modelID', label: t('Model ID'), minWidth: 10 },
-        { id: 'manufacturerName', label: t('Manufacturer Name'), minWidth: 100 },
         { id: 'wheelFormula', label: t('Wheel Formula'), minWidth: 100 },
         { id: 'wheelTread', label: t('Wheel Tread'), minWidth: 100 },
         { id: 'dimension', label: t('Dimension'), minWidth: 100 },
@@ -62,6 +61,7 @@ function AdminCarModelList() {
         { id: 'tireNumber', label: t('Tire Number'), minWidth: 100 },
         { id: 'actions', label: t('Actions'), minWidth: 100 }
     ];
+    const [page, setPage] = useState(0)
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [paging, setPaging] = useState<Paging>()
     const [resetTrigger, setResetTrigger] = useState(0);
@@ -70,7 +70,6 @@ function AdminCarModelList() {
     const [searchReleasedDateEnd, setSearchReleasedDateEnd] = useState('')
     const [searchManuName, setSearchManuName] = useState('')
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
-    const [manufacturers, setManufacturers] = useState([])
     const [carModels, setCarModels] = useState<CarModel[]>([])
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -79,9 +78,11 @@ function AdminCarModelList() {
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [editModel, setEditModel] = useState<CarModel | null>(null)
+    const [addRecalModel, setAddRecallModel] = useState<CarRecalls | null>(null)
+    const manufacturerId = JWTDecoder(token).dataprovider
     const [newModel, setNewModel] = useState<CarModel>({
         modelID: "",
-        manufacturerId: 0,
+        manufacturerId: manufacturerId,
         manufacturerName: "",
         wheelFormula: "",
         wheelTread: "",
@@ -133,7 +134,11 @@ function AdminCarModelList() {
             }
         ]
     })
-
+    const [newRecall, setNewRecall] = useState<CarRecalls>({
+        modelId: "",
+        description: "",
+        recallDate: new Date()
+    })
 
     const validateCarModel = (model: CarModel): boolean => {
         if (!model.modelID) {
@@ -191,21 +196,49 @@ function AdminCarModelList() {
         return true
     }
 
-    const handleNextPage = () => {
-        if (modalPage < 5) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editModel) handleEditModel();
-            else handleAddModel();
+    const validateCarRecall = (model: CarRecalls | null): boolean => {
+        if (!model?.modelId) {
+            setAddError("Model ID must be filled out");
+            setOpenError(true)
+            return false;
         }
+        return true;
     };
 
-    const handlePreviousPage = () => {
-        if (modalPage > 1) {
-            setModalPage(prevPage => prevPage - 1);
+    const handleDateChange = (date: string, type: string) => {
+        if (type === 'releasedDate') {
+            if (editModel) {
+                setEditModel({
+                    ...editModel,
+                    releasedDate: date
+                })
+            } else {
+                setNewModel({
+                    ...newModel,
+                    releasedDate: date,
+                });
+            }
+        }
+    }
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        if (editModel) {
+            setEditModel({
+                ...editModel,
+                [e.target.name]: e.target.value,
+            })
+        } else if (addRecalModel) {
+            setAddRecallModel({
+                ...addRecalModel,
+                [e.target.name]: e.target.value,
+            });
+        }
+        else {
+            setNewModel({
+                ...newModel,
+                [e.target.name]: e.target.value,
+            });
         }
     };
-
     const handleChangeDayPerMaintainance = (index: number, value: string) => {
         if (editModel) {
             setEditModel({
@@ -236,17 +269,19 @@ function AdminCarModelList() {
             })
         }
     }
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        if (editModel) {
-            setEditModel({
-                ...editModel,
-                [e.target.name]: e.target.value
-            })
+    const handleNextPage = () => {
+        if (modalPage < 5) {
+            setModalPage(prevPage => prevPage + 1);
         } else {
-            setNewModel({
-                ...newModel,
-                [e.target.name]: e.target.value,
-            });
+            if (editModel) handleEditModel();
+            else if (addRecalModel) handleRecallClick();
+            else handleAddModel();
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (modalPage > 1) {
+            setModalPage(prevPage => prevPage - 1);
         }
     };
 
@@ -268,7 +303,7 @@ function AdminCarModelList() {
                 setOpenSuccess(true)
                 setNewModel({
                     modelID: "",
-                    manufacturerId: 0,
+                    manufacturerId: manufacturerId,
                     manufacturerName: "",
                     wheelFormula: "",
                     wheelTread: "",
@@ -324,6 +359,27 @@ function AdminCarModelList() {
             }
         }
     };
+    //TODO: car recall
+    const handleRecallClick = async () => {
+        if (addRecalModel != null && validateCarRecall(addRecalModel)) {
+            setAdding(true);
+            setAddError(null);
+            console.log("submitted:", addRecalModel);
+            const response: APIResponse = await AddCarRecall(addRecalModel, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+                setOpenError(true)
+            } else {
+                setShowModal(false);
+                setAddRecallModel(null);
+                setMessage(t('Add car recall successfully'))
+                setOpenSuccess(true)
+                setModalPage(1);
+                fetchData();
+            }
+        }
+    };
 
     const handleEditModel = async () => {
         if (editModel != null && validateCarModel(editModel)) {
@@ -346,21 +402,6 @@ function AdminCarModelList() {
             }
         }
     };
-    const handleDateChange = (date: string, type: string) => {
-        if (type === 'releasedDate') {
-            if (editModel) {
-                setEditModel({
-                    ...editModel,
-                    releasedDate: date
-                })
-            } else {
-                setNewModel({
-                    ...newModel,
-                    releasedDate: date,
-                });
-            }
-        } 
-    }
     const handleResetFilters = () => {
         setSearchManuName('')
         setSearchModelId('')
@@ -368,7 +409,6 @@ function AdminCarModelList() {
         setSearchReleasedDateStart('')
         setResetTrigger(prev => prev + 1);
     }
-
     const fetchData = async () => {
         setLoading(true);
         setError(null);
@@ -381,22 +421,12 @@ function AdminCarModelList() {
             releasedDateEnd: searchReleasedDateEnd,
             releasedDateStart: searchReleasedDateStart
         }
-        let searchManuParams: ManufacturerSearchParams = {
-            name: '',
-            email: ''
-        }
-        const manuListResponse: APIResponse = await ListManu(token, 1, connectAPIError, unknownError, language, searchManuParams);
-        if (manuListResponse.error) {
-            setError(manuListResponse.error);
+        const carModelResponse: APIResponse = await ListManufaturerCarModels(manufacturerId, token, page+1, connectAPIError, unknownError, language, searchParams)
+        if (carModelResponse.error) {
+            setError(carModelResponse.error)
         } else {
-            setManufacturers(manuListResponse.data)
-            const carModelResponse: APIResponse = await ListAdminCarModels(token, page+1, connectAPIError, unknownError, language, searchParams)
-            if (carModelResponse.error) {
-                setError(carModelResponse.error)
-            } else {
-                setCarModels(carModelResponse.data)
-                setPaging(carModelResponse.pages)
-            }
+            setCarModels(carModelResponse.data)
+            setPaging(carModelResponse.pages)
         }
         setLoading(false)
     };
@@ -406,7 +436,7 @@ function AdminCarModelList() {
                 return key;
             }
         }
-        return null; 
+        return null;
     }
     function getBodyTypeName(value: number): string | null {
         for (const [key, val] of Object.entries(BODY_TYPES)) {
@@ -440,6 +470,7 @@ function AdminCarModelList() {
     useEffect(() => {
         fetchData();
     }, [resetTrigger]);
+
   return (
       <div className="pol-crash-list-page">
           <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
@@ -488,16 +519,6 @@ function AdminCarModelList() {
                                   placeholder={t('Search by Model ID')}
                                   value={searchModelId}
                                   onChange={(e) => setSearchModelId(e.target.value)}
-                              />
-                          </div>
-                          <div className="reg-inspec-search-filter-item">
-                              <label>{t('Manufacturer Name')}</label>
-                              <input
-                                  type="text"
-                                  className="reg-inspec-search-bar"
-                                  placeholder={t('Search by Manufacturer Name')}
-                                  value={searchManuName}
-                                  onChange={(e) => setSearchManuName(e.target.value)}
                               />
                           </div>
                           <div className="reg-inspec-search-filter-item-2">
@@ -559,13 +580,13 @@ function AdminCarModelList() {
                               <TableBody>
                                   {loading ? (
                                       <TableRow>
-                                          <TableCell colSpan={19}>
+                                          <TableCell colSpan={18}>
                                               <div className="pol-crash-spinner"></div>
                                           </TableCell>
                                       </TableRow>
                                   ) : error ? (
                                       <TableRow>
-                                          <TableCell colSpan={19}>
+                                          <TableCell colSpan={18}>
                                               {error}
                                               <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
                                           </TableCell>
@@ -598,10 +619,17 @@ function AdminCarModelList() {
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>                                                        
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditModel(row); }} disabled={adding} className="pol-crash-action-button">
-                                                                          {t('Edit1')} &#x270E;
-                                                                      </button>
+                                                                      {t('Edit1')} &#x270E;
+                                                                  </button>
+                                                                  <button className="manu-car-model-recall-btn" onClick={() => setAddRecallModel({
+                                                                      modelId: row.modelID,
+                                                                      description: '',
+                                                                      recallDate: new Date()
+                                                                  })}>{t('Create Recall')}</button>
+                                                                  </div>
                                                               </TableCell>
                                                           )
                                                       }
@@ -610,7 +638,7 @@ function AdminCarModelList() {
                                           );
                                       }) :
                                       <TableRow>
-                                          <TableCell colSpan={19}>
+                                          <TableCell colSpan={18}>
                                               {t('No car models found')}
                                           </TableCell>
                                       </TableRow>
@@ -634,6 +662,7 @@ function AdminCarModelList() {
                   </div>
               </div>
           </div>
+          {/*Pop-up add window*/}
           {showModal && (
               <div className="pol-crash-modal">
                   <div className="pol-crash-modal-content">
@@ -698,7 +727,6 @@ function AdminCarModelList() {
                               <CarModelModalIdentificationPage
                                   action="Add"
                                   model={newModel}
-                                  manufacturers={manufacturers}
                                   handleInputChange={handleInputChange}
                                   handleDateChange={handleDateChange}
                               />
@@ -750,14 +778,13 @@ function AdminCarModelList() {
           {editModel && (
               <div className="pol-crash-modal">
                   <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setEditModel(null); setModalPage(1)}}>&times;</span>
+                      <span className="pol-crash-close-btn" onClick={() => { setEditModel(null); setModalPage(1) }}>&times;</span>
                       <h2>{t('Edit Car Model')}</h2>
                       <div className="pol-crash-modal-content-2">
                           {modalPage === 1 && (
                               <CarModelModalIdentificationPage
                                   action="Edit"
                                   model={editModel}
-                                  manufacturers={manufacturers}
                                   handleInputChange={handleInputChange}
                                   handleDateChange={handleDateChange}
                               />
@@ -802,7 +829,33 @@ function AdminCarModelList() {
                                   </button>
                               </div>
                           )}
-                      </div>                     
+                      </div>                      
+                  </div>
+              </div>
+          )}
+          {addRecalModel && (
+              <div className="pol-crash-modal">
+                  <div className="pol-crash-modal-content">
+                      <span className="pol-crash-close-btn" onClick={() => { setAddRecallModel(null); setModalPage(1) }}>&times;</span>
+                      <h2>{t('Add Car Recall')}</h2>
+                      <div className="pol-crash-modal-content-2">
+                          <CarRecallEditModal
+                              action="Add"
+                              model={addRecalModel}
+                              handleInputChange={handleInputChange}
+                          />
+                          {addError && (
+                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                  {addError}
+                              </MuiAlert>
+                          )}
+                          <button onClick={handleRecallClick} disabled={adding} className="ad-manu-add-btn">
+                              {adding ? (
+                                  <div className="ad-manu-inline-spinner"></div>
+                              ) : t('Finish')}
+                          </button>
+                      </div>
+                      
                   </div>
               </div>
           )}
@@ -810,4 +863,4 @@ function AdminCarModelList() {
   );
 }
 
-export default AdminCarModelList;
+export default ManufacturerCarModelList;
