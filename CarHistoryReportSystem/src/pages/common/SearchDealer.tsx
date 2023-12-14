@@ -136,7 +136,7 @@ function SearchDealer() {
                         position: location,
                         name: dealer.name,
                         description: dealer.description,
-                        id: dealer.id,
+                        id: dealer.id ?? -1,
                         address: dealer.address,
                         imageLink: dealer.imageLink,
                         averageRating: calculateAverageRating(dealer.reviews || [])
