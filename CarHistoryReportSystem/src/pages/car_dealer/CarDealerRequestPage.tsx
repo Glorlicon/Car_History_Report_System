@@ -38,24 +38,6 @@ function CarDealerRequestPage() {
         status: ''
     });
     const id = JWTDecoder(token).nameidentifier
-    const handleResponseRequest = async () => {
-        if (editRequest != null) {
-
-            setAdding(true);
-            setAddError(null);
-            console.log(editRequest);
-            const response: APIResponse = await ResponseRequest(editRequest, token);
-            setAdding(false);
-            if (response.error) {
-                setAddError(response.error);
-            } else {
-                setShowModal(false);
-                setEditRequest(null);
-                fetchData();
-            }
-
-        }
-    }
 
     const handleAddRequest = async () => {
         setAdding(true);

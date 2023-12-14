@@ -220,8 +220,8 @@ export interface AdminRequest {
     status: string
     createdByUserId?: string
     modifiedByUserId?: string
-    createdTime?: Date
-    lastModified?: Date
+    createdTime?: string
+    lastModified?: string
 }
 export interface ReportPackage {
     title: string
