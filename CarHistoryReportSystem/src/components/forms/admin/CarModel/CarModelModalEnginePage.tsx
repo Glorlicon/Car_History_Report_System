@@ -4,10 +4,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/State';
 import { FUEL_TYPES } from '../../../../utils/const/FuelTypes';
 import { CarModel } from '../../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
+import TextField from '@mui/material/TextField'
 
 interface CarModelModalEngineProps {
     model: CarModel,
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
 }
 const CarModelModalEnginePage: React.FC<CarModelModalEngineProps> = ({
     model,
@@ -20,10 +22,9 @@ const CarModelModalEnginePage: React.FC<CarModelModalEngineProps> = ({
     }, []);
     return (
         <>
-            <div className="ad-car-model-form-columns">
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Fuel Type')}</label>
-                    <select name="fuelType" value={model.fuelType ? model.fuelType : -1} onChange={handleInputChange}>
+                    <select name="fuelType" value={model.fuelType ? model.fuelType : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                         <option value="-1">{t('Not chosen')}</option>
                         <option value={FUEL_TYPES.BioDiesel}>BioDiesel</option>
                         <option value={FUEL_TYPES.Diesel}>Diesel</option>
@@ -31,21 +32,18 @@ const CarModelModalEnginePage: React.FC<CarModelModalEngineProps> = ({
                         <option value={FUEL_TYPES.Gasoline}>Gasoline</option>
                     </select>
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Maximum Output')} (kW)</label>
-                    <input type="number" name="maximumOutput" value={model.maximumOutput} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="maximumOutput" value={model.maximumOutput} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-            </div>
-            <div className="ad-car-model-form-columns">
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Engine Displacement')} (cm3)</label>
-                    <input type="number" name="engineDisplacement" value={model.engineDisplacement} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="engineDisplacement" value={model.engineDisplacement} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-                <div className="ad-car-model-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('RPM')}</label>
-                    <input type="number" name="rpm" value={model.rpm} onChange={handleInputChange} min="0" />
+                    <TextField type="number" name="rpm" value={model.rpm} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
                 </div>
-            </div>
       </>
   );
 }

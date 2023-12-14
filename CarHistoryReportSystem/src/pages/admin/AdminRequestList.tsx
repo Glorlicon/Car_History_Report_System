@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/State';
-import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, UsersRequest } from '../../../utils/Interfaces';
-import '../../../styles/AdminCars.css'
-import { ResponseRequest, GetAllUserRequest } from '../../../services/api/Request';
-import RequestAnsweringPage from '../../../components/forms/admin/Request/RequestAnsweringPage';
-import { t } from 'i18next';
+import { RootState } from '../../store/State';
+import { AdminRequest, APIResponse, Car, CarModel, Paging, RequestSearchParams, UsersRequest } from '../../utils/Interfaces';
+import '../../styles/AdminCars.css'
+import { ResponseRequest, GetAllUserRequest } from '../../services/api/Request';
+import RequestAnsweringPage from '../../components/forms/admin/Request/RequestAnsweringPage';
 import { Pagination } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 function AdminRequestList() {
+    const { t, i18n } = useTranslation()
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -102,7 +103,15 @@ function AdminRequestList() {
 
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        fetchData();
+        i18n.changeLanguage(currentLanguage)
+    }, [page])
+    useEffect(() => {
+        fetchData();
+    }, [resetTrigger]);
 
   return (
       <div className="ad-car-list-page">

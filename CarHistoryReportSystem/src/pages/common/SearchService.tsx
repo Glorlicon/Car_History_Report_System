@@ -136,7 +136,7 @@ function SearchService() {
                         position: location,
                         name: dealer.name,
                         description: dealer.description,
-                        id: dealer.id,
+                        id: dealer.id ?? -1,
                         address: dealer.address,
                         imageLink: dealer.imageLink,
                         averageRating: calculateAverageRating(dealer.reviews || [])
@@ -155,7 +155,8 @@ function SearchService() {
         const response = await fetch(url);
         const data = await response.json();
         if (data.status === "OK") {
-            const { lat, lng } = data.results[0].geometry.location;
+            const lat = parseFloat(data.results[0].geometry.location.lat);
+            const lng = parseFloat(data.results[0].geometry.location.lng);
             return { lat, lng };
         } else {
             throw new Error(data.error_message || 'Failed to geocode address');

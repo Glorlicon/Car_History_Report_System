@@ -493,7 +493,7 @@ function InsuranceCompanyInsuranceList() {
                           </div>
                           <button
                               className="search-reg-inspec-btn"
-                              onClick={fetchData}
+                              onClick={() => { setPage(0); fetchData(); }}
                           >
                               {t('Search...')}
                           </button>
@@ -557,12 +557,14 @@ function InsuranceCompanyInsuranceList() {
                                                       } else if (column.id === 'actions') {
                                                           return (
                                                               <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                  <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditCarInsurance(row) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Edit1')} &#x270E;
                                                                   </button>
                                                                   <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('View Report For Car')}
-                                                                  </button>
+                                                                      </button>
+                                                                  </div>
                                                               </TableCell>
                                                           )
                                                       }

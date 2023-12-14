@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios"
 import { Token } from "typescript"
 import { DATA_PROVIDERS } from "../../utils/const/DataProviderTypes"
-import { APIResponse, CarSalesInfo, Manufacturer, ManufacturerSearchParams } from "../../utils/Interfaces"
+import { APIResponse, CarSalesInfo, DataProvider, DataProviderSearchParams, Manufacturer, ManufacturerSearchParams } from "../../utils/Interfaces"
 
 export async function ListDataProviderTypes(token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
@@ -24,7 +24,35 @@ export async function ListDataProviderTypes(token: string, connectAPIError: stri
     }
 }
 
-export async function List(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: ManufacturerSearchParams, pageSize?: number): Promise<APIResponse> {
+export async function List(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: DataProviderSearchParams): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: {
+                    PageNumber: pageNumber,
+                    Name: searchParams.name,
+                    Email: searchParams.email,
+                    Type: searchParams.role
+                }
+            }
+        )
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: unknownError }
+        }
+    }
+}
+
+export async function ListManu(token: string, pageNumber: number, connectAPIError: string, unknownError: string, language: string, searchParams: ManufacturerSearchParams, pageSize?: number): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/type/${DATA_PROVIDERS.Manufacturer}/no-user`,
             {
@@ -37,11 +65,10 @@ export async function List(token: string, pageNumber: number, connectAPIError: s
                     PageNumber: pageNumber,
                     Name: searchParams.name,
                     Email: searchParams.email,
-                    PageSize: pageSize ? pageSize : 100000 
+                    PageSize: pageSize ? pageSize : 100000
                 }
             }
         )
-        //return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
@@ -54,13 +81,12 @@ export async function List(token: string, pageNumber: number, connectAPIError: s
 }
 
 
-export async function AddManufacturer(types: string[], data: Manufacturer, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
-    const manufacturer = types.findIndex((x: string) => x === "Manufacturer")
+export async function AddDataProvider(data: DataProvider, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider`,
             {
-                ...data,
-                type: manufacturer
+            ...data,
+            type: Number(data.type)
             },
             {
                 headers: {
@@ -72,6 +98,7 @@ export async function AddManufacturer(types: string[], data: Manufacturer, token
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
+        console.log(axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
@@ -80,9 +107,13 @@ export async function AddManufacturer(types: string[], data: Manufacturer, token
     }
 }
 
-export async function EditManufacturer(data: Manufacturer, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
+export async function EditDataProvder(data: DataProvider, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${data.id}`, data,
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/DataProvider/${data.id}`,
+            {
+                ...data,
+                type: Number(data.type)
+            },
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -93,6 +124,7 @@ export async function EditManufacturer(data: Manufacturer, token: string, connec
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
+        console.log(axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {

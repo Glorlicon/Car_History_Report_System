@@ -125,10 +125,6 @@ namespace Application.DomainServices
             {
                 throw new UserNotFoundException("No current user is logged in");
             }
-            if (user.DataProviderId is null)
-            {
-                throw new UnauthorizedAccessException();
-            }
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, true);
 
             if (dataProvider is null)

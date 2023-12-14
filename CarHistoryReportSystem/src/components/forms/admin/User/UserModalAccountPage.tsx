@@ -6,10 +6,12 @@ import { GetDataProviders } from '../../../../services/api/Users';
 import { RootState } from '../../../../store/State';
 import { USER_ROLE } from '../../../../utils/const/UserRole';
 import { DataProvider, User } from '../../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
+import TextField from '@mui/material/TextField'
 
 interface UserModalAccountPageProps {
     model: User
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     action: "Add" | "Edit"
 }
 const UserModalAccountPage: React.FC<UserModalAccountPageProps> = ({
@@ -24,18 +26,18 @@ const UserModalAccountPage: React.FC<UserModalAccountPageProps> = ({
         i18n.changeLanguage(currentLanguage)
     }, []);
   return (
-      <div className="ad-user-form-columns">
-          <div className="ad-user-form-column">
+      <>
+          <div className="pol-crash-form-column">
               <label>{t('Email Address')}</label>
-              <input type="text" name="email" value={model.email} onChange={handleInputChange} disabled={edit} />
+              <TextField type="text" name="email" value={model.email} onChange={handleInputChange} disabled={edit} style={{ width: '100%' }} size='small' />
           </div>
-          <div className="ad-user-form-column">
+          <div className="pol-crash-form-column">
               <label>{t('Username')}</label>
-              <input type="text" name="userName" value={model.userName} onChange={handleInputChange} disabled={edit} />
+              <TextField type="text" name="userName" value={model.userName} onChange={handleInputChange} disabled={edit} style={{ width: '100%' }} size='small' />
           </div>
-          <div className="ad-user-form-column">
-              <label>{t('Role')}: </label>
-              <select name="role" value={model.role} onChange={handleInputChange} disabled={edit}>
+          <div className="pol-crash-form-column">
+              <label>{t('Role')}</label>
+              <select name="role" value={model.role} onChange={handleInputChange} disabled={edit} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                   <option value={USER_ROLE.ADMIN}>{t('Admin')}</option>
                   <option value={USER_ROLE.USER}>{t('User')}</option>
                   <option value={USER_ROLE.DEALER}>{t('Car Dealer')}</option>
@@ -46,7 +48,7 @@ const UserModalAccountPage: React.FC<UserModalAccountPageProps> = ({
                   <option value={USER_ROLE.SERVICE}>{t('Service Shop')}</option>
               </select>
           </div>
-      </div>
+      </>
   );
 }
 

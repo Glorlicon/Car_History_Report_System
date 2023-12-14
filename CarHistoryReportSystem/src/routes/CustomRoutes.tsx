@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SpecialLayout from '../components/layout/SpecialLayout';
 import UserLayout from '../components/layout/UserLayout';
 import AdminHomePage from '../pages/admin/AdminHomePage';
-import AdminCarModelList from '../pages/admin/car_model/AdminCarModelList';
-import AdminManufacturerList from '../pages/admin/manufacturer/AdminManufacturerList';
+import AdminCarModelList from '../pages/admin//AdminCarModelList';
+import AdminDataProviderList from '../pages/admin/AdminDataProviderList';
 import UserListPage from '../pages/admin/UserListPage';
 import CarDealerCarDetails from '../pages/car_dealer/CarDealerCarDetails';
 import CarDealerCarList from '../pages/car_dealer/CarDealerCarList';
@@ -27,7 +27,7 @@ import SuspendPage from '../pages/special/SuspendPage';
 import CarMaintenance from '../pages/user/CarMaintenancePage';
 import UserProfile from '../pages/user/UserProfile';
 import RequestPage from '../pages/user/UserRequest';
-import AdminRequestPage from '../pages/admin/request/AdminRequestList'
+import AdminRequestPage from '../pages/admin/AdminRequestList'
 import UnauthorizedPage from '../pages/special/UnauthorizedPage';
 import VehicleRegistryHomePage from '../pages/vehicle_registry/VehicleRegistryHomePage';
 import { AdminNavigation, CarDealerNavigation, InsuranceNavigation, ServiceShopNavigation, ManufacturerNavigation, PoliceNavigation, RegistryNavigation, UserNavigation } from '../utils/const/NavigationItems';
@@ -95,14 +95,14 @@ const CustomRoutes = () => {
                 <Route path="/request" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}> <RequestPage /> </UserLayout>}></ProtectedRoute>} />
                 <Route path="/notification" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}> <UserNotification /> </UserLayout>}></ProtectedRoute>} />
                 {/*Admin*/}
-                <Route path="/admin" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminHomePage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserListPage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/manufacturers" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminManufacturerList /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/car-models" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminCarModelList /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminRequestPage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/monetization" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><AdminMonetizationPage /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/profile" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserProfile /></SpecialLayout>}></ProtectedRoute>} />
-                <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<SpecialLayout navItems={AdminNavigation}><UserNotification /></SpecialLayout>}></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/users" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserListPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/dataproviders" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminDataProviderList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/car-models" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminCarModelList /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/requests" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminRequestPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/monetization" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminMonetizationPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/profile" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 {/*Service Shop*/}
                 <Route path="/service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/car-service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHistory /></UserLayout>}></ProtectedRoute>} />

@@ -24,7 +24,6 @@
     <Folder Include="src\components\forms\police\" />
     <Folder Include="src\components\forms\register\" />
     <Folder Include="src\localization\locales\en\" />
-    <Folder Include="src\pages\admin\car_model\" />
     <Folder Include="src\pages\manufacturer\car_model\" />
     <Folder Include="src\pages\insurance_company\" />
     <Folder Include="src\pages\vehicle_registry\" />
