@@ -587,5 +587,9 @@
   "Role is not chosen": "Role is not chosen",
   "Add Data Provider": "Add Data Provider",
   "Add new data provider successfully": "Add new data provider successfully",
-  "Edit data provider successfully": "Edit data provider successfully"
+  "Edit data provider successfully": "Edit data provider successfully",
+  "Add Car Recall": "Add Car Recall",
+  "Add car recall successfully": "Add car recall successfully",
+  "Recall Date must be chosen": "Recall Date must be chosen",
+  "Edit car recall successfully": "Edit car recall successfully"
 }

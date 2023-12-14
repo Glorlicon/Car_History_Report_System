@@ -18,7 +18,7 @@ import CarDealerProfile from '../pages/common/CarDealerProfile';
 import CarServiceShoprProfile from '../pages/common/ServiceShopProfile';
 import RegisterPage from '../pages/common/RegisterPage';
 import InsuranceCompanyHomePage from '../pages/insurance_company/InsuranceCompanyHomePage';
-import ManufacturerCarModelList from '../pages/manufacturer/car_model/ManufacturerCarModelList';
+import ManufacturerCarModelList from '../pages/manufacturer/ManufacturerCarModelList';
 import ManufacturerHomePage from '../pages/manufacturer/ManufacturerHomePage';
 import PoliceHomePage from '../pages/police/PoliceHomePage';
 import ServiceShopHomePage from '../pages/service_shop/ServiceShopHomePage';

@@ -107,8 +107,8 @@ export async function ListManufacturerRecallss(id: number, token: string, pageNu
                 params: {
                     PageNumber: pageNumber,
                     ModelID: CarRecallSearchParams.modelId,
-                    ExpireDateStart: CarRecallSearchParams.recallDateStart,
-                    ExpireDateEnd: CarRecallSearchParams.recallDateEnd
+                    RecallDateStart: CarRecallSearchParams.recallDateStart,
+                    RecallDateEnd: CarRecallSearchParams.recallDateEnd
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }

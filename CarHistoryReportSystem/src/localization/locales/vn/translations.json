@@ -588,5 +588,9 @@
   "Role is not chosen": "Chưa chọn vai trò",
   "Add Data Provider": "Thêm nhà cung cấp dữ liệu",
   "Add new data provider successfully": "Thêm nhà cung cấp dữ liệu mới thành công",
-  "Edit data provider successfully": "Chỉnh sửa thông tin nhà cung cấp dữ liệu thành công"
+  "Edit data provider successfully": "Chỉnh sửa thông tin nhà cung cấp dữ liệu thành công",
+  "Add Car Recall": "Thêm thông tin thu hồi xe",
+  "Add car recall successfully": "Thêm thông tin thu hồi xe thành công",
+  "Recall Date must be chosen": "Hãy chọn ngày thu hồi xe",
+  "Edit car recall successfully": "Chỉnh sửa thông tin hồi xe thành công"
 }
