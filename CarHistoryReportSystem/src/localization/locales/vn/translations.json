@@ -638,5 +638,18 @@
   "Add Car Recall": "Thêm thông tin thu hồi xe",
   "Add car recall successfully": "Thêm thông tin thu hồi xe thành công",
   "Recall Date must be chosen": "Hãy chọn ngày thu hồi xe",
-  "Edit car recall successfully": "Chỉnh sửa thông tin hồi xe thành công"
+  "Edit car recall successfully": "Chỉnh sửa thông tin hồi xe thành công",
+  "Please enter email": "Hãy nhập email",
+  "Please enter username": "Hãy nhập tên người dùng",
+  "Please enter first name": "Hãy nhập tên",
+  "Please enter last name": "Hãy nhập họ",
+  "Please enter phone number": "Hãy nhập số điện thoại",
+  "Added car to storage successfully": "Thêm xe vào kho thành công",
+  "Edit car to storage successfully": "Chỉnh sửa thông tin xe trong kho thành công",
+  "Car Storage List": "Danh sách xe trong kho",
+  "Started selling car successfully": "Xe đã được đăng bán",
+  "Edit selling car information successfully": "Chỉnh sửa xe đang được đăng bán thành công",
+  "Car is sold successfully": "Xe đã được bán thành công",
+  "Car Sales List": "Danh sách xe đang bán",
+  "Remove Current Image": "Bỏ ảnh này"
 }

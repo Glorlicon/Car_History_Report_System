@@ -125,7 +125,8 @@ export async function ListAllCarModels(token: string, pageNumber: number, connec
                     ModelID: searchParams.modelId,
                     ManufacturerName: searchParams.manuName,
                     ReleasedDateStart: searchParams.releasedDateStart,
-                    ReleasedDateEnd: searchParams.releasedDateEnd
+                    ReleasedDateEnd: searchParams.releasedDateEnd,
+                    PageSize: 100000
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }

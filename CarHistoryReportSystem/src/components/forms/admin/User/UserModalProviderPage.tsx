@@ -67,15 +67,15 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
                       <>
                           <div className="pol-crash-form-column">
                           <div className="pol-crash-checkboxes">
-                          </div>
                               <label>
                                   <input
                                       type="checkbox"
                                       checked={isNew}
                                       onChange={handleCheckbox}
-                              />
-                              {t('New Data Provider')}?
+                                  />
+                                  {t('New Data Provider')}?
                               </label>
+                          </div>
                           </div>
                           {isNew && (
                               <>

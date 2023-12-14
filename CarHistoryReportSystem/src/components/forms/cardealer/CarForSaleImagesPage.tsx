@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { GetImages } from '../../../services/azure/Images';
 import { RootState } from '../../../store/State';
 import { CarSalesInfo } from '../../../utils/Interfaces';
+import emptyCar from '../../../car-default.jpg'
 
 interface CarForSaleImagesPageProps {
     model: CarSalesInfo
@@ -56,9 +57,14 @@ const CarForSaleImagesPage: React.FC<CarForSaleImagesPageProps> = ({
         i18n.changeLanguage(currentLanguage)
     }, []);
   return (
-          <div className="dealer-car-sales-form-image-columns-2">
+          <>
           <div className="dealer-car-sales-form-image-column">
               <label>{t('Car Images')}</label>
+              <a>
+                  <strong>
+                      {t('Total Images')}: {model.carImages?.length}
+                  </strong>
+              </a>
               <input type="file" id="car-image" accept="image/*" className="car-images-input" onChange={handleAddImages} multiple />
               <button onClick={handleAddClick} className="dealer-car-sales-form-image-add-button"> + {t('Add Image')}</button>
                   {model.carImages && model.carImages?.length > 0 ? (
@@ -70,21 +76,16 @@ const CarForSaleImagesPage: React.FC<CarForSaleImagesPageProps> = ({
                                   model?.carImages?.at(currentImageIndex)?.imageLink
                               }
                               alt="Car" className="dealer-car-sales-details-image" />
-                          <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
-                      <a>
-                          <strong>
-                              {t('Total Images')}: {model.carImages?.length}
-                          </strong>
-                      </a>
-                          <button type="button" className="dealer-car-sales-form-image-remove-button" onClick={() => { handleRemoveImages(currentImageIndex); handleChangeIndex() }}>Remove Current</button>
+                      <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
+                      < button type="button" className="dealer-car-sales-form-image-remove-button" onClick={() => { handleRemoveImages(currentImageIndex); handleChangeIndex() }}>{t('Remove Current Image')}</button>
                       </div>
                   ): (
                       <div className="dealer-car-sales-images">
-                          {t('No images for this car')}'
+                          <img src={emptyCar} />
                       </div>
                   )}
               </div>
-          </div>
+          </>
   );
 }
 

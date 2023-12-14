@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/State';
 import { COLORS } from '../../../../utils/const/Colors';
 import { Car } from '../../../../utils/Interfaces';
-
+import TextField from '@mui/material/TextField'
 interface CarCharacteristicPageProps {
     action: "Add" | "Edit"
     model: Car
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
 }
 const CarCharacteristicPage: React.FC<CarCharacteristicPageProps> = ({
     action,
@@ -23,20 +23,13 @@ const CarCharacteristicPage: React.FC<CarCharacteristicPageProps> = ({
     }, []);
   return (
       <>
-          <div className="ad-car-form-columns">
-              <div className="ad-car-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Engine Number')}</label>
-                  <input type="text" name="engineNumber" value={model.engineNumber} onChange={handleInputChange} />
+                  <TextField type="text" name="engineNumber" value={model.engineNumber} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="ad-car-form-column">
-                  <label>{t('Modified')}?</label>
-                  <input type="checkbox" name="isModified" checked={model.isModified} onChange={handleInputChange}/>
-              </div>
-          </div>
-          <div className="ad-car-form-columns">
-              <div className="ad-car-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Color')}</label>
-                  <select name="color" value={model.color} onChange={handleInputChange}>
+              <select name="color" value={model.color} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                       <option value={COLORS.Beige}>{t('Beige')}</option>
                       <option value={COLORS.Black}>{t('Black')}</option>
                       <option value={COLORS.Blue}>{t('Blue')}</option>
@@ -52,11 +45,18 @@ const CarCharacteristicPage: React.FC<CarCharacteristicPageProps> = ({
                       <option value={COLORS.Yellow}>{t('Yellow')}</option>
                   </select>
               </div>
-              <div className="ad-car-form-column">
-                  <label>{t('Commercial Use')}?</label>
+              <div className="pol-crash-form-column">
+                  <div className="pol-crash-checkboxes-2">
                   <input type="checkbox" name="isCommercialUse" checked={model.isCommercialUse} onChange={handleInputChange} />
+                  <label>{t('Commercial Use')}?</label>
+                  </div>
               </div>
-          </div>
+              <div className="pol-crash-form-column">
+                  <div className="pol-crash-checkboxes-2">
+                  <input type="checkbox" name="isModified" checked={model.isModified} onChange={handleInputChange} />
+                  <label>{t('Modified')}?</label>
+                  </div>
+              </div>
       </>
   );
 }

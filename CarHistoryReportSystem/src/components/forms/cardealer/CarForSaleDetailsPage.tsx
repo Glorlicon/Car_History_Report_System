@@ -1,64 +1,70 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/State';
 import { CarSalesInfo } from '../../../utils/Interfaces';
+import TextField from '@mui/material/TextField'
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Button from "@mui/material/Button";
+import { Container } from "@mui/material";
 
 interface CarForSaleDetailsPageProps {
     action: "Add" | "Edit"
     model: CarSalesInfo
-    feature: string
-    setFeature: React.Dispatch<React.SetStateAction<string>>
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     handleAddFeature: () => void
     handleRemoveFeature: (index: number) => void
+    handleSetFeature: (index: number, value: string) => void
 }
 const CarForSaleDetailsPage: React.FC<CarForSaleDetailsPageProps> = ({
     action,
     model,
-    feature,
-    setFeature,
     handleInputChange,
     handleAddFeature,
-    handleRemoveFeature
+    handleRemoveFeature,
+    handleSetFeature
 }) => {
     const edit = action === "Edit"
     const { t, i18n } = useTranslation()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [fields, setFields] = useState([""]);
+
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, []);
   return (
       <>
-          <div className="dealer-car-sales-form-columns-2">
-              <div className="dealer-car-sales-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Description')}</label>
-                  <input type="text" name="description" value={model.description} onChange={handleInputChange} />
+                <TextField type="text" name="description" value={model.description} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="dealer-car-sales-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('VIN')}</label>
-                  <input type="text" name="carId" value={model.carId} onChange={handleInputChange} disabled={edit} />
+              <TextField type="text" name="carId" value={model.carId} disabled={edit} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
               </div>
-              <div className="dealer-car-sales-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Price')}</label>
-                  <input type="number" name="price" value={model.price} onChange={handleInputChange} min="0" />
+                <TextField type="number" name="price" value={model.price} onChange={handleInputChange} style={{ width: '100%' }} size='small' InputProps={{ inputProps: { min: 0 } }} />
               </div>
-          </div>
-          <div className="dealer-car-sales-form-columns-2">
-              <div className="dealer-car-sales-form-column">
+              <div className="pol-crash-form-column">
                   <label>{t('Features')}: </label>
-                  <input type="text" name="feature" value={feature} onChange={e => setFeature(e.target.value)} />
-                  <button className="dealer-car-sales-add-feature-btn" type="button" onClick={handleAddFeature}>+{t('Add Feature')}</button>
-                  <ul className="dealer-car-sales-feature-list">
-                      {model.features.map((f, index) => (
-                          <li key={index} className="dealer-car-sales-feature-list-item">
-                              <span style={{ marginRight: '10px' }}>{f}</span>
-                              <button className="dealer-car-sales-remove-feature-btn" type="button" onClick={() => handleRemoveFeature(index)}>{t('Remove Feature')}</button>
-                          </li>
-                      ))}
-                  </ul>
+                  {model.features.map((field, index) => (
+                      <div key={index}>
+                          <TextField
+                              style={{ width: '80%' }}
+                              value={field}
+                              onChange={(e) => handleSetFeature(index, e.target.value)}
+                          />
+                          <IconButton onClick={() => handleRemoveFeature(index)} style={{ width: '20%' }}>
+                              <DeleteIcon />
+                          </IconButton>
+                      </div>
+                  ))}
+                  <Button variant="contained" onClick={handleAddFeature} sx={{ mt: 2 }}>
+                      +{t('Add Feature')}
+                  </Button>
               </div>
-          </div>
       </>
   );
 }
