@@ -114,7 +114,7 @@ namespace UnitTests.Application.Tests
         }
 
         [Fact]
-        public async Task GetAllOrders_ReturnsCarRecallsList()
+        public async Task GetAllOrders_ReturnsOrdersList()
         {
             // Arrange
             bool trackChange = false;
@@ -131,6 +131,28 @@ namespace UnitTests.Application.Tests
             // Assert
             Assert.Equal(5, result.Count());
             Assert.Equal(5, result.PagingData.TotalCount);
+            Assert.IsAssignableFrom<PagedList<OrderResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetOrdersByUserId_ReturnsOrdersList()
+        {
+            // Arrange
+            bool trackChange = false;
+            string userId = "User1";
+            var mockRepo = new Mock<IOrderRepository>();
+            mockRepo.Setup(repo => repo.GetOrderByUserId(userId, parameter, trackChange))
+                    .ReturnsAsync(data.Where(x => x.UserId == userId));
+            mockRepo.Setup(repo => repo.CountByCondition(x => x.UserId == userId, parameter)).ReturnsAsync(3);
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(uow => uow.OrderRepository)
+                          .Returns(mockRepo.Object);
+            var service = new OrderServices(mockUnitOfWork.Object, mapper, mockIdentityService.Object);
+            // Act
+            var result = await service.GetOrdersByUserId(userId, parameter);
+            // Assert
+            Assert.Equal(3, result.Count());
+            Assert.Equal(3, result.PagingData.TotalCount);
             Assert.IsAssignableFrom<PagedList<OrderResponseDTO>>(result);
         }
 

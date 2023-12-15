@@ -430,8 +430,8 @@
   "Any Status": "Any Status",
   "Approved": "Accepted",
   "Rejected": "Rejected",
-  "Pending": "Đợi xử lí",
-  "Response": "Phản hồi",
+  "Pending": "Pending",
+  "Response": "Response",
   "Sort By Date": "Sort By Date",
   "Ascending": "Ascending",
   "Descending": "Descending",
@@ -653,5 +653,9 @@
   "Car Sales List": "Car Sales List",
   "Remove Current Image": "Remove Current Image",
   "Export PDF": "Export PDF",
-  "Car Registration History": "Car Registration History"
+  "Car Registration History": "Car Registration History",
+  "Submit successfully": "Submit successfully",
+  "Add New Request": "Add New Request",
+  "DataCorrection": "DataCorrection",
+  "TechnicalSupport": "TechnicalSupport"
 }

@@ -20,6 +20,8 @@ namespace UnitTests.Application.Tests
     {
         private IMapper mapper;
         private List<DataProvider> dataProvidersTestData;
+        private List<Car> carsTestData;
+        private List<Review> reviewsTestData;
         private DataProviderParameter parameter;
         private Mock<IIdentityServices> mockService;
         private Mock<IEmailServices> mockEmailService;
@@ -33,6 +35,8 @@ namespace UnitTests.Application.Tests
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
             mapper = new Mapper(configuration);
             dataProvidersTestData = GetDataProviders();
+            carsTestData = GetCars();
+            reviewsTestData = GetReviews();
             parameter = new DataProviderParameter();
             mockService = new Mock<IIdentityServices>();
             mockEmailService = new Mock<IEmailServices>();
@@ -401,6 +405,43 @@ namespace UnitTests.Application.Tests
             return dataProviders;
         }
 
+        private List<Car> GetCars()
+        {
+            var cars = new List<Car>();
+            cars.Add(new Car
+            {
+                VinId = "ABCHHFASHFHASFH20",
+                LicensePlateNumber = "29A10971",
+                ModelId = "2",
+                Color = Color.White,
+                EngineNumber = "Test",
+                IsModified = false,
+                IsCommercialUse = false,
+                CurrentOdometer = 0,
+                CreatedByUser = new User
+                {
+                    DataProvider = dataProvidersTestData.First()
+                }
+
+
+            });
+            return cars;
+        }
+
+        private List<Review> GetReviews()
+        {
+            var reviews = new List<Review>();
+            reviews.Add(new Review
+            {
+                DataProviderId = 1001,
+                UserId = "test",
+                Description = "test",
+                Rating = 5,
+                DataProvider = dataProvidersTestData.First()
+            });
+            return reviews;
+        }
+
         [Fact]
         public async Task GetDataProviders_ReturnsDataProvidersList()
         {
@@ -418,6 +459,26 @@ namespace UnitTests.Application.Tests
             var result = await service.GetAllDataProviders(parameter);
             // Assert
             Assert.Equal(5, result.Count());
+            Assert.IsAssignableFrom<PagedList<DataProviderDetailsResponseDTO>>(result);
+        }        
+        
+        [Fact]
+        public async Task GetDataProviders_ReturnsDataProvidersListNull()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(repo => repo.GetAllDataProviders(parameter, trackChange))
+                    .ReturnsAsync(value: null);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(0);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetAllDataProviders(parameter);
+            // Assert
+            Assert.Equal(0, result.Count());
             Assert.IsAssignableFrom<PagedList<DataProviderDetailsResponseDTO>>(result);
         }
 
@@ -516,10 +577,60 @@ namespace UnitTests.Application.Tests
         }
 
         [Fact]
+        public async Task UserNotLoggedIn_UpdateDataProvider_ReturnsUserNotFoundException()
+        {
+            // Arrange
+            bool trackChange = true;
+            int id = 1001;
+            var request = new DataProviderUpdateRequestDTO();
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
+                                        .ReturnsAsync(dataProvidersTestData.First());
+
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Object);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync());
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.UpdateDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task UpdateDataProvider_ReturnsNotFoundDataProviderException()
+        {
+            // Arrange
+            bool trackChange = true;
+            int id = 9999;
+            var request = new DataProviderUpdateRequestDTO();
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { DataProviderId = 1001, Role = Role.CarDealer });
+            mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
+                                        .ReturnsAsync(value: null);
+
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Object);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync());
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.UpdateDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
         public async Task DeleteDataProvider_ReturnsNotFoundException()
         {
             // Arrange
-            bool trackChange = false;
+            bool trackChange = true;
             int id = 1001;
             var mockRepo = new Mock<IDataProviderRepository>();
             mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
@@ -536,6 +647,466 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.DeleteDataProvider(id);
             // Assert
             await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task DeleteDataProvider_ReturnsTrue()
+        {
+            // Arrange
+            bool trackChange = true;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+            .ReturnsAsync(new User { DataProviderId = 1001 });
+            mockRepo.Setup(repo => repo.GetDataProvider(id, trackChange))
+                    .ReturnsAsync(dataProvidersTestData.First());
+            mockRepo.Setup(repo => repo.SaveAsync());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.DeleteDataProvider(id);
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ContactDataProvider_ReturnsTrue()
+        {
+            DataProviderContactCreateRequestDTO request = new DataProviderContactCreateRequestDTO();
+            request.Email = "Test@gmail.com";
+            request.PhoneNumber = "Test";
+            request.FirstName = "Test";
+            request.LastName = "Test";
+            request.VinId = "ABCHHFASHFHASFH20";
+            request.ZipCode = "10000";
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockCarRepository.Setup(repo => repo.GetCarIncludeDataProviderFromVinId(request.VinId, trackChange))
+                                    .ReturnsAsync(carsTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.ContactDataProvider(request);
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ContactDataProvider_ReturnsCarNotFoundException()
+        {
+            DataProviderContactCreateRequestDTO request = new DataProviderContactCreateRequestDTO();
+            request.Email = "Test@gmail.com";
+            request.PhoneNumber = "Test";
+            request.FirstName = "Test";
+            request.LastName = "Test";
+            request.VinId = "ABCHHFASHFHASFH20";
+            request.ZipCode = "10000";
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockCarRepository.Setup(repo => repo.GetCarIncludeDataProviderFromVinId(request.VinId, trackChange))
+                                    .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.ContactDataProvider(request);
+            // Assert
+            await Assert.ThrowsAsync<CarNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task GetReviews_ReturnsReviewsList()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            DataProviderReviewParameter parameter = new DataProviderReviewParameter();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockReviewRepository.Setup(repo => repo.GetAllReview(parameter, trackChange))
+                    .ReturnsAsync(reviewsTestData);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(3);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetAllReview(parameter);
+            // Assert
+            Assert.Equal(1, result.Count());
+            Assert.IsAssignableFrom<PagedList<DataProviderReviewsResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetReviews_ReturnsReviewsListNull()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            DataProviderReviewParameter parameter = new DataProviderReviewParameter();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockReviewRepository.Setup(repo => repo.GetAllReview(parameter, trackChange))
+                    .ReturnsAsync(value: null);
+            mockRepo.Setup(repo => repo.CountAll()).ReturnsAsync(0);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetAllReview(parameter);
+            // Assert
+            Assert.Equal(0, result.Count());
+            Assert.IsAssignableFrom<PagedList<DataProviderReviewsResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetReview_ReturnsReview()
+        {
+            // Arrange
+            bool trackChange = false;
+            string userId = "test";
+            int dataProviderId = 1;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+            .ReturnsAsync(new User { Role = Role.User });
+            mockReviewRepository.Setup(repo => repo.GetReview(userId, dataProviderId, trackChange))
+                .ReturnsAsync(reviewsTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.GetReview(userId, dataProviderId);
+            // Asserts
+            Assert.IsAssignableFrom<DataProviderReviewsResponseDTO>(result);
+            Assert.Equal(userId, result.UserId);
+        }
+
+        [Fact]
+        public async Task GetReview_ReturnsReviewNotFoundException()
+        {
+            // Arrange
+            bool trackChange = false;
+            string userId = "test";
+            int dataProviderId = 1;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+            .ReturnsAsync(new User { Role = Role.User });
+            mockReviewRepository.Setup(repo => repo.GetReview(userId, dataProviderId, trackChange))
+                .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.GetReview(userId, dataProviderId);
+            // Assert
+            await Assert.ThrowsAsync<ReviewNotFoundException>(act);
+        }
+
+
+        [Fact]
+        public async Task ReviewDataProvider_ReturnsDataProviderNotFoundException()
+        {
+            DataProviderReviewCreateRequestDTO request = new DataProviderReviewCreateRequestDTO();
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.ReviewDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task ReviewDataProvider_ReturnsTrue()
+        {
+            DataProviderReviewCreateRequestDTO request = new DataProviderReviewCreateRequestDTO();
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Role = Role.User });
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.ReviewDataProvider(id, request);
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ReviewDataProvider_ReturnUserNotFoundException()
+        {
+            DataProviderReviewCreateRequestDTO request = new DataProviderReviewCreateRequestDTO();
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.ReviewDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task EditReviewDataProvider_ReturnsDataProviderNotFoundException()
+        {
+            DataProviderReviewUpdateRequestDTO request = new DataProviderReviewUpdateRequestDTO();
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.EditReviewDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task EditReviewDataProvider_ReturnsTrue()
+        {
+            DataProviderReviewUpdateRequestDTO request = new DataProviderReviewUpdateRequestDTO();
+            // Arrange
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, false))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            mockReviewRepository.Setup(x => x.GetReview(userId, id, true))
+                        .ReturnsAsync(reviewsTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.EditReviewDataProvider(id, request);
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task EditReviewDataProvider_ReturnUserNotFoundException()
+        {
+            DataProviderReviewUpdateRequestDTO request = new DataProviderReviewUpdateRequestDTO();
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.EditReviewDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(act);
+        }
+
+
+        [Fact]
+        public async Task EditReviewDataProvider_ReturnsOldReviewNotExistException()
+        {
+            DataProviderReviewUpdateRequestDTO request = new DataProviderReviewUpdateRequestDTO();
+            // Arrange
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, false))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            mockReviewRepository.Setup(x => x.GetReview(userId, id, true))
+                        .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.EditReviewDataProvider(id, request);
+            // Assert
+            await Assert.ThrowsAsync<OldReviewNotExistException>(act);
+        }
+
+        [Fact]
+        public async Task DeleteReviewDataProvider_ReturnsDataProviderNotFoundException()
+        {
+            // Arrange
+            bool trackChange = false;
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, trackChange))
+                        .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.DeleteReviewDataProvider(id, userId);
+            // Assert
+            await Assert.ThrowsAsync<DataProviderNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task DeleteReviewDataProvider_ReturnsTrue()
+        {
+            // Arrange
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, false))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            mockReviewRepository.Setup(x => x.GetReview(userId, id, true))
+                        .ReturnsAsync(reviewsTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            var result = await service.DeleteReviewDataProvider(id, userId);
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task DeleteReviewDataProvider_ReturnUserNotFoundException()
+        {
+            // Arrange
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockRepo.Setup(x => x.GetDataProvider(id, false))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            mockReviewRepository.Setup(x => x.GetReview(userId, id, true))
+            .ReturnsAsync(reviewsTestData.First());
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.DeleteReviewDataProvider(id, userId);
+            // Assert
+            await Assert.ThrowsAsync<UserNotFoundException>(act);
+        }
+
+        [Fact]
+        public async Task DeleteReviewDataProvider_ReturnsOldReviewNotExistException()
+        {
+            // Arrange
+            int id = 1001;
+            string userId = "test";
+            var mockRepo = new Mock<IDataProviderRepository>();
+            mockAuthenticationService.Setup(x => x.GetCurrentUserAsync())
+                        .ReturnsAsync(new User { Id = "test" });
+            mockRepo.Setup(x => x.GetDataProvider(id, false))
+                        .ReturnsAsync(dataProvidersTestData.First());
+            mockReviewRepository.Setup(x => x.GetReview(userId, id, true))
+                        .ReturnsAsync(value: null);
+            //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //mockUnitOfWork.Setup(uow => uow.DataProviderRepository)
+            //              .Returns(mockRepo.Obje;ct);
+            //mockUnitOfWork.Setup(uow => uow.SaveAsync())
+            var service = new DataProviderService(mockRepo.Object, mapper, mockService.Object,
+                mockEmailService.Object, mockCarRepository.Object, mockAuthenticationService.Object,
+                mockReviewRepository.Object);
+            // Act
+            Func<Task> act = () => service.DeleteReviewDataProvider(id, userId);
+            // Assert
+            await Assert.ThrowsAsync<OldReviewNotExistException>(act);
         }
     }
 }

@@ -103,7 +103,7 @@ export async function AddRequest(data: UsersRequest, token: string): Promise<API
     }
 }
 
-export async function ResponseRequest(data: AdminRequest, token: string): Promise<APIResponse> {
+export async function ResponseRequest(data: AdminRequest, token: string, connectAPIError: string, unknownError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/Request/${data.id}`,
             {
@@ -112,18 +112,19 @@ export async function ResponseRequest(data: AdminRequest, token: string): Promis
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Edit Error!: ", error)
+        console.log(axiosError)
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: unknownError }
         }
     }
 }

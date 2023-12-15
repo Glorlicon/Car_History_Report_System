@@ -170,7 +170,7 @@ function ManufacturerCarRecallList() {
         } else {
             setRecallList(CarRecallReponse.data)
             setModelList(carModelResponse.data)
-            setPaging(CarRecallReponse.pages)
+            setPaging(carModelResponse.pages)
         }
         setLoading(false)
     }
