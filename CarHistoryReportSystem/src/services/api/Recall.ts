@@ -20,7 +20,7 @@ export async function ListManufaturerCarModels(id: number, token: string): Promi
     }
 }
 
-export async function AddCarRecall(data: CarRecalls, token: string): Promise<APIResponse> {
+export async function AddCarRecall(data: CarRecalls, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     console.log("Data: ", data)
     try {
         const response = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/CarRecall`,
@@ -29,7 +29,8 @@ export async function AddCarRecall(data: CarRecalls, token: string): Promise<API
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -38,9 +39,9 @@ export async function AddCarRecall(data: CarRecalls, token: string): Promise<API
         const axiosError = error as AxiosError
         console.log("Add Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

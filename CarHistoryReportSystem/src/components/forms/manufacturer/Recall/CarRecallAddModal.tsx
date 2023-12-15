@@ -15,15 +15,21 @@ interface CarRecallAddModalCapacityProps {
     recall: CarRecalls,
     models?: CarModel[],
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
+    handleDateChange: (date: string, type: string) => void
 }
 
 const CarRecallAddModal: React.FC<CarRecallAddModalCapacityProps> = ({
     recall,
     models,
-    handleInputChange
+    handleInputChange,
+    handleDateChange
 }) => {
     const { t, i18n } = useTranslation();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const handleFormatDateChange = (value: Dayjs, type: string) => {
+        let newDate = moment(value.toDate()).format('YYYY-MM-DD');
+        handleDateChange(newDate, type)
+    }
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, []);
@@ -41,7 +47,14 @@ const CarRecallAddModal: React.FC<CarRecallAddModalCapacityProps> = ({
             <div className="pol-crash-form-column">
                     <label>{t('Description')}</label>
                     <Textarea name="description" value={recall?.description} onChange={handleInputChange} />
-                </div>
+            </div>
+            <div className="pol-crash-form-column">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DatePicker', 'DatePicker']}>
+                        <DatePicker label={t('Recall Date')} defaultValue={dayjs(recall.recallDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'recallDate') }} />
+                    </DemoContainer>
+                </LocalizationProvider>
+            </div>
         </>
     );
 }

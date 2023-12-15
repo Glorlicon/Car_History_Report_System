@@ -134,11 +134,6 @@ function ManufacturerCarModelList() {
             }
         ]
     })
-    const [newRecall, setNewRecall] = useState<CarRecalls>({
-        modelId: "",
-        description: "",
-        recallDate: new Date()
-    })
 
     const validateCarModel = (model: CarModel): boolean => {
         if (!model.modelID) {
@@ -198,7 +193,12 @@ function ManufacturerCarModelList() {
 
     const validateCarRecall = (model: CarRecalls | null): boolean => {
         if (!model?.modelId) {
-            setAddError("Model ID must be filled out");
+            setAddError(t('Model ID must be filled out'));
+            setOpenError(true)
+            return false;
+        }
+        if (!model?.recallDate) {
+            setAddError(t('Recall Date must be filled out'));
             setOpenError(true)
             return false;
         }
@@ -218,6 +218,11 @@ function ManufacturerCarModelList() {
                     releasedDate: date,
                 });
             }
+        } else if (type === 'recallDate' && addRecalModel) {
+            setAddRecallModel({
+                ...addRecalModel,
+                recallDate: date
+            })
         }
     }
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -364,8 +369,9 @@ function ManufacturerCarModelList() {
         if (addRecalModel != null && validateCarRecall(addRecalModel)) {
             setAdding(true);
             setAddError(null);
-            console.log("submitted:", addRecalModel);
-            const response: APIResponse = await AddCarRecall(addRecalModel, token);
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const response: APIResponse = await AddCarRecall(addRecalModel, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -627,7 +633,7 @@ function ManufacturerCarModelList() {
                                                                   <button className="manu-car-model-recall-btn" onClick={() => setAddRecallModel({
                                                                       modelId: row.modelID,
                                                                       description: '',
-                                                                      recallDate: new Date()
+                                                                      recallDate: ''
                                                                   })}>{t('Create Recall')}</button>
                                                                   </div>
                                                               </TableCell>
@@ -843,6 +849,7 @@ function ManufacturerCarModelList() {
                               action="Add"
                               model={addRecalModel}
                               handleInputChange={handleInputChange}
+                              handleDateChange={handleDateChange}
                           />
                           {addError && (
                               <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>

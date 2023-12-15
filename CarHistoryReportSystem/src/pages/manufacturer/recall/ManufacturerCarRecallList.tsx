@@ -56,7 +56,7 @@ function ManufacturerCarRecallList() {
     const [newRecall, setNewRecall] = useState<CarRecalls>({
         modelId: "",
         description: "",
-        recallDate: new Date()
+        recallDate: ""
     })
     const [modelList, setModelList] = useState<CarModel[]>([]);
     const [editRecall, setEditRecall] = useState<CarRecalls | null>(null)
@@ -101,7 +101,7 @@ function ManufacturerCarRecallList() {
                 setNewRecall({
                     modelId: "",
                     description: "",
-                    recallDate: new Date()
+                    recallDate: ""
                 })
                 setShowModal(false);
                 setMessage(t('Add car recall successfully'))
@@ -178,17 +178,16 @@ function ManufacturerCarRecallList() {
         setPage(newPage);
     };
     const handleDateChange = (date: string, type: string) => {
-        let formatDate = new Date(date)
         if (type === 'recallDate') {
             if (editRecall) {
                 setEditRecall({
                     ...editRecall,
-                    recallDate: formatDate
+                    recallDate: date
                 })
             } else {
                 setNewRecall({
                     ...newRecall,
-                    recallDate: formatDate,
+                    recallDate: date,
                 });
             }
         }
@@ -303,7 +302,7 @@ function ManufacturerCarRecallList() {
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
                         <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                            {t('Car Models List')}
+                            {t('Car Recalls List')}
                         </span>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table">
@@ -323,13 +322,13 @@ function ManufacturerCarRecallList() {
                                 <TableBody>
                                     {loading ? (
                                         <TableRow>
-                                            <TableCell colSpan={4}>
+                                            <TableCell colSpan={5}>
                                                 <div className="pol-crash-spinner"></div>
                                             </TableCell>
                                         </TableRow>
                                     ) : error ? (
                                         <TableRow>
-                                            <TableCell colSpan={4}>
+                                            <TableCell colSpan={5}>
                                                 {error}
                                                 <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
                                             </TableCell>
@@ -366,7 +365,7 @@ function ManufacturerCarRecallList() {
                                             );
                                         }) :
                                         <TableRow>
-                                            <TableCell colSpan={4}>
+                                            <TableCell colSpan={5}>
                                                 {t('No car recall found')}
                                             </TableCell>
                                         </TableRow>
@@ -397,7 +396,7 @@ function ManufacturerCarRecallList() {
                             setShowModal(false); setNewRecall({
                                 modelId: "",
                                 description: "",
-                                recallDate: new Date()
+                                recallDate: ""
                             }); setError(''); setAddError('')}}>&times;</span>
                         <h2>{t('Add Car Registration')}</h2>
                         <div className="pol-crash-modal-content-2">
@@ -405,6 +404,7 @@ function ManufacturerCarRecallList() {
                                 recall={newRecall}
                                 models={modelList}
                                 handleInputChange={handleInputChange}
+                                handleDateChange={handleDateChange}
                             />
                             {addError && (
                                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
@@ -430,6 +430,7 @@ function ManufacturerCarRecallList() {
                                 action="Edit"
                                 model={editRecall}
                                 handleInputChange={handleInputChange}
+                                handleDateChange={handleDateChange}
                             />
                             {addError && (
                                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>

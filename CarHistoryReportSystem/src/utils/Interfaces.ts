@@ -300,20 +300,20 @@ export interface CarOwner {
 }
 
 export interface CarServiceHistory {
-    id: number;
+    id?: number;
     carId: string;
-    source: string;
-    otherServices: string;
+    source?: string;
+    otherServices?: string;
     serviceTime: string;
     reportDate: string;
     services: number;
     servicesName: string;
-    note: string;
+    note?: string;
     odometer: number;
-    createdByUserId: string;
-    modifiedByUserId: string;
-    createdTime: string;
-    lastModified: string;
+    createdByUserId?: string;
+    modifiedByUserId?: string;
+    createdTime?: string;
+    lastModified?: string;
 }
 
 
@@ -420,7 +420,7 @@ export interface CarRecalls {
     id?: number
     modelId: string
     description: string
-    recallDate?: Date
+    recallDate?: string
 }
 
 export interface RecallStatus {
@@ -713,4 +713,10 @@ export interface DataProviderSearchForm {
     name: string,
     email?: string,
     sortByName: number,
+}
+
+export interface ServiceSearchParams {
+    carId: string
+    serviceTimeStart: string
+    serviceTimeEnd: string
 }
