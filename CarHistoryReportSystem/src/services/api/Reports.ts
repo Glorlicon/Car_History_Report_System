@@ -1,21 +1,21 @@
 import axios, { AxiosError } from "axios";
 import { AddReport, APIResponse, Order } from "../../utils/Interfaces";
 
-export async function GetReport(vin: string, token: string, date: string): Promise<APIResponse> {
+export async function GetReport(vin: string, token: string, date: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarReport/${vin}/${date}`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             })
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
-            console.log(axiosError)
             return { error: (axiosError.response?.data as any).error[0] }
         }
     }
