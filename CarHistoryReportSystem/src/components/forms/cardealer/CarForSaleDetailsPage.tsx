@@ -28,7 +28,6 @@ const CarForSaleDetailsPage: React.FC<CarForSaleDetailsPageProps> = ({
     const edit = action === "Edit"
     const { t, i18n } = useTranslation()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    const [fields, setFields] = useState([""]);
 
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)

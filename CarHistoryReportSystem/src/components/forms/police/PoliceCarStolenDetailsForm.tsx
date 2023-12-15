@@ -74,13 +74,7 @@ const PoliceCarStolenDetailsForm: React.FC<PoliceCarStolenDetailsFormProps> = ({
               <select name="status" value={model.status ? model.status : CAR_STOLEN_STATUS.Stolen} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height:'40px' }}>
                       <option value={CAR_STOLEN_STATUS.Stolen}>{t('Stolen')}</option>
                       <option value={CAR_STOLEN_STATUS.Found}>{t('Found')}</option>
-                  </select>
-              {/*<Autocomplete*/}
-              {/*    disablePortal*/}
-              {/*    options={[{ label: t('Stolen') }, { label: t('Found') }]}*/}
-              {/*    getOptionLabel={(option) => option.label}*/}
-              {/*    renderInput={(params) => <TextField {...params} type='text' />}*/}
-              {/*/>*/}
+              </select>
               </div>
       </>
   );

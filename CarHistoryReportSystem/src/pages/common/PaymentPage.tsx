@@ -101,6 +101,7 @@ function PaymentPage() {
                   <li>{t('Car Inspection History')}</li>
                   <li>{t('Car Insurance History')}</li>
                   <li>{t('Car Stolen Accidents History')}</li>
+                  <li>{t('Car Registration History')}</li>
               </ul>
           </div>
           <div className="payment-forms">

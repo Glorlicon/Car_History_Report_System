@@ -9,14 +9,38 @@ import { RootState } from '../../store/State';
 import { clearVerifyToken } from '../../store/authSlice';
 import car from '../../car.jpg'
 import { CAR_SIDES } from '../../utils/const/CarSides';
+import { useTranslation } from 'react-i18next';
+import GroupIcon from '@mui/icons-material/Group';
+import CarCrashIcon from '@mui/icons-material/CarCrash';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import CachedIcon from '@mui/icons-material/Cached';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+interface GeneralColumn {
+    id: 'carInformation' | 'icons' | 'details';
+    label: string;
+    minWidth?: string;
+}
 function CarReportPage() {
     type RouteParams = {
         vin: string
         date: string
     }
+    const generalColumns: readonly GeneralColumn[] = [
+        { id: 'carInformation', label: 'ID', minWidth: '40%' },
+        { id: 'icons', label: 'ID', minWidth: '10%' },
+        { id: 'details', label: 'ID', minWidth: '50%' }
+    ]
+    const { t, i18n } = useTranslation();
     const verifyToken = useSelector((state: RootState) => state.auth.verifyToken) as unknown as string
     const token = useSelector((state: RootState) => state.auth.token)
     const dispatch = useDispatch()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const { vin, date } = useParams<RouteParams>()
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -63,26 +87,30 @@ function CarReportPage() {
         setError(null); 
         let reportDate = date ? date : new Date().toISOString().split('T')[0]
         let response: APIResponse
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         if (token) {
-            response = await GetReport(vin as string, token, reportDate)
+            response = await GetReport(vin as string, token, reportDate, connectAPIError, language)
         } else {
-            response = await GetReport(vin as string, verifyToken, reportDate)
+            response = await GetReport(vin as string, verifyToken, reportDate, connectAPIError, language)
         }
         setLoading(false);
         if (response.error) {
             setError(response.error);
         } else {
             setReport(response.data)
+            console.log(response.data)
             dispatch(clearVerifyToken())
         }
     }
     useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
         fetchData()
     }, [])
 
   return (
       <div className="car-report-details-page">
-          <button onClick={handleDownloadPdf}>Export PDF</button>
+          <button onClick={handleDownloadPdf} className="add-pol-crash-btn">{t('Export PDF')}</button>
           <div className="car-report-details-container" id="report">
               {loading ? (
                   <div className="car-report-details-spinner"></div>
@@ -93,7 +121,7 @@ function CarReportPage() {
                       </>
               ) : (
                   <>
-                      <h3>Car General Information</h3>
+                      <h3>{t('Car General Information')}</h3>
                       <div className="car-report-general-information">
                           <div className="car-report-general-information-details">
                               <h4>Vehicle information:</h4>
@@ -107,16 +135,17 @@ function CarReportPage() {
                               <p>Car Model: {report?.modelId}</p>
                           </div>
                           <div className="car-report-general-information-history">
-                              <a>{report?.numberOfAccidentRecords === 0 ? "No accident recorded" : `${report?.numberOfAccidentRecords} accidents recorded`}</a>
-                              <a>{report?.numberOfOpenRecalls === 0 ? "No recalls recorded" : `${report?.numberOfOpenRecalls} recalls recorded`}</a>
-                              <a>{report?.numberOfOwners === 0 ? "No ownership changes recorded" : `${report?.numberOfOwners} ownership changes recorded`}</a>
-                              <a>{report?.numberOfServiceHistoryRecords === 0 ? "No services performed recorded" : `${report?.numberOfServiceHistoryRecords} services performed recorded`}</a>
+                              <a><CarCrashIcon style={{color:'red'}}/>{report?.numberOfAccidentRecords === 0 ? "No accident recorded" : `${report?.numberOfAccidentRecords} accidents recorded`}</a>
+                              <a><CachedIcon style={{color:'red'}}/>{report?.numberOfOpenRecalls === 0 ? "No recalls recorded" : `${report?.numberOfOpenRecalls} recalls recorded`}</a>
+                              <a><GroupIcon style={{color:'red'}}/> {report?.numberOfOwners === 0 ? "No ownership changes recorded" : `${report?.numberOfOwners} ownership changes recorded`}</a>
+                              <a><ConstructionIcon style={{color:'red'}}/>{report?.numberOfServiceHistoryRecords === 0 ? "No services performed recorded" : `${report?.numberOfServiceHistoryRecords} services performed recorded`}</a>
                               <a>{report?.numberOfStolenRecords === 0 ? "No stolen recorded" : `${report?.numberOfStolenRecords} stolen recorded`}</a>
                           </div>
                       </div>
+                      
 
                       <div className="car-report-service-history">
-                          <h3>Car Recall History</h3>
+                          <h3>{t('Car Recall History')}</h3>
                           <table className="car-report-service-history-table">
                               <thead>
                                   <tr>
@@ -144,7 +173,7 @@ function CarReportPage() {
                           </div>
 
                       <div className="car-report-service-history">
-                          <h3>Car Service History</h3>
+                          <h3>{t('Car Service History')}</h3>
                           <table className="car-report-service-history-table">
                               <thead>
                                   <tr>
@@ -201,7 +230,7 @@ function CarReportPage() {
 
 
                           <div className="car-report-service-history">
-                              <h3>Car Accident History</h3>
+                              <h3>{t('Car Accident History')}</h3>
                               <table className="car-report-service-history-table">
                                   <thead>
                                       <tr>
@@ -279,7 +308,7 @@ function CarReportPage() {
 
 
                           <div className="car-report-service-history">
-                              <h3>Car Inspection History</h3>
+                              <h3>{t('Car Inspection History')}</h3>
                               <table className="car-report-service-history-table">
                                   <thead>
                                       <tr>
@@ -347,7 +376,7 @@ function CarReportPage() {
 
 
                           <div className="car-report-service-history">
-                              <h3>Car Insurance History</h3>
+                              <h3>{t('Car Insurance History')}</h3>
                               <table className="car-report-service-history-table">
                                   <thead>
                                       <tr>
@@ -403,7 +432,7 @@ function CarReportPage() {
                           </div>
 
                           <div className="car-report-service-history">
-                              <h3>Car Stolen History</h3>
+                              <h3>{t('Car Stolen Accidents History')}</h3>
                               <table className="car-report-service-history-table">
                                   <thead>
                                       <tr>
@@ -459,7 +488,7 @@ function CarReportPage() {
                           </div>
 
                           <div className="car-report-service-history">
-                              <h3>Car Registration History</h3>
+                              <h3>{t('Car Registration History')}</h3>
                               <table className="car-report-service-history-table">
                                   <thead>
                                       <tr>
