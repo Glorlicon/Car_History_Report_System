@@ -23,7 +23,6 @@ export const AdminNavigation = [
 ]
 
 export const ManufacturerNavigation = [
-    { label: 'Manufacturer Details', link: '/manufacturer/details' },
     { label: 'Car Model List', link: '/manufacturer/car-models' },
     { label: 'Recall List', link: '/manufacturer/recalls' },
     { label: 'Car History Report', link: '/manufacturer/reports' },
