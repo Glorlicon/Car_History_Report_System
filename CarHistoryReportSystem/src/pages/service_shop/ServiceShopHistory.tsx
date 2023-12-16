@@ -7,8 +7,6 @@ import '../../styles/ManufacturerCarModels.css'
 import { CreateServiceHistory, EditCarServices, GetCarRecalls, ListServices, ListServiceShopHistory, UpdateCarRecallStatus } from '../../services/api/CarServiceHistory';
 import CarServiceModal from '../../components/forms/carservice/CarServiceModal';
 import { isValidVIN } from '../../utils/Validators';
-import CarServiceSearchCaRecall from '../../components/forms/carservice/CarServiceSearchCaRecall';
-import CarServiceRecallStatus from '../../components/forms/carservice/CarServiceRecallStatus';
 import { useTranslation } from 'react-i18next';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -25,7 +23,6 @@ import TableRow from '@mui/material/TableRow';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-
 interface Column {
     id: 'id' | 'carId' | 'servicesName' | 'otherServices' | 'serviceTime' | 'reportDate' | 'odometer' | 'note' | 'action';
     label: string;
@@ -35,16 +32,20 @@ interface Column {
 }
 function ServiceShopHistory() {
     const { t, i18n } = useTranslation();
+    const stickyCellStyle = {
+        position: "sticky",
+        right: 0,
+    };
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
-        { id: 'carId', label: t('VIN'), minWidth: 100 },
-        { id: 'servicesName', label: t('Main Services'), minWidth: 100 },
-        { id: 'otherServices', label: t('Other Services'), minWidth: 100 },
-        { id: 'serviceTime', label: t('Service Time'), minWidth: 100 },
-        { id: 'reportDate', label: t('Report Date'), minWidth: 100 },
-        { id: 'odometer', label: t('Odometer'), minWidth: 100 },
-        { id: 'note', label: t('Note'), minWidth: 100 },
-        { id: 'action', label: t('Actions'), minWidth: 100 }
+        { id: 'carId', label: t('VIN'), minWidth: 50 },
+        { id: 'servicesName', label: t('Main Services'), minWidth: 50 },
+        { id: 'otherServices', label: t('Other Services'), minWidth: 50 },
+        { id: 'serviceTime', label: t('Service Time'), minWidth: 50 },
+        { id: 'reportDate', label: t('Report Date'), minWidth: 50 },
+        { id: 'odometer', label: t('Odometer'), minWidth: 50 },
+        { id: 'note', label: t('Note'), minWidth: 50 },
+        { id: 'action', label: t('Actions'), minWidth: 50 }
     ];
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [carServiceHistory, setCarServiceHistory] = useState<CarServiceHistory[]>([]);
@@ -250,7 +251,7 @@ function ServiceShopHistory() {
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-            const response: APIResponse = await CreateServiceHistory(editCarService, token, connectAPIError, language);
+            const response: APIResponse = await EditCarServices(editCarService, token, connectAPIError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
@@ -276,7 +277,7 @@ function ServiceShopHistory() {
                 await Promise.all(selectedRecalls.map(async (recall) => {
                     let res: APIResponse = await UpdateCarRecallStatus(newServiceHistory.carId, recall.carRecallId, token, connectAPIError, language)
                     if (!res.error) {
-                        temp.note = temp.note + `${t(' Repair Recall ')} ${recall.carRecallId}`
+                        temp.note = temp.note + `${t(' Repair Recall ')}${recall.carRecallId}`
                     }
                 }))
             }
@@ -353,12 +354,12 @@ function ServiceShopHistory() {
 
     return (
         <div className="pol-crash-list-page">
-            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose}  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop:'200px' }}>
                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                     {message}
                 </MuiAlert>
             </Snackbar>
-            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose}  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
                     {error ? error : addError}
                 </MuiAlert>
@@ -431,7 +432,7 @@ function ServiceShopHistory() {
                                 onClick={handleResetFilters}
                             >
                                 {t('Reset Filters')}
-                            </button>
+                                </button>
                         </div>
                     </AccordionDetails>
                 </Accordion>
@@ -446,15 +447,30 @@ function ServiceShopHistory() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column, index) => (
-                                            <TableCell
-                                                key={column.id + '-' + index}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                            >
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
+                                        {columns.map((column, index) => {
+                                            if (column.id !== 'action') {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell
+                                                        sx={stickyCellStyle}
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -503,7 +519,7 @@ function ServiceShopHistory() {
                                                             )
                                                         }  else if (column.id === 'action') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
 
                                                                     <button onClick={() => { setEditCarService(row) }} disabled={adding} className="pol-crash-action-button">
                                                                             {t('Edit1')} &#x270E;

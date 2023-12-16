@@ -35,6 +35,10 @@ interface Column {
 
 function AdminDataProviderList() {
     const { t, i18n } = useTranslation()
+    const stickyCellStyle = {
+        position: "sticky",
+        right: 0,
+    };
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
         { id: 'name', label: t('Name'), minWidth: 100 },
@@ -216,12 +220,12 @@ function AdminDataProviderList() {
     }, [resetTrigger]);
   return (
       <div className="pol-crash-list-page">
-          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
               <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                   {message}
               </MuiAlert>
           </Snackbar>
-          <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+          <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
               <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
                   {error ? error : addError}
               </MuiAlert>
@@ -312,15 +316,30 @@ function AdminDataProviderList() {
                           <Table stickyHeader aria-label="sticky table">
                               <TableHead>
                                   <TableRow>
-                                      {columns.map((column, index) => (
-                                          <TableCell
-                                              key={column.id + '-' + index}
-                                              align={column.align}
-                                              style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                          >
-                                              {column.label}
-                                          </TableCell>
-                                      ))}
+                                      {columns.map((column, index) => {
+                                          if (column.id !== 'actions') {
+                                              return (
+                                                  <TableCell
+                                                      key={column.id + '-' + index}
+                                                      align={column.align}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                  >
+                                                      {column.label}
+                                                  </TableCell>
+                                              )
+                                          } else {
+                                              return (
+                                                  <TableCell
+                                                      sx={stickyCellStyle}
+                                                      key={column.id + '-' + index}
+                                                      align={column.align}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                  >
+                                                      {column.label}
+                                                  </TableCell>
+                                              )
+                                          }
+                                      })}
                                   </TableRow>
                               </TableHead>
                               <TableBody>
@@ -351,7 +370,7 @@ function AdminDataProviderList() {
                                                           )
                                                       }  else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <button onClick={() => { setEditDp(row) }} disabled={adding} className="pol-crash-action-button">
                                                                           {t('Edit1')} &#x270E;
                                                                       </button>

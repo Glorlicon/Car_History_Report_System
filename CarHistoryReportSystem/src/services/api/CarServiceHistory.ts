@@ -55,7 +55,6 @@ export async function CreateServiceHistory(data: CarServiceHistory, token: strin
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Add Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: connectAPIError }
         } else {
@@ -64,24 +63,21 @@ export async function CreateServiceHistory(data: CarServiceHistory, token: strin
     }
 }
 
-export async function EditCarServices(data: CarServices, token: string): Promise<APIResponse> {
+export async function EditCarServices(data: CarServiceHistory, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
-        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory/${data.id}`,
-            {
-                ...data,
-            },
+        const response = await axios.put(`${process.env.REACT_APP_BASE_API_URL}/api/CarServiceHistory/${data.id}`,data,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
-        console.log("Edit Error!: ", error)
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
+            return { error: connectAPIError }
         } else {
             return { error: (axiosError.response?.data as any).error[0] }
         }

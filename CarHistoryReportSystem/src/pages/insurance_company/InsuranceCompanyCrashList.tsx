@@ -40,6 +40,10 @@ interface Column {
 function InsuranceCompanyCrashList() {
     const navigate = useNavigate()
     const { t, i18n } = useTranslation()
+    const stickyCellStyle = {
+        position: "sticky",
+        right: 0,
+    };
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
         { id: 'carId', label: t('VIN'), minWidth: 100 },
@@ -250,15 +254,30 @@ function InsuranceCompanyCrashList() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column,index) => (
-                                            <TableCell
-                                                key={column.id + '-' + index}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                            >
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
+                                        {columns.map((column, index) => {
+                                            if (column.id !== 'actions') {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell
+                                                        sx={stickyCellStyle}
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -276,9 +295,9 @@ function InsuranceCompanyCrashList() {
                                             </TableCell>
                                         </TableRow>
                                     ) : carCrashList.length > 0 ? carCrashList
-                                        .map((row, index) => {
+                                        .map((row, index1) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId+'-'+index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId+'-'+index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
                                                     {columns.map((column, index) => {
                                                         if (column.id !== 'actions' && column.id !== 'damageLocation') {
                                                             let value = row[column.id]
@@ -296,7 +315,7 @@ function InsuranceCompanyCrashList() {
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                     <div className="pol-crash-modal-content-2-buttons">
                                                                     <button onClick={() => { setShowCarCrashReport(row) }} className="pol-crash-action-button">
                                                                         {t('Details')} <InfoIcon/>

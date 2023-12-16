@@ -87,6 +87,7 @@ export async function Edit(id: string, data: User, token: string, connectAPIErro
                 'Accept-Language': `${language}`
             }
         })
+        console.log("Data", response)
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError

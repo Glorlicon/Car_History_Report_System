@@ -36,6 +36,10 @@ interface Column {
 }
 function ManufacturerCarRecallList() {
     const { t, i18n } = useTranslation();
+    const stickyCellStyle = {
+        position: "sticky",
+        right: 0,
+    };
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
         { id: 'modelId', label: t('ModelID'), minWidth: 100 },
@@ -215,12 +219,12 @@ function ManufacturerCarRecallList() {
     }, [resetTrigger]);
     return (
         <div className="pol-crash-list-page">
-            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                     {message}
                 </MuiAlert>
             </Snackbar>
-            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
                     {error ? error : addError}
                 </MuiAlert>
@@ -308,15 +312,30 @@ function ManufacturerCarRecallList() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column, index) => (
-                                            <TableCell
-                                                key={column.id + '-' + index}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                            >
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
+                                        {columns.map((column, index) => {
+                                            if (column.id !== 'actions') {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell
+                                                        sx={stickyCellStyle}
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -334,9 +353,9 @@ function ManufacturerCarRecallList() {
                                             </TableCell>
                                         </TableRow>
                                     ) : recallList.length > 0 ? recallList
-                                        .map((row, index) => {
+                                        .map((row, index1) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id + '-' + index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
                                                     {columns.map((column, index) => {
                                                         if (column.id !== 'actions' && column.id !== 'recallDate') {
                                                             let value = row[column.id]
@@ -353,7 +372,7 @@ function ManufacturerCarRecallList() {
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                         <button onClick={() => { setEditRecall(row); }} disabled={adding} className="pol-crash-action-button">
                                                                             {t('Edit1')} &#x270E;
                                                                         </button>
