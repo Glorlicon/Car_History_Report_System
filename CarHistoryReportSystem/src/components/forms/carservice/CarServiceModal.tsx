@@ -14,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment from "moment";
 import MuiAlert from '@mui/material/Alert';
+import ListItemText from '@mui/material/ListItemText';
 interface CarServiceModalCapacityProps {
     action: "Add" | "Edit"
     model: CarServiceHistory
@@ -88,12 +89,13 @@ const CarServiceModal: React.FC<CarServiceModalCapacityProps> = ({
                     .map((field, index) => (
                     <div key={`service`+index}>
                         <TextField
-                            style={{ width: '80%', color:'black' }}
+                            style={{ width: '90%', color:'black' }}
                             value={t(field.name)}
                             className='Mui-disabled'
-                        />
-                        <IconButton onClick={() => {handleRemoveService(field.value)}} style={{ width: '20%' }} disabled={edit}>
-                            {!edit &&  (model.services & 16) !== 0 && <DeleteIcon />}
+                            />
+                        {!(edit &&  (field.value === 16))}
+                        <IconButton onClick={() => {if (!(edit &&  (field.value === 16))) handleRemoveService(field.value)}} style={{ width: '10%' }} >
+                                {!(edit && (field.value === 16)) &&<DeleteIcon />}
                         </IconButton>
                     </div>
                 ))}
@@ -117,11 +119,11 @@ const CarServiceModal: React.FC<CarServiceModalCapacityProps> = ({
                             .map((recall, index) => (
                                 <div key={`recall`+index}>
                                     <TextField
-                                        style={{ width: '80%', color: 'black' }}
+                                        style={{ width: '90%', color: 'black' }}
                                         value={recall.description}
                                         className='Mui-disabled'
                                     />
-                                    <IconButton onClick={() => { handleRemoveRecall(index) }} style={{ width: '20%' }} disabled={edit}>
+                                    <IconButton onClick={() => { handleRemoveRecall(index) }} style={{ width: '10%' }} disabled={edit}>
                                         {!edit && <DeleteIcon />}
                                     </IconButton>
                                 </div>
@@ -152,14 +154,8 @@ const CarServiceModal: React.FC<CarServiceModalCapacityProps> = ({
             </div>
             <div className="pol-crash-form-column">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker', 'DatePicker']}>
+                    <DemoContainer components={['DatePicker', 'DatePicker']} >
                         <DatePicker label={t('Report Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
-                    </DemoContainer>
-                </LocalizationProvider>
-            </div>
-            <div className="pol-crash-form-column">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker', 'DatePicker']}>
                         <DatePicker label={t('Service Date')} defaultValue={dayjs(model.serviceTime)} onChange={(value) => { if (value) handleFormatDateChange(value, 'serviceTime') }} />
                     </DemoContainer>
                 </LocalizationProvider>

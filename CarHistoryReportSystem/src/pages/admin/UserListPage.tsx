@@ -203,7 +203,7 @@ function UserListPage() {
             let connectAPIError = t('Cannot connect to API! Please try again later')
             let unknownError = t('Something went wrong. Please try again')
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-            const response: APIResponse = await Edit(currentId, editingUser, token, connectAPIError, unknownError, language);
+            const response: APIResponse = await Edit(editingUser.id, editingUser, token, connectAPIError, unknownError, language);
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
