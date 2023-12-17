@@ -1,14 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { GetReport } from '../../services/api/Reports';
-import { APIResponse, CarCrash, CarHistoryDetail, CarInspectionDetail, CarInspectionHistory, CarInsurance, CarRecallStatus, CarRegistration, CarReport, CarServiceHistory, CarStolen } from '../../utils/Interfaces';
+import { APIResponse, CarHistoryDetail, CarReport } from '../../utils/Interfaces';
 import '../../styles/CarReportPage.css'
 import generatePDF, { Resolution, Margin, Options } from 'react-to-pdf';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { clearVerifyToken } from '../../store/authSlice';
-import car from '../../car.jpg'
 import { CAR_SIDES } from '../../utils/const/CarSides';
 import { useTranslation } from 'react-i18next';
 import logo from '../../logoCHRS.png'
@@ -43,6 +42,16 @@ function CarReportPage() {
     const getReport = () => document.getElementById('report')
     const handleDownloadPdf = () => {
         generatePDF(getReport, options)
+    }
+
+    function getHistoryDetails(value: string): string | null {
+        if (value === 'Car Service History') return t('Car Serviced')
+        if (value === 'Car Accident History') return t('Accident Reported')
+        if (value === 'Car Inspection History') return t('Inspection Performed')
+        if (value === 'Car Insurance History') return t('Insurance Registered')
+        if (value === 'Car Stolen History') return t('Stolen Accident Reported')
+        if (value === 'Car Registration History') return t('Registration Issued Or Renewed')
+        return null
     }
     function getFuelTypeName(value: number): string | null {
         for (const [key, val] of Object.entries(FUEL_TYPES)) {
@@ -146,11 +155,11 @@ function CarReportPage() {
                     <>
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px' }}>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-                                <img src={logo} style={{ width: '10%', height: '10%', alignSelf: 'center' }} />
-                                <h3 style={{ fontSize: '25px', textAlign: 'center' }}>CHRS Car History Report</h3>
+                                <img src={logo} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
+                                <h3 style={{ fontSize: '25px', textAlign: 'center' }}>{t('CHRS Car History Report')}</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 'auto', alignSelf: 'center' }}>
                                     <a style={{ color: 'gray' }}>
-                                        <span style={{ fontWeight: 'bold', fontStyle: 'oblique' }}>Report Date</span>: {date ? date : new Date().toISOString().split('T')[0]}
+                                        <span style={{ fontWeight: 'bold', fontStyle: 'oblique' }}>{t('Report Date')}</span>: {date ? date : new Date().toISOString().split('T')[0]}
                                     </a>
                                 </div>
                             </div>
@@ -161,15 +170,15 @@ function CarReportPage() {
                                 <a>{getBodyTypeName(report?.model.bodyType)} | {getFuelTypeName(report?.model.fuelType)}</a>
                                 <a>{report.vinId}</a>
                                 <a>
-                                    <span>Country of Assembly: </span>
+                                    <span>{t('Country of Assembly')}: </span>
                                     {report.model.country}
                                 </a>
                                 <a>
-                                    <span>Last Reported Odometer: </span>
+                                    <span>{t('Last Reported Odometer')}: </span>
                                     {report.currentOdometer} KM
                                 </a>
                                 <a>
-                                    <span>Current License Plate Number: </span>
+                                    <span>{t('Current License Plate Number')}: </span>
                                     {report.licensePlateNumber ? report.licensePlateNumber : t('None')}
                                 </a>
                             </div>
@@ -177,28 +186,28 @@ function CarReportPage() {
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '35px', paddingBottom: '15px' }}>
                             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
-                                    <img src={accident} style={{ width: '70%', alignSelf: 'center' }} />
-                                    <a>{report.numberOfAccidentRecords > 0 ? `${report.numberOfAccidentRecords} Accident Records Found` : 'No Accident Records Found'}</a>
+                                    <img src={accident} style={{ width: '70%', alignSelf: 'center' }} alt='' />
+                                    <a>{report.numberOfAccidentRecords > 0 ? `${report.numberOfAccidentRecords} ${t('Accident Records Found')}` : t('No Accident Records Found')}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
-                                    <img src={service} style={{ width: '70%', alignSelf: 'center' }} />
-                                    <a>{report.numberOfServiceHistoryRecords > 0 ? `${report.numberOfServiceHistoryRecords} Service Records Found` : 'No Service Records Found'}</a>
+                                    <img src={service} style={{ width: '70%', alignSelf: 'center' }} alt='' />
+                                    <a>{report.numberOfServiceHistoryRecords > 0 ? `${report.numberOfServiceHistoryRecords} ${t('Service Records Found')}` : t('No Service Records Found')}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
-                                    <img src={owner} style={{ width: '70%', alignSelf: 'center' }} />
-                                    <a>{report.numberOfOwners > 0 ? `${report.numberOfOwners} Past Owners Found` : 'No Ownership Records Found'}</a>
+                                    <img src={owner} style={{ width: '70%', alignSelf: 'center' }} alt='' />
+                                    <a>{report.numberOfOwners > 0 ? `${report.numberOfOwners} ${t('Past Owners Found')}` : t('No Ownership Records Found')}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
-                                    <img src={stolen} style={{ width: '70%', alignSelf: 'center' }} />
-                                    <a>{report.numberOfStolenRecords > 0 ? `${report.numberOfStolenRecords} Stolen Records Found` : 'No Stolen Records Found'}</a>
+                                    <img src={stolen} style={{ width: '70%', alignSelf: 'center' }} alt='' />
+                                    <a>{report.numberOfStolenRecords > 0 ? `${report.numberOfStolenRecords} ${t('Stolen Records Found')}` : t('No Stolen Records Found')}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
-                                    <img src={recall} style={{ width: '70%', alignSelf: 'center' }} />
-                                    <a>{report.numberOfOpenRecalls > 0 ? `${report.numberOfOpenRecalls} Open Recalls Found` : 'No Open Recalls Found'}</a>
+                                    <img src={recall} style={{ width: '70%', alignSelf: 'center' }} alt='' />
+                                    <a>{report.numberOfOpenRecalls > 0 ? `${report.numberOfOpenRecalls} ${t('Open Recalls Found')}` : t('No Open Recalls Found')}</a>
                                 </div>
                             </div>
                         </div>
-                        <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '80%', alignSelf: 'center' }}>
+                        <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '80%', alignSelf: 'center', marginBottom: '5%' }}>
                             {t('This car history report is based on information that was reported and available to CHRS as of')}
                             {date ? date : new Date().toISOString().split('T')[0]}
                             {`. ${t('CHRS receives data records from many sources across Vietnam, and we receive new historical data records every day. There may be other information about this car that has not been reported to CHRS. When buying a used car, we always recommend using a CHRS Car History Report, to make an informed decision')}.`}
@@ -208,13 +217,13 @@ function CarReportPage() {
 
                         <div style={{ paddingTop: '15px', paddingBottom: '15px', backgroundColor: '#fbfbfb' }}>
                             <div style={{ marginLeft: '5%', marginRight: '5%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', color: '#546875', textAlign: 'left' }}>
-                                <h3 style={{ fontSize: '25px', textAlign: 'left' }}>Car History Report</h3>
+                                <h3 style={{ fontSize: '25px', textAlign: 'left' }}>{t('Car History Report')}</h3>
                             </div>
                         </div>
 
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px', borderTop: '1px solid gray' }}>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-                                <img src={recall} style={{ width: '7%', height: '7%', alignSelf: 'center', marginRight: '5px' }} />
+                                <img src={recall} style={{ width: '7%', height: '7%', alignSelf: 'center', marginRight: '5px' }} alt='' />
                                 <h3 style={{ fontSize: '25px', textAlign: 'center' }}>{t('Car Recall History')}</h3>
                             </div>
                         </div>
@@ -225,16 +234,16 @@ function CarReportPage() {
                                     <div style={{ border: '1px solid gray', borderLeft: recall.status === 'Open' ? '5px solid red' : '5px solid green', borderRadius: '5px', boxShadow: '1px 2px #888888', display: 'flex', flexDirection: 'column', margin: '5px', padding: '5px' }}>
                                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                             <a>
-                                                <span style={{ fontWeight: 'bold' }}>Recall #: </span>{recall.carRecallId} | {recall.status}
+                                                <span style={{ fontWeight: 'bold' }}>{t('NoRecall')} #: </span>{recall.carRecallId} | {recall.status === ' Open' ? t('OpenRecall') : t('ClosedRecall')}
                                             </a>
                                             <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 'auto', alignSelf: 'center' }}>
                                                 <a>
-                                                    <span style={{ fontWeight: 'bold' }}>Report Date</span>: {recall.recallDate}
+                                                    <span style={{ fontWeight: 'bold' }}>{t('Report Date')}</span>: {recall.recallDate}
                                                 </a>
                                             </div>
                                         </div>
                                         <a style={{ color: 'gray', textAlign: 'left' }}>
-                                            <span style={{ fontWeight: 'bold', fontStyle: 'oblique' }}>Recall Description</span>
+                                            <span style={{ fontWeight: 'bold', fontStyle: 'oblique' }}>{t('Recall Description')}</span>
                                         </a>
                                         <p style={{ textAlign: 'left' }}>
                                             {recall.description}
@@ -243,7 +252,7 @@ function CarReportPage() {
                                 )
                             }) :
                                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%%', alignSelf: 'center' }}>
-                                    This car doesn't have any recored recalls
+                                    {t("This car doesn't have any recored recalls")}
                                 </MuiAlert>
                             }
                         </div>
@@ -262,12 +271,12 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Details</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Details')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -280,26 +289,26 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {general.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {general.odometer ? general.odometer + 'KM' : ''}
+                                                                {general.odometer ? general.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {general.source}
                                                             </td>
                                                             <td >
-                                                                {general.historyType}
+                                                                {getHistoryDetails(general.historyType)}
                                                             </td>
                                                             <td >
                                                                 {general.note}
@@ -316,13 +325,13 @@ function CarReportPage() {
                                                                 {general.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {general.odometer ? general.odometer + 'KM' : ''}
+                                                                {general.odometer ? general.odometer + ' KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {general.source}
                                                             </td>
                                                             <td>
-                                                                {general.historyType}
+                                                                {getHistoryDetails(general.historyType)}
                                                             </td>
                                                             <td >
                                                                 {general.note}
@@ -336,7 +345,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any records")}
                                 </MuiAlert>
                             }
 
@@ -355,12 +364,12 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Services</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Services')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -373,26 +382,26 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {service.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {service.odometer ? service.odometer + 'KM' : ''}
+                                                                {service.odometer ? service.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {service.source}
                                                             </td>
                                                             <td>
-                                                                <span>Services Performed:</span>
+                                                                <span>{t('Services Performed')}:</span>
                                                                 <ul>
                                                                     {service.servicesName.split(', ').map((s, index) => (
                                                                         <li>{t(s)}</li>
@@ -418,13 +427,13 @@ function CarReportPage() {
                                                                 {service.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {service.odometer ? service.odometer + 'KM' : ''}
+                                                                {service.odometer ? service.odometer + ' KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {service.source}
                                                             </td>
                                                             <td>
-                                                                <span>Services Performed:</span>
+                                                                <span>{t('Services Performed')}:</span>
                                                                 <ul>
                                                                     {service.servicesName.split(', ').map((s, index) => (
                                                                         <li>{t(s)}</li>
@@ -447,7 +456,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any service records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any service records")}
                                 </MuiAlert>
                             }
 
@@ -466,12 +475,12 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Details</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Details')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -484,38 +493,38 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {accident.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {accident.odometer ? accident.odometer + 'KM' : ''}
+                                                                {accident.odometer ? accident.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {accident.source}
                                                             </td>
                                                             <td >
-                                                                <span>Accident Details:</span>
+                                                                <span>{t('Accident Details')}:</span>
                                                                 <ul>
                                                                     <li>
-                                                                        Accident Date: {accident.accidentDate}
+                                                                        {t('Accident Date')}: {accident.accidentDate}
                                                                     </li>
                                                                     <li>
-                                                                        Estimated Severity : {accident.serverity * 100}%
+                                                                        {t('Estimated Severity')}: {accident.serverity * 100}%
                                                                     </li>
                                                                     <li>
-                                                                        Accident Location: {accident.location}
+                                                                        {t('Accident Location')}: {accident.location}
                                                                     </li>
                                                                     <li>
-                                                                        Damaged Car Sides: {getCarSides(accident.damageLocation)}
+                                                                        {t('Damaged Car Sides')}: {getCarSides(accident.damageLocation)}
                                                                     </li>
                                                                 </ul>
                                                             </td>
@@ -534,25 +543,25 @@ function CarReportPage() {
                                                                 {accident.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {accident.odometer ? accident.odometer + 'KM' : ''}
+                                                                {accident.odometer ? accident.odometer + ' KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {accident.source}
                                                             </td>
                                                             <td>
-                                                                <span>Accident Details:</span>
+                                                                <span>{t('Accident Details')}:</span>
                                                                 <ul>
                                                                     <li>
-                                                                        Accident Date: {accident.accidentDate}
+                                                                        {t('Accident Date')}: {accident.accidentDate}
                                                                     </li>
                                                                     <li>
-                                                                        Estimated Severity : {accident.serverity * 100}%
+                                                                        {t('Estimated Severity')}: {accident.serverity * 100}%
                                                                     </li>
                                                                     <li>
-                                                                        Accident Location: {accident.location}
+                                                                        {t('Accident Location')}: {accident.location}
                                                                     </li>
                                                                     <li>
-                                                                        Damaged Car Sides: {getCarSides(accident.damageLocation)}
+                                                                        {t('Damaged Car Sides')}: {getCarSides(accident.damageLocation)}
                                                                     </li>
                                                                 </ul>
                                                             </td>
@@ -568,7 +577,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any accident records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any accident records")}
                                 </MuiAlert>
                             }
 
@@ -587,12 +596,12 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Details</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Details')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -605,26 +614,26 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {inspection.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {inspection.odometer ? inspection.odometer + 'KM' : ''}
+                                                                {inspection.odometer ? inspection.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {inspection.source}
                                                             </td>
                                                             <td >
-                                                                <span>Inpsection Details:</span>
+                                                                <span>{t('Inpsection Details')}:</span>
                                                                 <ul>
                                                                     {inspection.carInspectionHistoryDetail.map((detail) => (
                                                                         <li>
@@ -654,7 +663,7 @@ function CarReportPage() {
                                                                 {inspection.source}
                                                             </td>
                                                             <td>
-                                                                <span>Inpsection Details:</span>
+                                                                <span>{t('Inpsection Details')}:</span>
                                                                 <ul>
                                                                     {inspection.carInspectionHistoryDetail.map((detail) => (
                                                                         <li>
@@ -675,7 +684,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any inspection records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any inspection records")}
                                 </MuiAlert>
                             }
 
@@ -698,13 +707,13 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Duration</th>
-                                            <th>Description</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Duration')}</th>
+                                            <th>{t('Description')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -717,20 +726,20 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {insurance.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {insurance.odometer ? insurance.odometer + 'KM' : ''}
+                                                                {insurance.odometer ? insurance.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {insurance.source}
@@ -756,7 +765,7 @@ function CarReportPage() {
                                                                 {insurance.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {insurance.odometer ? insurance.odometer + 'KM' : ''}
+                                                                {insurance.odometer ? insurance.odometer + ' KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {insurance.source}
@@ -779,7 +788,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any insurance records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any insurance records")}
                                 </MuiAlert>
                             }
 
@@ -798,13 +807,13 @@ function CarReportPage() {
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>Status</th>
-                                            <th>Description</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('Status')}</th>
+                                            <th>{t('Description')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -817,26 +826,26 @@ function CarReportPage() {
                                                             <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
                                                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                                                     <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
-                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : 'Unknown'}</h3>
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
                                                                 </div>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Address:</span>{detail.carOwner ? detail.carOwner.address : 'Unknown'}
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
                                                                 </a>
                                                                 <a style={{ textAlign: 'left' }}>
-                                                                    <span>Est. Length Owned:</span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + detail.carOwner.endDate : 'Unknown'}
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
                                                                 </a>
                                                             </td>
                                                             <td >
                                                                 {stolen.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {stolen.odometer ? stolen.odometer + 'KM' : ''}
+                                                                {stolen.odometer ? stolen.odometer + ' KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {stolen.source}
                                                             </td>
                                                             <td >
-                                                                {stolen.status === 1 ? t('Found') : ('Not found')}
+                                                                {stolen.status === 1 ? t('Found') : t('Stolen')}
                                                             </td>
                                                             <td >
                                                                 {stolen.description}
@@ -856,13 +865,13 @@ function CarReportPage() {
                                                                 {stolen.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {stolen.odometer ? stolen.odometer + 'KM' : ''}
+                                                                {stolen.odometer ? stolen.odometer + ' KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {stolen.source}
                                                             </td>
                                                             <td >
-                                                                {stolen.status === 1 ? t('Found') : ('Not found')}
+                                                                {stolen.status === 1 ? t('Found') : t('Stolen')}
                                                             </td>
                                                             <td >
                                                                 {stolen.description}
@@ -879,7 +888,7 @@ function CarReportPage() {
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any stolen accidents records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any stolen accidents records")}
                                 </MuiAlert>
                             }
 
@@ -891,115 +900,104 @@ function CarReportPage() {
                             </div>
                         </div>
 
-
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px' }} >
-                            {report.carRegistrationHistories.length > 0 ?
+                            {!isHistoryEmpty(report, 'carStolenHistories') ?
                                 <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                     <thead>
                                         <tr style={{ minHeight: '300px' }}>
-                                            <th>Owner</th>
-                                            <th>Date</th>
-                                            <th>Mileage</th>
-                                            <th>Source</th>
-                                            <th>License Plate Number</th>
-                                            <th>Expire Date</th>
-                                            <th>Note</th>
+                                            <th>{t('Owner')}</th>
+                                            <th>{t('Report Date')}</th>
+                                            <th>{t('Mileage')}</th>
+                                            <th>{t('Source')}</th>
+                                            <th>{t('License Plate Number')}</th>
+                                            <th>{t('Expire Date')}</th>
+                                            <th>{t('Description')}</th>
+                                            <th>{t('Note')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {report.carRegistrationHistories.map((reg, index1) => (
-                                            <tr style={{ height: '100px', backgroundColor: index1 % 2 !== 0 ? 'white' : 'rgba(18,148,239,.03)' }}>
-                                                <td style={{ paddingLeft: '10px' }}>
-                                                    {reg.ownerName}
-                                                </td>
-                                                <td>
-                                                    {reg.reportDate}
-                                                </td>
-                                                <td>
-                                                    {reg.odometer ? reg.odometer + 'KM' : ''}
-                                                </td>
-                                                <td>
-                                                    {reg.source}
-                                                </td>
-                                                <td>
-                                                    {reg.licensePlateNumber}
-                                                </td>
-                                                <td>
-                                                    {reg.expireDate}
-                                                </td>
-                                                <td>
-                                                    {reg.note}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {report.carHistoryDetails.map((detail, index1) => {
+                                            let count = detail.carRegistrationHistories.length
+                                            return detail.carRegistrationHistories.map((reg, index2) => {
+                                                if (index2 === 0) {
+                                                    return (
+                                                        <tr style={{ height: '100px', backgroundColor: index2 % 2 !== 0 ? 'white' : 'rgba(18,148,239,.03)' }}>
+                                                            <td rowSpan={count} style={{ display: 'flex', flexDirection: 'column', width: '150px', paddingLeft: '10px' }}>
+                                                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+                                                                    <img src={ownerOne} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
+                                                                    <h3 style={{ fontSize: '15px', textAlign: 'center' }}>{detail.carOwner ? detail.carOwner.name : t('Unknown')}</h3>
+                                                                </div>
+                                                                <a style={{ textAlign: 'left' }}>
+                                                                    <span>{t('Address')}: </span>{detail.carOwner ? detail.carOwner.address : t('Unknown')}
+                                                                </a>
+                                                                <a style={{ textAlign: 'left' }}>
+                                                                    <span>{t('Est. Length Owned')}: </span>{detail.carOwner ? detail.carOwner.startDate + ' ' + t('to') + ' ' + (detail.carOwner.endDate ? detail.carOwner.endDate : t('Now')) : t('Unknown')}
+                                                                </a>
+                                                            </td>
+                                                            <td >
+                                                                {reg.reportDate ? reg.reportDate.split('T')[0] : ''}
+                                                            </td>
+                                                            <td >
+                                                                {reg.odometer ? reg.odometer + ' KM' : ''}
+                                                            </td>
+                                                            <td >
+                                                                {reg.source}
+                                                            </td>
+                                                            <td >
+                                                                {reg.licensePlateNumber}
+                                                            </td>
+                                                            <td >
+                                                                {reg.expireDate}
+                                                            </td>
+                                                            <td >
+                                                                {t('Registration Issued')}
+                                                            </td>
+                                                            <td >
+                                                                {reg.note}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                } else {
+                                                    return (
+                                                        <tr style={{ height: '100px', backgroundColor: index2 % 2 !== 0 ? 'white' : 'rgba(18,148,239,.03)' }}>
+                                                            <td >
+
+                                                            </td>
+                                                            <td >
+                                                                {reg.reportDate ? reg.reportDate.split('T')[0] : ''}
+                                                            </td>
+                                                            <td>
+                                                                {reg.odometer ? reg.odometer + ' KM' : ''}
+                                                            </td>
+                                                            <td>
+                                                                {reg.source}
+                                                            </td>
+                                                            <td >
+                                                                {reg.licensePlateNumber}
+                                                            </td>
+                                                            <td >
+                                                                {reg.expireDate}
+                                                            </td>
+                                                            <td >
+                                                                {t('Registration Renewed')}
+                                                            </td>
+                                                            <td >
+                                                                {reg.note}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+                                            })
+                                        })}
                                     </tbody>
                                 </table>
                                 :
                                 <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '90%', margin: 'auto' }}>
-                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any registration records
+                                    {t('As of')} {date ? date : new Date().toISOString().split('T')[0]}, {t("this car doesn't have any registration records")}
                                 </MuiAlert>
                             }
 
                         </div>
-
-                        {/* <div className="car-report-service-history">
-                            <h3>{t('Car Registration History')}</h3>
-                            <table className="car-report-service-history-table">
-                                <thead>
-                                    <tr>
-                                        <th>Owner</th>
-                                        <th>Date</th>
-                                        <th>Mileage</th>
-                                        <th>Source</th>
-                                        <th>License Plate Number</th>
-                                        <th>Expire Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {report?.carHistoryDetails && report?.carHistoryDetails.length > 0 && !isHistoryEmpty(report, 'carRegistrationHistories') ? (
-                                        report?.carHistoryDetails.map((history: CarHistoryDetail, index: number) => {
-                                            const registrationCount = history.carRegistrationHistories?.length || 1;
-                                            return (
-                                                <>
-                                                    <tr key={`${index}-0`}>
-                                                        {history.carRegistrationHistories && history.carRegistrationHistories.length > 0 ? (
-                                                            <>
-                                                                <td className="car-report-service-history-table-ownership-data" rowSpan={registrationCount}>
-                                                                    <a>Owner name: {history.carOwner ? history.carOwner.name : 'Unknown'}</a>
-                                                                    <a>Owner address: {history.carOwner ? history.carOwner.address : 'Unknown'}</a>
-                                                                    <a>Estimated length owned: {history.carOwner ? `${history.carOwner.startDate} to ${history.carOwner.endDate}` : 'Unknown'}</a>
-                                                                </td>
-                                                                <td>{history.carRegistrationHistories[0].reportDate}</td>
-                                                                <td>{history.carRegistrationHistories[0].odometer}</td>
-                                                                <td>{history.carRegistrationHistories[0].source}</td>
-                                                                <td>{history.carRegistrationHistories[0].licensePlateNumber}</td>
-                                                                <td>{history.carRegistrationHistories[0].expireDate}</td>
-                                                            </>
-                                                        ) : null}
-                                                    </tr>
-                                                    {history.carRegistrationHistories && history.carRegistrationHistories.length > 1 ? (
-                                                        history.carRegistrationHistories.slice(1).map((registration: CarRegistration, index2: number) => (
-                                                            <tr key={`${index}-${index2 + 1}`}>
-                                                                <td></td>
-                                                                <td>{registration.reportDate}</td>
-                                                                <td>{registration.odometer}</td>
-                                                                <td>{registration.source}</td>
-                                                                <td>{registration.licensePlateNumber}</td>
-                                                                <td>{registration.expireDate}</td>
-                                                            </tr>
-                                                        ))
-                                                    ) : null}
-                                                </>
-                                            );
-                                        })
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={5}>No stolen recorded</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div> */}
                     </>
                 )}
             </div>
