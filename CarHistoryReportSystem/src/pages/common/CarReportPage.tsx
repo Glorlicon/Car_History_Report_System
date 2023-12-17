@@ -133,7 +133,7 @@ function CarReportPage() {
 
     return (
         <div className="car-report-details-page">
-            <button  className="add-pol-crash-btn">{t('Export PDF')}(WIP)</button>
+            <button className="add-pol-crash-btn">{t('Export PDF')}(WIP)</button>
             <div className="car-report-details-container" id="report">
                 {loading ? (
                     <div className="car-report-details-spinner"></div>
@@ -248,6 +248,7 @@ function CarReportPage() {
                             }
                         </div>
 
+
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px', borderTop: '1px solid gray' }}>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                 <img src={general} style={{ width: '7%', height: '7%', alignSelf: 'center', marginRight: '5px' }} alt="" />
@@ -292,7 +293,7 @@ function CarReportPage() {
                                                                 {general.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {general.odometer} KM
+                                                                {general.odometer ? general.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {general.source}
@@ -315,7 +316,7 @@ function CarReportPage() {
                                                                 {general.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {general.odometer} KM
+                                                                {general.odometer ? general.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {general.source}
@@ -385,7 +386,7 @@ function CarReportPage() {
                                                                 {service.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {service.odometer} KM
+                                                                {service.odometer ? service.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {service.source}
@@ -417,7 +418,7 @@ function CarReportPage() {
                                                                 {service.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {service.odometer} KM
+                                                                {service.odometer ? service.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {service.source}
@@ -496,7 +497,7 @@ function CarReportPage() {
                                                                 {accident.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {accident.odometer} KM
+                                                                {accident.odometer ? accident.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {accident.source}
@@ -533,7 +534,7 @@ function CarReportPage() {
                                                                 {accident.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {accident.odometer} KM
+                                                                {accident.odometer ? accident.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {accident.source}
@@ -617,7 +618,7 @@ function CarReportPage() {
                                                                 {inspection.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {inspection.odometer} KM
+                                                                {inspection.odometer ? inspection.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {inspection.source}
@@ -647,7 +648,7 @@ function CarReportPage() {
                                                                 {inspection.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {inspection.odometer} KM
+                                                                {inspection.odometer ? inspection.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {inspection.source}
@@ -680,7 +681,7 @@ function CarReportPage() {
 
                         </div>
 
-                        
+
 
 
 
@@ -729,13 +730,13 @@ function CarReportPage() {
                                                                 {insurance.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {insurance.odometer} KM
+                                                                {insurance.odometer ? insurance.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {insurance.source}
                                                             </td>
                                                             <td >
-                                                                {t('From')+' '+insurance.startDate + ' '+t('to')+' '+insurance.endDate}
+                                                                {t('From') + ' ' + insurance.startDate + ' ' + t('to') + ' ' + insurance.endDate}
                                                             </td>
                                                             <td >
                                                                 {insurance.description}
@@ -755,13 +756,13 @@ function CarReportPage() {
                                                                 {insurance.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {insurance.odometer} KM
+                                                                {insurance.odometer ? insurance.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {insurance.source}
                                                             </td>
                                                             <td >
-                                                                {t('From')+' '+insurance.startDate + ' '+t('to')+' '+insurance.endDate}
+                                                                {t('From') + ' ' + insurance.startDate + ' ' + t('to') + ' ' + insurance.endDate}
                                                             </td>
                                                             <td >
                                                                 {insurance.description}
@@ -829,7 +830,7 @@ function CarReportPage() {
                                                                 {stolen.reportDate.split('T')[0]}
                                                             </td>
                                                             <td >
-                                                                {stolen.odometer} KM
+                                                                {stolen.odometer ? stolen.odometer + 'KM' : ''}
                                                             </td>
                                                             <td >
                                                                 {stolen.source}
@@ -855,7 +856,7 @@ function CarReportPage() {
                                                                 {stolen.reportDate.split('T')[0]}
                                                             </td>
                                                             <td>
-                                                                {stolen.odometer} KM
+                                                                {stolen.odometer ? stolen.odometer + 'KM' : ''}
                                                             </td>
                                                             <td>
                                                                 {stolen.source}
@@ -883,7 +884,63 @@ function CarReportPage() {
                             }
 
                         </div>
-                       
+                        <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px', borderTop: '1px solid gray' }}>
+                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+                                <img src={registration} style={{ width: '7%', height: '7%', alignSelf: 'center', marginRight: '5px' }} alt="" />
+                                <h3 style={{ fontSize: '25px', textAlign: 'center' }}>{t('Car Registration History')}</h3>
+                            </div>
+                        </div>
+
+
+                        <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px' }} >
+                            {report.carRegistrationHistories.length > 0 ?
+                                <table style={{ border: '1px solid gray', borderRadius: '5px', boxShadow: '1px 2px #888888', width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                                    <thead>
+                                        <tr style={{ minHeight: '300px' }}>
+                                            <th>Owner</th>
+                                            <th>Date</th>
+                                            <th>Mileage</th>
+                                            <th>Source</th>
+                                            <th>License Plate Number</th>
+                                            <th>Expire Date</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {report.carRegistrationHistories.map((reg, index1) => (
+                                            <tr style={{ height: '100px', backgroundColor: index1 % 2 !== 0 ? 'white' : 'rgba(18,148,239,.03)' }}>
+                                                <td style={{ paddingLeft: '10px' }}>
+                                                    {reg.ownerName}
+                                                </td>
+                                                <td>
+                                                    {reg.reportDate}
+                                                </td>
+                                                <td>
+                                                    {reg.odometer ? reg.odometer + 'KM' : ''}
+                                                </td>
+                                                <td>
+                                                    {reg.source}
+                                                </td>
+                                                <td>
+                                                    {reg.licensePlateNumber}
+                                                </td>
+                                                <td>
+                                                    {reg.expireDate}
+                                                </td>
+                                                <td>
+                                                    {reg.note}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                :
+                                <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '90%', margin: 'auto' }}>
+                                    As of {date ? date : new Date().toISOString().split('T')[0]}, this car doesn't have any registration records
+                                </MuiAlert>
+                            }
+
+                        </div>
 
                         {/* <div className="car-report-service-history">
                             <h3>{t('Car Registration History')}</h3>
