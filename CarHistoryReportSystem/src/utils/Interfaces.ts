@@ -279,6 +279,7 @@ export interface CarHistoryDetail {
     carInspectionHistories: CarInspectionHistory[];
     carInsurances: CarInsurance[];
     carStolenHistories: CarStolen[];
+    carRegistrationHistories: CarRegistration[];
     generalCarHistories: GeneralCarHistory[];
 }
 
