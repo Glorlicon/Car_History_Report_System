@@ -165,7 +165,7 @@ namespace Application.DomainServices
                 AddGeneralCarHistories(generalCarHistories, carInspectionHistories.Cast<CarHistory>().ToList(), "Car Inspection History");
                 AddGeneralCarHistories(generalCarHistories, carInsurances.Cast<CarHistory>().ToList(), "Car Insurance History");
                 AddGeneralCarHistories(generalCarHistories, carStolenHistories.Cast<CarHistory>().ToList(), "Car Stolen History");
-                AddGeneralCarHistories(generalCarHistories, carRegistrationHistories.Cast<CarHistory>().ToList(), "Car Registration History");
+                //AddGeneralCarHistories(generalCarHistories, carRegistrationHistories.Cast<CarHistory>().ToList(), "Car Registration History");
                 generalCarHistories = generalCarHistories.OrderByDescending(x => x.ReportDate).ToList();
 
                 if (generalCarHistories.Count == 0 && timePeriod.CarOwner == null) continue;
@@ -180,7 +180,7 @@ namespace Application.DomainServices
                     CarInspectionHistories = _mapper.Map<List<CarInspectionHistoryResponseDTO>>(carInspectionHistories),
                     CarInsurances = _mapper.Map<List<CarInsuranceHistoryResponseDTO>>(carInsurances),
                     CarStolenHistories = _mapper.Map<List<CarStolenHistoryResponseDTO>>(carStolenHistories),
-                    CarRegistrationHistories = _mapper.Map<List<CarRegistrationHistoryResponseDTO>>(carRegistrationHistories),
+                    //CarRegistrationHistories = _mapper.Map<List<CarRegistrationHistoryResponseDTO>>(carRegistrationHistories),
                     GeneralCarHistories = generalCarHistories
                 };
                 carHistoryDetails.Add(carHistoryDetail);
