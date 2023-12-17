@@ -1,5 +1,6 @@
 ﻿using Application.DTO.Car;
 using Application.DTO.CarRecall;
+using Application.DTO.CarRegistrationHistory;
 using Application.DTO.CarSpecification;
 using Domain.Enum;
 using System;
@@ -41,6 +42,8 @@ namespace Application.DTO.CarReport
         public CarSpecificationResponseDTO Model { get; set; } = null!;
 
         public List<CarRecallStatusResponseDTO> CarRecallStatuses { get; set; }
+
+        public List<CarRegistrationHistoryResponseDTO> CarRegistrationHistories { get; set; }
 
         public List<CarReportCarHistoryDetails> CarHistoryDetails { get; set; }
 
