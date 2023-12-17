@@ -9,6 +9,7 @@ import Textarea from '@mui/joy/Textarea';
 interface UserModalProviderPageProps {
     model: DataProvider | null
     isDataProvider: boolean
+    providerId: number
     action: "Add" | "Edit"
     providerList: DataProvider[] | null
     handleCheckboxToggle: () => void
@@ -18,6 +19,7 @@ interface UserModalProviderPageProps {
 const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
     model,
     action,
+    providerId,
     providerList,
     handleCheckboxToggle,
     handleInputDataProviderChange,
@@ -108,7 +110,7 @@ const UserModalProviderPage: React.FC<UserModalProviderPageProps> = ({
                           {!isNew && (
                           <div className="pol-crash-form-column">
                                   <label>{t('Data Provider')}</label>
-                              <select name="dataProviderId" value={model?.id ? model.id : -1} disabled={edit} onChange={handleInputDataProviderSelect} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
+                              <select name="dataProviderId" value={providerId ? providerId : -1} disabled={edit} onChange={handleInputDataProviderSelect} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                                       <option value={-1}>{t('Not chosen')}</option>
                                       {providerList && (
                                           providerList.map((provider: DataProvider) => (

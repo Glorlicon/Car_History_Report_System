@@ -266,7 +266,8 @@ export interface CarReport {
     isCommercialUse: boolean,
     model: CarModel,
     carRecallStatuses: CarRecallStatus[],
-    carHistoryDetails: CarHistoryDetail[]
+    carHistoryDetails: CarHistoryDetail[],
+    carRegistrationHistories: CarRegistration[];
 }
 
 export interface CarHistoryDetail {
@@ -278,7 +279,6 @@ export interface CarHistoryDetail {
     carInspectionHistories: CarInspectionHistory[];
     carInsurances: CarInsurance[];
     carStolenHistories: CarStolen[];
-    carRegistrationHistories: CarRegistration[];
     generalCarHistories: GeneralCarHistory[];
 }
 
