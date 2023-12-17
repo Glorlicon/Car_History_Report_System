@@ -45,20 +45,20 @@ function CarReportPage() {
     const getReport = () => document.getElementById('report')
     const handleDownloadPdf = () => {
         const report = getReport()
-        if (report){
+        if (report) {
             html2canvas(report, { scale: 2, scrollY: -window.scrollY }).then((canvas) => {
                 const imgWidth = 210; // A4 width in mm
                 const pageHeight = 295; // A4 height in mm
                 const imgHeight = canvas.height * imgWidth / canvas.width;
                 let heightLeft = imgHeight;
-    
+
                 const pdf = new jsPDF('p', 'mm');
                 let position = 0;
-    
+
                 // Add the first page
                 pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pageHeight;
-    
+
                 // Add new pages as long as there's content left
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
@@ -66,7 +66,7 @@ function CarReportPage() {
                     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
-    
+
                 pdf.save('car-report-details.pdf');
             });
         }
@@ -170,17 +170,17 @@ function CarReportPage() {
 
     return (
         <div className="car-report-details-page">
-            <button className="add-pol-crash-btn" onClick={handleDownloadPdf}>{t('Export PDF')}(WIP)</button>
-            <div className="car-report-details-container" id="report">
-                {loading ? (
-                    <div className="car-report-details-spinner"></div>
-                ) : error || !report ? (
-                    <>
-                        {error}
-                        <button onClick={fetchData} className="dealer-car-sales-details-retry-btn">{t('Retry')}</button>
-                    </>
-                ) : (
-                    <>
+            {loading ? (
+                <div className="car-report-details-spinner"></div>
+            ) : error || !report ? (
+                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', margin: 'auto' }}>
+                    {error}
+                    <button onClick={fetchData} className="dealer-car-sales-details-retry-btn">{t('Retry')}</button>
+                </MuiAlert>
+            ) : (
+                <>
+                    <button className="add-pol-crash-btn" onClick={handleDownloadPdf}>{t('Export PDF')}</button>
+                    <div className="car-report-details-container" id="report">
                         <div style={{ marginLeft: '5%', marginRight: '5%', paddingTop: '15px', paddingBottom: '15px' }}>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
                                 <img src={logo} style={{ width: '10%', height: '10%', alignSelf: 'center' }} alt='' />
@@ -1026,9 +1026,9 @@ function CarReportPage() {
                             }
 
                         </div>
-                    </>
-                )}
-            </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

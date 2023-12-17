@@ -772,5 +772,14 @@
   "this car doesn't have any stolen accidents records":"this car doesn't have any stolen statuses records",
   "Registration Issued":"Registration Issued",
   "Registration Renewed":"Registration Renewed",
-  "this car doesn't have any registration records":"this car doesn't have any registration records"
+  "this car doesn't have any registration records":"this car doesn't have any registration records",
+  "Transaction successful! Please wait until we complete remaining operations":"Transaction successful! Please wait until we complete remaining operations",
+  "Everything is completed! Thanks for your support of our system":"Everything is completed! Thanks for your support of our system",
+  "Something went wrong in the process. Please contact admin for support":"Something went wrong in the process. Please contact admin for support",
+  "Your transaction ID":"Your transaction ID",
+  "Avoid bying a car with costly hidden problems by getting a CHRS Report now":"Avoid bying a car with costly hidden problems by getting a CHRS Report now",
+  "Ran out of reports":"Ran out of reports",
+  "Already bought a report":"Already bought a report",
+  "Go to profile to view your reports":"Go to profile to view your reports",
+  "Sign in to view the reports":"Sign in to view the reports"
 }

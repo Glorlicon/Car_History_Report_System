@@ -772,5 +772,14 @@
   "this car doesn't have any stolen accidents records":"xe này không có thông tin cập nhật trạng thái trộm cắp nào được báo cáo lên hệ thống",
   "Registration Issued":"Đăng ký xe mới",
   "Registration Renewed":"Đăng ký xe được gia hạn",
-  "this car doesn't have any registration records":"xe này không có thông tin đăng ký xe nào được báo cáo lên hệ thống"
+  "this car doesn't have any registration records":"xe này không có thông tin đăng ký xe nào được báo cáo lên hệ thống",
+  "Transaction successful! Please wait until we complete remaining operations":"Giao dịch thành công! Hãy chờ 1 lúc để chúng tôi hoàn thiện các thao tác còn lại",
+  "Everything is completed! Thanks for your support of our system":"Hoàn tất! Cảm ơn bạn vì đã ủng hộ hệ thống chúng tôi",
+  "Something went wrong in the process. Please contact admin for support":"Có lỗi bất ngờ xảy ra. Hãy liên hệ với quản trị viên để được hỗ trợ",
+  "Your transaction ID":"Mã giao dịch của bạn",
+  "Avoid bying a car with costly hidden problems by getting a CHRS Report now":"Tránh mua ô tô với những vấn đề tiềm ẩn bằng cách mua báo cáo CHRS",
+  "Ran out of reports":"Đã dùng hết báo cáo",
+  "Already bought a report":"Bạn đã sở hữu báo cáo CHRS rồi",
+  "Go to profile to view your reports":"Tới hồ sơ để xem các báo cáo của bạn",
+  "Sign in to view the reports":"Đăng nhập để xem báo cáo"
 }

@@ -172,12 +172,13 @@ export async function EditCarForSale(data: CarSalesInfo, token: string, connectA
         }
     }
 }
-export async function GetCar(id: string, token: string): Promise<APIResponse> {
+export async function GetCar(id: string, token: string, connectAPIError: string, language: string): Promise<APIResponse> {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${id}`,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`
                 }
             }
         )
@@ -186,11 +187,30 @@ export async function GetCar(id: string, token: string): Promise<APIResponse> {
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {
-            return { error: "Network error. Please check your internet connection!" }
-        } else if (axiosError.response?.status === 404) {
-            return { error: (axiosError.response.data as any).error }
-        } else {
-            return { error: "Something went wrong. Please try again" }
+            return { error: connectAPIError }
+        }  else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function CheckCar(id: string, connectAPIError: string, language: string): Promise<APIResponse> {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/${id}`,
+            {
+                headers: {
+                    'Accept-Language': `${language}`
+                }
+            }
+        )
+        console.log("res: ", response.data)
+        return { data: response.data }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        }  else {
+            return { error: (axiosError.response?.data as any).error[0] }
         }
     }
 }

@@ -13,7 +13,7 @@ export function matchingPassword(password: string, confirmPassword: string): boo
 }
 
 export function isValidPassword(password: string): boolean {
-    const passwordRegex = /^(?=.{8,})(?=\D*\d)(?=[^A-Z]*[A-Z])(?=\w*\W)/;
+    const passwordRegex = /^(?=.{8,})(?=\D*\d)(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\w*\W)/;
     return passwordRegex.test(password) || password.length === 0;
 }
 

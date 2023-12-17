@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SpecialLayout from '../components/layout/SpecialLayout';
 import UserLayout from '../components/layout/UserLayout';
 import AdminHomePage from '../pages/admin/AdminHomePage';
 import AdminCarModelList from '../pages/admin//AdminCarModelList';
@@ -76,6 +75,7 @@ const CustomRoutes = () => {
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
                 <Route path="/report" element={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>} />
                 <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
+                <Route path="/payment/" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
                 <Route path="/car-report/:vin/:date" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
                 <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
                 <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
