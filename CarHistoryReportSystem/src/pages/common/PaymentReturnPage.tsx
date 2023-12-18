@@ -51,8 +51,6 @@ function PaymentReturnPage() {
     vnp_Params = sortObject(vnp_Params)
     const data = qs.stringify(vnp_Params, { encode: false })
     const signedData = CryptoJS.HmacSHA512(data, VNP_CONST.SECRET_KEY).toString()
-
-    if (signedData != secureHash) navigate('/unauthorized')
     const transactionSuccess = vnp_Params.vnp_ResponseCode === '00'
     const [successOrder, setSuccessOrder] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -79,6 +77,13 @@ function PaymentReturnPage() {
         setLoading(true)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        if (signedData !== secureHash) {
+            console.log(data)
+            console.log(signedData)
+            console.log(secureHash)
+            //navigate('/unauthorized')
+            return
+        }
         if (token) {
             let decodedToken = JWTDecoder(token)
             order['userId'] = decodedToken.nameidentifier

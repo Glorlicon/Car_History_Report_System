@@ -2,6 +2,7 @@
     margin-top: 100px;
     font-family: Arial, sans-serif;
     width: 100%; /* Ensure the container spans the full width */
+    flex:1;
 }
 
 .home-header {
