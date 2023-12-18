@@ -1,21 +1,16 @@
 .profile-container-2 {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 15%;
-    margin-left: 15%;
-    margin-right: 15%;
-    margin-bottom: 15%;
-    padding: 5% 15% 5% 15%;
-    background-color: #C4C0C0;
-    border: 1px solid black;
-    border-radius: 10px;
+    flex-direction: row;
+    background-color: ghostwhite;
     flex:1;
 }
 .columns {
     display:flex;
     flex-direction: row;
+}
+.gradient-background{
+    background: -webkit-gradient(linear, left top, right top, from(#61B6FF), to(#0060B3));
+    background: linear-gradient(to right, #0060B3, #61B6FF);
 }
 .sections {
     display: flex;
