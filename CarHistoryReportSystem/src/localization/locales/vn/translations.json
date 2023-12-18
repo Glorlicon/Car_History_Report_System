@@ -833,5 +833,12 @@
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Xem xét các thông báo thu hồi từ nhà sản xuất để nhanh chóng xác định các xe bị ảnh hưởng và chuẩn bị cho việc sửa chữa hoặc thay thế bộ phận cần thiết.",
   "Notification ID": "ID Thông Báo",
   "Add Dataprovider": "Thêm nhà cung cấp dữ liệu",
-  "Edit Car Recall": "Chỉnh sửa thông tin thu hồi xe"
+  "Edit Car Recall": "Chỉnh sửa thông tin thu hồi xe",
+  "Full Name":"Họ tên",
+  "Available Reports":"Số lượng báo cáo còn lại",
+  "Purchased Reports":"Số lượng báo cáo đã mua",
+  "Reports":"Thông tin báo cáo",
+  "Information":"Thông tin",
+  "View My Reports":"Xem báo cáo của tôi",
+  "Report List":"Danh sách báo cáo"
 }

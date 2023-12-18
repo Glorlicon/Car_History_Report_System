@@ -1,0 +1,31 @@
+Admin: 
+Username: bantq_admin
+Password: &@6GrGqop3R0^v2Xw-x0
+
+User: 
+Username: bantq_user
+Password: Password123#
+
+Car Dealer: 
+Username: bantq_cardealer
+Password: Password123#
+
+Service Shop:
+Username: bantq_serviceshop
+Password: Password123#
+Manufacturer: 
+Username: bantq_manufacturer
+Password: Password123#
+
+Insurance: 
+Username: bantq_insurance
+Password: Password123#
+
+Police Office: 
+Username: bantq_policeoffice
+Password: Password123#
+
+Vehicle Registry: 
+Username: bantq_registry
+Password: Password123#
+

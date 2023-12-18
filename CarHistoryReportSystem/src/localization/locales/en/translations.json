@@ -833,5 +833,12 @@
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.",
   "Notification ID": "Notification ID",
   "Add Dataprovider": "Add Dataprovider",
-  "Edit Car Recall": "Edit Car Recall"
+  "Edit Car Recall": "Edit Car Recall",
+  "Full Name":"Full Name",
+  "Available Reports":"Available Reports",
+  "Purchased Reports":"Purchased Reports",
+  "Reports":"Reports",
+  "Information":"Information",
+  "View My Reports":"View My Reports",
+  "Report List":"Report List"
 }
