@@ -173,9 +173,9 @@ function CarReportPage() {
             {loading ? (
                 <div className="car-report-details-spinner"></div>
             ) : error || !report ? (
-                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', margin: 'auto' }}>
+                <MuiAlert elevation={6} variant="filled" severity="info" sx={{ width: '50%', margin: 'auto', display:'flex', flexDirection:'row', alignItems:"center", justifyContent:'center' }}>
                     {error}
-                    <button onClick={fetchData} className="dealer-car-sales-details-retry-btn">{t('Retry')}</button>
+                    <button onClick={fetchData} className="pol-crash-action-button-3">{t('Retry')}</button>
                 </MuiAlert>
             ) : (
                 <>

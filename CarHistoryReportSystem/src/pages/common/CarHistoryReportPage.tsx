@@ -30,8 +30,8 @@ function CarHistoryReportPage() {
         } else if (!isValidVIN(vin)) {
             setVinError(t('The VIN entered is invalid. Please check and try again'));
         } else {
-            const checkCar: APIResponse = await CheckCar(vin,connectAPIError,language)
-            if (checkCar.error){
+            const checkCar: APIResponse = await CheckCar(vin, connectAPIError, language)
+            if (checkCar.error) {
                 setVinError(checkCar.error)
                 return
             }
@@ -41,36 +41,58 @@ function CarHistoryReportPage() {
             if (!token) navigate(`/payment/${vin}`)
             else {
                 const id = JWTDecoder(token).nameidentifier
-                const userResponse: APIResponse = await Get(id, token, connectAPIError, unknownError, language)
-                if (userResponse.data.maxReportNumber > 0) {
-                    let decodedToken = JWTDecoder(token)
-                    const reportData: AddReport = {
-                        userId: decodedToken.nameidentifier,
-                        carId: vin
-                    }
-                    const checkReportExist: APIResponse = await CheckReportExist(reportData, token, connectAPIError, language)
-                    console.log(checkReportExist)
-                    if (checkReportExist.error) {
-                        setIsLoading(false);
-                        setVinError(checkReportExist.error)
+                const reportData: AddReport = {
+                    userId: id,
+                    carId: vin
+                }
+                const checkReportExist: APIResponse = await CheckReportExist(reportData, token, connectAPIError, language)
+                if (checkReportExist.error) {
+                    const userResponse: APIResponse = await Get(id, token, connectAPIError, unknownError, language)
+                    if (userResponse.data.maxReportNumber > 0) {
                         const addReportResponse: APIResponse = await AddUserReport(reportData, token, connectAPIError, language)
                         if (addReportResponse.error) {
                             setIsLoading(false);
                             setVinError(addReportResponse.error)
-                        }
-                        else {
+                        } else {
                             setIsLoading(false);
                             navigate(`/car-report/${vin}`)
                         }
                     } else {
                         setIsLoading(false);
-                        navigate(`/car-report/${vin}`)
+                        navigate(`/payment/${vin}`)
                     }
-                }
-                else {
+                } else {
                     setIsLoading(false);
-                    navigate(`/payment/${vin}`)
+                    navigate(`/car-report/${vin}`)
                 }
+                //const userResponse: APIResponse = await Get(id, token, connectAPIError, unknownError, language)
+                // if (userResponse.data.maxReportNumber > 0) {
+                //     let decodedToken = JWTDecoder(token)
+                //     const reportData: AddReport = {
+                //         userId: decodedToken.nameidentifier,
+                //         carId: vin
+                //     }
+                //     const checkReportExist: APIResponse = await CheckReportExist(reportData, token, connectAPIError, language)
+                //     console.log(checkReportExist)
+                //     if (checkReportExist.error) {
+                //         setIsLoading(false);
+                //         setVinError(checkReportExist.error)
+                //         const addReportResponse: APIResponse = await AddUserReport(reportData, token, connectAPIError, language)
+                //         if (addReportResponse.error) {
+                //             setIsLoading(false);
+                //             setVinError(addReportResponse.error)
+                //         } else {
+                //             setIsLoading(false);
+                //             navigate(`/car-report/${vin}`)
+                //         }
+                //     } else {
+                //         setIsLoading(false);
+                //         navigate(`/car-report/${vin}`)
+                //     }
+                // } else {
+                //     setIsLoading(false);
+                //     navigate(`/payment/${vin}`)
+                // }
             }
         }
     };
