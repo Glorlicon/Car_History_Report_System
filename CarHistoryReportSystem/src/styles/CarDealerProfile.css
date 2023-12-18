@@ -3,6 +3,7 @@
     flex-direction: column;
     gap: 20px;
     padding-top: 100px;
+    flex:1;
 }
 
 .car-dealer-profile-header-section {

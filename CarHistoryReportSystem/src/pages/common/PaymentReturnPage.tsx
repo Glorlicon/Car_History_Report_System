@@ -29,6 +29,7 @@ function PaymentReturnPage() {
         vnp_ResponseCode: paymentParams.get("vnp_ResponseCode"),
         vnp_TmnCode: paymentParams.get("vnp_TmnCode"),
         vnp_TransactionNo: paymentParams.get("vnp_TransactionNo"),
+        vnp_TransactionStatus: paymentParams.get("vnp_TransactionStatus"),
         vnp_TxnRef: paymentParams.get("vnp_TxnRef")
     }
 
@@ -51,8 +52,6 @@ function PaymentReturnPage() {
     vnp_Params = sortObject(vnp_Params)
     const data = qs.stringify(vnp_Params, { encode: false })
     const signedData = CryptoJS.HmacSHA512(data, VNP_CONST.SECRET_KEY).toString()
-
-    if (signedData != secureHash) navigate('/unauthorized')
     const transactionSuccess = vnp_Params.vnp_ResponseCode === '00'
     const [successOrder, setSuccessOrder] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -79,12 +78,17 @@ function PaymentReturnPage() {
         setLoading(true)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        if (signedData !== secureHash) {
+            navigate('/unauthorized')
+            return
+        }
+        if (!check) order['carId'] = details[1]
         if (token) {
             let decodedToken = JWTDecoder(token)
             order['userId'] = decodedToken.nameidentifier
-            if (!check) order['carId'] = details[1]
             const orderResponse: APIResponse = await CreateOrder(order, connectAPIError, language)
             if (orderResponse.error) {
+                console.log('user bad order', orderResponse.error)
                 setLoading(false)
                 setSuccessOrder(false)
                 return
@@ -95,11 +99,12 @@ function PaymentReturnPage() {
                     carId: details[1]
                 }
                 const addReportResponse: APIResponse = await AddUserReport(reportData, token, connectAPIError, language)
-                if (addReportResponse.data) {
+                if (!addReportResponse.error) {
                     setLoading(false)
                     setSuccessOrder(true)
                     navigate(`/car-report/${details[1]}`)
                 } else {
+                    console.log('failed add report', addReportResponse.error)
                     setLoading(false)
                     setSuccessOrder(false)
                     return
@@ -110,8 +115,9 @@ function PaymentReturnPage() {
                 return
             }
         } else {
+            console.log(order)
             const orderResponse: APIResponse = await CreateOrder(order, connectAPIError, language)
-            if (orderResponse.data) {
+            if (!orderResponse.error) {
                 console.log(orderResponse.data)
                 console.log(orderResponse.data.token)
                 const verifyToken = dispatch(setVerifyToken(orderResponse.data.token))
@@ -119,6 +125,7 @@ function PaymentReturnPage() {
                 setSuccessOrder(true)
                 navigate(`/car-report/${details[1]}`)
             } else {
+                console.log('ano bad order', orderResponse.error)
                 setLoading(false)
                 setSuccessOrder(false)
                 return

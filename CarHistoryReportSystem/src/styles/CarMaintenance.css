@@ -2,6 +2,7 @@
     margin: 5% 20% 10% 20%;
     font-family: Arial, sans-serif;
     padding: 20px;
+    flex:1;
 }
 .car-maintenance-header {
     display: flex;

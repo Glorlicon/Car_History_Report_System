@@ -2,6 +2,7 @@
     margin-top:60px;
     padding: 20px;
     background-color: #f9f9f9;
+    flex:1;
 }
 .dealer-card{
     display:flex;
