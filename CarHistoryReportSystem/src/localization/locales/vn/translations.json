@@ -832,6 +832,7 @@
   "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.": "Quản lý hồ sơ của các xe đã được sửa chữa, bao gồm nhật ký dịch vụ chi tiết, các bộ phận đã thay thế và khoảng thời gian dịch vụ.",
   "Recall Notices": "Thông báo Thu hồi",
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Xem xét các thông báo thu hồi từ nhà sản xuất để nhanh chóng xác định các xe bị ảnh hưởng và chuẩn bị cho việc sửa chữa hoặc thay thế bộ phận cần thiết.",
+  "Notification ID": "ID Thông Báo",
   "Full Name":"Họ tên",
   "Available Reports":"Số lượng báo cáo còn lại",
   "Purchased Reports":"Số lượng báo cáo đã mua",

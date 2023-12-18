@@ -13,7 +13,7 @@ export async function GetUserNotification(id: string, pageNumber: number, connec
                     PageNumber: pageNumber
                 }
             })
-        return { data: response.data }
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.code === "ERR_NETWORK") {

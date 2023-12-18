@@ -37,7 +37,8 @@ const RequestCharacteristicPage: React.FC<RequestCharacteristicFormProps> = ({
           <div className="pol-crash-form-column">
               <label>{t('Description')}</label>
               <Textarea name="description" onChange={handleInputChange} className="TextField"/>
-              </div>
+          </div>
+
       </>
   );
 }
