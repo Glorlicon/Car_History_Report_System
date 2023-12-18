@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Edit, EditPassword, Get } from '../../services/api/Users';
 import { RootState } from '../../store/State';
@@ -11,6 +12,9 @@ import { isValidEmail, isValidPassword } from '../../utils/Validators';
 import { useTranslation } from 'react-i18next';
 import { GetUserReports } from '../../services/api/Reports';
 import UserReportListPage from '../../components/forms/user/UserReportListPage';
+import Avatar from '@mui/material/Avatar';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import IconButton from "@mui/material/IconButton";
 
 function UserProfile() {
     const { t, i18n } = useTranslation()
@@ -204,7 +208,55 @@ function UserProfile() {
                 <div className="profile-spinner"></div>
             ) : (
                 <>
-                    {isEditing ? (
+                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '15%', marginLeft: '20%', marginRight: '20%', marginBottom: '20%', backgroundColor: 'white', borderRadius: '30px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)', width: '100%' }}>
+                        <div className="gradient-background" style={{ display: 'flex', flexDirection: 'column', maxWidth: '35%', justifyItems: 'center', justifyContent: 'center', padding: '15%', paddingTop: '8%', borderTopLeftRadius: '30px', borderBottomLeftRadius: '30px' }}>
+                            <div className="profile-icon">
+                                <Avatar src={imageUrl ? imageUrl : blank} alt="Click to change" className="picture" sx={{ width: 144, height: 144, border: '1px solid white' }} />
+                            </div>
+                            <p>{user.userName}</p>
+                            <p>{user.roleName}</p>
+                            <IconButton onClick={() => { }} style={{}} >
+                                <ModeEditIcon />
+                            </IconButton>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '5%', width: '100%', paddingLeft: '5%', paddingRight: '5%' }}>
+                            <h3 style={{ textAlign: 'left', borderBottom: '1px solid gray', justifyItems: 'center', fontSize: '25px', color: 'gray' }}>Information</h3>
+                            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>Email</h2>
+                                    <a style={{ color: 'gray' }}>{user.email}</a>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>{t('Username')}</h2>
+                                    <a style={{ color: 'gray' }}>{user.userName}</a>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>{t('Full Name')}</h2>
+                                    <a style={{ color: 'gray' }}>{user.firstName} {user.lastName}</a>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>{t('Phone Number')}</h2>
+                                    <a style={{ color: 'gray' }}>{user.phoneNumber}</a>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>{t('Address')}</h2>
+                                    <a style={{ color: 'gray' }}>{user.address}</a>
+                                </div>
+                            </div>
+                            <h3 style={{ textAlign: 'left', borderBottom: '1px solid gray', justifyItems: 'center', fontSize: '25px', color: 'gray' }}>Reports</h3>
+                            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>Available Reports</h2>
+                                    <a style={{ color: 'gray' }}>{user.maxReportNumber}</a>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                    <h2>Purchased Reports</h2>
+                                    <a style={{ color: 'gray' }}>{reports.length}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* {isEditing ? (
                         <>
                             <div className="header-edit-section">
                                 <div className="profile-edit-icon">
@@ -323,7 +375,7 @@ function UserProfile() {
                                 </div>
                             )}
                         </>
-                    )}
+                    )} */}
                 </>
             )}
 
