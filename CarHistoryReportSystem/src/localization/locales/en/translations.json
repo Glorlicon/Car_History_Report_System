@@ -69,6 +69,7 @@
   "Change Password": "Change Password",
   "Change Part": "Change Part",
   "ChangePart": "Change Part",
+  "Change Car Part":"Change Car Part",
   "Choose file": "Choose file",
   "Confirm Password": "Confirm Password",
   "Country": "Country",
@@ -781,5 +782,6 @@
   "Ran out of reports":"Ran out of reports",
   "Already bought a report":"Already bought a report",
   "Go to profile to view your reports":"Go to profile to view your reports",
-  "Sign in to view the reports":"Sign in to view the reports"
+  "Sign in to view the reports":"Sign in to view the reports",
+  "days":"days"
 }

@@ -69,6 +69,7 @@
   "Change Password": "Đổi mật khẩu",
   "Change Part": "Đổi bộ phận",
   "ChangePart": "Đổi bộ phận",
+  "Change Car Part":"Đổi bộ phận",
   "Choose file": "Chọn file",
   "Confirm Password": "Xác nhận mật khẩu",
   "Country": "Quốc gia",
@@ -781,5 +782,6 @@
   "Ran out of reports":"Đã dùng hết báo cáo",
   "Already bought a report":"Bạn đã sở hữu báo cáo CHRS rồi",
   "Go to profile to view your reports":"Tới hồ sơ để xem các báo cáo của bạn",
-  "Sign in to view the reports":"Đăng nhập để xem báo cáo"
+  "Sign in to view the reports":"Đăng nhập để xem báo cáo",
+  "days":"ngày"
 }
