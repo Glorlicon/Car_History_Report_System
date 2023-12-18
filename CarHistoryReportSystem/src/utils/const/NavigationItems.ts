@@ -30,14 +30,14 @@ export const ManufacturerNavigation = [
 ]
 
 export const CarDealerNavigation = [
-    { label: 'Dealer Details', link: '/dealer' },
+    { label: 'Dealer Details', link: '/dealer/details' },
     { label: 'Car Sale List', link: '/dealer/cars' },
     { label: 'Car Storage', link: '/dealer/storage' },
     { label: 'Admin Request', link: '/dealer/requests' }
 ]
 
 export const ServiceShopNavigation = [
-    { label: 'Service Shop Details', link: '/service' },
+    { label: 'Service Shop Details', link: '/service/details' },
     { label: 'Car Service List', link: '/service/car-service' },
     { label: 'Recall List', link: '/service/recalls' },
     { label: 'Admin Request', link: '/service/requests' }
