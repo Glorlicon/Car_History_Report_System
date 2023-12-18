@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/State';
 import { COLORS } from '../../../utils/const/Colors';
 import { AdminRequest, Car, UserNotification, UsersRequest } from '../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
 
 interface NotificationCharacteristicFormProps {
     model: UserNotification,
@@ -19,53 +20,24 @@ const RequestCharacteristicPage: React.FC<NotificationCharacteristicFormProps> =
     }, []);
   return (
       <>
-          <div className="ad-car-form-columns">
-              <div className="ad-car-form-column">
-                  <TextField
-                      label={t('Title')}
-                      defaultValue={model.notification.title}
-                      InputProps={{
-                          readOnly: true,
-                          style: {
-                              fontSize: 15,
-                              width: 170
-                          },
-                      }}
-                      multiline
-                  />
-              </div>
+          <div className="pol-crash-form-column">
+              <label>{t('Title')}</label>
+              <TextField type="text" name="tile" value={model.notification.title} disabled style={{ width: '100%' }} size='small' />
           </div>
-          <div className="ad-car-form-columns">
-              <div className="ad-car-form-column">
-                  <TextField
-                      label={t('Description')}
-                      defaultValue={model.notification.description}
-                      InputProps={{
-                          readOnly: true,
-                          style: {
-                              fontSize: 15,
-                              width: 250
-                          },
-                      }}
-                      multiline
-                  />
-              </div>
-              <div className="ad-car-form-column">
-                  <TextField
-                      label={t('Date')}
-                      defaultValue={model.notification.createdTime}
-                      InputProps={{
-                          readOnly: true,
-                          style: {
-                              fontSize: 15,
-                              width: 250
-                          },
-                      }}
-                  />
-              </div>
+          <div className="pol-crash-form-column">
+              <label>{t('Description')}</label>
+              <TextField type="text" name="description" value={model.notification.description} disabled style={{ width: '100%' }} size='small' />
           </div>
-          <div className="ad-car-form-column">
-              
+          <div className="pol-crash-form-column">
+              <label>{t('Date')}</label>
+              <TextField
+                  type="text"
+                  name="createdTime"
+                  value={model.notification.createdTime ? new Date(model.notification.createdTime).toLocaleDateString() : ''}
+                  disabled
+                  style={{ width: '100%' }}
+                  size="small"
+              />
           </div>
           
       </>

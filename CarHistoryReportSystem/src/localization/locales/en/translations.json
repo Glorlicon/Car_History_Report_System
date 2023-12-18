@@ -822,7 +822,6 @@
   "Essential Service Shop Solutions for Vehicle Care and Maintenance": "Essential Service Shop Solutions for Vehicle Care and Maintenance",
   "Service Shop Detail": "Service Shop Detail",
   "Access detailed information about your service shop, including services offered, hours of operation, and customer reviews.": "Access detailed information about your service shop, including services offered, hours of operation, and customer reviews.",
-  "Car Service List": "Car Service List",
   "View a list of vehicles serviced at your shop, track service history, and schedule upcoming maintenance appointments.": "View a list of vehicles serviced at your shop, track service history, and schedule upcoming maintenance appointments.",
   "Car Recall Information": "Car Recall Information",
   "Stay informed about the latest vehicle recalls published by manufacturers to ensure timely service for your customers.": "Stay informed about the latest vehicle recalls published by manufacturers to ensure timely service for your customers.",
@@ -832,5 +831,6 @@
   "Serviced Cars": "Serviced Cars",
   "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.": "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.",
   "Recall Notices": "Recall Notices",
-  "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements."
+  "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.",
+  "Notification ID": "Notification ID"
 }
