@@ -153,3 +153,20 @@
         transform: scale3d(1.1, 1.1, 1);
     }
 }
+.checkmark__xcircle {
+    stroke-width: 2;
+    stroke: #FF6347; /* Tomato red color for failure */
+    stroke-miterlimit: 10;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__x {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 2;
+    stroke: #FF6347; /* Tomato red color for failure */
+    fill: none;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards, scale 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}

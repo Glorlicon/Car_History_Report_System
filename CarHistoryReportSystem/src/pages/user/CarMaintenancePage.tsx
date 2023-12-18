@@ -10,6 +10,8 @@ import '../../styles/CarMaintenance.css'
 import { isValidVIN } from '../../utils/Validators';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import MuiAlert from '@mui/material/Alert';
+import TextField from '@mui/material/TextField'
 
 function CarMaintenancePage() {
     const { t, i18n } = useTranslation()
@@ -40,12 +42,12 @@ function CarMaintenancePage() {
 
     const validateVin = (vin: string): boolean => {
         if (!isValidVIN(vin)) {
-            setAddError("VIN is invalid");
+            setAddError(t('VIN is invalid'));
             return false;
         }
 
         if (!vin) {
-            setAddError("VIN must be filled out");
+            setAddError(t('VIN must be filled out'));
             return false;
         }
 
@@ -104,7 +106,7 @@ function CarMaintenancePage() {
     }
     useEffect(() => {
         fetchData()
-    },[])
+    }, [])
     function handleCarMaintenanceDetails(vinId: any): void {
         navigate(`/maintenance/${vinId}`)
     }
@@ -113,89 +115,96 @@ function CarMaintenancePage() {
         i18n.changeLanguage(currentLanguage)
     }, []);
 
-  return (
-      <div className="car-maintenance-page">
-          <header className="car-maintenance-header">
-              <span className="car-maintenance-icon">🚗</span>
-              <h1>{t('GARAGE')}</h1>
-          </header>
-          {loading ? (
-              <div className="car-maintenance-spinner"></div>
-          ): error ? (
-                  <div className="car-maintenance-load-error">
-                      {error}
-                      <button onClick={fetchData} className="car-maintenance-retry-btn">{t('Retry')}</button>
-              </div>
-              ) : list.length > 0 ? (
-                      <>
-                          <div className="car-maintenance-item" onClick={handleAddButton}>
-                              🚘 {t('Add Car')}
-                          </div>
-                          {list.map((car: any, index: number) => (
-                              <div className="car-maintenance-item">
-                                  <div className="car-maintenance-card" onClick={() => handleCarMaintenanceDetails(car.vinId)}>
-                                      <img src={carIcon} alt="cat" />
-                                      <span>{car.modelId}</span>
-                                  </div>
-                                  <div className="car-maintenance-btn" onClick={() => handleDeleteButton(car.vinId)}>
-                                      <img src={deleteIcon} alt="cat" />
-                                      <span>{t('Delete')}</span>
-                                  </div>
-                              </div>
-                          ))}
-                      </>                 
-          ) : (
-              <>
-                 <div className="car-maintenance-item" onClick={handleAddButton}>
-                     🚘 {t('Add Car')}
-                 </div>
-                 <span>{t('No car in garage')}</span>
-              </>
-          )}
-          {showModal && (
-              <div className="car-maintenance-modal">
-                  <div className="car-maintenance-modal-content">
-                      <span className="car-maintenance-close-btn" onClick={() => { if (!adding) { setShowModal(false); setAddError('') } }}>&times;</span>
-                      <h2>{t('Add Car')}</h2>
-                      <div className="car-maintenance-form-columns">
-                          <div className="car-maintenance-form-column">
-                              <label>{t('Car VIN')}</label>
-                              <input type="text" name="vin" onChange={handleVinChange} required />
-                          </div>
-                      
-                      <button onClick={handleAddCar} disabled={adding} className="car-maintenance-add-btn">
-                          {adding ? (<div className="car-maintenance-inline-spinner"></div>) : t('Finish')}
-                      </button>
-                      {addError && (
-                          <p className="car-maintenance-error">{addError}</p>
-                          )}
-                      </div>
-                  </div>
-              </div>
-          )}
-          {showDeleteModal && (
-              <div className="car-maintenance-modal">
-                  <div className="car-maintenance-modal-content">
-                      <span className="car-maintenance-close-btn" onClick={() => { if (!adding) setShowDeleteModal(false); }}>&times;</span>
-                      <h2>{t('Delete Car')}</h2>
-                      <p>{t('Are you sure you want to delete')} {currentVin} {t('from your garage')}?</p>
-
-                      {adding ? (
-                          <div className="car-maintenance-inline-spinner"></div>
-                      ) : (
-                              <>
-                                  <button onClick={handleDeleteCar} className="car-maintenance-add-btn">{t('Yes')}</button>
-                                  <button onClick={() => { if (!adding) setShowDeleteModal(false); }} className="car-maintenance-add-btn">{t('No')}</button>
-                          </>
-                      )}
-                      {addError && (
-                          <p className="car-maintenance-error">{addError}</p>
-                      )}
-                  </div>
-              </div>
-          )}
-      </div>
-  );
+    return (
+        <div className="car-maintenance-page">
+            <header className="car-maintenance-header">
+                <span className="car-maintenance-icon">🚗</span>
+                <h1>{t('GARAGE')}</h1>
+            </header>
+            {loading ? (
+                <div className="car-maintenance-spinner"></div>
+            ) : error ? (
+                <div className="car-maintenance-load-error">
+                    {error}
+                    <button onClick={fetchData} className="car-maintenance-retry-btn">{t('Retry')}</button>
+                </div>
+            ) : list.length > 0 ? (
+                <>
+                    <div className="car-maintenance-item" onClick={handleAddButton} style={{marginLeft:'5px', marginRight:'5px'}}>
+                        🚘 {t('Add Car')}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {list.map((car: any, index: number) => (
+                            <>
+                                <div className="car-maintenance-item" style={{marginLeft:'5px', marginRight:'5px'}}>
+                                    <div className="car-maintenance-card" onClick={() => handleCarMaintenanceDetails(car.vinId)}>
+                                        <img src={carIcon} alt="cat" />
+                                        <span>{car.modelId}</span>
+                                    </div>
+                                    <div className="car-maintenance-btn" onClick={() => handleDeleteButton(car.vinId)}>
+                                        <img src={deleteIcon} alt="cat" />
+                                        <span>{t('Delete')}</span>
+                                    </div>
+                                </div>
+                                
+                            </>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="car-maintenance-item" onClick={handleAddButton}>
+                        🚘 {t('Add Car')}
+                    </div>
+                    <span>{t('No car in garage')}</span>
+                </>
+            )}
+            {showModal && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { if (!adding) { setShowModal(false); setAddError(''); setVin('') } }}>&times;</span>
+                        <h2>{t('Add Car')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <div className="pol-crash-form-column">
+                                <label>{t('Car VIN')}</label>
+                                <TextField type="text" name="vin" onChange={handleVinChange} style={{ width: '100%' }} size='small' />
+                            </div>
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleAddCar} disabled={adding} className="car-maintenance-add-btn">
+                                {adding ? (<div className="car-maintenance-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showDeleteModal && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { if (!adding) { setShowDeleteModal(false); setAddError(''); setVin('') } }}>&times;</span>
+                        <h2>{t('Delete Car')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <p>{t('Are you sure you want to delete')} {currentVin} {t('from your garage')}?</p>
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
+                                <div className="pol-crash-modal-content-2-buttons">
+                                    <button onClick={handleDeleteCar} className="car-maintenance-add-btn">{t('Yes')}</button>
+                                    <button onClick={() => { if (!adding) setShowDeleteModal(false); }} className="car-maintenance-add-btn">{t('No')}</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default CarMaintenancePage;

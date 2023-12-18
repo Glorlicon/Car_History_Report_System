@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
                 <p>&#169; 2023 SEP490_G6. {t('All rights reserved')}.</p>
                 <div className="contact-info">
                     <p><strong>{t('Address')}:</strong> {t('FPT University, Ha Noi, Vietnam')}</p>
-                    <p><strong>Email:</strong>se.group6.chrs@gmail.com</p>
+                    <p><strong>Email: </strong>se.group6.chrs@gmail.com</p>
                     <p><strong>{t('Phone')}:</strong> +1 (123) 456-7890</p>
                 </div>
             </div>

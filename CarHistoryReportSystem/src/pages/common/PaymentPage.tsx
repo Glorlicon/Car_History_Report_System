@@ -25,7 +25,7 @@ function PaymentPage() {
         vin: string
     }
     const { vin } = useParams<RouteParams>()
-
+    const value = vin ? vin : 'None'
     const formatDate = (date: Date): string => {
         const year = date.getFullYear()
         const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -70,7 +70,7 @@ function PaymentPage() {
             vnp_Locale: language || 'vn',
             vnp_CurrCode: 'VND',
             vnp_TxnRef: Date.now(),
-            vnp_OrderInfo: description+"-"+vin,
+            vnp_OrderInfo: description+"-"+value,
             vnp_OrderType: 'billpayment',
             vnp_ReturnUrl: `${process.env.REACT_APP_PAYMENT_RETURN}`, 
             vnp_IpAddr: '58.186.167.116',

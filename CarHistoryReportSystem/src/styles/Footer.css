@@ -5,6 +5,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 .footer-content {
@@ -14,11 +17,14 @@
     width: 100%;
     max-width: 1200px; /* You can adjust this value based on your design */
 }
+.footer-content p {
+    padding: 0;
+    margin: 5px;
+}
 
 .contact-info {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 }
 
 /* Responsive styles */

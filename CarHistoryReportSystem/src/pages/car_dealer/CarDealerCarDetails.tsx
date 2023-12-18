@@ -7,8 +7,11 @@ import { ListCarForSale } from '../../services/api/CarForSale';
 import { APIResponse, Car, CarImages } from '../../utils/Interfaces';
 import '../../styles/CarDealerCarDetails.css'
 import { GetImages } from '../../services/azure/Images';
+import { useTranslation } from 'react-i18next';
 
 function CarDealerCarDetails() {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     type RouteParams = {
         id: string
@@ -20,7 +23,9 @@ function CarDealerCarDetails() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        const carSalesListResponse: APIResponse = await GetCar(id as unknown as string, token)
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carSalesListResponse: APIResponse = await GetCar(id as unknown as string, token,connectAPIError,language)
         if (carSalesListResponse.error) {
             setError(carSalesListResponse.error)
         } else {
@@ -55,6 +60,7 @@ function CarDealerCarDetails() {
 
     useEffect(() => {
         fetchData();
+        i18n.changeLanguage(currentLanguage)
     }, []);
     return (
         <div className="dealer-car-sales-details-page">
