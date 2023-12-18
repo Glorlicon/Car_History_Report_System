@@ -81,22 +81,18 @@ function AdminDataProviderList() {
     const validateManu = (dp: DataProvider): boolean => {
         if (dp.email && !isValidEmail(dp.email)) {
             setAddError(t('Invalid email address'));
-            setOpenError(true)
             return false;
         }
         if (dp.phoneNumber && !isValidNumber(dp.phoneNumber)) {
             setAddError(t('Invalid phone number'));
-            setOpenError(true)
             return false;
         }
         if (!dp.description || !dp.name || !dp.email || !dp.phoneNumber || !dp.address || !dp.websiteLink) {
             setAddError(t('All fields must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (dp.type < 0) {
             setAddError(t('Role is not chosen'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -128,7 +124,6 @@ function AdminDataProviderList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setNewDp(emptyDataProvider)
@@ -151,7 +146,6 @@ function AdminDataProviderList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setEditDp(null);
@@ -309,7 +303,7 @@ function AdminDataProviderList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Data Providers List')}
                       </span>
                       <TableContainer>
@@ -322,7 +316,7 @@ function AdminDataProviderList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -333,7 +327,7 @@ function AdminDataProviderList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -364,13 +358,13 @@ function AdminDataProviderList() {
                                                       if (column.id !== 'actions' && column.id !== 'typeName') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       }  else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <button onClick={() => { setEditDp(row) }} disabled={adding} className="pol-crash-action-button">
                                                                           {t('Edit1')} &#x270E;
                                                                       </button>
@@ -379,7 +373,7 @@ function AdminDataProviderList() {
                                                       } else if (column.id === 'typeName') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
                                                                   
                                                                       {t(value)}
                                                                  
@@ -415,44 +409,6 @@ function AdminDataProviderList() {
                   </div>
               </div>
           </div>
-          {/*<table className="ad-manu-table">*/}
-          {/*    <thead>*/}
-          {/*        <tr>*/}
-          {/*            <th>ID</th>*/}
-          {/*            <th>{t('Name')}</th>*/}
-          {/*            <th>{t('Description')}</th>*/}
-          {/*        </tr>*/}
-          {/*    </thead>*/}
-          {/*    <tbody>*/}
-          {/*        {loading ? (*/}
-          {/*            <tr>*/}
-          {/*                <td colSpan={5} style={{ textAlign: 'center' }}>*/}
-          {/*                    <div className="ad-manu-spinner"></div>*/}
-          {/*                </td>*/}
-          {/*            </tr>*/}
-          {/*        ) : error ? (*/}
-          {/*            <tr>*/}
-          {/*                <td colSpan={5} style={{ textAlign: 'center' }}>*/}
-          {/*                    {error}*/}
-          {/*                    <button onClick={fetchData} className="ad-manu-retry-btn">{t('Retry')}</button>*/}
-          {/*                </td>*/}
-          {/*            </tr>*/}
-          {/*            ) : manufactureres.length > 0 ? (*/}
-          {/*                manufactureres.map((manu: any, index: number) => (*/}
-          {/*                    <tr key={index}>*/}
-          {/*                    <td onClick={() => { setEditManu(manu); setCurrentId(manu.id) }}>{manu.id}</td>*/}
-          {/*                    <td>{manu.name}</td>*/}
-          {/*                    <td>{manu.description}</td>*/}
-          {/*                </tr>*/}
-          {/*            ))*/}
-          {/*        ) : (*/}
-          {/*            <tr>*/}
-          {/*                <td colSpan={5}>{t('No manufacturers added by admin')}</td>*/}
-          {/*            </tr>*/}
-          {/*        )}*/}
-          {/*    </tbody>*/}
-          {/*</table>*/}
-          {/*Pop-up add window*/}
           {showModal && (
               <div className="pol-crash-modal">
                   <div className="pol-crash-modal-content">

@@ -1,6 +1,8 @@
 .pol-stolen-list-page {
     padding: 20px;
     padding-top: 200px;
+    flex:1;
+    background-color: ghostwhite;
 }
 
 .pol-stolen-top-bar {

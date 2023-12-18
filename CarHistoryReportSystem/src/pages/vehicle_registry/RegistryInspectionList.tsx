@@ -90,42 +90,34 @@ function RegistryInspectionList() {
     const validateCarInspection = (inspection: CarInspectionHistory): boolean => {
         if (!isValidVIN(inspection.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!inspection.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (inspection.odometer <= 0 ) {
             setAddError(t('Odometer must be higher than 0'));
-            setOpenError(true)
             return false;
         }
         if (!inspection.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!inspection.description) {
             setAddError(t('Description must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!inspection.inspectionNumber) {
             setAddError(t('Inspection Number must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!inspection.inspectDate) {
             setAddError(t('Inspect Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (inspection.carInspectionHistoryDetail.length === 0 ) {
             setAddError(t('Inspection must have details'));
-            setOpenError(true)
             return false;
         }
         for (let i = 0; i < inspection.carInspectionHistoryDetail.length; i++) {
@@ -138,7 +130,6 @@ function RegistryInspectionList() {
     const validateCarInsectionDetails = (detail: CarInspectionDetail): boolean => {
         if (!detail.inspectionCategory) {
             setAddError(t('Inspection Category must be filled out'));
-            setOpenError(true)
             return false;
         }
 
@@ -154,7 +145,6 @@ function RegistryInspectionList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setModalPage(1);
@@ -184,7 +174,6 @@ function RegistryInspectionList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setEditInspection(null);
@@ -500,7 +489,7 @@ function RegistryInspectionList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Car Inspection List')}
                       </span>
                       <TableContainer>
@@ -513,7 +502,7 @@ function RegistryInspectionList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -524,7 +513,7 @@ function RegistryInspectionList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -555,18 +544,18 @@ function RegistryInspectionList() {
                                                       if (column.id !== 'actions' && column.id !== 'carInspectionHistoryDetail') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditInspection(row) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Edit1')} &#x270E;
                                                                   </button>
-                                                                  <button onClick={() => { navigate(`/registry/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                  <button onClick={() => { navigate(`/registry/car-report/${row.carId}`) }} className="pol-crash-action-button-2">
                                                                       {t('View Report For Car')}
                                                                       </button>
                                                                   </div>
@@ -580,7 +569,7 @@ function RegistryInspectionList() {
                                                               </div>
                                                           ));
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {detailElements}
                                                               </TableCell>
                                                           )
@@ -599,6 +588,7 @@ function RegistryInspectionList() {
                           </Table>
                       </TableContainer>
                       <TablePagination
+                      style={{backgroundColor:'white', borderBottomLeftRadius:'10px', borderBottomRightRadius:'10px'}}
                           rowsPerPageOptions={[15]}
                           component="div"
                           count={paging ? paging.TotalCount : 0}

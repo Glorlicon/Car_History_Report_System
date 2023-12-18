@@ -27,7 +27,7 @@ import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 
 interface Column {
-    id: 'id' | 'carId' | 'description' | 'status' |'odometer' | 'reportDate' | 'note' | 'actions';
+    id: 'id' | 'carId' | 'description' | 'status' | 'odometer' | 'reportDate' | 'note' | 'actions';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -115,7 +115,6 @@ function PoliceStolenCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setOpenImport(false)
                 setImportData(null)
@@ -164,32 +163,26 @@ function PoliceStolenCarList() {
     const validateCarStolenReport = (stolenReport: CarStolen): boolean => {
         if (!isValidVIN(stolenReport.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!stolenReport.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!stolenReport.description) {
             setAddError(t('Description must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!stolenReport.odometer) {
             setAddError(t('Odometer must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!stolenReport.note) {
             setAddError(t('Note must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!stolenReport.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -204,7 +197,6 @@ function PoliceStolenCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setNewCarStolenReport({
                     description: '',
@@ -232,7 +224,6 @@ function PoliceStolenCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditCarStolenReport(null)
                 setMessage(t('Edit car stolen report successfully'))
@@ -289,13 +280,13 @@ function PoliceStolenCarList() {
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const carStolenReportResponse: APIResponse = await ListCarStolen(id, token, page+1, connectAPIError, language, searchParams)
+        const carStolenReportResponse: APIResponse = await ListCarStolen(id, token, page + 1, connectAPIError, language, searchParams)
         if (carStolenReportResponse.error) {
             setError(carStolenReportResponse.error)
         } else {
             setcarStolenList(carStolenReportResponse.data)
             setPaging(carStolenReportResponse.pages)
-            const responseCsv: APIResponse = await GetStolenExcel(id, token, page+1, connectAPIError, language, searchParams)
+            const responseCsv: APIResponse = await GetStolenExcel(id, token, page + 1, connectAPIError, language, searchParams)
             setData(responseCsv.data)
         }
         setLoading(false)
@@ -321,354 +312,356 @@ function PoliceStolenCarList() {
     useEffect(() => {
         fetchData();
     }, [resetTrigger]);
-  return (
-      <div className="pol-stolen-list-page">
-          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-              <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
-                  {message}
-              </MuiAlert>
-          </Snackbar>
-          <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
-                  {error ? error : addError}
-              </MuiAlert>
-          </Snackbar>
-          <div className="pol-alert-action">
-              <Accordion>
-                  <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                  >
-                      <Typography style={{ fontWeight: 'bold' }}>+ {t('Add New Stolen Car Report')}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                      <Typography>
-                          + {t('Add Manually')}
-                      </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Stolen Car Report')}</button>
-                  </AccordionDetails>
-                  <AccordionDetails>
-                      <Typography>
-                          + {t('Add Using Excel')}
-                      </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => { handleDownloadTemplate() }}>&dArr; {t('Excel Template')}</button>
-                      <a
-                          href={`data:text/csv;charset=utf-8,${escape(template)}`}
-                          download={`template.csv`}
-                          hidden
-                          id="template"
-                      />
-                      <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
-                  </AccordionDetails>
-              </Accordion>
-          </div>
-          <div className="pol-alert-action">
-              <Accordion>
-                  <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                  >
-                      <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                      <div className="reg-inspec-search-filter-container">
-                          <div className="reg-inspec-search-filter-item">
-                              <label>{t('Car ID')}</label>
-                              <input
-                                  type="text"
-                                  className="reg-inspec-search-bar"
-                                  placeholder={t('Search by Car ID')}
-                                  value={searchVinId}
-                                  onChange={(e) => setSearchVinId(e.target.value)}
-                              />
-                          </div>
-                          <div className="reg-inspec-search-filter-item">
-                              <label>{t('Status')}</label>
-                              <select className="reg-inspec-search-bar" value={searchStatus} onChange={(e) => setSearchStatus(e.target.value)}>
-                                  <option value=''>{t('All')}</option>
-                                  <option value={CAR_STOLEN_STATUS.Stolen}>{t('Stolen')}</option>
-                                  <option value={CAR_STOLEN_STATUS.Found}>{t('Found')}</option>
-                              </select>
-                          </div>
-                          <button
-                              className="search-reg-inspec-btn"
-                              onClick={() => { setPage(0); fetchData(); }}
-                          >
-                              {t('Search...')}
-                          </button>
-                          <button
-                              className="reset-reg-inspec-btn"
-                              onClick={handleResetFilters}
-                          >
-                              {t('Reset Filters')}
-                          </button>
-                      </div>
-                  </AccordionDetails>
-              </Accordion>
-          </div>
-          <div className="plate-search-page-row">
-              <div className="plate-alert-page-item">
-                  <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                          {t('Car Stolen List')}
-                      </span>
-                      <TableContainer>
-                          <Table stickyHeader aria-label="sticky table">
-                              <TableHead>
-                                  <TableRow>
-                                      {columns.map((column, index) => {
-                                          if (column.id !== 'actions') {
-                                              return (
-                                                  <TableCell
-                                                      key={column.id + '-' + index}
-                                                      align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                                  >
-                                                      {column.label}
-                                                  </TableCell>
-                                              )
-                                          } else {
-                                              return (
-                                                  <TableCell
-                                                      sx={stickyCellStyle}
-                                                      key={column.id + '-' + index}
-                                                      align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
-                                                  >
-                                                      {column.label}
-                                                  </TableCell>
-                                              )
-                                          }
-                                      })}
-                                  </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                  {loading ? (
-                                      <TableRow>
-                                          <TableCell colSpan={8}>
-                                              <div className="pol-crash-spinner"></div>
-                                          </TableCell>
-                                      </TableRow>
-                                  ) : error ? (
-                                      <TableRow>
-                                          <TableCell colSpan={8}>
-                                              {error}
-                                              <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
-                                          </TableCell>
-                                      </TableRow>
-                                  ) : carStolenList.length > 0 ? carStolenList
-                                      .map((row, index1) => {
-                                          return (
-                                              <TableRow hover role="checkbox" tabIndex={-1} key={row.carId + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
-                                                  {columns.map((column, index) => {
-                                                      if (column.id !== 'actions' && column.id !== 'status') {
-                                                          let value = row[column.id]
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                  {value}
-                                                              </TableCell>
-                                                          )
-                                                      } else if (column.id === 'status') {
-                                                          let value = row[column.id]
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                  {value === 1 ? t('Found') : t('Stolen')}
-                                                              </TableCell>
-                                                          )
-                                                      } else if (column.id === 'actions') {
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}  sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
-                                                                  <div className="pol-crash-modal-content-2-buttons">
-                                                                  <button onClick={() => { setEditCarStolenReport(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                      {t('Edit1')} &#x270E;
-                                                                  </button>
-                                                                  <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button">
-                                                                      {t('View Report For Car')}
-                                                                  </button>
-                                                                  </div>
-                                                              </TableCell>
-                                                          )
-                                                      }
-                                                  })}
-                                              </TableRow>
-                                          );
-                                      }) :
-                                      <TableRow>
-                                          <TableCell colSpan={8}>
-                                              {t('No stolen car reports found')}
-                                          </TableCell>
-                                      </TableRow>
-                                  }
-                              </TableBody>
-                          </Table>
-                      </TableContainer>
-                      <TablePagination
-                          rowsPerPageOptions={[15]}
-                          component="div"
-                          count={paging ? paging.TotalCount : 0}
-                          rowsPerPage={15}
-                          page={page}
-                          onPageChange={handleChangePage}
-                          labelDisplayedRows={
-                              ({ from, to, count }) => {
-                                  return '' + from + '-' + to + ' ' + t('of') + ' ' + count
-                              }
-                          }
-                      />
-                  </div>
-              </div>
-          </div>
-          {showModal && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => {
-                          setShowModal(false); setNewCarStolenReport({
-                              description: '',
-                              carId: '',
-                              odometer: 0,
-                              status: 0,
-                              note: '',
-                              reportDate: ''
-                          }); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Add Car Stolen Report')}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          <PoliceCarStolenDetailsForm
-                              action="Add"
-                              model={newCarStolenReport}
-                              handleDateChange={handleDateChange}
-                              handleInputChange={handleInputChange}
-                          />
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          <button onClick={handleAddCarStolenReport} disabled={adding} className="pol-stolen-model-add-btn">
-                              {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Finish')}
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          )}
-          {editCarStolenReport && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setEditCarStolenReport(null); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Edit Car Stolen Report')}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          <PoliceCarStolenDetailsForm
-                              action="Edit"
-                              model={editCarStolenReport}
-                              handleInputChange={handleInputChange}
-                              handleDateChange={handleDateChange}
-                          />
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          <button onClick={handleEditCarStolenReport} disabled={adding} className="pol-stolen-model-add-btn">
-                              {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Finish')}
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          )}
-          {openImport && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setOpenImport(false); setImportData(null); setViewImportData([]); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Import from csv')}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          <div className="reg-reg-form-column-2">
-                              <input type="file" id="excel-file" accept=".csv" className="csv-input" onChange={handleAddDataFromFile} />
-                              <button onClick={handleImportClick} className="dealer-car-sales-form-image-add-button"> {t('Choose file')}</button>
-                          </div>
-                          <span style={{ width: '100%', fontWeight: 'bold', fontSize: '15px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                              {t('Car Stolen List')}
-                          </span>
-                          <TableContainer>
-                              <Table stickyHeader aria-label="sticky table">
-                                  <TableHead>
-                                      <TableRow>
-                                          {columns.map((column, index) => {
-                                              if (column.id !== 'id' && column.id !== 'actions')
-                                                  return (
-                                                      <TableCell
-                                                          key={column.id + '-' + index}
-                                                          align={column.align}
-                                                          style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '10px', textAlign: 'center' }}
-                                                      >
-                                                          {column.label}
-                                                      </TableCell>
-                                                  )
-                                          })}
-                                      </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                      {viewImportData.length > 0 ? viewImportData
-                                          .map((row, index) => {
-                                              return (
-                                                  <TableRow hover role="checkbox" tabIndex={-1} key={row.carId + '-' + index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
-                                                      {columns.map((column, index) => {
-                                                          if (column.id !== 'actions' && column.id !== 'status' && column.id !== 'id') {
-                                                              let value = row[column.id]
-                                                              return (
-                                                                  <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                      {value}
-                                                                  </TableCell>
-                                                              )
-                                                          } else if (column.id === 'status') {
-                                                              let value = row[column.id];
-                                                              return (
-                                                                  <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                      {value}
-                                                                  </TableCell>
-                                                              )
-                                                          }
-                                                      })}
-                                                  </TableRow>
-                                              );
-                                          }) :
-                                          <TableRow>
-                                              <TableCell colSpan={6}>
-                                                  {t('No stolen car reports found')}
-                                              </TableCell>
-                                          </TableRow>
-                                      }
-                                  </TableBody>
-                              </Table>
-                          </TableContainer>
-                          <MuiAlert elevation={6} variant="filled" severity="warning" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                              {t('Import file must have all data correct to be able to import')} !
-                          </MuiAlert>
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          <button onClick={handleImportExcel} disabled={adding} className="reg-reg-model-add-btn">
-                              {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : t('Finish')}
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          )}
-          {paging && paging.TotalPages > 0 &&
-              <div className="plate-search-page-row">
-                  <button className="export-pol-crash-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
-                  <a
-                      href={`data:text/csv;charset=utf-8,${escape(data)}`}
-                      download={`stolen-${Date.now()}.csv`}
-                      hidden
-                      id="excel"
-                  />
-              </div>
-          }
-      </div>
-  );
+    return (
+        <div className="pol-stolen-list-page">
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                    {error ? error : addError}
+                </MuiAlert>
+            </Snackbar>
+            <div className="pol-alert-action">
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography style={{ fontWeight: 'bold' }}>+ {t('Add New Stolen Car Report')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            + {t('Add Manually')}
+                        </Typography>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Stolen Car Report')}</button>
+                    </AccordionDetails>
+                    <AccordionDetails>
+                        <Typography>
+                            + {t('Add Using Excel')}
+                        </Typography>
+                        <button className="add-pol-crash-btn" onClick={() => { handleDownloadTemplate() }}>&dArr; {t('Excel Template')}</button>
+                        <a
+                            href={`data:text/csv;charset=utf-8,${escape(template)}`}
+                            download={`template.csv`}
+                            hidden
+                            id="template"
+                        />
+                        <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
+                    </AccordionDetails>
+                </Accordion>
+            </div>
+            <div className="pol-alert-action">
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <div className="reg-inspec-search-filter-container">
+                            <div className="reg-inspec-search-filter-item">
+                                <label>{t('Car ID')}</label>
+                                <input
+                                    type="text"
+                                    className="reg-inspec-search-bar"
+                                    placeholder={t('Search by Car ID')}
+                                    value={searchVinId}
+                                    onChange={(e) => setSearchVinId(e.target.value)}
+                                />
+                            </div>
+                            <div className="reg-inspec-search-filter-item">
+                                <label>{t('Status')}</label>
+                                <select className="reg-inspec-search-bar" value={searchStatus} onChange={(e) => setSearchStatus(e.target.value)}>
+                                    <option value=''>{t('All')}</option>
+                                    <option value={CAR_STOLEN_STATUS.Stolen}>{t('Stolen')}</option>
+                                    <option value={CAR_STOLEN_STATUS.Found}>{t('Found')}</option>
+                                </select>
+                            </div>
+                            <button
+                                className="search-reg-inspec-btn"
+                                onClick={() => { setPage(0); fetchData(); }}
+                            >
+                                {t('Search...')}
+                            </button>
+                            <button
+                                className="reset-reg-inspec-btn"
+                                onClick={handleResetFilters}
+                            >
+                                {t('Reset Filters')}
+                            </button>
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+            </div>
+            <div className="plate-search-page-row">
+                <div className="plate-alert-page-item">
+                    <div className="plate-search-page-item-3">
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
+                            {t('Car Stolen List')}
+                        </span>
+                        <TableContainer>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column, index) => {
+                                            if (column.id !== 'actions') {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell
+                                                        sx={stickyCellStyle}
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={8}>
+                                                <div className="pol-crash-spinner"></div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : error ? (
+                                        <TableRow>
+                                            <TableCell colSpan={8}>
+                                                {error}
+                                                <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : carStolenList.length > 0 ? carStolenList
+                                        .map((row, index1) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                    {columns.map((column, index) => {
+                                                        if (column.id !== 'actions' && column.id !== 'status') {
+                                                            let value = row[column.id]
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
+                                                                    {value}
+                                                                </TableCell>
+                                                            )
+                                                        } else if (column.id === 'status') {
+                                                            let value = row[column.id]
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
+                                                                    {value === 1 ? t('Found') : t('Stolen')}
+                                                                </TableCell>
+                                                            )
+                                                        } else if (column.id === 'actions') {
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                    <div className="pol-crash-modal-content-2-buttons">
+                                                                        <button onClick={() => { setEditCarStolenReport(row) }} disabled={adding} className="pol-crash-action-button">
+                                                                            {t('Edit1')} &#x270E;
+                                                                        </button>
+                                                                        <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button-2">
+                                                                            {t('View Report For Car')}
+                                                                        </button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            )
+                                                        }
+                                                    })}
+                                                </TableRow>
+                                            );
+                                        }) :
+                                        <TableRow>
+                                            <TableCell colSpan={8}>
+                                                {t('No stolen car reports found')}
+                                            </TableCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            style={{ backgroundColor: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px' }}
+                            rowsPerPageOptions={[15]}
+                            component="div"
+                            count={paging ? paging.TotalCount : 0}
+                            rowsPerPage={15}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            labelDisplayedRows={
+                                ({ from, to, count }) => {
+                                    return '' + from + '-' + to + ' ' + t('of') + ' ' + count
+                                }
+                            }
+                        />
+                    </div>
+                </div>
+            </div>
+            {showModal && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => {
+                            setShowModal(false); setNewCarStolenReport({
+                                description: '',
+                                carId: '',
+                                odometer: 0,
+                                status: 0,
+                                note: '',
+                                reportDate: ''
+                            }); setError(''); setAddError('')
+                        }}>&times;</span>
+                        <h2>{t('Add Car Stolen Report')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <PoliceCarStolenDetailsForm
+                                action="Add"
+                                model={newCarStolenReport}
+                                handleDateChange={handleDateChange}
+                                handleInputChange={handleInputChange}
+                            />
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleAddCarStolenReport} disabled={adding} className="pol-stolen-model-add-btn">
+                                {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {editCarStolenReport && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setEditCarStolenReport(null); setError(''); setAddError('') }}>&times;</span>
+                        <h2>{t('Edit Car Stolen Report')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <PoliceCarStolenDetailsForm
+                                action="Edit"
+                                model={editCarStolenReport}
+                                handleInputChange={handleInputChange}
+                                handleDateChange={handleDateChange}
+                            />
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleEditCarStolenReport} disabled={adding} className="pol-stolen-model-add-btn">
+                                {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {openImport && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setOpenImport(false); setImportData(null); setViewImportData([]); setError(''); setAddError('') }}>&times;</span>
+                        <h2>{t('Import from csv')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <div className="reg-reg-form-column-2">
+                                <input type="file" id="excel-file" accept=".csv" className="csv-input" onChange={handleAddDataFromFile} />
+                                <button onClick={handleImportClick} className="dealer-car-sales-form-image-add-button"> {t('Choose file')}</button>
+                            </div>
+                            <span style={{ width: '100%', fontWeight: 'bold', fontSize: '15px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                                {t('Car Stolen List')}
+                            </span>
+                            <TableContainer>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            {columns.map((column, index) => {
+                                                if (column.id !== 'id' && column.id !== 'actions')
+                                                    return (
+                                                        <TableCell
+                                                            key={column.id + '-' + index}
+                                                            align={column.align}
+                                                            style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '10px', textAlign: 'center' }}
+                                                        >
+                                                            {column.label}
+                                                        </TableCell>
+                                                    )
+                                            })}
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {viewImportData.length > 0 ? viewImportData
+                                            .map((row, index) => {
+                                                return (
+                                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.carId + '-' + index} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                        {columns.map((column, index) => {
+                                                            if (column.id !== 'actions' && column.id !== 'status' && column.id !== 'id') {
+                                                                let value = row[column.id]
+                                                                return (
+                                                                    <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                        {value}
+                                                                    </TableCell>
+                                                                )
+                                                            } else if (column.id === 'status') {
+                                                                let value = row[column.id];
+                                                                return (
+                                                                    <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                        {value}
+                                                                    </TableCell>
+                                                                )
+                                                            }
+                                                        })}
+                                                    </TableRow>
+                                                );
+                                            }) :
+                                            <TableRow>
+                                                <TableCell colSpan={6}>
+                                                    {t('No stolen car reports found')}
+                                                </TableCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <MuiAlert elevation={6} variant="filled" severity="warning" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                {t('Import file must have all data correct to be able to import')} !
+                            </MuiAlert>
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleImportExcel} disabled={adding} className="reg-reg-model-add-btn">
+                                {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {paging && paging.TotalPages > 0 &&
+                <div className="plate-search-page-row">
+                    <button className="export-pol-crash-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
+                    <a
+                        href={`data:text/csv;charset=utf-8,${escape(data)}`}
+                        download={`stolen-${Date.now()}.csv`}
+                        hidden
+                        id="excel"
+                    />
+                </div>
+            }
+        </div>
+    );
 }
 
 export default PoliceStolenCarList;

@@ -247,7 +247,7 @@ function InsuranceCompanyCrashList() {
               <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                             {t('Car Crash List')}
                         </span>
                         <TableContainer>
@@ -260,7 +260,7 @@ function InsuranceCompanyCrashList() {
                                                     <TableCell
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -271,7 +271,7 @@ function InsuranceCompanyCrashList() {
                                                         sx={stickyCellStyle}
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -302,25 +302,25 @@ function InsuranceCompanyCrashList() {
                                                         if (column.id !== 'actions' && column.id !== 'damageLocation') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id+'-'+index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id+'-'+index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {column.id === 'serverity' && typeof value === 'number' ? `${value*100}%` : value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'damageLocation') {
                                                             let value = row[column.id];
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {getCarSides(value)}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                     <div className="pol-crash-modal-content-2-buttons">
                                                                     <button onClick={() => { setShowCarCrashReport(row) }} className="pol-crash-action-button">
-                                                                        {t('Details')} <InfoIcon/>
+                                                                        {t('Details')}
                                                                     </button>
-                                                                    <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                    <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} className="pol-crash-action-button-2">
                                                                         {t('View Report For Car')}
                                                                         </button>
                                                                      </div>

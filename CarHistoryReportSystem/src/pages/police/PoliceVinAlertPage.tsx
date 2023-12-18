@@ -49,18 +49,16 @@ function PoliceVinAlertPage() {
         { id: 'createdTime', label: t('Created Time'), minWidth: 100 },
         { id: 'isFollowing', label: t('Actions'), minWidth: 100 }
     ];
-    const handleAddNewAlert = async() => {
+    const handleAddNewAlert = async () => {
         setAdding(true);
         setAddError(null);
         if (!isValidVIN(alertVin)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             setAdding(false);
             return;
         }
         if (!alertVin) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             setAdding(false);
             return;
         }
@@ -73,7 +71,6 @@ function PoliceVinAlertPage() {
         setAdding(false);
         if (response.error) {
             setAddError(response.error);
-            setOpenError(true)
         } else {
             setAlertVin('')
             setMessage(t('Add alert successfully'))
@@ -91,7 +88,6 @@ function PoliceVinAlertPage() {
         } as CarTracking, token, connectAPIError, language);
         if (response.error) {
             setAddError(response.error);
-            setOpenError(true)
         } else {
             setMessage(t('Add alert successfully'))
             setOpenSuccess(true)
@@ -107,7 +103,6 @@ function PoliceVinAlertPage() {
         } as CarTracking, token, connectAPIError, language);
         if (response.error) {
             setAddError(response.error);
-            setOpenError(true)
         } else {
             setMessage(t('Remove alert successfully'))
             setOpenSuccess(true)
@@ -122,10 +117,9 @@ function PoliceVinAlertPage() {
         setError(null);
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const response: APIResponse = await GetVinAlertList(id, page+1, token, connectAPIError, language)
+        const response: APIResponse = await GetVinAlertList(id, page + 1, token, connectAPIError, language)
         if (response.error) {
             setError(response.error)
-            setOpenError(true)
         } else {
             setCarList(response.data)
             setPaging(response.pages)
@@ -154,7 +148,7 @@ function PoliceVinAlertPage() {
         i18n.changeLanguage(currentLanguage)
     }, [page])
     return (
-      <div className="pol-plate-search-page">
+        <div className="pol-plate-search-page">
             <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                     {message}
@@ -172,7 +166,7 @@ function PoliceVinAlertPage() {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >
-                        <Typography style={{ fontWeight:'bold' }}>{t('Create a VIN Alert')}</Typography>
+                        <Typography style={{ fontWeight: 'bold' }}>{t('Create a VIN Alert')}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
@@ -193,7 +187,7 @@ function PoliceVinAlertPage() {
                             />
                         </div>
                         <div className="search-actions">
-                            <button onClick={handleAddNewAlert} disabled={adding} className="pol-stolen-model-add-btn">
+                            <button onClick={handleAddNewAlert} disabled={adding} className="search-reg-inspec-btn">
                                 {adding ? (<div className="pol-stolen-inline-spinner"></div>) : t('Add VIN Alert')}
                             </button>
                         </div>
@@ -207,7 +201,7 @@ function PoliceVinAlertPage() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell colSpan={4} style={{ width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color:'white' }}>
+                                        <TableCell colSpan={4} style={{ width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
                                             {t('VIN Alert List')}
                                         </TableCell>
                                     </TableRow>
@@ -216,7 +210,7 @@ function PoliceVinAlertPage() {
                                             <TableCell
                                                 key={column.id}
                                                 align={column.align}
-                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign:'center' }}
+                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
                                             >
                                                 {column.label}
                                             </TableCell>
@@ -231,26 +225,26 @@ function PoliceVinAlertPage() {
                                             </TableCell>
                                         </TableRow>
                                     ) : error ? (
-                                            <TableRow>
-                                                <TableCell colSpan={3}>
-                                                    <button onClick={fetchData} className="pol-stolen-retry-btn">{t('Retry')}</button>
-                                                </TableCell>
-                                            </TableRow>
+                                        <TableRow>
+                                            <TableCell colSpan={3}>
+                                                <button onClick={fetchData} className="pol-stolen-retry-btn">{t('Retry')}</button>
+                                            </TableCell>
+                                        </TableRow>
                                     ) : carList.length > 0 ? carList
                                         .map((row, index) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId} style={{ backgroundColor: index % 2 === 1 ? 'white' :'#E1E1E1'}}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
                                                     {columns.map((column) => {
                                                         if (column.id === 'isFollowing') {
                                                             const value = row[column.id]
                                                             return (
                                                                 <TableCell key={column.id} align={column.align} style={{ textAlign: 'center' }}>
                                                                     {value ? (
-                                                                        <button className="ad-user-suspend-btn" onClick={() => handleRemoveAlertButtonClick(row.carId)}>{t('Stop tracking')}</button>
+                                                                        <button className="pol-crash-action-button-3" onClick={() => handleRemoveAlertButtonClick(row.carId)}>{t('Stop tracking')}</button>
                                                                     ) : (
-                                                                        <button className="ad-user-unsuspend-btn" onClick={() => handleAddAlertButtonClick(row.carId)}>{t('Resume tracking')}</button>
+                                                                        <button className="pol-crash-action-button-2" onClick={() => handleAddAlertButtonClick(row.carId)}>{t('Resume tracking')}</button>
                                                                     )}
-                                                                    <button className="plate-view-report-button" onClick={() => { handleViewReport(row.carId) }}>{t('View Report For Car')}</button>
+                                                                    <button className="pol-crash-action-button" onClick={() => { handleViewReport(row.carId) }}>{t('View Report For Car')}</button>
                                                                 </TableCell>
                                                             )
                                                         } else {
@@ -258,7 +252,7 @@ function PoliceVinAlertPage() {
                                                             if (column.id === 'createdTime') value = row[column.id].split('T')[0]
                                                             else value = row[column.id];
                                                             return (
-                                                                <TableCell key={column.id} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
@@ -277,6 +271,7 @@ function PoliceVinAlertPage() {
                             </Table>
                         </TableContainer>
                         <TablePagination
+                            style={{ backgroundColor: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px' }}
                             rowsPerPageOptions={[5]}
                             component="div"
                             count={paging ? paging.TotalCount : 0}
@@ -292,8 +287,8 @@ function PoliceVinAlertPage() {
                     </div>
                 </div>
             </div>
-      </div>
-  );
+        </div>
+    );
 }
 
 export default PoliceVinAlertPage;

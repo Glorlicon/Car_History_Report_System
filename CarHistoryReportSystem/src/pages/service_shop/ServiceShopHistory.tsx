@@ -82,27 +82,22 @@ function ServiceShopHistory() {
     const validateCarService = (service: CarServiceHistory): boolean => {
         if (!isValidVIN(service.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!service.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!service.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!service.serviceTime) {
             setAddError(t('Service Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (service.services === 0) {
             setAddError(t('Please choose at least 1 service'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -162,7 +157,6 @@ function ServiceShopHistory() {
             } else {
                 if (!newServiceHistory.carId || !isValidVIN(newServiceHistory.carId)) {
                     setAddError(t('VIN is invalid. Please enter valid VIN to get car recalls!'))
-                    setOpenError(true)
                     return
                 }
                 const response: APIResponse = await GetCarRecalls(newServiceHistory.carId, token, connectAPIError, language);
@@ -255,7 +249,6 @@ function ServiceShopHistory() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setMessage(t('Edit service history successfully'))
                 setOpenSuccess(true)
@@ -285,7 +278,6 @@ function ServiceShopHistory() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setMessage(t('Add service history successfully'))
                 setOpenSuccess(true)
@@ -440,7 +432,7 @@ function ServiceShopHistory() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                             {t('Performed Car Services List')}
                         </span>
                         <TableContainer>
@@ -464,7 +456,7 @@ function ServiceShopHistory() {
                                                         sx={stickyCellStyle}
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -495,14 +487,14 @@ function ServiceShopHistory() {
                                                         if (column.id !== 'action' && column.id !== 'serviceTime' && column.id !== 'servicesName') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'serviceTime') {
                                                             let value = row[column.id];
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value.split('T')[0]}
                                                                 </TableCell>
                                                             )
@@ -513,13 +505,13 @@ function ServiceShopHistory() {
                                                                 translatedServices[index] = t(service)
                                                             })
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {translatedServices.join(', ')}
                                                                 </TableCell>
                                                             )
                                                         }  else if (column.id === 'action') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
 
                                                                     <button onClick={() => { setEditCarService(row) }} disabled={adding} className="pol-crash-action-button">
                                                                             {t('Edit1')} &#x270E;
@@ -541,6 +533,7 @@ function ServiceShopHistory() {
                             </Table>
                         </TableContainer>
                         <TablePagination
+                        style={{backgroundColor:'white', borderBottomLeftRadius:'10px', borderBottomRightRadius:'10px'}}
                             rowsPerPageOptions={[15]}
                             component="div"
                             count={paging ? paging.TotalCount : 0}

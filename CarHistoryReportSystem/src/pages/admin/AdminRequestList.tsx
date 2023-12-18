@@ -152,7 +152,7 @@ function AdminRequestList() {
     }, [resetTrigger]);
 
   return (
-      <div className="ad-car-list-page">
+      <div className="pol-crash-list-page">
           <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
               <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                   {message}
@@ -229,7 +229,7 @@ function AdminRequestList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Request List')}
                       </span>
                       <TableContainer>
@@ -242,7 +242,7 @@ function AdminRequestList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -253,7 +253,7 @@ function AdminRequestList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -284,13 +284,13 @@ function AdminRequestList() {
                                                       if (column.id !== 'actions' && column.id !== 'type' && column.id !=="createdTime") {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <button onClick={() => { setEditRequest(row) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Response')} &#x270E;
                                                                   </button>
@@ -299,7 +299,7 @@ function AdminRequestList() {
                                                       } else if (column.id === 'type') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
 
                                                                   {t(value)}
 
@@ -307,7 +307,7 @@ function AdminRequestList() {
                                                           )
                                                       } else if (column.id === 'createdTime') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {row.createdTime ? new Date(row.createdTime).toLocaleDateString() : 'Date not available'}
                                                               </TableCell>
                                                           )

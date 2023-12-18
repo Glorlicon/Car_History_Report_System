@@ -3,6 +3,7 @@
     padding-top: 200px;
     display: flex;
     flex-direction: column;
+    flex:1;
 }
 .pol-plate-search-action {
     border: 1px solid black;
@@ -21,7 +22,6 @@
     min-height: 450px;
 }
 .plate-search-page-item-3 {
-    border: 1px solid black;
     border-radius: 20px;
     margin: 5px;
     box-shadow: 5px 10px #888888;
@@ -61,15 +61,22 @@
     text-align: left;
 }
 .search-actions button {
+    margin-top: 10px;
+}
+.search-actions button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+.search-actions-2 button {
     color: white;
     background-color: deepskyblue;
     border: none;
     padding: 15px;
     font-size: 20px;
     margin: 10px;
-    border-radius: 50px;
+    border-radius: 10px;
 }
-.search-actions button:hover {
+.search-actions-2 button:hover {
     background-color: dodgerblue;
     cursor: pointer;
 }

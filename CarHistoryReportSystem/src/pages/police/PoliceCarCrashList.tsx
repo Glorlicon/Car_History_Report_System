@@ -126,7 +126,6 @@ function PoliceCarCrashList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setOpenImport(false)
                 setImportData(null)
@@ -160,7 +159,7 @@ function PoliceCarCrashList() {
                 },
                 header: true,
             });
-            
+
             const reader = new FileReader()
             reader.onload = (e: ProgressEvent<FileReader>) => {
                 if (e.target && e.target.result && typeof e.target.result === 'string') {
@@ -174,7 +173,7 @@ function PoliceCarCrashList() {
         }
     }
 
-    const getCarSides = (value: number):string => {
+    const getCarSides = (value: number): string => {
         const sides: string[] = []
         if (value & CAR_SIDES.Front) {
             sides.push(t('Front'));
@@ -195,47 +194,38 @@ function PoliceCarCrashList() {
     const validateCarCrashReport = (crashReport: CarCrash): boolean => {
         if (!isValidVIN(crashReport.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.description) {
             setAddError(t('Description must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.location) {
             setAddError(t('Location must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.odometer) {
             setAddError(t('Odometer must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.accidentDate) {
             setAddError(t('Accident Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!crashReport.note) {
             setAddError(t('Note must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (crashReport.serverity <= 0) {
             setAddError(t('Severity must be higher than 0'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -279,7 +269,6 @@ function PoliceCarCrashList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setModalPage(1)
@@ -311,7 +300,6 @@ function PoliceCarCrashList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditCarCrashReport(null)
                 setModalPage(1)
@@ -398,13 +386,13 @@ function PoliceCarCrashList() {
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const carCrashReportResponse: APIResponse = await ListCarCrash(id, token, page+1, connectAPIError, language, searchParams)
+        const carCrashReportResponse: APIResponse = await ListCarCrash(id, token, page + 1, connectAPIError, language, searchParams)
         if (carCrashReportResponse.error) {
             setError(carCrashReportResponse.error)
         } else {
             setCarCrashList(carCrashReportResponse.data)
             setPaging(carCrashReportResponse.pages)
-            const responseCsv: APIResponse = await GetCrashExcel(id, token, page+1, connectAPIError, language, searchParams)
+            const responseCsv: APIResponse = await GetCrashExcel(id, token, page + 1, connectAPIError, language, searchParams)
             setData(responseCsv.data)
         }
         setLoading(false)
@@ -456,7 +444,7 @@ function PoliceCarCrashList() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Manually')} 
+                            + {t('Add Manually')}
                         </Typography>
                         <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Crash Car Report')}</button>
                     </AccordionDetails>
@@ -559,7 +547,7 @@ function PoliceCarCrashList() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
                             {t('Car Crash List')}
                         </span>
                         <TableContainer>
@@ -572,7 +560,7 @@ function PoliceCarCrashList() {
                                                     <TableCell
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -583,7 +571,7 @@ function PoliceCarCrashList() {
                                                         sx={stickyCellStyle}
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -609,30 +597,30 @@ function PoliceCarCrashList() {
                                     ) : carCrashList.length > 0 ? carCrashList
                                         .map((row, index1) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId+'-'+index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.carId + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
                                                     {columns.map((column, index) => {
                                                         if (column.id !== 'actions' && column.id !== 'damageLocation') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id+'-'+index} align={column.align} style={{ textAlign: 'center' }}>
-                                                                    {column.id === 'serverity' && typeof value === 'number' ? `${value*100}%` : value}
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
+                                                                    {column.id === 'serverity' && typeof value === 'number' ? `${value * 100}%` : value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'damageLocation') {
                                                             let value = row[column.id];
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {getCarSides(value)}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                     <div className="pol-crash-modal-content-2-buttons">
                                                                         <button onClick={() => { setEditCarCrashReport(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                        {t('Edit1')} &#x270E;
+                                                                            {t('Edit1')} &#x270E;
                                                                         </button>
-                                                                        <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button">
+                                                                        <button onClick={() => { navigate(`/police/car-report/${row.carId}`) }} className="pol-crash-action-button-2">
                                                                             {t('View Report For Car')}
                                                                         </button>
                                                                     </div>
@@ -654,6 +642,7 @@ function PoliceCarCrashList() {
                             </Table>
                         </TableContainer>
                         <TablePagination
+                            style={{ backgroundColor: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px' }}
                             rowsPerPageOptions={[15]}
                             component="div"
                             count={paging ? paging.TotalCount : 0}
@@ -683,7 +672,8 @@ function PoliceCarCrashList() {
                                 damageLocation: 0,
                                 accidentDate: '',
                                 location: ''
-                            }); setError(''); setAddError('') }}>&times;</span>
+                            }); setError(''); setAddError('')
+                        }}>&times;</span>
                         <h2>{t('Add Car Crash Report')}</h2>
                         <div className="pol-crash-modal-content-2">
                             {modalPage === 1 && (
@@ -774,7 +764,7 @@ function PoliceCarCrashList() {
                                 <input type="file" id="excel-file" accept=".csv" className="csv-input" onChange={handleAddDataFromFile} />
                                 <button onClick={handleImportClick} className="dealer-car-sales-form-image-add-button"> {t('Choose file')}</button>
                             </div>
-                            <span style={{ width:'100%', fontWeight: 'bold', fontSize: '15px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                            <span style={{ width: '100%', fontWeight: 'bold', fontSize: '15px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
                                 {t('Car Crash List')}
                             </span>
                             <TableContainer>
@@ -783,15 +773,15 @@ function PoliceCarCrashList() {
                                         <TableRow>
                                             {columns.map((column, index) => {
                                                 if (column.id !== 'id' && column.id !== 'actions')
-                                                return (
-                                                    <TableCell
-                                                        key={column.id + '-' + index}
-                                                        align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '10px', textAlign: 'center' }}
-                                                    >
-                                                        {column.label}
-                                                    </TableCell>
-                                                )
+                                                    return (
+                                                        <TableCell
+                                                            key={column.id + '-' + index}
+                                                            align={column.align}
+                                                            style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '10px', textAlign: 'center' }}
+                                                        >
+                                                            {column.label}
+                                                        </TableCell>
+                                                    )
                                             })}
                                         </TableRow>
                                     </TableHead>
@@ -829,7 +819,7 @@ function PoliceCarCrashList() {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
-                            <MuiAlert elevation={6} variant="filled" severity="warning" sx={{ width: '90%', zIndex: '2000', marginTop:'20px' }}>
+                            <MuiAlert elevation={6} variant="filled" severity="warning" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
                                 {t('Import file must have all data correct to be able to import')} !
                             </MuiAlert>
                             {addError && (

@@ -122,7 +122,6 @@ function InsuranceCompanyInsuranceList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setOpenImport(false)
                 setImportData(null)
@@ -172,47 +171,38 @@ function InsuranceCompanyInsuranceList() {
     const validateCarInsurance = (insurance: CarInsurance): boolean => {
         if (!isValidVIN(insurance.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.insuranceNumber) {
             setAddError(t('Insurance Number must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.odometer) {
             setAddError(t('Odometer must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.startDate) {
             setAddError(t('Start Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.endDate) {
             setAddError(t('End Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.description) {
             setAddError(t('Description must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.note) {
             setAddError(t('Note must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!insurance.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -227,7 +217,6 @@ function InsuranceCompanyInsuranceList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setNewCarInsurance({
                     insuranceNumber: '',
@@ -257,7 +246,6 @@ function InsuranceCompanyInsuranceList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditCarInsurance(null)
                 setMessage(t('Add car stolen report successfully'))
@@ -514,7 +502,7 @@ function InsuranceCompanyInsuranceList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Car Insurance List')}
                       </span>
                       <TableContainer>
@@ -527,7 +515,7 @@ function InsuranceCompanyInsuranceList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -538,7 +526,7 @@ function InsuranceCompanyInsuranceList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -569,18 +557,18 @@ function InsuranceCompanyInsuranceList() {
                                                       if (column.id !== 'actions') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <div className="pol-crash-modal-content-2-buttons">
                                                                   <button onClick={() => { setEditCarInsurance(row) }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Edit1')} &#x270E;
                                                                   </button>
-                                                                  <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} disabled={adding} className="pol-crash-action-button">
+                                                                  <button onClick={() => { navigate(`/insurance/car-report/${row.carId}`) }} disabled={adding} className="pol-crash-action-button-2">
                                                                       {t('View Report For Car')}
                                                                       </button>
                                                                   </div>
@@ -601,6 +589,7 @@ function InsuranceCompanyInsuranceList() {
                           </Table>
                       </TableContainer>
                       <TablePagination
+                      style={{backgroundColor:'white', borderBottomLeftRadius:'10px', borderBottomRightRadius:'10px'}}
                           rowsPerPageOptions={[15]}
                           component="div"
                           count={paging ? paging.TotalCount : 0}
