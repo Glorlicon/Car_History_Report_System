@@ -59,6 +59,7 @@ import ForgottenPasswordSuccess from '../pages/common/ForgottenPasswordSucess'
 import PoliceSearchCarReport from '../pages/police/PoliceSearchCarReport';
 import RegistrySearchCarReport from '../pages/vehicle_registry/RegistrySearchCarReport';
 import TestInput from '../pages/vehicle_registry/test';
+import ServiceShopDetailsPage from '../pages/service_shop/ServiceShopDetailsPage';
 
 
 const CustomRoutes = () => {
@@ -105,6 +106,7 @@ const CustomRoutes = () => {
                 <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 {/*Service Shop*/}
                 <Route path="/service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHomePage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/service/details" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopDetailsPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/car-service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHistory /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/recalls" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopRecall /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/requests" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><RequestPage /></UserLayout>}></ProtectedRoute>} />

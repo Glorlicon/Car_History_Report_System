@@ -1,4 +1,4 @@
-import { Avatar, Box, Pagination, Tooltip } from '@mui/material';
+import { Avatar, Pagination, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { t } from 'i18next';
@@ -7,55 +7,40 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
-import { EditProfile, GetAllCarForSaleBySellerID, GetCarForSaleBySellerID, GetDealerProfileData, GetReviewAllByDataProvider, GetReviewByDataProvider } from '../../services/api/Profile';
+import i18n from '../../localization/config';
+import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProvider, editWorkingTime, Manufacturer, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
+import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import i18n from '../../localization/config';
-import cardefaultimage from '../../car-default.jpg'
 
-function CarDealerShopDetailsPage() {
+function ServiceShopDetailsPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const dealerId = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [carList, setCarList] = useState<Car[]>([]);
-    const currentLanguage = useSelector((state: RootState) => state.auth.language);
-    const [newImages, setNewImages] = useState<File[]>([])
-    const [User, setUser] = useState<DataProvider | null>(null) //EditDataProvider
+    const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
     const [modalPage, setModalPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const daysOfWeek = [t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')];
-    const [removedImages, setRemovedImages] = useState<string[]>([]);
-    const [image, setImage] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [adding, setAdding] = useState(false);
     const [review, setReview] = useState<Reviews[]>([]);
     const [averageRating, setAverageRating] = useState<number>(0);
     const [starCounts, setStarCounts] = useState<{ [key: string]: number }>({ '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 });
-    const [carMake, setCarMake] = useState('')
-    const [carModel, setCarModel] = useState('')
-    const [yearStart, setYearStart] = useState(0)
-    const [priceMax, setPriceMax] = useState(9999999999)
-    const [milageMax, setMilageMax] = useState(9999999999)
-    const [carPaging, setCarPaging] = useState<Paging>()
+    const [allServices, setAllServices] = useState<string[]>([]);
+    const [image, setImage] = useState<File | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
     const [reviewPaging, setReviewPaging] = useState<Paging>()
+    const [reviewPage, setReviewPage] = useState(1)
     const [rating, setRating] = useState(0)
     const [sortByRating, setSortByRating] = useState(0)
     const [sortByDate, setSortByDate] = useState(0)
-    const [selectedMake, setSelectedMake] = useState(0)
-    const [resetCarTrigger, setResetCarTrigger] = useState(0);
-    const [resetReviewTrigger, setResetReviewTrigger] = useState(0);
-    const [manufacturerList, setManufacturerList] = useState<Manufacturer[]>([]);
-    const [carPage, setCarPage] = useState(1)
-    const [reviewPage, setReviewPage] = useState(1)
-    const [modelList, setModelList] = useState<CarModel[]>([]);
     const [filteredReview, setFilteredReview] = useState<Reviews[]>([]);
-    const [filteredCarList, setFilteredCarList] = useState<Car[]>([]);
+
     const [userDetails, setUserDetails] = useState({
         id: 0,
         name: '',
@@ -76,32 +61,12 @@ function CarDealerShopDetailsPage() {
         })
     });
 
-    const handleResetCarFilters = () => {
-        setCarMake('')
-        setCarModel('')
-        setYearStart(0)
-        setPriceMax(9999999999)
-        setMilageMax(9999999999)
-        setResetCarTrigger(prev => prev + 1);
-    }
     const handleResetReviewFilters = () => {
         setRating(0)
         setSortByRating(0)
         setSortByDate(0)
         setResetReviewTrigger(prev => prev + 1);
     }
-
-    const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = Number(e.target.value);
-        setSelectedMake(selectedValue);
-        let connectAPIError = t('Cannot connect to API! Please try again later')
-        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
-
-        if (!ManufacturerModelResponse.error) {
-            setModelList(ManufacturerModelResponse.data);
-        }
-    };
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -180,7 +145,6 @@ function CarDealerShopDetailsPage() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-
         const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
             setError(dataProviderResponse.error);
@@ -210,42 +174,39 @@ function CarDealerShopDetailsPage() {
                 ...dataProviderResponse.data,
                 workingTimes: transformedWorkingTimes
             });
-            let searchCarParams: CarSearchParams = {
-                make: carMake,
-                model: carModel,
-                yearstart: yearStart,
-                pricemax: priceMax,
-                milagemax: milageMax
-            }
-            let connectAPIError = t('Cannot connect to API! Please try again later')
-            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-            const filteredCarListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, carPage, connectAPIError, language, searchCarParams);
-            if (filteredCarListResponse.error) {
-                setError(filteredCarListResponse.error);
+            const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(dealerId);
+            if (carServiceResponse.error) {
+                setError(carServiceResponse.error);
             } else {
-                const manufacturerReponse: APIResponse = await ListManufacturer();
-                setManufacturerList(manufacturerReponse.data)
-                setFilteredCarList(filteredCarListResponse.data);
-                const CarListResponse: APIResponse = await GetAllCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, connectAPIError, language);
-                setCarList(CarListResponse.data)
+                setCarServicesList(carServiceResponse.data);
+
+                // Define the initial value of the accumulator explicitly as an array of strings
+                const initialServices: string[] = [];
+                const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
+                    if (item.servicesName) {
+                        const serviceNames = item.servicesName.split(', ').map(name => name.trim());
+                        return acc.concat(serviceNames);
+                    }
+                    return acc;
+                }, []);
+                // Remove duplicates
+                const uniqueServices = Array.from(new Set<string>(services));
+                setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
             }
 
-            let searchReviewParams: ReviewSearchParams = {
-                dataproviderId: dataProviderResponse?.data.id,
-                rating: rating,
-                sortByRating: sortByRating,
-                sortByDate: sortByDate
-            }
-            const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
-            if (filteredReviewListResponse.error) {
-                setError(filteredReviewListResponse.error);
-            } else {
-                setFilteredReview(filteredReviewListResponse.data);
-                const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
-                setReview(reviewListReponse.data)
-            }
-            setLoading(false);
+
+            //const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
+            //if (reviewListResponse.error) {
+            //    setError(reviewListResponse.error);
+            //} else {
+            //    setReview(reviewListResponse.data);
+            //}
+
+            //setLoading(false);
         }
+
+
+
         setLoading(false);
     };
 
@@ -275,13 +236,16 @@ function CarDealerShopDetailsPage() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
         const { name, value, type } = e.target;
-
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
+
+            // If the change is related to working times
             if (index !== undefined && field) {
                 let updatedTimes = [...prevProfile.workingTimes];
+
                 if (type === 'time') {
                     const [hours, minutes] = value.split(':').map(Number);
+
                     updatedTimes = updatedTimes.map((time, i) => {
                         if (i === index) {
                             if (field === 'startHour') {
@@ -293,16 +257,23 @@ function CarDealerShopDetailsPage() {
                         return time;
                     });
                 } else if (type === 'checkbox' && field === 'isClosed') {
+                    // Handle isClosed separately
                     updatedTimes = updatedTimes.map((time, i) =>
                         i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
                     );
                 }
+
                 return { ...prevProfile, workingTimes: updatedTimes };
             } else {
+                // For changes outside of working times
                 return { ...prevProfile, [name]: value };
             }
         });
     };
+
+
+
+
 
     const handleAddImages = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -312,6 +283,7 @@ function CarDealerShopDetailsPage() {
             setImage(file)
         }
     };
+
 
     const handleEditDealerProfile = async () => {
         if (editDealerProfile != null) {
@@ -343,43 +315,38 @@ function CarDealerShopDetailsPage() {
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
         fetchData();
-    }, []);
+    }, [dealerId, token]);
 
     useEffect(() => {
         const percentage = Math.round((value / max) * 100);
         setOverlayWidth(`${100 - percentage}%`);
 
         setUserDetails((currentUser) => {
-            // Check if currentUser exists and if workingTimes needs to be set
             if (currentUser && (!currentUser.workingTimes || currentUser.workingTimes.length === 0)) {
                 const updatedUser = {
                     ...currentUser,
-                    workingTimes: defaultSchedule // Set workingTimes directly on currentUser
+                    workingTimes: defaultSchedule
                 };
                 setWorkingTimes(defaultSchedule);
                 return updatedUser;
             } else if (currentUser?.workingTimes) {
-                // If workingTimes already exists, just update the workingTimes state
                 setWorkingTimes(currentUser.workingTimes);
             }
 
-            return currentUser; // Return the currentUser as is if no updates are needed
+            return currentUser;
         });
+
     }, [value, max, userDetails, defaultSchedule]);
 
 
 
     return (
         <div className="car-dealer-profile">
-
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
                     {/*<div className="breadcrumb">*/}
                     {/*    Home*/}
                     {/*</div>*/}
-
-                    {/* Dealer Name and Ratings */}
                     <div className="dealer-info">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
@@ -389,27 +356,24 @@ function CarDealerShopDetailsPage() {
                                 </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
+                            <span className="favorites">
+                            </span>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
-
                     <div className="phone-info">
                         <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
                     </div>
-
-                    {/* Navigation */}
                     <div className="navigation">
-                        <a href="#cars-for-sale-section">{t('Car For Sale')}</a>
+                        <a href="#service-information-section">{t('Top Service Performed')}</a>
                         <a href="#ratings-reviews-section">{t('Reviews')}</a>
                         <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
-
-                {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
                     <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
-                        <Tooltip title={t('Edit')}>
+                        <Tooltip title={t('Click to edit')}>
                             <Avatar
                                 alt="Dealer Shop"
                                 src={GetImages(userDetails?.imageLink)}
@@ -418,139 +382,24 @@ function CarDealerShopDetailsPage() {
                         </Tooltip>
                     </div>
                 </div>
-
-
-
-
             </div>
-            <div className="cars-for-sale-section" id="cars-for-sale-sections">
-                <div className="listing-header">
-                    <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
-                    <div className="filters">
-                        <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
 
-                        <span>
-                            <div className="filter-choice">
-                                <p>{t('Make')}</p>
-                                <select onChange={handleSelectChange} value={selectedMake}>
-                                    <option value="">{t('Any Make')}</option>
-                                    {manufacturerList.length > 0 ? (
-                                        manufacturerList.map((manufacturer, index) => (
-                                            <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
-                                        ))
-                                    ) : (
-                                        <option value="" disabled>Loading...</option>
-                                    )}
-                                </select>
-                            </div>
-                        </span>
-                        <span>
-                            <div className="filter-choice">
-                                <p>{t('Min Year')}</p>
-                                <select onChange={(e) => setYearStart(Number(e.target.value))} value={yearStart}>
-                                    <option value="0">{t('Any Year')}</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2010">2010</option>
-                                    <option value="2009">2009</option>
-                                    <option value="2008">2008</option>
-                                    <option value="2007">2007</option>
-                                    <option value="2006">2006</option>
-                                    <option value="2005">2005</option>
-                                    <option value="2004">2004</option>
-                                    <option value="2003">2003</option>
-                                    <option value="2002">2002</option>
-                                    <option value="2001">2001</option>
-                                    <option value="2000">2000</option>
-                                    <option value="1999">1999</option>
-                                    <option value="1998">1998</option>
-                                </select>
-                            </div>
-                        </span>
-                        <span>
-                            <div className="filter-choice">
-                                <p>{t('Max Price')}</p>
-                                <select onChange={(e) => setPriceMax(Number(e.target.value))} value={priceMax}>
-                                    <option value="9999999999">{t('Any Price')}</option>
-                                    <option value="122025000">122.025.000 VND</option>
-                                    <option value="244050000">244.050.000 VND</option>
-                                    <option value="366075000">366.075.000 VND</option>
-                                    <option value="488100000">488.100.000 VND</option>
-                                    <option value="610125000">610.125.000 VND</option>
-                                    <option value="854175000">854.175.000 VND</option>
-                                    <option value="1220250000">1.220.250.000 VND</option>
-                                    <option value="1830375000">1.830.375.000 VND</option>
-                                </select>
-                            </div>
-                        </span>
-                        <span>
-                            <div className="filter-choice">
-                                <p>{t('Max Milage')}</p>
-                                <select onChange={(e) => setMilageMax(Number(e.target.value))} value={milageMax}>
-                                    <option value="9999999999">{t('Any Milage')}</option>
-                                </select>
-                            </div>
-                        </span>
-                        <span>
-                            <button onClick={handleResetCarFilters} className="car-btn-filter">{t('Clear Filters')}</button>
-                        </span>
+            <div className="service-information-section" id="service-information-section">
+                <div className="service-info">
+                    <h3>{t('Top Services Performed')}</h3>
+                    <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
+                    <div className="services-list">
+                        {allServices.length === 0 ? (
+                            <p>{t('No services available')}</p>
+                        ) : (
+                            allServices.map((service, index) => (
+                                <span key={index}>{t(service)}</span>
+                            ))
+                        )}
                     </div>
                 </div>
-
-
-                <div className="vehicle-grid">
-
-                    {loading ? (
-                        <tr>
-                            <td colSpan={5} style={{ textAlign: 'center' }}>
-                                <div className="ad-car-spinner"></div>
-                            </td>
-                        </tr>
-                    ) : error ? (
-                        <tr>
-                            <td colSpan={5} style={{ textAlign: 'center' }}>
-                                {error}
-                                <button onClick={fetchData} className="ad-car-retry-btn">{t('Retry')}</button>
-                            </td>
-                        </tr>
-                    ) : filteredCarList.length > 0 ? (
-                        carList.map((model: any, index: number) => (
-                            <div className="vehicle-card">
-                                <div className="vehicle-image">
-                                    <Box
-                                        component="img"
-                                        sx={{
-                                            height: '100%',
-                                            width: '100%',
-                                            objectFit: 'cover',
-                                        }}
-                                        src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
-                                        alt="Car"
-                                    />
-                                </div>
-                                <p>{t('Used')} <span>{model.modelId}</span></p>
-                                <p>{t('Price')}: <span>{model.carSalesInfo.price}</span></p>
-                                <a href={`/sales/details/${model.vinId}`}>More Detail</a>
-                            </div>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={5}>{t('No cars found')}</td>
-                        </tr>
-                    )}
-
-                </div>
-                <div id="pagination">
-                    {carPaging && carPaging.TotalPages > 0 &&
-                        <>
-                            <Pagination count={carPaging.TotalPages} onChange={(e, value) => setCarPage(value)} />
-                        </>
-                    }
-                </div>
             </div>
+
 
             <div className="ratings-reviews-section" id="ratings-reviews-section">
                 <h1>{t('Ratings & Review')}</h1>
@@ -687,7 +536,7 @@ function CarDealerShopDetailsPage() {
                 <div className="dealer-car-sales-modal">
                     <div className="dealer-car-sales-modal-content-2">
                         <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Profile</h2>
+                        <h2>{t('Edit Profile')}</h2>
                         {modalPage === 1 && (
                             <CarDealerProfilePage
                                 action="Edit"
@@ -706,10 +555,10 @@ function CarDealerShopDetailsPage() {
                             <>
                                 <div>
                                     <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
+                                        {t('Previous')}
                                     </button>
                                     <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
+                                        {modalPage < 2 ? t('Next') : t('Edit')}
                                     </button>
                                 </div>
                             </>
@@ -730,4 +579,4 @@ function CarDealerShopDetailsPage() {
     );
 }
 
-export default CarDealerShopDetailsPage;
+export default ServiceShopDetailsPage;
