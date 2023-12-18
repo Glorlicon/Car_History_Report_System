@@ -235,9 +235,9 @@ function AdminDataProviderList() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ {t('Add Data Provider')}</button>
+                      <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>{t('Add Data Provider')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>
@@ -413,7 +413,7 @@ function AdminDataProviderList() {
               <div className="pol-crash-modal">
                   <div className="pol-crash-modal-content">
                       <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setNewDp(emptyDataProvider); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Add Manufacturer')}</h2>
+                      <h2>{t('Add Dataprovider')}</h2>
                       <div className="pol-crash-modal-content-2">
                           <div className="pol-crash-form-column">
                               <label>{t('Name')}</label>

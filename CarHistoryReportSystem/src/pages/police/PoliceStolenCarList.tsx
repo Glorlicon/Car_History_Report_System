@@ -335,9 +335,9 @@ function PoliceStolenCarList() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Manually')}
+                            {t('Add Manually')}
                         </Typography>
-                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Stolen Car Report')}</button>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add New Stolen Car Report')}</button>
                     </AccordionDetails>
                     <AccordionDetails>
                         <Typography>
@@ -350,7 +350,7 @@ function PoliceStolenCarList() {
                             hidden
                             id="template"
                         />
-                        <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
+                        <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>{t('Import From Excel')}</button>
                     </AccordionDetails>
                 </Accordion>
             </div>

@@ -1,5 +1,5 @@
 {
-  "+ Add Car Inspection": "+ Add Car Inspection",
+  "Add Car Inspection": "Add Car Inspection",
   "1 CHRS Reports": "1 CHRS Reports",
   "3 CHRS Reports": "3 CHRS Reports",
   "5 CHRS Reports": "5 CHRS Reports",
@@ -9,7 +9,6 @@
   "Add Account": "Add Account",
   "Add Car": "Add Car",
   "Add Car Crash Report": "Add Car Crash Report",
-  "Add Car Inspection": "Add Car Inspection",
   "Add Car Model": "Add Car Model",
   "Add Car Registration": "Add Car Registration",
   "Add Car Stolen Report": "Add Car Stolen Report",
@@ -527,7 +526,7 @@
   "High": "High",
   "Car Crash List": "Car Crash List",
   "Edit1": "Edit",
-  "Add Manually": "Add Manually",
+  "Add Manually": "Insert entry into the database manually",
   "Add Using Excel": "Add Using Excel",
   "Search Bars and Filters": "Search Bars and Filters",
   "Only maximum of 2 wildcard characters allowed": "Only maximum of 2 wildcard characters allowed",
@@ -725,8 +724,8 @@
   "View Insights": "View Insights",
   "This car history report is based on information that was reported and available to CHRS as of": "This car history report is based on information that was reported and available to CHRS as of ",
   "CHRS receives data records from many sources across Vietnam, and we receive new historical data records every day. There may be other information about this car that has not been reported to CHRS. When buying a used car, we always recommend using a CHRS Car History Report, to make an informed decision": "CHRS receives data records from many sources across Vietnam, and we receive new historical data records every day. There may be other information about this car that has not been reported to CHRS. When buying a used car, we always recommend using a CHRS Car History Report, to make an informed decision",
-  "User Details":"User Details",
-  "Account Details":"Account Details",
+  "User Details": "User Details",
+  "Account Details": "Account Details",
   "CHRS Car History Report": "CHRS Car History Report",
   "Country of Assembly": "Country of Assembly",
   "Last Reported Odometer": "Last Reported Odometer",
@@ -832,5 +831,7 @@
   "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.": "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.",
   "Recall Notices": "Recall Notices",
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.",
-  "Notification ID": "Notification ID"
+  "Notification ID": "Notification ID",
+  "Add Dataprovider": "Add Dataprovider",
+  "Edit Car Recall": "Edit Car Recall"
 }

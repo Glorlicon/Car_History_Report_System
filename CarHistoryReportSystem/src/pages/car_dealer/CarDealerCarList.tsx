@@ -273,7 +273,7 @@ function CarDealerCarList() {
         })
     }
     const handleDetailsClick = (id: string) => {
-        navigate(`/sales/details/${id}`)
+        navigate(`/dealer/sales/details/${id}`)
     }
     const handleCarSale = async() => {
         if (saleDetails!=null && validateSaleDetails(saleDetails)) {
@@ -454,9 +454,9 @@ function CarDealerCarList() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add Car Sale')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car Sale')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>

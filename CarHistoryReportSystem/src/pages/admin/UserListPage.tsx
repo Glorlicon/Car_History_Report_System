@@ -381,9 +381,9 @@ function UserListPage() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>+ {t('Add Account')}</button>
+                      <button className="add-ad-account-btn" onClick={() => setShowModal(true)}>{t('Add Account')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>

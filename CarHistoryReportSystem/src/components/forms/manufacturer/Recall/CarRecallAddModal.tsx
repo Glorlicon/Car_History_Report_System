@@ -40,7 +40,7 @@ const CarRecallAddModal: React.FC<CarRecallAddModalCapacityProps> = ({
                     <select name="modelId" value={recall.modelId ? recall.modelId : ''} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height:'40px' }}>
                     <option value=''>{t('Not chosen')}</option>
                         {models?.map((m: any, index: number) => (
-                            <option key={index} value={m.modelId}>{m.modelId}</option>
+                            <option key={index} value={m.modelID}>{m.modelID}</option>
                         ))}
                     </select>
                 </div>

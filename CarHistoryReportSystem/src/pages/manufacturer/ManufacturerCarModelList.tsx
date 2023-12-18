@@ -490,9 +490,9 @@ function ManufacturerCarModelList() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add Car Model')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car Model')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>

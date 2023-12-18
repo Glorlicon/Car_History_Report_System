@@ -340,9 +340,9 @@ function CarDealerCarStorage() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add Car To Storage')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car To Storage')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>
