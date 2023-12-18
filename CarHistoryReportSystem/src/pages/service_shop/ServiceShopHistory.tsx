@@ -367,9 +367,9 @@ function ServiceShopHistory() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Manually')}
+                            {t('Add Manually')}
                         </Typography>
-                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Car Service')}</button>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add New Car Service')}</button>
                     </AccordionDetails>
                 </Accordion>
             </div>

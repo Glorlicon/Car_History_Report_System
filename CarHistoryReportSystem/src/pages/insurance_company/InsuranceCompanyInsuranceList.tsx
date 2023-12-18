@@ -391,13 +391,13 @@ function InsuranceCompanyInsuranceList() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Car Insurance')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add New Car Insurance')}</button>
                   </AccordionDetails>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Using Excel')}
+                          {t('Add Using Excel')}
                       </Typography>
                       <button className="add-pol-crash-btn" onClick={() => { handleDownloadTemplate() }}>&dArr; {t('Excel Template')}</button>
                       <a
@@ -406,7 +406,7 @@ function InsuranceCompanyInsuranceList() {
                           hidden
                           id="template"
                       />
-                      <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>+ {t('Import From Excel')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => { setOpenImport(true) }}>{t('Import From Excel')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>

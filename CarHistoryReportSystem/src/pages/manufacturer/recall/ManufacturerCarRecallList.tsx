@@ -168,6 +168,7 @@ function ManufacturerCarRecallList() {
             setError(carModelResponse.error)
         } else {
             setRecallList(CarRecallReponse.data)
+            console.log(carModelResponse.data)
             setModelList(carModelResponse.data)
             setPaging(CarRecallReponse.pages)
         }
@@ -235,9 +236,9 @@ function ManufacturerCarRecallList() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Manually')}
+                            {t('Add Manually')}
                         </Typography>
-                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Car Recall')}</button>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add New Car Recall')}</button>
                     </AccordionDetails>
                 </Accordion>
             </div>
@@ -412,7 +413,7 @@ function ManufacturerCarRecallList() {
                                 description: "",
                                 recallDate: ""
                             }); setError(''); setAddError('')}}>&times;</span>
-                        <h2>{t('Add Car Registration')}</h2>
+                        <h2>{t('Add Car Recall')}</h2>
                         <div className="pol-crash-modal-content-2">
                             <CarRecallAddModal
                                 recall={newRecall}
@@ -438,7 +439,7 @@ function ManufacturerCarRecallList() {
                 <div className="pol-crash-modal">
                     <div className="pol-crash-modal-content">
                         <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setEditRecall(null); setError(''); setAddError('') }}>&times;</span>
-                        <h2>{t('Edit Car Registration')}</h2>
+                        <h2>{t('Edit Car Recall')}</h2>
                         <div className="pol-crash-modal-content-2">
                             <CarRecallEditModal
                                 action="Edit"
