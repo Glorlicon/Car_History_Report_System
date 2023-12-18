@@ -832,5 +832,12 @@
   "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.": "Manage your records of serviced vehicles, including detailed service logs, parts replaced, and service intervals.",
   "Recall Notices": "Recall Notices",
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.",
-  "Notification ID": "Notification ID"
+  "Notification ID": "Notification ID",
+  "Full Name":"Full Name",
+  "Available Reports":"Available Reports",
+  "Purchased Reports":"Purchased Reports",
+  "Reports":"Reports",
+  "Information":"Information",
+  "View My Reports":"View My Reports",
+  "Report List":"Report List"
 }

@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
-
+import accident from '../../accident.png'
 function TestInput() {
     const [fields, setFields] = useState([""]);
 
@@ -18,26 +18,9 @@ function TestInput() {
     };
 
     return (
-        <Container maxWidth="md" sx={{ mt: 8 }}>
-            {fields.map((field, index) => (
-                <div key={index}>
-                    <TextField
-                        value={field}
-                        onChange={(e) => {
-                            const updatedFields = [...fields];
-                            updatedFields[index] = e.target.value;
-                            setFields(updatedFields);
-                        }}
-                    />
-                    <IconButton onClick={() => handleRemoveField(index)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </div>
-            ))}
-            <Button variant="contained" onClick={handleAddField} sx={{ mt: 2 }}>
-                Add Field
-            </Button>
-        </Container>
+        <IconButton style={{scale:'0.3'}}>
+        <img src={accident} style={{}}/>
+    </IconButton>
     );
 }
 
