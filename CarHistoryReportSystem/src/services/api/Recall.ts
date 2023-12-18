@@ -112,6 +112,7 @@ export async function ListManufacturerRecallss(id: number, token: string, pageNu
                     RecallDateEnd: CarRecallSearchParams.recallDateEnd
                 }
             })
+            console.log(response)
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
     } catch (error) {
         const axiosError = error as AxiosError

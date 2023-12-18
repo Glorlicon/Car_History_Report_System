@@ -142,38 +142,31 @@ function AdminCarModelList() {
     const validateCarModel = (model: CarModel): boolean => {
         if (!model.modelID) {
             setAddError(t('Model ID must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (model.manufacturerId <= 0) {
             setAddError(t('Manufacturer must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (model.fuelType < 0) {
             setAddError(t('Fuel Type must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (model.bodyType < 0) {
             setAddError(t('Body Type must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!model.country) {
             setAddError(t('Country must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!model.releasedDate) {
             setAddError(t('Released Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         for (let i = 0; i < model.modelOdometers.length; i++) {
             const check = validateCarMaintenanceDetails(model.modelOdometers[i])
             if (!check) {
-                setOpenError(true)
                 return false
             }
         }
@@ -183,12 +176,10 @@ function AdminCarModelList() {
     const validateCarMaintenanceDetails = (detail: ModelMaintenance): boolean => {
         if (detail.dayPerMaintainance <= 0) {
             setAddError(t('Day Per Maintainance must be higher than 0'));
-            setOpenError(true)
             return false;
         }
         if (detail.odometerPerMaintainance <= 0) {
             setAddError(t('Odometer Per Maintainance must be higher than 0'));
-            setOpenError(true)
             return false;
         }
 
@@ -264,7 +255,6 @@ function AdminCarModelList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setModalPage(1);
@@ -339,7 +329,6 @@ function AdminCarModelList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setEditModel(null);
@@ -542,7 +531,7 @@ function AdminCarModelList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Car Models List')}
                       </span>
                       <TableContainer>
@@ -555,7 +544,7 @@ function AdminCarModelList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -566,7 +555,7 @@ function AdminCarModelList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -597,27 +586,27 @@ function AdminCarModelList() {
                                                       if (column.id !== 'actions' && column.id !== 'bodyType' && column.id !== 'fuelType') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'bodyType') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {t(getBodyTypeName(value))}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'fuelType') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {t(getFuelTypeName(value))}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">                                                        
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">                                                        
                                                                   <button onClick={() => { setEditModel(row); }} disabled={adding} className="pol-crash-action-button">
                                                                           {t('Edit1')} &#x270E;
                                                                       </button>

@@ -31,7 +31,7 @@ interface Column {
     id: 'id' | 'userName' | 'email' | 'firstName' | 'lastName' | 'phoneNumber' | 'address' | 'roleName' | 'isSuspended' | 'dataProvider' | 'actions';
     label: string;
     minWidth?: number;
-    align?: 'right';
+    align?: 'left';
     format?: (value: number) => string;
 }
 function UserListPage() {
@@ -41,12 +41,12 @@ function UserListPage() {
         right: 0,
     };
     const columns: readonly Column[] = [
-        { id: 'id', label: 'ID', minWidth: 10 },
+        { id: 'id', label: 'ID', minWidth: 10, align:'left' },
         { id: 'userName', label: t('Username'), minWidth: 100 },
         { id: 'email', label: 'Email', minWidth: 100 },
         { id: 'firstName', label: t('First Name'), minWidth: 100 },
         { id: 'lastName', label: t('Last Name'), minWidth: 100 },
-        { id: 'phoneNumber', label: t('Phone number'), minWidth: 100 },
+        { id: 'phoneNumber', label: t('Phone Number'), minWidth: 100 },
         { id: 'address', label: t('Address'), minWidth: 100 },
         { id: 'roleName', label: t('Role'), minWidth: 100 },
         { id: 'dataProvider', label: t('Data Provider'), minWidth: 100 },
@@ -89,44 +89,36 @@ function UserListPage() {
     const validateUser = (user: User): boolean => {
         if (!isValidEmail(user.email)) {
             setAddError(t('Invalid email address'));
-            setOpenError(true)
             return false;
         }
         if (!isValidNumber(user.phoneNumber)) {
             setAddError(t('Invalid phone number'));
-            setOpenError(true)
             return false;
         }
         if (!user.email) {
             setAddError(t('Please enter email'));
-            setOpenError(true)
             return false;
         }
         if (!user.userName) {
             setAddError(t('Please enter username'));
-            setOpenError(true)
             return false;
         }
         if (!user.firstName) {
             setAddError(t('Please enter first name'));
-            setOpenError(true)
             return false;
         }
         if (!user.lastName) {
             setAddError(t('Please enter last name'));
-            setOpenError(true)
             return false;
         }
         if (!user.phoneNumber) {
             setAddError(t('Please enter phone number'));
-            setOpenError(true)
             return false;
         }
         console.log("Validate last")
         console.log(user.dataProviderId == -1)
         if (user.dataProviderId && user.dataProviderId == -1) {
             setAddError(t('Data provider must be chosen'))
-            setOpenError(true)
         }
         return true;
     };
@@ -174,7 +166,6 @@ function UserListPage() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setNewUser({
@@ -258,7 +249,6 @@ function UserListPage() {
             setAdding(false)
             if (response.error) {
                 setAddError(response.error)
-                setOpenError(true)
             } else {
                 setSuspendTab(false);
                 setMessage(userToSuspend.isSuspended ? t('User unsuspended successfully') : t('User suspended successfully'))
@@ -471,7 +461,7 @@ function UserListPage() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Users List')}
                       </span>
                       <TableContainer>
@@ -484,7 +474,7 @@ function UserListPage() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -495,7 +485,7 @@ function UserListPage() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -526,34 +516,34 @@ function UserListPage() {
                                                       if (column.id !== 'actions' && column.id !== 'dataProvider' && column.id !== 'isSuspended' && column.id !== 'roleName') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'isSuspended') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center', color: value ? 'red' : 'green' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left', color: value ? 'red' : 'green' }}>
                                                                   {value ? t('Suspended') : t('Not Suspended')}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'roleName') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center', color: value ? 'red' : 'green' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {t(value)}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'dataProvider') {
                                                           let value = row[column.id]?.name;
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <div className="pol-crash-modal-content-2-buttons">
                                                                       {row.isSuspended ? (
                                                                           <button className="ad-user-unsuspend-btn" onClick={() => handleSuspendClick(row)}>{t('Unsuspend')}</button>
@@ -581,6 +571,7 @@ function UserListPage() {
                           </Table>
                       </TableContainer>
                       <TablePagination
+                          style={{backgroundColor:'white', borderBottomLeftRadius:'10px', borderBottomRightRadius:'10px'}}
                           rowsPerPageOptions={[15]}
                           component="div"
                           count={paging ? paging.TotalCount : 0}

@@ -26,7 +26,7 @@ import TableRow from '@mui/material/TableRow';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField'
-import { ListManufacturerModel } from '../../services/api/CarForSale';
+import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 
 interface Column {
     id: 'vinId' | 'modelId' | 'price' | 'action';
@@ -88,17 +88,14 @@ function CarDealerCarList() {
     const validateCarSales = (carSales: CarSalesInfo): boolean => {
         if (!isValidVIN(carSales.carId as unknown as string)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!carSales.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (carSales.price <=0) {
             setAddError(t('Price must be larger than 0'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -195,7 +192,6 @@ function CarDealerCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setNewCarSales(basicCarSale)
@@ -225,7 +221,6 @@ function CarDealerCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditCarSales(null)
                 setModalPage(1)
@@ -290,7 +285,6 @@ function CarDealerCarList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setSaleDetails(null);
                 setMessage(t('Car is sold successfully'))
@@ -362,12 +356,10 @@ function CarDealerCarList() {
     const validateSaleDetails = (d: CarSaleDetails) => {
         if (!isValidNumber(d.phoneNumber)) {
             setAddError(t('Customer number is not valid'));
-            setOpenError(true)
             return false;
         }
         if (!d.address || !d.dob || !d.name || !d.note || !d.phoneNumber || !d.startDate) {
             setAddError(t('All fields must be filled out'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -409,6 +401,8 @@ function CarDealerCarList() {
             setError(carSalesListResponse.error)
         } else {
             setCarList(carSalesListResponse.data)
+            const manufacturerReponse: APIResponse = await ListManufacturer();
+            setSearchManuList(manufacturerReponse.data)
             setPaging(carSalesListResponse.pages)
         }
         setLoading(false)
@@ -610,7 +604,7 @@ function CarDealerCarList() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Car Sales List')}
                       </span>
                       <TableContainer>
@@ -623,7 +617,7 @@ function CarDealerCarList() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -634,7 +628,7 @@ function CarDealerCarList() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -665,28 +659,28 @@ function CarDealerCarList() {
                                                       if (column.id !== 'action' && column.id !== 'price') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'price') {
                                                           let value = row.carSalesInfo?.price;
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value} {t('VND')}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'action') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
-                                                                  <div className="pol-crash-modal-content-2-buttons" style={{ justifyContent: 'space-evenly' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                  <div className="pol-crash-modal-content-2-buttons" style={{ justifyContent: 'flex-start' }}>
                                                                       <button onClick={() => { if (row.carSalesInfo) setEditCarSales({ ...row.carSalesInfo, carId: row.vinId, carImages: row.carImages }) }} disabled={adding} className="pol-crash-action-button">
                                                                           {t('Edit1')} &#x270E;
                                                                       </button>
-                                                                      <button onClick={() => handleDetailsClick(row.vinId)} disabled={adding} className="pol-crash-action-button">
+                                                                      <button onClick={() => handleDetailsClick(row.vinId)} disabled={adding} className="pol-crash-action-button-2">
                                                                           {t('Details')}
                                                                       </button>
-                                                                      <button onClick={() => handleSoldClick(row.vinId)} disabled={adding} className="pol-crash-action-button">
+                                                                      <button onClick={() => handleSoldClick(row.vinId)} disabled={adding} className="pol-crash-action-button-3">
                                                                           {t('Sold')}
                                                                       </button>
                                                                   </div>

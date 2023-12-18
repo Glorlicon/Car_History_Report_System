@@ -245,7 +245,7 @@ function UserRequest() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                             {t('Request List')}
                         </span>
                         <TableContainer>
@@ -285,14 +285,14 @@ function UserRequest() {
                                                         if (column.id !== 'type' && column.id !== "createdTime") {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'type') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }}>
 
                                                                     {t(value)}
 
@@ -300,7 +300,7 @@ function UserRequest() {
                                                             )
                                                         } else if (column.id === 'createdTime') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {row.createdTime ? new Date(row.createdTime).toLocaleDateString() : 'Date not available'}
                                                                 </TableCell>
                                                             )

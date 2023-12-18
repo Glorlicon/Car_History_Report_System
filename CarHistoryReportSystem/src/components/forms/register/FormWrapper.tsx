@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 type FormWrapperProps = {
@@ -6,11 +7,12 @@ type FormWrapperProps = {
     children: ReactNode
 }
 function FormWrapper({ title, children }: FormWrapperProps) {
+    const { t, i18n } = useTranslation();
   return (
       <>
-          <h2 style={{ textAlign: "center", margin: 0, marginBottom: "2rem" }}>
-              {title}
-          </h2>
+          <h3 style={{ textAlign: "center", margin: 0, marginBottom: "2rem" }}>
+              {t(title)}
+          </h3>
           <div
               style={{
                   display: "grid",

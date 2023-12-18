@@ -52,7 +52,7 @@ function PolicePartialPlateSearch() {
     const [manufacturerList, setManufacturerList] = useState<Manufacturer[]>([]);
     const [modelList, setModelList] = useState<CarModel[]>([]);
     const [carList, setCarList] = useState<Car[]>([])
-    const [plateLength, setPlateLength] = useState(7)
+    const [plateLength, setPlateLength] = useState(8)
     const [plateCharacters, setPlateCharacters] = useState<string[]>(Array(plateLength).fill('*'));
     const [selectedRow, setSelectedRow] = useState<Car | null>();
     const [message, setMessage] = useState('')
@@ -131,7 +131,6 @@ function PolicePartialPlateSearch() {
     const handleSearch = async () => {
         if (!validatePlateSearch(getSearchPlate(plateCharacters))) {
             setError(t('Only maximum of 2 wildcard characters allowed'))
-            setOpenError(true)
             return
         }
         setLoading(true);
@@ -147,7 +146,6 @@ function PolicePartialPlateSearch() {
         const response = await PlateSearch(page, token, connectAPIError, language, searchParams)
         if (response.error) {
             setError(response.error)
-            setOpenError(true)
         } else {
             setCarList(response.data)
             setMessage(t('Search succesfully. Please check the results'))
@@ -253,7 +251,7 @@ function PolicePartialPlateSearch() {
                         </select>
                     </div>
                 </div>
-                <div className="search-actions">
+                <div className="search-actions-2">
                     <button onClick={handleSearch}>{t('Search License Plates')}</button>
                     <button onClick={handleClearSearch}>{t('Clear Search')}</button>
                 </div>
@@ -261,20 +259,18 @@ function PolicePartialPlateSearch() {
             <div className="plate-search-page-row">
                 <div className="plate-search-page-item-2">
                     <div className="plate-search-page-item-3">
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
+                        {t('Cars Found')}
+                        </span>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
-                                    <TableRow>
-                                        <TableCell colSpan={4} style={{ width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
-                                            {t('Cars Found')}
-                                            </TableCell>
-                                    </TableRow>
                                     <TableRow>
                                         {columns.map((column) => (
                                             <TableCell
                                                 key={column.id}
                                                 align={column.align}
-                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                             >
                                                 {column.label}
                                             </TableCell>
@@ -321,7 +317,7 @@ function PolicePartialPlateSearch() {
                             }
                         />
                     </div>
-                    <div className="plate-search-page-item-4">
+                    <div className="plate-search-page-item-4" style={{border:'None'}}>
                         <h3>{t('Car Report')}</h3>
                         {selectedRow ? 
                             <div className="plate-view-report-button-div">

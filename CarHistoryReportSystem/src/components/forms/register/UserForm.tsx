@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/State';
 import { isValidNumber } from '../../../utils/Validators';
 import FormWrapper from './FormWrapper';
-
+import MuiAlert from '@mui/material/Alert';
 type UserData = {
     firstName: string
     lastName: string
@@ -31,11 +31,6 @@ function UserForm({
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, []);
-    useEffect(() => {
-        const isNumberValid = isValidNumber(phoneNumber);
-        setValidNumber(isNumberValid);
-        setValid(isNumberValid);
-    }, [phoneNumber])
 
     return (
         <FormWrapper title="User Details">
@@ -62,12 +57,7 @@ function UserForm({
                 value={phoneNumber}
                 onChange={e => updateFields({ phoneNumber: e.target.value })}
             />
-            <div className={` ${shake ? 'shaking' : 'validation'}`}>
-                {!validNumber && (
-                    <div className="error">{t('Phone number is not valid')}!!</div>
-                )}
-            </div>
         </FormWrapper>
-  );
+    );
 }
 export default UserForm;

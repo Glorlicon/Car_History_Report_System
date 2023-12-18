@@ -90,22 +90,18 @@ function CarDealerCarStorage() {
     const validateCar = (car: Car): boolean => {
         if (!isValidVIN(car.vinId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!car.vinId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!car.modelId || car.modelId === "notChosen") {
             setAddError(t('Model must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!car.engineNumber) {
             setAddError(t('Engine Number must be filled out'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -148,7 +144,6 @@ function CarDealerCarStorage() {
                 const response2: APIResponse = await AddOldCarToStorage(id, newCar.vinId, token, connectAPIError, language)
                 if (response2.error) {
                     setAddError(response2.error);
-                    setOpenError(true)
                 } else {
                     setShowModal(false);
                     setModalPage(1);
@@ -172,12 +167,10 @@ function CarDealerCarStorage() {
     const handleAddOldCar = async () => {
         if (!isValidVIN(oldCarVin)) {
             setAddError(t('VIN is invalid'))
-            setOpenError(true)
             return
         }
         if (!oldCarVin) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return;
         }
         setAdding(true);
@@ -188,7 +181,6 @@ function CarDealerCarStorage() {
         setAdding(false);
         if (response.error) {
             setAddError(response.error);
-            setOpenError(true)
         } else {
             setShowModal(false);
             setModalPage(1);
@@ -209,7 +201,6 @@ function CarDealerCarStorage() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setEditCar(null);
@@ -478,7 +469,7 @@ function CarDealerCarStorage() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Car Storage List')}
                       </span>
                       <TableContainer>
@@ -491,7 +482,7 @@ function CarDealerCarStorage() {
                                                   <TableCell
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -502,7 +493,7 @@ function CarDealerCarStorage() {
                                                       sx={stickyCellStyle}
                                                       key={column.id + '-' + index}
                                                       align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                   >
                                                       {column.label}
                                                   </TableCell>
@@ -533,20 +524,20 @@ function CarDealerCarStorage() {
                                                       if (column.id !== 'actions' && column.id !== 'isModified' && column.id !== 'isCommercialUse') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'isModified' || column.id === 'isCommercialUse') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value ? t('Yes') : t('No')}
                                                               </TableCell>
                                                           )
                                                       }  else if (column.id === 'actions') {
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                   <button onClick={() => { setEditCar(row); }} disabled={adding} className="pol-crash-action-button">
                                                                       {t('Edit1')} &#x270E;
                                                                   </button>

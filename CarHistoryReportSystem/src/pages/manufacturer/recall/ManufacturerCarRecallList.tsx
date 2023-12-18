@@ -75,17 +75,14 @@ function ManufacturerCarRecallList() {
     const validateCarRegistration = (recall: CarRecalls): boolean => {
         if (!recall.description) {
             setAddError(t('Description must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!recall.modelId) {
             setAddError(t('Model must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!recall.recallDate) {
             setAddError(t('Recall Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -100,7 +97,6 @@ function ManufacturerCarRecallList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setNewRecall({
                     modelId: "",
@@ -125,7 +121,6 @@ function ManufacturerCarRecallList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditRecall(null)
                 setMessage(t('Edit car recall successfully'))
@@ -174,7 +169,7 @@ function ManufacturerCarRecallList() {
         } else {
             setRecallList(CarRecallReponse.data)
             setModelList(carModelResponse.data)
-            setPaging(carModelResponse.pages)
+            setPaging(CarRecallReponse.pages)
         }
         setLoading(false)
     }
@@ -305,7 +300,7 @@ function ManufacturerCarRecallList() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                             {t('Car Recalls List')}
                         </span>
                         <TableContainer>
@@ -318,7 +313,7 @@ function ManufacturerCarRecallList() {
                                                     <TableCell
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -329,7 +324,7 @@ function ManufacturerCarRecallList() {
                                                         sx={stickyCellStyle}
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -360,19 +355,19 @@ function ManufacturerCarRecallList() {
                                                         if (column.id !== 'actions' && column.id !== 'recallDate') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'recallDate') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {row.recallDate ? new Date(row.recallDate).toLocaleDateString() : 'Date not available'}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                         <button onClick={() => { setEditRecall(row); }} disabled={adding} className="pol-crash-action-button">
                                                                             {t('Edit1')} &#x270E;
                                                                         </button>

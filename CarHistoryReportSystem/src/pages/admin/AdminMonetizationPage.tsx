@@ -207,7 +207,7 @@ function AdminMonetizationPage() {
                 setDailyIncome(dailyIncome)
                 setMonthlyPackageCounts(monthlyPackageCounts)
                 setPaging(response.pages)
-                const responseCsv: APIResponse = await ListOrdersExcel(token, page, connectAPIError, language, searchParams)
+                const responseCsv: APIResponse = await ListOrdersExcel(token, page+1, connectAPIError, language, searchParams)
                 setData(responseCsv.data)
             }
         }
@@ -227,7 +227,9 @@ function AdminMonetizationPage() {
   return (
       <div className="pol-crash-list-page">
           <div className="pol-alert-action">
-              <Accordion>
+              <Accordion
+                defaultExpanded
+              >
                   <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -277,7 +279,7 @@ function AdminMonetizationPage() {
               </Accordion>
           </div>
           <div className="pol-alert-action">
-              <Accordion>
+              <Accordion defaultExpanded>
                   <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -368,7 +370,7 @@ function AdminMonetizationPage() {
               </Accordion>
           </div>
           <div className="pol-alert-action">
-              <Accordion>
+              <Accordion defaultExpanded>
                   <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
@@ -476,7 +478,7 @@ function AdminMonetizationPage() {
           <div className="plate-search-page-row">
               <div className="plate-alert-page-item">
                   <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
                           {t('Orders List')}
                       </span>
                       <TableContainer>
@@ -487,7 +489,7 @@ function AdminMonetizationPage() {
                                           <TableCell
                                               key={column.id + '-' + index}
                                               align={column.align}
-                                              style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                              style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                           >
                                               {column.label}
                                           </TableCell>
@@ -516,28 +518,28 @@ function AdminMonetizationPage() {
                                                       if (column.id !== 'orderOptionId' && column.id !== 'createdDate' && column.id !== 'userId') {
                                                           let value = row[column.id]
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'userId') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {value ? value : t('Guest')}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'orderOptionId') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {getOrderOption(value)}
                                                               </TableCell>
                                                           )
                                                       } else if (column.id === 'createdDate') {
                                                           let value = row[column.id];
                                                           return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                   {formatDate(value)}
                                                               </TableCell>
                                                           )

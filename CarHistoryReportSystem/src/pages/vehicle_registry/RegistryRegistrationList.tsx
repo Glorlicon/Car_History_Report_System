@@ -122,7 +122,6 @@ function RegistryRegistrationList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setOpenImport(false)
                 setImportData(null)
@@ -171,47 +170,38 @@ function RegistryRegistrationList() {
     const validateCarRegistration = (registration: CarRegistration): boolean => {
         if (!isValidVIN(registration.carId)) {
             setAddError(t('VIN is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!isValidPlateNumber(registration.licensePlateNumber)) {
             setAddError(t('License Plate Number is invalid'));
-            setOpenError(true)
             return false;
         }
         if (!registration.carId) {
             setAddError(t('VIN must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!registration.ownerName) {
             setAddError(t('Owner Name must be filled out'));
-            setOpenError(true)
             return false;
         }
         if (!registration.odometer) {
             setAddError(t('Odometer must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!registration.expireDate) {
             setAddError(t('Expire Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!registration.reportDate) {
             setAddError(t('Report Date must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!registration.registrationNumber) {
             setAddError(t('Registration Number must be chosen'));
-            setOpenError(true)
             return false;
         }
         if (!registration.licensePlateNumber) {
             setAddError(t('License Plate Number must be chosen'));
-            setOpenError(true)
             return false;
         }
         return true;
@@ -226,7 +216,6 @@ function RegistryRegistrationList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setShowModal(false);
                 setNewRegistration({
@@ -256,7 +245,6 @@ function RegistryRegistrationList() {
             setAdding(false);
             if (response.error) {
                 setAddError(response.error);
-                setOpenError(true)
             } else {
                 setEditRegistration(null)
                 setMessage(t('Edit car registration successfully'))
@@ -329,13 +317,13 @@ function RegistryRegistrationList() {
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const carRegistrationResponse: APIResponse = await ListCarRegistration(id, token, page+1, connectAPIError, language, searchParams)
+        const carRegistrationResponse: APIResponse = await ListCarRegistration(id, token, page + 1, connectAPIError, language, searchParams)
         if (carRegistrationResponse.error) {
             setError(carRegistrationResponse.error)
         } else {
             setRegistrationList(carRegistrationResponse.data)
             setPaging(carRegistrationResponse.pages)
-            const responseCsv: APIResponse = await GetRegistrationExcel(id, token, page+1, connectAPIError, language, searchParams)
+            const responseCsv: APIResponse = await GetRegistrationExcel(id, token, page + 1, connectAPIError, language, searchParams)
             setData(responseCsv.data)
         }
         setLoading(false)
@@ -416,78 +404,86 @@ function RegistryRegistrationList() {
                         <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <div className="reg-inspec-search-filter-container">
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Car ID')}</label>
-                                <input
-                                    type="text"
-                                    className="reg-inspec-search-bar"
-                                    placeholder={t('Search by Car ID')}
-                                    value={searchCarID}
-                                    onChange={(e) => setSearchCarId(e.target.value)}
-                                />
+                        <div className="reg-inspec-search-filter-container-3">
+                            <div className="reg-inspec-search-filter-container-2">
+                                <div className="reg-inspec-search-filter-item-2">
+                                    <label>{t('Expire Date')}</label>
+                                    <div className="reg-inspec-search-filter-item-2-dates">
+                                        <label>{t('From')}: </label>
+                                        <input
+                                            type="date"
+                                            className="reg-inspec-search-bar"
+                                            value={searchExpireStartDate}
+                                            onChange={(e) => setSearchExpireStartDate(e.target.value)}
+                                        />
+                                        <label>{t('To')}: </label>
+                                        <input
+                                            type="date"
+                                            className="reg-inspec-search-bar"
+                                            value={searchExpireEndDate}
+                                            onChange={(e) => setSearchExpireEndDate(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Owner Name')}</label>
-                                <input
-                                    type="text"
-                                    className="reg-inspec-search-bar"
-                                    placeholder={t('Search by Owner Name')}
-                                    value={searchOwnerName}
-                                    onChange={(e) => setSearchOwnerName(e.target.value)}
-                                />
-                            </div>
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Registration Number')}</label>
-                                <input
-                                    type="text"
-                                    className="reg-inspec-search-bar"
-                                    placeholder={t('Search by Registration Number')}
-                                    value={searchRegistrationNumber}
-                                    onChange={(e) => setSearchRegistrationNumber(e.target.value)}
-                                />
-                            </div>
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('License Plate Number')}</label>
-                                <input
-                                    type="text"
-                                    className="reg-inspec-search-bar"
-                                    placeholder={t('Search by License Plate Number')}
-                                    value={searchLicensePlateNumber}
-                                    onChange={(e) => setSearchLicensePlateNumber(e.target.value)}
-                                />
-                            </div>
-                            <div className="reg-inspec-search-filter-item-2">
-                                <label>{t('Expire Date')}</label>
-                                <div className="reg-inspec-search-filter-item-2-dates">
-                                    <label>{t('From')}: </label>
+                            <div className="reg-inspec-search-filter-container-2">
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Car ID')}</label>
                                     <input
-                                        type="date"
+                                        type="text"
                                         className="reg-inspec-search-bar"
-                                        value={searchExpireStartDate}
-                                        onChange={(e) => setSearchExpireStartDate(e.target.value)}
+                                        placeholder={t('Search by Car ID')}
+                                        value={searchCarID}
+                                        onChange={(e) => setSearchCarId(e.target.value)}
                                     />
-                                    <label>{t('To')}: </label>
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Owner Name')}</label>
                                     <input
-                                        type="date"
+                                        type="text"
                                         className="reg-inspec-search-bar"
-                                        value={searchExpireEndDate}
-                                        onChange={(e) => setSearchExpireEndDate(e.target.value)}
+                                        placeholder={t('Search by Owner Name')}
+                                        value={searchOwnerName}
+                                        onChange={(e) => setSearchOwnerName(e.target.value)}
+                                    />
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Registration Number')}</label>
+                                    <input
+                                        type="text"
+                                        className="reg-inspec-search-bar"
+                                        placeholder={t('Search by Registration Number')}
+                                        value={searchRegistrationNumber}
+                                        onChange={(e) => setSearchRegistrationNumber(e.target.value)}
+                                    />
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('License Plate Number')}</label>
+                                    <input
+                                        type="text"
+                                        className="reg-inspec-search-bar"
+                                        placeholder={t('Search by License Plate Number')}
+                                        value={searchLicensePlateNumber}
+                                        onChange={(e) => setSearchLicensePlateNumber(e.target.value)}
                                     />
                                 </div>
                             </div>
-                            <button
-                                className="search-reg-inspec-btn"
-                                onClick={() => { setPage(0); fetchData(); }}
-                            >
-                                {t('Search...')}
-                            </button>
-                            <button
-                                className="reset-reg-inspec-btn"
-                                onClick={handleResetFilters}
-                            >
-                                {t('Reset Filters')}
-                            </button>
+
+
+                            <div className="reg-inspec-search-filter-item-4">
+                                <button
+                                    className="search-reg-inspec-btn"
+                                    onClick={fetchData}
+                                >
+                                    {t('Search...')}
+                                </button>
+                                <button
+                                    className="reset-reg-inspec-btn"
+                                    onClick={handleResetFilters}
+                                >
+                                    {t('Reset Filters')}
+                                </button>
+                            </div>
                         </div>
                     </AccordionDetails>
                 </Accordion>
@@ -495,7 +491,7 @@ function RegistryRegistrationList() {
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#0037CD', color: 'white' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
                             {t('Car Registration List')}
                         </span>
                         <TableContainer>
@@ -508,7 +504,7 @@ function RegistryRegistrationList() {
                                                     <TableCell
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -519,7 +515,7 @@ function RegistryRegistrationList() {
                                                         sx={stickyCellStyle}
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>
@@ -550,21 +546,21 @@ function RegistryRegistrationList() {
                                                         if (column.id !== 'actions') {
                                                             let value = row[column.id]
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }}>
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
                                                                     {value}
                                                                 </TableCell>
                                                             )
                                                         } else if (column.id === 'actions') {
                                                             return (
-                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'center' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
                                                                     <div className="pol-crash-modal-content-2-buttons">
-                                                                    <button onClick={() => { setEditRegistration(row) }} disabled={adding} className="pol-crash-action-button">
-                                                                        {t('Edit1')} &#x270E;
-                                                                    </button>
-                                                                    <button onClick={() => { navigate(`/registry/car-report/${row.carId}`) }} className="pol-crash-action-button">
-                                                                        {t('View Report For Car')}
-                                                                    </button>
-                                                                </div>
+                                                                        <button onClick={() => { setEditRegistration(row) }} disabled={adding} className="pol-crash-action-button">
+                                                                            {t('Edit1')} &#x270E;
+                                                                        </button>
+                                                                        <button onClick={() => { navigate(`/registry/car-report/${row.carId}`) }} className="pol-crash-action-button-2">
+                                                                            {t('View Report For Car')}
+                                                                        </button>
+                                                                    </div>
                                                                 </TableCell>
                                                             )
                                                         }
@@ -582,6 +578,7 @@ function RegistryRegistrationList() {
                             </Table>
                         </TableContainer>
                         <TablePagination
+                            style={{ backgroundColor: 'white', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px' }}
                             rowsPerPageOptions={[15]}
                             component="div"
                             count={paging ? paging.TotalCount : 0}
@@ -610,7 +607,8 @@ function RegistryRegistrationList() {
                                 odometer: 0,
                                 note: '',
                                 reportDate: ''
-                            }); setError(''); setAddError('') }}>&times;</span>
+                            }); setError(''); setAddError('')
+                        }}>&times;</span>
                         <h2>{t('Add Car Registration')}</h2>
                         <div className="pol-crash-modal-content-2">
                             <RegistryRegistrationDetailsForm
@@ -627,7 +625,7 @@ function RegistryRegistrationList() {
                             <button onClick={handleAddCarRegistration} disabled={adding} className="reg-reg-model-add-btn">
                                 {adding ? (<div className="reg-reg-inline-spinner"></div>) : t('Finish')}
                             </button>
-  
+
                         </div>
                     </div>
                 </div>
