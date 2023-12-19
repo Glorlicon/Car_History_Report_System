@@ -301,8 +301,8 @@ function InsuranceCompanyStolenList() {
                                 </div>
                                 <div className="pol-stolen-form-column">
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer components={['DatePicker', 'DatePicker']}>
-                                            <DatePicker label={t('Report Date')} defaultValue={dayjs(showCarStolenReport.reportDate)} disabled />
+                                        <DemoContainer components={['DatePicker']}>
+                                            <DatePicker label={t('Report Date')}slotProps={{ textField: { fullWidth: true } }} defaultValue={dayjs(showCarStolenReport.reportDate)} disabled />
                                         </DemoContainer>
                                     </LocalizationProvider>
                                 </div>
