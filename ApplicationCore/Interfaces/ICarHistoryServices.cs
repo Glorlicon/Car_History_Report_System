@@ -18,6 +18,8 @@ namespace Application.Interfaces
 
         Task<PagedList<R>> GetCarHistoryByUserId(string userId, P parameter);
 
+        Task<PagedList<R>> GetCarHistoryByDataProviderId(int dataProviderId, P parameter);
+
         Task<int> CreateCarHistory(C request);
 
         Task DeleteCarHistory(int id);
@@ -28,5 +30,6 @@ namespace Application.Interfaces
 
         Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter);
 
+        Task<R> InsuranceCompanyGetOwnCarHistoryDetail(int id);
     }
 }

@@ -2,9 +2,11 @@
     margin: 5% 10% 10% 10%;
     font-family: Arial, sans-serif;
     padding: 20px;
+    margin-top:200px;
     border: 1px solid black;
     border-radius: 10px;
     box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.5);
+    flex:1;
 }
 
 .car-maintenance-details-spinner {
@@ -40,16 +42,15 @@
     flex-direction: row;
     background-color: deepskyblue;
 }
-.car-maintenance-details-navigator a{
+.car-maintenance-details-navigator-a{
     padding-left: 5%;
     padding-right: 5%;
     padding-top: 1%;
     padding-bottom: 1%;
     width: 100%;
     text-align: center;
-    border: 1px solid white;
 }
-.car-maintenance-details-navigator a:hover{
+.car-maintenance-details-navigator-a:hover{
     background-color: dodgerblue;
 }
 
@@ -88,7 +89,8 @@
     justify-content: center;
 }
 .car-maintenance-details-dashboard-details h3{
-    text-align: left;
+    text-align: center;
+    font-size: 25px;
 }
 .car-maintenance-details-dashboard-details progress {
     display: block;
@@ -115,16 +117,18 @@
     border-radius: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
-.car-maintenance-details-dashboard-details-next button {
-    margin-top: 50%;
+.car-maintenance-details-dashboard-details-next-button {
+    margin-top: 5%;
     padding: 3%;
+    padding-left: 13    %;
+    padding-right: 13%;
     border: none;
     background-color: deepskyblue;
     color: white;
     font-size: 18px;
     border-radius: 10px;
 }
-.car-maintenance-details-dashboard-details-next button:hover{
+.car-maintenance-details-dashboard-details-next-button:hover{
     background-color: dodgerblue;
 }
 

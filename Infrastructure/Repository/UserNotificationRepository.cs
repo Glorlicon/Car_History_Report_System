@@ -2,10 +2,12 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
+using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +19,13 @@ namespace Infrastructure.Repository
         public UserNotificationRepository(ApplicationDBContext repositoryContext) : base(repositoryContext)
         {
 
+        }
+
+        public async Task<int> CountByCondition(Expression<Func<UserNotification, bool>> expression, UserNotificationParameter parameter)
+        {
+            return await FindByCondition(expression, false)
+                            .Filter(parameter)
+                            .CountAsync();
         }
 
         public async Task<IEnumerable<UserNotification>> GetAllUserNotifications(UserNotificationParameter parameter, bool trackChange)
@@ -41,7 +50,9 @@ namespace Infrastructure.Repository
         {
             return await FindByCondition(x => x.UserId == userId,trackChange)
                             .Include(x => x.Notification)
+                            .Filter(parameter)
                             .OrderBy(x => x.IsRead)
+                            .ThenBy(x => x.Notification.CreatedTime)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();

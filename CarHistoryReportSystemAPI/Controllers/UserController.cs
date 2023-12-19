@@ -1,4 +1,5 @@
-﻿using Application.DomainServices;
+﻿using Application.Common.Models;
+using Application.DomainServices;
 using Application.DTO.Authentication;
 using Application.DTO.Car;
 using Application.DTO.CarSpecification;
@@ -16,6 +17,7 @@ namespace CarHistoryReportSystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -72,10 +74,12 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Return user list</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "Adminstrator")]
         public async Task<IActionResult> ListAccountAsync([FromQuery] UserParameter parameter)
         {
             var users = await _userService.GetAllUsers(parameter, trackChange: false);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(users.PagingData));
             return Ok(users);
         }
@@ -86,6 +90,8 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetUserDetail")]
         [Authorize(Roles = "Adminstrator,User")]
+        [ProducesResponseType(typeof(UserResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUserDetailAync(string id)
         {
             var user = await _userService.GetUser(id);
@@ -93,7 +99,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         }
 
         /// <summary>
-        /// Update User
+        /// Admin Update User
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -103,8 +109,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Adminstrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateUserAsync(string id, UpdateUserRequestDTO request)
         {
             var result = await _userService.UpdateUser(id, request);
@@ -129,8 +136,9 @@ namespace CarHistoryReportSystemAPI.Controllers
         [HttpPut]
         [Authorize(Roles = "Adminstrator,CarDealer,InsuranceCompany,ServiceShop,Manufacturer,VehicleRegistry,PoliceOffice,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateUserProfileAsync(UpdateUserOwnProfileRequestDTO request)
         {
             var result = await _userService.UpdateUserOwnProfile(request);

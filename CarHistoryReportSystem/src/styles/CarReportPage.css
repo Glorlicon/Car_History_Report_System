@@ -1,5 +1,8 @@
 .car-report-details-page {
-    margin-top: 10%;
+    margin-top: 15%;
+    margin-left: 10%;
+    margin-right:10%;
+    flex:1;
 }
 
 .car-report-details-container {
@@ -38,7 +41,7 @@
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
     padding: 1%;
-    width: 60%;
+    width: 50%;
     text-align: left;
 }
 
@@ -53,7 +56,7 @@
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
     padding: 1%;
-    width: 40%;
+    width: 50%;
 }
 .car-report-general-information-history a{
     font-size: 20px;
@@ -87,10 +90,15 @@
         text-align: center;
     }
 
-
+.car-report-service-history{
+    margin-top: 5%;
+    margin-bottom: 1%;
+}
 
 .car-report-service-history-table {
-    width: 100%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
     border-collapse: collapse;
     border: 1px solid black;
 }
@@ -115,4 +123,11 @@
 .car-report-service-history-table-ownership-data{
     display: flex;
     flex-direction: column
+}
+.report-crash-car-image {
+    display: block;
+    margin: 0 auto;
+    width: 15%;
+    height: 15%;
+    transform: rotateZ(90deg);
 }

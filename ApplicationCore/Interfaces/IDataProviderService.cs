@@ -16,9 +16,9 @@ namespace Application.Interfaces
     {
         Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProviders(DataProviderParameter parameter);
 
-        Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type);
+        Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type);
 
-        Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type);
+        Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type, DataProviderParameter parameter);
 
         Task<DataProviderDetailsResponseDTO> GetDataProvider(int dataProviderId);
 
@@ -38,5 +38,8 @@ namespace Application.Interfaces
 
         Task<bool> ReviewDataProvider(int dataProviderId, DataProviderReviewCreateRequestDTO request);
 
+        Task<bool> EditReviewDataProvider(int dataProviderId, DataProviderReviewUpdateRequestDTO request);
+
+        Task<bool> DeleteReviewDataProvider(int dataProviderId, string userId);
     }
 }

@@ -8,6 +8,7 @@ import { USER_ROLE } from '../../utils/const/UserRole';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserData, setVerifyToken } from '../../store/authSlice';
+import { useTranslation } from 'react-i18next';
 
 type RegisterData = {
     email: string
@@ -38,6 +39,7 @@ const INITIAL_ERRORS: ValidationErrors = {
 }
 
 function RegisterPage() {
+    const { t, i18n } = useTranslation();
     const [data, setData] = useState(INITIAL_DATA)
     const [valid, setValid] = useState(false)
     const [shake, setShake] = useState(false)
@@ -87,6 +89,7 @@ function RegisterPage() {
     return (
         <div className="register-container">
             <form onSubmit={onSubmit} className="register-form">
+                <h2 style={{borderBottom:'1px solid gray'}}>{t('Register')}</h2>
                 <div className="register-pages">
                     {currentStepIndex + 1} / {steps.length}
                 </div>

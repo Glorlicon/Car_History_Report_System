@@ -75,6 +75,7 @@ namespace Application.DomainServices
                 NotificationType.Request => await _unitOfWork.UserRepository.GetAdminUserIds(),
                 NotificationType.PoliceAlert => await _unitOfWork.CarTrackingRepository.GetUserIdsTrackingCarId(request.RelatedCarId, trackChange: false),
                 NotificationType.SystemInformation => (await _unitOfWork.UserRepository.GetAll(false)).Select(x => x.Id).ToList(),
+                NotificationType.InsuranceAlert => await _unitOfWork.CarInsuranceRepository.GetCarInsuranceUserIdsByCarId(request.RelatedCarId),
                 _ => new List<string> { request.RelatedUserId }
             };
             return userIdsList;
@@ -106,7 +107,7 @@ namespace Application.DomainServices
         {
             var notifications = await _unitOfWork.UserNotificationRepository.GetUserNotificationsByUserId(userId, parameter, false);
             var notificationsResponse = _mapper.Map<List<UserNotificationResponseDTO>>(notifications);
-            var count = await _unitOfWork.UserNotificationRepository.CountByCondition(x => x.UserId == userId);
+            var count = await _unitOfWork.UserNotificationRepository.CountByCondition(x => x.UserId == userId , parameter);
             return new PagedList<UserNotificationResponseDTO>(notificationsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
@@ -142,6 +143,11 @@ namespace Application.DomainServices
 
         public async Task TrackCar(string userId, string carId)
         {
+            var isCarExist = await _unitOfWork.CarRepository.IsExist(x => x.VinId == carId);
+            if(!isCarExist)
+            {
+                throw new CarNotFoundException();
+            }
             var carTracking = await _unitOfWork.CarTrackingRepository.GetCarTracking(userId, carId, trackChange: true);
             if(carTracking is not null)
             {

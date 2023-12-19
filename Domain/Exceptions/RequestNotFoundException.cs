@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class RequestNotFoundException : NotFoundException
     {
         public RequestNotFoundException(int id)
-            : base($"Request with id {id} was not found")
+            : base($"Request was not found")
         {
 
         }

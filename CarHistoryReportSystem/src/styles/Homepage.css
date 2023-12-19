@@ -1,0 +1,103 @@
+.home-container {
+    margin-top: 100px;
+    font-family: Arial, sans-serif;
+    width: 100%; /* Ensure the container spans the full width */
+    flex:1;
+}
+
+.home-header {
+    text-align: center;
+    padding: 20px;
+}
+
+.header-buttons {
+    margin-top: 20px;
+}
+
+.homepage-logo{
+    width: 500px;
+}
+.CHRS_Report{
+    width:400px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+    .btn-primary:hover {
+        background-color: #0069d9; /* Darker shade of primary color */
+    }
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+    .btn-secondary:hover {
+        background-color: #5a6268; /* Darker shade of secondary color */
+    }
+
+.home-content {
+    width: 100%;
+}
+
+.content-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 35px;
+    border: 1px solid #000000;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+    .text-content-right {
+        text-align: left;
+        padding-left: 50px;
+    }
+.text-content-left{
+    text-align:left;
+    padding-right: 50px;
+}
+.image-content {
+    margin-bottom: -39px;
+}
+
+.home-content .content-block:nth-of-type(2n) {
+    background-color: #f8f4f4;
+}
+
+@media (max-width: 768px) {
+    .content-block,
+    .content-block.reverse {
+        flex-direction: column; /* Stack image and text on smaller screens */
+    }
+
+    .image-content {
+        margin-bottom: 0px;
+    }
+
+    .text-content-left, .text-content-right {
+        padding-right: 0px;
+        text-align:center;
+    }
+    .text-content-left{
+        padding-bottom: 10px;
+    }
+}

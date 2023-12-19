@@ -3,10 +3,12 @@ using Application.DTO.CarInspectionHistory;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarInspectionHistory;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -20,15 +22,18 @@ namespace CarHistoryReportSystemAPI.Controllers
                                              CarInspectionHistoryCreateRequestDTO,
                                              CarInspectionHistoryUpdateRequestDTO> _carInspectionHistoryService;
         private readonly ICsvServices _csvServices;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
         public CarInspectionHistoryController(ICarHistoryServices<CarInspectionHistoryResponseDTO,
                                                              CarInspectionHistoryParameter,
                                                              CarInspectionHistoryCreateRequestDTO,
                                                              CarInspectionHistoryUpdateRequestDTO> carInspectionHistoryService
-                                        , ICsvServices csvServices)
+                                        , ICsvServices csvServices
+                                        , IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carInspectionHistoryService = carInspectionHistoryService;
             _csvServices = csvServices;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -42,6 +47,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInspectionHistorysAsync([FromQuery] CarInspectionHistoryParameter parameter)
         {
             var carInspectionHistorys = await _carInspectionHistoryService.GetAllCarHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
             return Ok(carInspectionHistorys);
         }
@@ -72,6 +78,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInspectionHistoryByCarIdAsync(string vinId, [FromQuery] CarInspectionHistoryParameter parameter)
         {
             var carInspectionHistorys = await _carInspectionHistoryService.GetCarHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
             return Ok(carInspectionHistorys);
         }
@@ -88,6 +95,24 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarInspectionHistoryByUserIdAsync(string userId, [FromQuery] CarInspectionHistoryParameter parameter)
         {
             var carInspectionHistorys = await _carInspectionHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
+            return Ok(carInspectionHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Inspection Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Inspection History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [ProducesResponseType(typeof(IEnumerable<CarInspectionHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarInspectionHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarInspectionHistoryParameter parameter)
+        {
+            var carInspectionHistorys = await _carInspectionHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carInspectionHistorys.PagingData));
             return Ok(carInspectionHistorys);
         }
@@ -116,7 +141,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -141,7 +166,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             CarInspectionHistoryCreateRequestDTOValidator validator = new CarInspectionHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carInspectionHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -163,13 +188,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             if (file.Count != 1)
             {
-                return BadRequest(new ErrorDetails("You should upload 1 file only"));
+                return BadRequest(new ErrorDetails(_sharedLocalizer["You should upload 1 file only"]));
             }
             var requests = _csvServices.ConvertToListObject<CarInspectionHistoryCreateRequestDTO>(file[0].OpenReadStream());
             //validate
             CarInspectionHistoryCreateRequestDTOValidator validator = new CarInspectionHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carInspectionHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -198,7 +223,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

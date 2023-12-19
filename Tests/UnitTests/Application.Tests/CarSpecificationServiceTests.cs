@@ -9,6 +9,7 @@ using Application.Common;
 using Application.Common.Models;
 using Application.DomainServices;
 using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -25,7 +26,9 @@ namespace UnitTests.Application.Tests
     {
         private IMapper mapper;
         private List<CarSpecification> carModelsTestData;
+        private List<ModelMaintainance> modelMaintainancesTestData;
         private CarSpecificationParameter parameter;
+        private ModelMaintainanceParameter maintainanceParameter;
         private Mock<IModelMaintainanceRepository> mockIModelMaintainanceRepository;
 
         public CarSpecificationServiceTests()
@@ -34,7 +37,9 @@ namespace UnitTests.Application.Tests
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
             mapper = new Mapper(configuration);
             carModelsTestData = GetCarModelsList();
+            modelMaintainancesTestData = GetModelMaintainancesList();
             parameter = new CarSpecificationParameter();
+            maintainanceParameter = new ModelMaintainanceParameter();
             mockIModelMaintainanceRepository = new Mock<IModelMaintainanceRepository>();
         }
 
@@ -59,6 +64,7 @@ namespace UnitTests.Application.Tests
                 FuelType = Domain.Enum.FuelType.Gasoline,
                 BodyType = Domain.Enum.BodyType.Sedan,
                 CreatedByUserId = "User1",
+                CreatedByUser = new User { Role = Domain.Enum.Role.Adminstrator },
                 ModelOdometers = new ModelMaintainance[]
                 {
                     new ModelMaintainance
@@ -150,6 +156,34 @@ namespace UnitTests.Application.Tests
             return carModels;
         }
 
+        private List<ModelMaintainance> GetModelMaintainancesList()
+        {
+            var modelMaintainances = new List<ModelMaintainance>();
+            modelMaintainances.Add
+                (new ModelMaintainance
+                {
+                    ModelId = "ModelTest1",
+                    Model = carModelsTestData.First(),
+                    DayPerMaintainance = 7,
+                    OdometerPerMaintainance = 3000,
+                    MaintenancePart = "test part",
+                    RecommendAction = "test recommend"
+                }
+                );
+            modelMaintainances.Add
+                (new ModelMaintainance
+                {
+                    ModelId = "ModelTest2",
+                    Model = carModelsTestData.First(),
+                    DayPerMaintainance = 7,
+                    OdometerPerMaintainance = 3000,
+                    MaintenancePart = "test part",
+                    RecommendAction = "test recommend"
+                }
+                );
+            return modelMaintainances;
+        }
+
         private List<CarSpecification> GetCarModelsListByUserId(string userId)
         {
             return carModelsTestData.Where(x => x.CreatedByUserId == userId).ToList();
@@ -158,6 +192,16 @@ namespace UnitTests.Application.Tests
         private List<CarSpecification> GetCarModelsListByManufacturerId(int manufacturerId)
         {
             return carModelsTestData.Where(x => x.ManufacturerId == manufacturerId).ToList();
+        }
+
+        private List<CarSpecification> GetCarModelsListByAdminstrator()
+        {
+            return carModelsTestData.Where(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator).ToList();
+        }
+
+        private List<ModelMaintainance> GetModelMaintainancesListByModelId(string modelId)
+        {
+            return modelMaintainancesTestData.Where(x => x.ModelId == modelId).ToList();
         }
 
         [Fact]
@@ -211,7 +255,6 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.GetCarModel(modelId, trackChange);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
         }
 
         [Fact]
@@ -267,7 +310,6 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.UpdateCarModel(modelId, request);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
         }
 
         [Fact]
@@ -284,7 +326,60 @@ namespace UnitTests.Application.Tests
             Func<Task> act = () => service.DeleteCarModel(modelId);
             //Assert
             var exception = await Assert.ThrowsAsync<CarSpecificationNotFoundException>(act);
-            Assert.Equal("Car Model with id ModelTestNotExist was not found", exception.Message);
+        }
+
+        [Fact]
+        public async Task GetCarModelsCreatedByAdminstrator_ReturnCarModels()
+        {
+            // Arrange
+            bool trackChange = false;
+            var mockRepo = new Mock<ICarSpecificationRepository>();
+            mockRepo.Setup(repo => repo.GetCarModelsCreatedByAdminstrator(parameter, trackChange))
+                    .ReturnsAsync(GetCarModelsListByAdminstrator());
+            mockRepo.Setup(repo => repo.CountByCondition(x => x.CreatedByUser != null && x.CreatedByUser.Role == Domain.Enum.Role.Adminstrator, parameter))
+                .ReturnsAsync(1);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
+            // Act
+            var result = await service.GetCarModelsCreatedByAdminstrator(parameter);
+            //Assert
+            Assert.Equal(1, result.Count());
+            Assert.IsAssignableFrom<PagedList<CarSpecificationResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetModelMaintainances_ReturnsModelMaintainances()
+        {
+            // Arrange\
+            bool trackChange = false;
+            var mockRepo = new Mock<ICarSpecificationRepository>();
+            mockIModelMaintainanceRepository.Setup(repo => repo.GetModelMaintainances(maintainanceParameter, trackChange))
+                .ReturnsAsync(modelMaintainancesTestData);
+            mockIModelMaintainanceRepository.Setup(repo => repo.CountAll(maintainanceParameter))
+                .ReturnsAsync(2);
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
+            // Act
+            var result = await service.GetModelMaintainances(maintainanceParameter, trackChange);
+            //Assert
+            Assert.Equal(2, result.Count());
+            Assert.IsAssignableFrom<PagedList<ModelMaintainanceResponseDTO>>(result);
+        }
+
+        [Fact]
+        public async Task GetModelMaintainancesByModelId_ReturnsModelMaintainances()
+        {
+            // Arrange\
+            string modelId = "ModelTest1";
+            bool trackChange = false;
+            var mockRepo = new Mock<ICarSpecificationRepository>();
+            mockIModelMaintainanceRepository.Setup(repo => repo.GetModelMaintainancesByModelId(modelId, maintainanceParameter, trackChange))
+                    .ReturnsAsync(GetModelMaintainancesListByModelId(modelId));
+            mockIModelMaintainanceRepository.Setup(repo => repo.CountByCondition(x => x.ModelId == modelId, maintainanceParameter));
+            var service = new CarSpecificationServices(mockRepo.Object, mapper, mockIModelMaintainanceRepository.Object);
+            // Act
+            var result = await service.GetModelMaintainancesByModelId(modelId, maintainanceParameter, trackChange);
+            //Assert
+            Assert.Equal(1, result.Count());
+            Assert.IsAssignableFrom<PagedList<ModelMaintainanceResponseDTO>>(result);
         }
     }
 }

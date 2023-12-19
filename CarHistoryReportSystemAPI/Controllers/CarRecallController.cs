@@ -5,6 +5,7 @@ using Application.DTO.CarRecall;
 using Application.Interfaces;
 using Application.Validation.Car;
 using Application.Validation.CarRecall;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Entities;
 using Domain.Enum;
 using FluentValidation;
@@ -12,6 +13,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -21,10 +23,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class CarRecallController : ControllerBase
     {
         private readonly ICarRecallServices _carRecallService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public CarRecallController(ICarRecallServices carRecallService)
+        public CarRecallController(ICarRecallServices carRecallService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carRecallService = carRecallService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -39,6 +43,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarRecallsAsync([FromQuery] CarRecallParameter parameter)
         {
             var carRecalls = await _carRecallService.GetAllCarRecalls(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRecalls.PagingData));
             return Ok(carRecalls);
         }
@@ -56,6 +61,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarRecallsByManufacturer(int manufacturerId, [FromQuery] CarRecallParameter parameter)
         {
             var carRecalls = await _carRecallService.GetCarRecallsByManufacturer(manufacturerId,parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRecalls.PagingData));
             return Ok(carRecalls);
         }
@@ -73,6 +79,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarRecallsByModel(string modelId, [FromQuery] CarRecallParameter parameter)
         {
             var carRecalls = await _carRecallService.GetCarRecallsByModel(modelId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carRecalls.PagingData));
             return Ok(carRecalls);
         }
@@ -174,7 +181,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

@@ -7,8 +7,14 @@ import { Login } from '../../services/auth/Login';
 import { LoginResponse } from '../../utils/Interfaces';
 import { clearUserData, setToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function AccountVeryficationPage() {
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, [])
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [code, setCode] = useState('')
@@ -89,22 +95,22 @@ function AccountVeryficationPage() {
                         <circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
                         <path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                     </svg>
-                    <p>Your email has been successfully verified! Wait for a bit, we will try to login you to the system!</p>
+                    <p>{t('Your email has been successfully verified! Wait for a bit, we will try to login you to the system')}!</p>
                     {isLogin ? (
                         <div className="loading"></div>
                     ): (
                         <div className="error">
                             {!loginSuccess && (
-                                <div className="message">Something went wrong when trying to login. Try to login manually.</div>
+                                    <div className="message">{t('Something went wrong when trying to login. Try to login manually')}.</div>
                             )}
                 </div>
                     )}
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="code-form">
-                <h2>Registration veryfication</h2>
-                <a>We have sent a veryfcation code to your registered email. Please verify it below.</a>
-                <label htmlFor="code">Code</label>
+                <h2>{t('Registration veryfication')}</h2>
+                <a>{t('We have sent a veryfcation code to your registered email. Please verify it below')}.</a>
+                <label htmlFor="code">{t('Code')}</label>
                 <input
                     type="text"
                     placeholder="Code"
@@ -115,7 +121,7 @@ function AccountVeryficationPage() {
                     {isResending ? (
                         <></>
                     ):(
-                        <a onClick={resentCode} href='#'>Didn't received code? Resend Code</a>
+                        <a onClick={resentCode} href='#'>{t("Didn't received code? Resend Code")}</a>
                     )
                     }
                 </div>
@@ -123,7 +129,7 @@ function AccountVeryficationPage() {
                     <></>
                 ): (
                        <div className="count">
-                            {count} seconds until code expires!
+                            {count} {t('seconds until code expires')}!
                         </div>
                 )}
                 <div className="error">
@@ -133,13 +139,13 @@ function AccountVeryficationPage() {
                 </div>
                 <div className="resend">
                     {resend && (
-                        <div className="message-resend">Code has been resent to your email.</div>
+                        <div className="message-resend">{t('Code has been resent to your email')}.</div>
                     )}
                 </div>
                 {(isVerifying || isResending) ? (
                     <div className="loading"></div>
                 ) : (
-                    <button type="submit">Verify</button>
+                    <button type="submit">{t('Verify')}</button>
                 )}
             </form>
             )}

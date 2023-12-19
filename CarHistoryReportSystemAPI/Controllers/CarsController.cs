@@ -5,12 +5,14 @@ using Application.Interfaces;
 using Application.Validation.Car;
 using Application.Validation.CarOwnerHistory;
 using AutoMapper;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Enum;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -20,10 +22,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class CarsController : ControllerBase
     {
         private readonly ICarServices _carService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public CarsController(ICarServices carService)
+        public CarsController(ICarServices carService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carService = carService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -43,11 +47,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetAllCars(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -102,11 +107,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarCreatedByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -129,11 +135,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarByManufacturerId(manufacturerId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -156,11 +163,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByCarDealerId(carDealerId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -168,7 +176,6 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <summary>
         /// Get All Cars in storage of current data provider
         /// </summary>
-        /// <param name="dataProviderId"></param>
         /// <returns>Car List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("storage", Name = "GetCarsByCurrentDataProviderId")]
@@ -183,11 +190,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByCurrentDataProviderId(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -211,11 +219,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsByAdminstrator(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -237,11 +246,12 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
             var cars = await _carService.GetCarsCurrentlySelling(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(cars.PagingData));
             return Ok(cars);
         }
@@ -268,7 +278,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -361,7 +371,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -425,7 +435,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -452,7 +462,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

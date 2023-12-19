@@ -1,6 +1,16 @@
 export interface APIResponse {
     data?: any
     error?: string
+    pages?: Paging
+}
+
+export interface Paging {
+    CurrentPage: number
+    TotalPages: number
+    PageSize: number
+    TotalCount: number
+    HasPrevious: boolean
+    HasNext: boolean
 }
 
 export interface LoginResponse {
@@ -40,22 +50,27 @@ export interface User {
     phoneNumber: string
     lastName: string
     address?: string
-    maxReports: number
+    maxReportNumber: number
     role: number
+    roleName?: string
     isSuspended?: boolean
     dataProviderId?: number | null
     avatarImageLink?: string
-    dataProvider?: {
-        name: string
-        description?: string
-        address?: string
-        websiteLink?: string
-        service?: string
-        phoneNumber?: string
-        email?: string
-        type: number
-    }
+    dataProvider?: DataProvider
 }
+
+export interface PasswordChange {
+    usernameOrEmail: string,
+    oldPassword: string,
+    password: string,
+    rePassword: string
+}
+
+export interface UserDataproviderId {
+    id: string
+    dataProviderId?: number | null
+}
+
 
 export interface Manufacturer {
     id: number
@@ -65,6 +80,17 @@ export interface Manufacturer {
     websiteLink?: string
     phoneNumber?: string
     email?: string
+}
+
+export interface CarDealer {
+    id: number
+    userName: string
+    dataProvider: DataProvider
+}
+
+export interface CarDealerImage {
+    id?: string
+    avatarImageLink?: string
 }
 
 export interface CarModel {
@@ -91,10 +117,27 @@ export interface CarModel {
     createdByUserId?: string,
     modifiedByUserId?: string,
     createdTime?: string,
-    lastModified?: string
+    lastModified?: string,
+    modelOdometers: ModelMaintenance[]
 }
 
 export interface DataProvider {
+    id?: number
+    name: string
+    description?: string
+    address?: string
+    websiteLink?: string
+    service?: string
+    phoneNumber?: string
+    email?: string
+    type: number
+    typeName?: string
+    imageLink: string
+    workingTimes?: workingTimes[]
+    reviews?: Reviews[]
+}
+
+export interface EditDataProvider {
     id: number
     name: string
     description?: string
@@ -105,6 +148,15 @@ export interface DataProvider {
     email?: string
     type: number
     typeName: string
+    imageLink?: string
+    workingTimes: {
+        dayOfWeek: number,
+        startHour: number,
+        startMinute: number,
+        endHour: number,
+        endMinute: number,
+        isClosed: boolean
+        }[]
 }
 
 export interface CarSalesInfo {
@@ -113,6 +165,7 @@ export interface CarSalesInfo {
     features: string[]
     price: number
     carImages?: CarImages[]
+    dataProvider?: DataProvider;
 }
 
 export interface CarSaleDetails {
@@ -125,15 +178,15 @@ export interface CarSaleDetails {
     note: string
 }
 
-export interface CarImages {
-    id?: number
-    carId?: string
-    imageLink: string
+    export interface CarImages {
+        id?: number
+        carId?: string
+        imageLink: string
 
-}
+    }
 export interface Car {
     vinId: string
-    licensePlateNumber: string
+    licensePlateNumber?: string
     modelId: string
     color: number
     colorName?: string
@@ -142,6 +195,7 @@ export interface Car {
     isModified: boolean
     isCommercialUse: boolean
     model?: CarModel
+    createdByUserId?: string;
     carSalesInfo?: CarSalesInfo
     carImages?: CarImages[]
 }
@@ -166,6 +220,8 @@ export interface AdminRequest {
     status: string
     createdByUserId?: string
     modifiedByUserId?: string
+    createdTime?: string
+    lastModified?: string
 }
 export interface ReportPackage {
     title: string
@@ -210,7 +266,8 @@ export interface CarReport {
     isCommercialUse: boolean,
     model: CarModel,
     carRecallStatuses: CarRecallStatus[],
-    carHistoryDetails: CarHistoryDetail[]
+    carHistoryDetails: CarHistoryDetail[],
+    carRegistrationHistories: CarRegistration[];
 }
 
 export interface CarHistoryDetail {
@@ -218,14 +275,15 @@ export interface CarHistoryDetail {
     endDate: string;
     carOwner: CarOwner;
     carServiceHistories: CarServiceHistory[];
-    carAccidentHistories: CarAccidentHistory[];
+    carAccidentHistories: CarCrash[];
     carInspectionHistories: CarInspectionHistory[];
     carInsurances: CarInsurance[];
-    carStolenHistories: CarStolenHistory[];
+    carStolenHistories: CarStolen[];
+    carRegistrationHistories: CarRegistration[];
     generalCarHistories: GeneralCarHistory[];
 }
 
-interface CarOwner {
+export interface CarOwner {
     id: string;
     name: string;
     phoneNumber: string;
@@ -243,40 +301,45 @@ interface CarOwner {
 }
 
 export interface CarServiceHistory {
-    id: number;
+    id?: number;
     carId: string;
-    source: string;
-    otherServices: string;
+    source?: string;
+    otherServices?: string;
     serviceTime: string;
     reportDate: string;
     services: number;
     servicesName: string;
-    note: string;
+    note?: string;
     odometer: number;
-    createdByUserId: string;
-    modifiedByUserId: string;
-    createdTime: string;
-    lastModified: string;
-}
-
-interface CarAccidentHistory {
-    // Define properties for CarAccidentHistory here
+    createdByUserId?: string;
+    modifiedByUserId?: string;
+    createdTime?: string;
+    lastModified?: string;
 }
 
 
-interface CarInspectionHistory {
-    // Define properties for CarInspectionHistory here
+export interface CarInspectionHistory {
+    id?: string
+    carId: string
+    note?: string
+    odometer: number
+    reportDate: string
+    source?: string
+    description: string
+    inspectionNumber: string
+    inspectDate: string
+    carInspectionHistoryDetail: CarInspectionDetail[]
 }
 
-interface CarInsuranceHistory {
-    // Define properties for CarInsurance here
+export interface CarInspectionDetail {
+    id?: number
+    carInspectionHistoryId?: number
+    inspectionCategory: string
+    isPassed: boolean
+    note?: string
 }
 
-interface CarStolenHistory {
-    // Define properties for CarStolenHistory here
-}
-
-interface GeneralCarHistory {
+export interface GeneralCarHistory {
     reportDate: string;
     odometer: number;
     historyType: string;
@@ -317,13 +380,29 @@ export interface workingTimes {
     isClosed: boolean
 }
 
-export interface Reviews {
-    userId: string
-    description: string
-    rating: number
-    //createdTime: Date
+export interface editWorkingTime {
+    dayOfWeek: number
+    startHour: number
+    startMinute: number
+    endHour: number
+    endMinute: number
+    isClosed: boolean
 }
 
+export interface Reviews {
+    userId?: string
+    description: string
+    rating: number
+    createdTime?: Date
+}
+
+export interface ModelMaintenance {
+    modelId?: string
+    maintenancePart: string
+    odometerPerMaintainance: number,
+    dayPerMaintainance: number
+    recommendAction: string
+}
 export interface ModelMaintainanceDetails {
     modelMaintainance: {
         modelId: string
@@ -342,7 +421,7 @@ export interface CarRecalls {
     id?: number
     modelId: string
     description: string
-    recallDate?: Date
+    recallDate?: string
 }
 
 export interface RecallStatus {
@@ -396,6 +475,15 @@ export interface CarStolen {
     lastModified?: string
 }
 
+export interface CarStolenExcel {
+    description?: string,
+    carId: string,
+    note?: string,
+    odometer: number,
+    reportDate: string,
+    status: string,
+}
+
 export interface CarCrash {
     id?: number,
     source?: string,
@@ -404,8 +492,8 @@ export interface CarCrash {
     serverity: number,
     damageLocation: number,
     accidentDate: string,
-    description: string,
-    note: string,
+    description?: string,
+    note?: string,
     odometer?: number,
     reportDate: string,
     createdByUserId?: string,
@@ -449,3 +537,196 @@ export interface CarInsurance {
     expired?: boolean
 }
 
+export interface CarInspectionSearchParams {
+    carId: string
+    inspectionNumber: string
+    startDate: string
+    endDate: string
+}
+
+export interface CarRegistrationSearchParams {
+    carId: string
+    ownerName: string
+    registrationNumber: string
+    expireDateStart: string
+    expireDateEnd: string
+    licensePlateNumber: string
+}
+
+export interface CarCrashSearchParams {
+    vinId: string,
+    minServerity: string,
+    maxServerity: string,
+    accidentStartDate: string,
+    accidentEndDate: string,
+}
+
+export interface CarStolenSearchParams {
+    vinID: string
+    status: string
+}
+
+export interface AdminUserSearchParams {
+    username: string
+    email: string
+    role: string
+    dataProviderName: string
+}
+
+export interface CarModelSearchParams {
+    modelId: string
+    manuName: string
+    releasedDateStart: string
+    releasedDateEnd: string
+}
+
+export interface DataProviderSearchParams {
+    name: string
+    email: string
+    role: string
+}
+export interface ManufacturerSearchParams {
+    name: string
+    email: string
+}
+
+export interface CarRecallSearchParams {
+    modelId: string
+    recallDateStart: string
+    recallDateEnd: string
+}
+
+export interface CarInsuranceSearchParams {
+    vinID: string
+    insuranceNumber: string
+    startInsuranceDateMin: string
+    startInsuranceDateMax: string
+    endInsuranceDateMin: string
+    endInsuranceDateMax: string
+}
+
+export interface CarStorageSearchParams {
+    vin: string
+    manufacturer: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+}
+
+export interface CarManuSearchParams {
+    vin: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+}
+export interface CarSaleSearchParams {
+    vin: string
+    manufacturer: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+    priceMin: string
+    priceMax: string
+}
+
+export interface UserReport {
+    userId: string
+    carId: string
+    createdDate: string
+}
+
+export interface OrderSearchParams {
+    usedId: string
+    orderOption: string
+    transactionId: string
+    createdDateStart: string
+    createdDateEnd: string
+}
+
+export interface OrderResponse {
+    id: number
+    userId?: string
+    orderOptionId: number
+    transactionId: string
+    createdDate: string
+}
+export interface CarSearchParams {
+    make: string
+    model: string
+    yearstart?: number
+    pricemax?: number
+    milagemax?: number
+}
+export interface PartialPlateSearchParams {
+    partialPlate: string
+    partialVin: string
+    manufacturer: string
+    model: string
+}
+
+export interface VinAlert {
+    carId: string
+    userId: string
+    isFollowing: boolean
+    createdTime: string
+}
+export interface CarTracking {
+    carId: string
+    userId: string
+}
+export interface ReviewSearchParams {
+    dataproviderId: number
+    rating: number
+    sortByRating: number
+    sortByDate: number
+}
+export interface RequestSearchParams {
+    requestType: number;
+    requestStatus: number;
+    sortByDate: number;
+}
+
+export interface UserNotification {
+    userId: string,
+    notificationId: string,
+    notification: Notification,
+    isRead: boolean
+}
+
+export interface UserNotificationRead {
+    userId: string
+    notificationId: string
+}
+
+export interface Notification {
+    id: number,
+    relatedCarId: string,
+    relatedUserId: string,
+    title: string,
+    description: string,
+    relatedLink: string,
+    type: number,
+    createdByUserId: string,
+    modifiedByUserId: string,
+    createdTime: Date,
+    lastModified: Date
+}
+
+export interface DataProviderSearchForm {
+    type: number,
+    name: string,
+    email?: string,
+    sortByName: number,
+}
+
+export interface ServiceSearchParams {
+    carId: string
+    serviceTimeStart: string
+    serviceTimeEnd: string
+}

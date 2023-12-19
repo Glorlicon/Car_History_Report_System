@@ -12,6 +12,9 @@ namespace Application.DTO.DataProvider
         public string UserId {  get; set; }
         public string? Description {  get; set; }
 
+        public string UserFirstName { get; set; }
+        public string UserLastName { get; set; }
+
         public int Rating { get; set; }
 
         public DateTime CreatedTime { get; set; }

@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class NotificationNotFoundException : NotFoundException
     {
         public NotificationNotFoundException(int notificationId)
-            : base($"Notification with id {notificationId} Not Found")
+            : base($"Notification Not Found")
         {
 
         }

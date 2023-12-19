@@ -3,8 +3,8 @@
     color: white;
     padding: 1rem 2rem;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
 }
 
 .footer-content {
@@ -12,13 +12,18 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* You can adjust this value based on your design */
+    margin-left:10%;
+    margin-right:10%;
+}
+.footer-content p {
+    padding: 0;
+    margin: 5px;
 }
 
 .contact-info {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    text-align:left;
 }
 
 /* Responsive styles */

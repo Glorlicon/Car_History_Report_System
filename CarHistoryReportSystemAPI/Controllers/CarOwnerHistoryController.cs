@@ -4,11 +4,13 @@ using Application.DTO.CarOwnerHistory;
 using Application.Interfaces;
 using Application.Validation.Car;
 using Application.Validation.CarOwnerHistory;
+using CarHistoryReportSystemAPI.Resources;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Controllers
@@ -18,10 +20,12 @@ namespace CarHistoryReportSystemAPI.Controllers
     public class CarOwnerHistoryController : ControllerBase
     {
         private readonly ICarOwnerHistoryServices _carOwnerHistoryService;
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
 
-        public CarOwnerHistoryController(ICarOwnerHistoryServices carOwnerHistoryService)
+        public CarOwnerHistoryController(ICarOwnerHistoryServices carOwnerHistoryService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _carOwnerHistoryService = carOwnerHistoryService;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         /// <summary>
@@ -35,6 +39,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarOwnerHistorysAsync([FromQuery] CarOwnerHistoryParameter parameter)
         {
             var carOwnerHistorys = await _carOwnerHistoryService.GetAllCarOwnerHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carOwnerHistorys.PagingData));
             return Ok(carOwnerHistorys);
         }
@@ -79,6 +84,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarOwnerHistoryByCarIdAsync(string vinId, [FromQuery] CarOwnerHistoryParameter parameter)
         {
             var carOwnerHistorys = await _carOwnerHistoryService.GetCarOwnerHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carOwnerHistorys.PagingData));
             return Ok(carOwnerHistorys);
         }
@@ -105,7 +111,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }
@@ -137,7 +143,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(_sharedLocalizer[error.ErrorMessage]);
                 }
                 return BadRequest(errors);
             }

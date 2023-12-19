@@ -1,8 +1,10 @@
 ﻿using Application.DTO.CarSpecification;
+using Application.DTO.ModelMaintainance;
 using Application.DTO.User;
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.DBContext;
+using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.ObjectPool;
 using System;
@@ -20,7 +22,12 @@ namespace Infrastructure.Repository
         {
 
         }
-        //TODO getall
+        public async Task<int> CountAll(UserParameter parameter)
+        {
+            return await FindAll(false)
+                            .Filter(parameter)
+                            .CountAsync();
+        }
         public override async Task<IEnumerable<User>> GetAll(bool trackChanges)
         {
             return await FindAll(trackChanges).ToListAsync();
@@ -30,8 +37,10 @@ namespace Infrastructure.Repository
         {
             return await FindAll(trackChanges)
                 .Include(u => u.DataProvider)
+                .Filter(parameter)
+                .Sort(parameter)          
                 .Skip((parameter.PageNumber - 1) * parameter.PageSize)
-                            .Take(parameter.PageSize)
+                .Take(parameter.PageSize)
                 .ToListAsync();
         }
 

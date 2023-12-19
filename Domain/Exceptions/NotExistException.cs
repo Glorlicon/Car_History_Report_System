@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class NotExistException : NotFoundException
     {
         public NotExistException(string objectName, string Id)
-            : base($"{objectName} {Id} not exist in list")
+            : base($"object not exist in list")
         {
 
         }

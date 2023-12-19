@@ -9,5 +9,8 @@ namespace Application.DTO.CarRecall
 {
     public class CarRecallParameter : PagingParameters
     {
+        public string? ModelId { get; set; }
+        public DateOnly? RecallDateStart { get; set; }
+        public DateOnly? RecallDateEnd { get; set; }
     }
 }

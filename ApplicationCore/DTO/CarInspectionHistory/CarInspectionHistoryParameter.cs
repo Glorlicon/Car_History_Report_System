@@ -9,6 +9,9 @@ namespace Application.DTO.CarInspectionHistory
 {
     public class CarInspectionHistoryParameter : PagingParameters
     {
-
+        public string? CarId { get; set; }
+        public string? InspectionNumber { get; set; } 
+        public DateOnly? InspectionStartDate { get; set; }
+        public DateOnly? InspectionEndDate { get; set; }
     }
 }

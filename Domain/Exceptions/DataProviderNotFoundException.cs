@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class DataProviderNotFoundException : NotFoundException
     {
         public DataProviderNotFoundException(int? dataProviderId)
-            : base($"Data Provider with id {dataProviderId} was not found")
+            : base($"Data Provider not found")
         {
 
         }

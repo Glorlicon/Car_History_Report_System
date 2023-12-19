@@ -20,7 +20,6 @@ namespace Infrastructure.Repository
         private ICarSalesInfoRepository _carSalesInfoRepository;
         private ICarPartRepository _carPartRepository;
         private ICarOwnerHistoryRepository _carOwnerHistoryRepository;
-        private ICarStolenHistoryRepository _carStolenHistoryRepository;
         private ICarMaintainanceRepository _carMaintainanceRepository;
         private ICarRecallRepository _carRecallRepository;
         private ICarRecallStatusRepository _carRecallStatusRepository;
@@ -54,7 +53,6 @@ namespace Infrastructure.Repository
             INotificationRepository notificationRepository,
             IUserNotificationRepository userNotificationRepository,
             ICarTrackingRepository carTrackingRepository,
-            ICarStolenHistoryRepository carStolenHistoryRepository,
             ICarInsuranceRepository carInsuranceRepository)
         {
             _repositoryContext = repositoryContext;
@@ -76,7 +74,6 @@ namespace Infrastructure.Repository
             _notificationRepository = notificationRepository;
             _userNotificationRepository = userNotificationRepository;
             _carTrackingRepository = carTrackingRepository;
-            _carStolenHistoryRepository = carStolenHistoryRepository;
             _carInsuranceRepository = carInsuranceRepository;
         }
 
@@ -114,11 +111,6 @@ namespace Infrastructure.Repository
         {
             get { return _carOwnerHistoryRepository; }
         }        
-        
-        public ICarStolenHistoryRepository CarStolenHistoryRepository
-        {
-            get { return _carStolenHistoryRepository; }
-        }
 
         public ICarMaintainanceRepository CarMaintainanceRepository
         {

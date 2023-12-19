@@ -4,6 +4,7 @@
     align-items: center;
     height: 100vh;
     background-color: #f4f4f4;
+    flex:1;
 }
 
 .login-form {
@@ -19,42 +20,79 @@
     justify-content: center;
 }
 
-.login-form input {
-    width: 75%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
+    .login-form input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
 
-.login-form button {
-    width: 60%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+    .login-form button,
+    .create-account-button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        background-color: #1877f2;
+        color: #fff;
+    }
+
 .login-form label {
     display: block;
     margin-bottom: 5px;
 }
 
-.login-form button:hover {
-    background-color: #0056b3;
+    .login-form button:hover,
+    .create-account-button:hover {
+        background-color: #0056b3; /* Darken the button on hover */
+        opacity: 0.9; /* Slight transparency on hover */
+    }
+
+.forgot-password {
+    color: #1877f2;
+    text-decoration: none;
+    display: block; /* Block level for spacing */
+    margin: 10px 0;
 }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+.divider {
+    position: relative;
+    border-bottom: 1px solid #ccc;
+    margin: 20px 0;
+}
+
+    .divider::after {
+        content: 'or';
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        padding: 0 10px;
+        color: #888;
+        font-size: 12px;
+    }
+
 .register-link {
     margin-bottom: 10px;
     margin-left: 150px;
     text-align: center;
+    margin: 20px 0;
 }
 
-.register-link a {
-    color: #007bff;
-    text-decoration: none;
-}
+    .register-link a {
+        color: #3bad25;
+        text-decoration: none;
+    }
 
 .register-link a:hover {
     text-decoration: underline;
@@ -70,13 +108,19 @@
 
 .error {
     background-color: #FFC300;
-    display: block;
+    display: none;
     font-weight: bold;
     text-align: center;
     color: red;
     font-size: 15px;
     grid-column: 1/-1;
 }
+
+    .error.message {
+        display: block; /* Show error */
+        animation: shake 0.5s ease-in-out;
+        margin: 10px;
+    }
 
 .message {
     animation: shake 0.5s ease-in-out;

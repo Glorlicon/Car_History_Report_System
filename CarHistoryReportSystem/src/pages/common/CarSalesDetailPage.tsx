@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { GetCarForSale, SendContactMail } from '../../services/api/CarForSale';
+import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
+import cardefaultimage from '../../images/car-default.jpg';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -12,7 +15,9 @@ function CarSalesDetailPage() {
     type RouteParams = {
         id: string
     }
+    const { t, i18n } = useTranslation();
     const { id } = useParams<RouteParams>()
+    const limitedDisplayCount = 6;
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [addError, setAddError] = useState<string | null>(null);
@@ -32,6 +37,35 @@ function CarSalesDetailPage() {
         }
         
         setLoading(false)
+    }
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const handlePrevImage = () => {
+        if (!car || !car.carImages) {
+            return
+        }
+        if (currentImageIndex === 0) {
+            setCurrentImageIndex(car.carImages!.length - 1)
+        } else {
+            setCurrentImageIndex((prev) => (prev - 1))
+        }
+    };
+
+    const handleNextImage = () => {
+        if (!car || !car.carImages) {
+            return
+        }
+        if (currentImageIndex === car.carImages!.length - 1) {
+            setCurrentImageIndex(0)
+        } else {
+            setCurrentImageIndex((prev) => (prev + 1))
+        }
+    };
+    const handleChangeIndex = () => {
+        if (currentImageIndex > 0) {
+            setCurrentImageIndex(currentImageIndex - 1)
+        }
     }
 
     const handleMessageSend= async () => {
@@ -73,90 +107,86 @@ function CarSalesDetailPage() {
             <div className="car-detail-container">
                 <div className="content-wrapper">
                     <div className="car-detail-main">
-                        <div className="car-image">
-                            <img src="#" alt="Car Image" />
-                        </div>
-                        <div>
-                        </div>
-                        <div className="box">
-                            <div className="nameprice">
-                                <p>Used {car?.modelId}</p>
-                                <p>{car?.carSalesInfo?.price}$ | {car?.currentOdometer}</p>
+                        {/* Car Image Section */}
+                        <div className="car-image-section">
+                            <div className="box">
+                                <div className="car-detail-image">
+                                    <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
+                                    <img src={
+                                        car?.carImages && car.carImages.length > 0 && car.carImages[currentImageIndex]?.id !== -1 ?
+                                            GetImages(car.carImages[currentImageIndex].imageLink) :
+                                            cardefaultimage
+                                    } alt="Car Image" />
+                                    <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
+                                    {/* Image counter */}
+                                    <div className="image-count">
+                                        {car?.carSalesInfo?.carImages?.length || 0} {t('Photos')}
+                                    </div>
+                                </div>
+                                <div className="vehicle-info">
+                                    <h1>{t('Used')} {car?.modelId}</h1>
+                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
+                                    <p>{t('VIN')}: {car?.vinId}</p>
+                                </div>
                             </div>
-                            <div>
-
-                            </div>
-                            <div className="vin">
-                                <p>VIN: {car?.vinId}</p>
-                            </div>
-                            
                         </div>
 
                         <div className="vehicle-highlights-box">
-                            <h2>Vehicle Highlights</h2>
+                            <h2>{t('Vehicle Highlights')}</h2>
                             <div className="box">
                                 <div className="highlight-content">
                                     <div className="notable-parts">
                                         <div className="first-section">
-                                                <div>
-                                                    <p>Body Style</p>
-                                                    <p>body</p>
-                                                </div>
-                                                <div>
-                                                    <p>MPG City/Hwy</p>
-                                                    <p>MPG</p>
-                                                </div>
-                                                <div>
-                                                    <p>Drive Type</p>
-                                                    <p>DriveType</p>
-                                                </div>
-                                                <div>
-                                                    <p>Transmission</p>
-                                                    <p>transmission</p>
-                                                </div>
+                                            <div>
+                                                <p>{t('Manufacturer')}</p>
+                                                <p>{car?.carSalesInfo?.dataProvider?.name}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Dimension')}</p>
+                                                <p>{car?.model?.dimension}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Wheel Base')}</p>
+                                                <p>{car?.model?.wheelBase}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Weight')}</p>
+                                                <p>{car?.model?.weight}</p>
+                                            </div>
                                         </div>
                                         <div className="second-section">
                                             <div>
-                                                <p>Engine</p>
-                                                <p>engine</p>
+                                                <p>{t('Released Date')}</p>
+                                                <p>{car?.model?.releasedDate}</p>
                                             </div>
                                             <div>
-                                                <p>Fuel</p>
-                                                <p>fuel</p>
-                                            </div>
-                                            <div>
-                                                <p>Interior Color</p>
-                                                <p>interiorcolor</p>
-                                            </div>
-                                            <div>
-                                                <p>Body Style</p>
-                                                <p>style</p>
+                                                <p>{t('Country Of Origin')}</p>
+                                                <p>{car?.model?.country}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div className="top-features">
-                                    <p className="top-features-header">Top Features</p>
+                                    <p className="top-features-header">{t('Top Features')}</p>
                                     <div className="tags-container">
-                                    {car?.carSalesInfo?.features.map((model: any, index: number) => (
-                                        
-                                            <div className="tag">
-                                                <p>{car.carSalesInfo?.features.at(index)}</p>
+                                        {car?.carSalesInfo?.features.slice(0, isExpanded ? car.carSalesInfo.features.length : limitedDisplayCount).map((feature, index) => (
+                                            <div className="tag" key={index}>
+                                                <p>{feature}</p>
                                             </div>
-                                    ))
-                                        }
+                                        ))}
                                     </div>
-                                    {/*Implement Later*/}
-                                    <div className="toggle_btn" onClick={() => setIsExpanded(!isExpanded)}>
-                                        <span className="toggle_text">{isExpanded ? 'Show Less' : 'Show More'}</span>
-                                        <span className="arrow">
-                                            <i className={`fas fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
-                                        </span>
-                                    </div>
+                                    {car && car.carSalesInfo && car.carSalesInfo.features && car.carSalesInfo.features.length > limitedDisplayCount && (
+                                        <div className="toggle_btn" onClick={() => setIsExpanded(!isExpanded)}>
+                                            <span className="toggle_text">{isExpanded ? 'Show Less' : 'Show More'}</span>
+                                            <span className="arrow">
+                                                <i className={`fas fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="sales-description">
-                                    <p className="sales-description-header">Sale Description</p>
+                                    <p className="sales-description-header">{t('Description')}</p>
                                     <div>
                                         <p>
                                             {car?.carSalesInfo?.description}
@@ -167,55 +197,61 @@ function CarSalesDetailPage() {
                         </div>
 
                         <div className="dealer-details-box">
-                            <h2>Dealer Details</h2>
+                            <h2>{t('Dealer Details')}</h2>
                             <div className="box">
-                                <p>Test</p>
+                                <a href={`../dealer/${car?.carSalesInfo?.dataProvider?.id}`}>{t('Dealer Profile')}</a>
                             </div>
                         </div>
-                        
+
                     </div>
 
-                    <div className="availability-section">
-                        <div className="info-header">
-                            <p>Check Availability</p>
-                            <p>Phone Number: (PhoneNumber)</p>
-                        </div>
-                        
-                        <div className="interest-message">
-                            <div className="contact-context">
-                                <div className="contact-image">
-                                    <img src="#" alt="Car Image" />
+                    {/* Contact Form Section */}
+                    <div className="availability-section narrow-section">
+                        <div className="box">
+                            <div className="info-header">
+                                <p>{t('Check Availability')}</p>
+                                <p>{t('Phone Number')}: {car?.carSalesInfo?.dataProvider?.phoneNumber}</p>
+                            </div>
+
+                            <div className="interest-message">
+                                <div className="contact-context">
+                                    <div className="contact-image">
+                                        <img
+                                            src={car?.carImages?.[0]?.imageLink ? GetImages(car.carImages[0].imageLink) : cardefaultimage}
+                                            alt="Car"
+                                            style={{ width: '75%' }}
+                                        />
+
+                                    </div>
+
+                                    <div className="contact-description">
+                                        <p>{t('Mail Intro')}</p>
+                                        <h3>{t('Used')} {car?.modelId}</h3>
+                                        <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
+                                    </div>
                                 </div>
 
-                                <div className="contact-description">
-                                    <p>Hi, I'm interested in this car!</p>
-                                    <h3>Used {car?.modelId}</h3>
-                                    <p>{car?.carSalesInfo?.price} | {car?.currentOdometer}</p>
+                                <div className="contact-form">
+                                    <div className="name-input">
+                                        <input onChange={handleInputChange} name="firstName" type="text" placeholder={t('First Name')} />
+                                        <input onChange={handleInputChange} name="lastName" type="text" placeholder={t('Last Name')} />
+                                    </div>
+                                    <div className="info-input">
+                                        <input onChange={handleInputChange} name="zipCode" type="text" placeholder={t('Zip Code')} />
+                                        <input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder={t('Phone Number')} />
+                                    </div>
+                                    <div className="email-input">
+                                        <input onChange={handleInputChange} name="email" type="email" placeholder={t('Email')} />
+                                        <input type="hidden" value={car?.vinId} name="vinId" />
+                                    </div>
+                                    <div className="button-submit">
+                                        <button onClick={handleMessageSend}>{t('Send Message')}</button>
+                                    </div>
+                                    {addError && <p className="ad-car-error">{addError}</p>}
                                 </div>
-                            </div>
-                            
-                            <div className="contact-form">
-                                <div className="name-input">
-                                    <input onChange={handleInputChange} name="firstName" type="text" placeholder="First Name" />
-                                    <input onChange={handleInputChange} name="lastName" type="text" placeholder="Last Name" />
-                                </div>
-                                <div className="info-input">
-                                    <input onChange={handleInputChange} name="zipCode" type="text" placeholder="Zip Code" />
-                                    <input onChange={handleInputChange} name="email" type="email" placeholder="Email" />
-                                    <input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder="Phone Number" />
-                                    <input type="hidden" value={car?.vinId} name="vinId"></input>
-                                </div>
-                                <div className="button-submit">
-                                    <button onClick={handleMessageSend}>Send Message</button>
-                                </div>
-                                {addError && (
-                                    <p className="ad-car-error">{addError}</p>
-                                )}
-                                    
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </>

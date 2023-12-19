@@ -1,10 +1,12 @@
 ﻿using Application.Common.Models;
 using Application.DomainServices;
 using Application.DTO.CarAccidentHistory;
+using Application.DTO.CarServiceHistory;
 using Application.DTO.CarStolenHistory;
 using Application.Interfaces;
 using Application.Validation;
 using Application.Validation.CarAccidentHistory;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -37,11 +39,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Historys List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistorysAsync([FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetAllCarHistorys(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -52,6 +56,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <param name="id"></param>
         /// <returns>Car Accident History</returns>
         [HttpGet("{id}", Name = "GetCarAccidentHistory")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(CarAccidentHistoryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCarAccidentHistoryAsync(int id)
@@ -67,11 +72,13 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Accident History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("car/{vinId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistoryByCarIdAsync(string vinId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByCarId(vinId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -83,11 +90,31 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <returns>Car Accident History List</returns>
         /// <response code="400">Invalid Request</response>
         [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCarAccidentHistoryByUserIdAsync(string userId, [FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByUserId(userId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
+            return Ok(carAccidentHistorys);
+        }
+
+        /// <summary>
+        /// Get All Car Accident Historys created by dataProviderId
+        /// </summary>
+        /// <param name="dataProviderId"></param>
+        /// <returns>Car Accident History List</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("data-provider/{dataProviderId}")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        [ProducesResponseType(typeof(IEnumerable<CarAccidentHistoryResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarAccidentHistoryByDataProviderAsync(int dataProviderId, [FromQuery] CarAccidentHistoryParameter parameter)
+        {
+            var carAccidentHistorys = await _carAccidentHistoryService.GetCarHistoryByDataProviderId(dataProviderId, parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
         }
@@ -102,7 +129,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car not found</response>
         /// <response code="500">Create Failed</response>
         [HttpPost(Name = "CreateCarAccidentHistory")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -116,7 +143,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(error.ErrorMessage);
                 }
                 return BadRequest(errors);
             }
@@ -133,7 +160,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -141,7 +168,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         {
             CarAccidentHistoryCreateRequestDTOValidator validator = new CarAccidentHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carAccidentHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -155,7 +182,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="500">Create Failed</response>
         [HttpPost("collection/from-csv")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status500InternalServerError)]
@@ -169,7 +196,7 @@ namespace CarHistoryReportSystemAPI.Controllers
             //validate
             CarAccidentHistoryCreateRequestDTOValidator validator = new CarAccidentHistoryCreateRequestDTOValidator();
             var errors = validator.ValidateList(requests);
-            if (errors.Error.Count > 0) return BadRequest(errors);
+            if (errors.error.Count > 0) return BadRequest(errors);
             await _carAccidentHistoryService.CreateCarHistoryCollection(requests);
             return NoContent();
         }
@@ -184,7 +211,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Update Failed</response>
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -198,7 +225,7 @@ namespace CarHistoryReportSystemAPI.Controllers
                 var errors = new ErrorDetails();
                 foreach (var error in validationResult.Errors)
                 {
-                    errors.Error.Add(error.ErrorMessage);
+                    errors.error.Add(error.ErrorMessage);
                 }
                 return BadRequest(errors);
             }
@@ -216,7 +243,7 @@ namespace CarHistoryReportSystemAPI.Controllers
         /// <response code="404">Car History not found</response>
         /// <response code="500">Delete Failed</response>
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status404NotFound)]
@@ -239,8 +266,52 @@ namespace CarHistoryReportSystemAPI.Controllers
         public async Task<IActionResult> GetCarAccidentHistorysByOwnInsuranceCompany([FromQuery] CarAccidentHistoryParameter parameter)
         {
             var carAccidentHistorys = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistories(parameter);
+            Response.Headers.AccessControlExposeHeaders = "*";
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(carAccidentHistorys.PagingData));
             return Ok(carAccidentHistorys);
+        }
+
+        /// <summary>
+        /// Get Car Accident History detail by own insurance company
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Car Accident History Detail</returns>
+        /// <response code="400">Invalid Request</response>
+        [HttpGet("insurance-own/{id}")]
+        [Authorize(Roles = "InsuranceCompany")]
+        [ProducesResponseType(typeof(CarAccidentHistoryResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCarAccidentHistoryByIdAsync(int id)
+        {
+            var carAccidentHistory = await _carAccidentHistoryService.InsuranceCompanyGetOwnCarHistoryDetail(id);
+            return Ok(carAccidentHistory);
+        }
+
+        /// <summary>
+        /// Get Car Historys Create Form Csv
+        /// </summary>
+        /// <returns>Car Historys List</returns>
+        [HttpGet("collection/from-csv/form")]
+        [Authorize(Roles = "Adminstrator,PoliceOffice")]
+        public async Task<IActionResult> GetCreateFormCarHistorysAsync()
+        {
+            var carHistorys = new List<CarAccidentHistoryCreateRequestDTO>
+            {
+                new CarAccidentHistoryCreateRequestDTO
+                {
+                    CarId = "Example",
+                    Note = "None",
+                    Odometer = null,
+                    ReportDate = DateOnly.FromDateTime(DateTime.Now),
+                    AccidentDate = DateOnly.FromDateTime(DateTime.Now),
+                    DamageLocation = AccidentDamageLocation.Front | AccidentDamageLocation.Rear | AccidentDamageLocation.Left | AccidentDamageLocation.Right,
+                    Description = "None",
+                    Location = null,
+                    Serverity = 0.5f
+                }
+            };
+            Request.Headers.Accept = "text/csv";
+            return Ok(carHistorys);
         }
     }
 }

@@ -13,9 +13,10 @@ namespace Application.Validation.CarInspectionHistory
     {
         public CarInspectionHistoryCreateRequestDTOValidator()
         {
-            RuleFor(x => x.Description).NotEmpty();
-            RuleFor(x => x.InspectDate).LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now));
-            RuleFor(x => x.InspectionNumber).NotEmpty();
+            RuleFor(x => x.Odometer).GreaterThanOrEqualTo(0).When(x => x.Odometer != null).WithMessage("Odometer value must be equal or greater than 0");
+            RuleFor(x => x.Description).NotEmpty().WithMessage("Description cannot be empty");
+            RuleFor(x => x.InspectDate).LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now)).WithMessage("Inspect Date cannot be in the future");
+            RuleFor(x => x.InspectionNumber).NotEmpty().WithMessage("Inspection Number should not be empty");
             RuleForEach(x => x.CarInspectionHistoryDetail).SetValidator(new CarInspectionHistoryDetailCreateRequestDTOValidator());
         }
     }

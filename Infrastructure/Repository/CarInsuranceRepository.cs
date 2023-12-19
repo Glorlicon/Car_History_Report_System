@@ -1,8 +1,9 @@
-﻿using Application.DTO.CarInsurance;
-using Application.DTO.CarServiceHistory;
-using Application.Interfaces;
+﻿using Application.DTO.CarInspectionHistory;
+using Application.DTO.CarInsurance;
 using Domain.Entities;
+using Domain.Exceptions;
 using Infrastructure.DBContext;
+using Infrastructure.Repository.Extension;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -64,10 +65,93 @@ namespace Infrastructure.Repository
                               .ToListAsync();
         }
 
+        public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByOwnCompany(List<string> carIds, CarInsuranceHistoryParameter parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => carIds.Contains(x.CarId), trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
+        public override async Task<IEnumerable<CarInsurance>> GetCarHistorysByDataProviderId(int dataProviderId, CarInsuranceHistoryParameter parameter, bool trackChange)
+        {
+            var query = FindByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, trackChange);
+            query = Filter(query, parameter);
+            query = Sort(query, parameter);
+            return await query.Include(x => x.CreatedByUser)
+                              .ThenInclude(x => x.DataProvider)
+                              .Skip((parameter.PageNumber - 1) * parameter.PageSize)
+                              .Take(parameter.PageSize)
+                              .ToListAsync();
+        }
+
         public async Task<List<string>> InsuranceCompanyGetOwnCarIds(int? dataProviderId, bool trackChange)
         {
             var query = FindByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, trackChange);
             return await query.Select(x => x.CarId).ToListAsync();
+        }
+
+        public async Task<List<string>> GetCarInsuranceUserIdsByCarId(string carId)
+        {
+            return await FindByCondition(x => x.CarId == carId, false)
+                            .Select(x => x.CreatedByUserId)
+                            .Distinct()
+                            .ToListAsync();
+        }
+
+        public override IQueryable<CarInsurance> Filter(IQueryable<CarInsurance> query, CarInsuranceHistoryParameter parameter)
+        {
+            if (parameter.VinId != null)
+            {
+                query = query.Where(x => x.CarId.ToLower().Contains(parameter.VinId.ToLower()));
+            }
+            if (parameter.InsuranceNumber != null)
+            {
+                query = query.Where(x => x.InsuranceNumber.ToLower().Contains(parameter.InsuranceNumber.ToLower()));
+            }
+            if (parameter.StartStartDate != null)
+            {
+                query = query.Where(x => x.StartDate >= parameter.StartStartDate);
+            }
+            if (parameter.StartEndDate != null)
+            {
+                query = query.Where(x => x.StartDate <= parameter.StartEndDate);
+            }
+
+            if (parameter.EndStartDate != null)
+            {
+                query = query.Where(x => x.EndDate >= parameter.EndStartDate);
+            }
+            if (parameter.EndEndDate != null)
+            {
+                query = query.Where(x => x.EndDate <= parameter.EndEndDate);
+            }
+            return query;
+        }
+
+        public override IQueryable<CarInsurance> Sort(IQueryable<CarInsurance> query, CarInsuranceHistoryParameter parameter)
+        {
+            query = parameter.SortByLastModified switch
+            {
+                1 => query.OrderBy(x => x.LastModified),
+                -1 => query.OrderByDescending(x => x.LastModified),
+                _ => query
+            };
+            return query;
+        }
+
+        public override void Create(CarInsurance entity)
+        {
+            var isInsuranceNumberExist = IsExistNotAsync(x => x.InsuranceNumber == entity.InsuranceNumber);
+            if (isInsuranceNumberExist)
+            {
+                throw new InsuranceNumberExistException();
+            }
+            base.Create(entity);
         }
     }
 }

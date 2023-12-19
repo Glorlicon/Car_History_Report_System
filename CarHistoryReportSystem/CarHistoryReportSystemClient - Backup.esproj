@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.74-alpha">
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <StartupCommand>set BROWSER=none&amp;&amp;npm start</StartupCommand>
+    <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
+    <!-- Command to run on project build -->
+    <BuildCommand>
+    </BuildCommand>
+    <!-- Command to create an optimized build of the project that's ready for publishing -->
+    <ProductionBuildCommand>npm run build</ProductionBuildCommand>
+    <!-- Folder where production build objects will be placed -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+    <FrameworkPathOverride>/usr/local/share/dotnet/shared/Microsoft.NETCore.App/7.0.5/mscorlib.dll</FrameworkPathOverride>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\components\footer\" />
+    <Folder Include="src\components\forms\cardealer\" />
+    <Folder Include="src\components\forms\insurance\" />
+    <Folder Include="src\components\forms\manuistry\" />
+    <Folder Include="src\components\forms\police\" />
+    <Folder Include="src\components\forms\manuister\" />
+    <Folder Include="src\localization\locales\en\" />
+    <Folder Include="src\pages\admin\car_model\" />
+    <Folder Include="src\pages\manufacturer\car\" />
+    <Folder Include="src\pages\manufacturer\car_model\" />
+    <Folder Include="src\pages\insurance_company\" />
+    <Folder Include="src\pages\vehicle_manuistry\" />
+    <Folder Include="src\pages\police\" />
+    <Folder Include="src\services\azure\" />
+    <Folder Include="src\services\payment\" />
+  </ItemGroup>
+</Project>

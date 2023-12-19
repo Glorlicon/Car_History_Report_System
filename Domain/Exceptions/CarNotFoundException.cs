@@ -9,7 +9,7 @@ namespace Domain.Exceptions
     public class CarNotFoundException : NotFoundException
     {
         public CarNotFoundException(string vinId)
-            : base($"Car with VinId {vinId} Not Found")
+            : base($"Car Not Found")
         {
 
         }

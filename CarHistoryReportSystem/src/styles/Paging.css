@@ -1,0 +1,13 @@
+.paging-container{
+    width: 100%;
+    height: 100%;
+    margin-top: 2%;
+    text-align: right;
+}
+.paging-container button {
+    background-color: white;
+    border: none;
+}
+.paging-container button:disabled{
+    color: black;
+}

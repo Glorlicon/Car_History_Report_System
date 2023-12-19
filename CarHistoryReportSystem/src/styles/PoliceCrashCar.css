@@ -1,25 +1,28 @@
 .pol-crash-list-page {
     padding: 20px;
-    padding-top: 120px;
+    padding-top: 200px;
+    flex:1;
+    background-color: ghostwhite;
 }
 
 .pol-crash-top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;
 }
 
 .add-pol-crash-btn {
-    background-color: #4CAF50; /* Green */
+    background-color: #4AB0EB; /* Green */
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 20px;
 }
 
     .add-pol-crash-btn:hover {
-        background-color: #45a049;
+        background-color: #3D97CB;
     }
 
 .pol-crash-search-filter-container {
@@ -103,6 +106,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1300;
 }
 
 .pol-crash-modal-content {
@@ -110,7 +114,28 @@
     padding: 20px;
     border-radius: 5px;
     position: relative;
-    width: 400px;
+    width: 600px;
+    max-height: 600px; 
+}
+.pol-crash-modal-content-2 {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 550px;
+    width: 100%;
+    height: 100%;
+    padding-top: 2%;
+    align-items: center;
+}
+.pol-crash-modal-content h2 {
+    border-bottom: 1px solid black;
+    margin: 0;
+    width: 100%;
+}
+.pol-crash-modal-content-2-buttons{
+    display: flex;
+    flex-direction: row;
 }
 
 .pol-crash-close-btn {
@@ -146,17 +171,24 @@
 
 .pol-crash-form-column {
     flex: 1;
-    min-width: 75px;
+    width: 90%;
+    padding-bottom:10px;
 }
 
     .pol-crash-form-column label,
-    .pol-crash-form-column input,
+    .pol-crash-form-column input:not([type=checkbox]),
     .pol-crash-form-column select {
         display: block;
         width: 100%;
-        margin-bottom: 10px;
+        height: 20px;
+        min-height: 20px
     }
-
+.pol-crash-form-column label{
+    text-align: left;
+}
+.pol-crash-form-column input[type="checkbox"]{
+    zoom: 1.5;
+}
 .pol-crash-model-prev-btn {
     background-color: #3498db;
     color: #fff;
@@ -190,6 +222,7 @@
 .pol-crash-car-container {
     display: flex; /* Or flex, depending on your layout needs */
     padding: 1px; /* Adjust the padding to match the border width for visual consistency */
+    flex-direction: row;
 }
 
 .pol-crash-car-image {
@@ -200,12 +233,77 @@
 }
 
 .pol-crash-checkboxes {
-    margin-top: 20px; /* Space out the checkboxes from the image */
     display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
     .pol-crash-checkboxes label {
-        margin-right: 3px; /* Space out the labels if needed */
-        margin-left: 3px; /* Space out the labels if needed */
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
+
+.pol-crash-checkboxes-2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+    .pol-crash-checkboxes-2 label {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+.pol-crash-action-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left:5px;
+    margin-right:5px;
+}
+.pol-crash-action-button:hover {
+    background-color: #2980b9;
+}
+.pol-crash-action-button-2 {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left:5px;
+    margin-right:5px;
+}
+.pol-crash-action-button-2:hover {
+    background-color: #21983D;
+}
+.pol-crash-action-button-3 {
+    background-color: #FA3939;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left:5px;
+    margin-right:5px;
+}
+.pol-crash-action-button-3:hover {
+    background-color: #E12D2D;
+}
+.export-pol-crash-btn {
+    background-color: #4AB0EB;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+    margin: 5px;
+    margin-top: 1%;
+    box-shadow: 2px 5px #888888;
+    height: 100%;
+}
+.export-pol-crash-btn:hover {
+    background-color: #3D97CB;
+}

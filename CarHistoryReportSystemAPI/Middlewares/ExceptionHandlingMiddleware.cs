@@ -1,6 +1,8 @@
 ﻿using Application.Common.Models;
 using Application.Interfaces;
+using CarHistoryReportSystemAPI.Resources;
 using Domain.Exceptions;
+using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
 namespace CarHistoryReportSystemAPI.Middlewares
@@ -9,10 +11,12 @@ namespace CarHistoryReportSystemAPI.Middlewares
     {
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
         private ILoggerService _loggerService;
-        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger, ILoggerService loggerService)
+        private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger, ILoggerService loggerService, IStringLocalizer<SharedResources> sharedLocalizer)
         {
             _logger = logger;
             _loggerService = loggerService;
+            _sharedLocalizer = sharedLocalizer;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
@@ -23,11 +27,18 @@ namespace CarHistoryReportSystemAPI.Middlewares
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
+                var list = _sharedLocalizer.GetAllStrings();
+                /*foreach (var er in list)
+                {
+                    _logger.LogError(er.Name);
+                    _logger.LogError(er.Value);
+                }
+                */
                 _loggerService.LogError(e.Message);
-                await HandleExceptionAsync(context, e);
+                await HandleExceptionAsync(context, e, _sharedLocalizer[e.Message]);
             }
         }
-        private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+        private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception, string localizedMessage)
         {
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = exception switch
@@ -39,7 +50,7 @@ namespace CarHistoryReportSystemAPI.Middlewares
             };
             var response = new ErrorDetails
             {
-                Error = new List<string> { exception.Message }
+                error = new List<string> { localizedMessage }
             };
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

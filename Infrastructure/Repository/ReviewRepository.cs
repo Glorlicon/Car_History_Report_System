@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,13 @@ namespace Infrastructure.Repository
 
         }
 
+        public async Task<int> CountAll(DataProviderReviewParameter parameter)
+        {
+            return await FindAll(false)
+                            .Filter(parameter)
+                            .CountAsync();
+        }
+
         public async Task<Review> GetReview(string userId, int dataProviderId, bool trackChange)
         {
             return await FindByCondition(r => r.DataProviderId == dataProviderId && r.UserId == userId, trackChange)
@@ -31,6 +39,7 @@ namespace Infrastructure.Repository
             return await FindAll(trackChange)
                             .Filter(parameter)
                             .Sort(parameter)
+                            .Include(x => x.User)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();

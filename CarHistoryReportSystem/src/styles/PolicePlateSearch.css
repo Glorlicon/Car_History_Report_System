@@ -1,0 +1,113 @@
+.pol-plate-search-page {
+    padding: 20px;
+    padding-top: 200px;
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+.pol-plate-search-action {
+    border: 1px solid black;
+    border-radius: 20px;
+    margin: 5px;
+    box-shadow: 5px 10px #888888;
+    width: 100%;
+    margin-bottom: 30px;
+}
+.plate-search-page-item {
+    border: 1px solid black;
+    border-radius: 20px;
+    margin: 5px;
+    box-shadow: 5px 10px #888888;
+    width: 50%;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.plate-search-page-item-3 {
+    border-radius: 20px;
+    margin: 5px;
+    box-shadow: 5px 10px #888888;
+    height: 100%;
+}
+.plate-search-page-item-4 {
+    border: 1px solid black;
+    border-radius: 20px;
+    margin: 5px;
+    box-shadow: 5px 10px #888888;
+}
+.plate-search-page-row{
+    display: flex;
+    flex-direction: row;
+}
+/*.MuiTableRow-root th:first-child {
+    border-top-left-radius: 20px;
+}
+.MuiTableRow-root th:last-child {
+    border-top-right-radius: 20px;
+}*/
+.plate-length-selector input {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 30px;
+}
+.plate-inputs input {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.plate-character-input {
+    width: 40px;
+    height: 50px;
+    margin: 1px;
+}
+.search-actions{
+    text-align: left;
+}
+.search-actions button {
+    margin-top: 10px;
+}
+.search-actions button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+.search-actions-2 button {
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    padding: 15px;
+    font-size: 20px;
+    margin: 10px;
+    border-radius: 10px;
+}
+.search-actions-2 button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+.plate-search-filters {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+.plate-search-page-item-2{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.plate-view-report-button-div {
+    text-align: center;
+}
+.plate-view-report-button {
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    padding: 10px;
+    font-size: 10px;
+    margin: 10px;
+    border-radius: 50px;
+}
+.plate-view-report-button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}

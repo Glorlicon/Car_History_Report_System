@@ -4,6 +4,7 @@
     align-items: center;
     height: 100vh;
     background-color: #f4f4f4;
+    flex:1;
 }
 
 .register-form {
@@ -84,12 +85,6 @@
 }
 
 .validation {
-    background-color: #FFC300;
-    display: block;
-    font-weight: bold;
-    text-align: left;
-    color: red;
-    font-size: 15px;
     margin-bottom: 5px;
     grid-column: 1/-1;
 }

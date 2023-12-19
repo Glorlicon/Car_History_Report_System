@@ -32,7 +32,7 @@ namespace Application.DomainServices
         public UserService(IMapper mapper, 
             IUserRepository userRepository, 
             IEmailServices emailServices, 
-            IIdentityServices identityServices, 
+            IIdentityServices identityServices,
             IAuthenticationServices authenticationServices)
         {
             _mapper = mapper;
@@ -60,11 +60,16 @@ namespace Application.DomainServices
         public async Task<RegisterResult> CreateAsync(CreateUserRequestDTO request)
         {
             var user = _mapper.Map<User>(request);
-            user.EmailConfirmed = true;
+
+
             //password generate move to Helper
             var password = UserUtility.GenerateRandomPassword(20);
-
+            user.EmailConfirmed = true;
             var result = await _identityServices.RegisterAsync(user, password);
+            if (result.UserId == "")
+            {
+                return result;
+            }
             //Gui mail password toi user
             await _emailServices.SendEmailAsync(request.Email, "Welcome to CarReportHistorySystem", "Hello!\n" +
                 "Your account has been created. Please login using the following credentials:\n" +
@@ -79,8 +84,7 @@ namespace Application.DomainServices
 
             var userResponse = _mapper.Map<List<UserResponseDTO>>(users);
 
-            var count = await _userRepository.CountAll();
-
+            var count = await _userRepository.CountAll(parameter);
             foreach (var user in userResponse)
             {
                 user.RoleName = user.Role.ToString();
@@ -92,6 +96,10 @@ namespace Application.DomainServices
         public async Task<UserResponseDTO> GetUser(string id)
         {
             var user = await _userRepository.GetUserByUserId(id, trackChanges: false);
+            if(user is null)
+            {
+                throw new UserNotFoundException("User was not found");
+            }
             var userResponse = _mapper.Map<UserResponseDTO>(user);
             userResponse.RoleName = user.Role.ToString();
             return userResponse;

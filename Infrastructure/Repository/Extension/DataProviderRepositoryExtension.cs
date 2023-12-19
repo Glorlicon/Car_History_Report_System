@@ -19,6 +19,9 @@ namespace Infrastructure.Repository.Extension
             }
             if (parameter.Type != null)
                 query = query.Where(x => x.Type == parameter.Type);
+
+            if (parameter.Email != null)
+                query = query.Where(x => x.Email.ToLower().Contains(parameter.Email.ToLower()));
             return query;
         }
 
@@ -28,6 +31,13 @@ namespace Infrastructure.Repository.Extension
             {
                 1 => query.OrderBy(x => x.Name),
                 -1 => query.OrderByDescending(x => x.Name),
+                _ => query
+            };
+
+            query = parameter.SortByType switch
+            {
+                1 => query.OrderBy(x => x.Type),
+                -1 => query.OrderByDescending(x => x.Type),
                 _ => query
             };
             return query;

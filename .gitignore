@@ -56,3 +56,4 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 /CarHistoryReportSystem/.env
+/CarHistoryReportSystem/.env

@@ -19,16 +19,14 @@
     <Folder Include="src\components\footer\" />
     <Folder Include="src\components\forms\cardealer\" />
     <Folder Include="src\components\forms\insurance\" />
+    <Folder Include="src\components\forms\notification\" />
     <Folder Include="src\components\forms\registry\" />
     <Folder Include="src\components\forms\police\" />
     <Folder Include="src\components\forms\register\" />
-    <Folder Include="src\pages\admin\car_model\" />
-    <Folder Include="src\pages\manufacturer\car\" />
-    <Folder Include="src\pages\manufacturer\car_model\" />
+    <Folder Include="src\localization\locales\en\" />
     <Folder Include="src\pages\insurance_company\" />
     <Folder Include="src\pages\vehicle_registry\" />
     <Folder Include="src\pages\police\" />
     <Folder Include="src\services\azure\" />
-    <Folder Include="src\services\payment\" />
   </ItemGroup>
 </Project>

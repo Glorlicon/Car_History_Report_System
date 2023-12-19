@@ -33,6 +33,17 @@ namespace Infrastructure.Repository
             return lastServicedTime is null ? null :  DateOnly.FromDateTime(lastServicedTime.Value);
         }
 
+        public override IQueryable<CarServiceHistory> Filter(IQueryable<CarServiceHistory> query, CarServiceHistoryParameter parameter)
+        {
+            if (parameter.CarId != null)
+                query = query.Where(x => x.CarId.Contains(parameter.CarId));
+            if (parameter.ServiceTimeStart != null)
+                query = query.Where(x => x.ServiceTime >= parameter.ServiceTimeStart);
+            if (parameter.ServiceTimeEnd != null)
+                query = query.Where(x => x.ServiceTime <= parameter.ServiceTimeEnd);
+            return query;
+        }
+
         public override IQueryable<CarServiceHistory> Sort(IQueryable<CarServiceHistory> query, CarServiceHistoryParameter parameter)
         {
             return query.OrderByDescending(x => x.ReportDate);

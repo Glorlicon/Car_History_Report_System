@@ -73,6 +73,14 @@ namespace Application.DomainServices
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
+        public async Task<PagedList<R>> GetCarHistoryByDataProviderId(int dataProviderId, P parameter)
+        {
+            var carHistorys = await _carHistoryRepository.GetCarHistorysByDataProviderId(dataProviderId, parameter, false);
+            var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
+            var count = await _carHistoryRepository.CountCarHistoryByCondition(x => x.CreatedByUser.DataProviderId == dataProviderId, parameter);
+            return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
         public virtual async Task<int> CreateCarHistory(C request)
         {
             var carHistory = _mapper.Map<T>(request);
@@ -89,18 +97,33 @@ namespace Application.DomainServices
             }
             _carHistoryRepository.Create(carHistory);
             await _carHistoryRepository.SaveAsync();
+            // Send Notification to insurance if it's accident or stolen
+            if(typeof(T) == typeof(CarAccidentHistory) || typeof(T) == typeof(CarStolenHistory))
+            {
+                var historyTypeName = typeof(T) == typeof(CarAccidentHistory) ? "Car Accident History" : "Car Stolen History";
+                var insuranceAlertNotification = new NotificationCreateRequestDTO
+                {
+                    Title = $"New {historyTypeName} of car with insurance has beed added",
+                    RelatedCarId = carHistory.CarId,
+                    Description = $"New {historyTypeName} of car with insurance has beed added",
+                    RelatedLink = $"{carHistory.Id}",
+                    Type = NotificationType.InsuranceAlert
+                };
+                await _notificationServices.CreateNotification(insuranceAlertNotification);
+            }
             // Send Notification to police
             var policeAlertNotification = new NotificationCreateRequestDTO
             {
                 Title = $"New Car History of car {carHistory.CarId} has beed added",
                 RelatedCarId = carHistory.CarId,
                 Description = $"Car {carHistory.CarId} have beed added new {typeof(T).Name}",
-                RelatedLink = $"/{carHistory.CarId}",
+                RelatedLink = $"{carHistory.CarId}",
                 Type = NotificationType.PoliceAlert
             };
             await _notificationServices.CreateNotification(policeAlertNotification);
             //
             return carHistory.Id;
+
         }
 
         public virtual async Task DeleteCarHistory(int id)
@@ -160,10 +183,6 @@ namespace Application.DomainServices
         public async Task<PagedList<R>> InsuranceCompanyGetOwnCarHistories(P parameter)
         {
             var user = await _authenticationServices.GetCurrentUserAsync();
-            if (user.DataProviderId == null)
-            {
-                throw new UnauthorizedAccessException();
-            }
             var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
             if (carIds == null)
             {
@@ -171,8 +190,29 @@ namespace Application.DomainServices
             }
             var carHistorys = await _carHistoryRepository.GetCarHistorysByOwnCompany(carIds, parameter, false);
             var carHistorysResponse = _mapper.Map<List<R>>(carHistorys);
-            var count = await _unitOfWork.CarStolenHistoryRepository.CountAll();
+            var count = await _carHistoryRepository.CountAll();
             return new PagedList<R>(carHistorysResponse, count: count, parameter.PageNumber, parameter.PageSize);
+        }
+
+        public async Task<R> InsuranceCompanyGetOwnCarHistoryDetail(int id)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            var carIds = await _unitOfWork.CarInsuranceRepository.InsuranceCompanyGetOwnCarIds(user.DataProviderId, false);
+            if (carIds == null || carIds.Count == 0)
+            {
+                throw new CarNotFoundException();
+            }
+            var carHistory = await _carHistoryRepository.GetCarHistoryById(id, false);
+            if(carHistory == null)
+            {
+                throw new CarHistoryRecordNotFoundException(id);
+            }
+            if (!carIds.Contains(carHistory.CarId))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            var carHistoryResponse = _mapper.Map<R>(carHistory);
+            return carHistoryResponse;
         }
     }
 }

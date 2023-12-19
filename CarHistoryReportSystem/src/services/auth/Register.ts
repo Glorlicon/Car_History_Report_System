@@ -21,6 +21,7 @@ export async function registerUser(data: RegisterData): Promise<APIResponse> {
         return { data: response.data }
     } catch (error) {
         const axiosError = error as AxiosError
+        console.log(axiosError)
         if (axiosError.code === "ERR_NETWORK") {
             return { error: "Network error. Please check your internet connection!" }
         } else if (axiosError.code === "ERR_BAD_REQUEST") {

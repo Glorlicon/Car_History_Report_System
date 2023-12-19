@@ -1,12 +1,16 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/GlobalNavigator.css'
-import logo from '../../logo512.png';
-import { NavItem } from '../../utils/Interfaces';
+import logo from '../../images/logoCHRS.png';
+import { APIResponse, NavItem, UserNotification } from '../../utils/Interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../store/authSlice';
+import { logout, setLanguage } from '../../store/authSlice';
+import { useTranslation } from 'react-i18next';
+import { Badge, Button, Fade, IconButton, Menu, MenuItem } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { GetAllUserNotification, GetUserNotification } from '../../services/api/Notification';
 
 interface GlobalNavigatorProps {
     items: NavItem[]
@@ -14,31 +18,103 @@ interface GlobalNavigatorProps {
 
 const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
     const [username, setUsername] = useState('')
+    const [userId, setUserId] = useState('')
+    const [role, setUserRole] = useState('')
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const token = useSelector((state: RootState) => state.auth.token)
+    const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const [userNotification, setUserNotification] = useState<UserNotification[]>([]);
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [loading, setLoading] = useState(true);
+    type UserRole = 'User' | 'CarDealer' | 'InsuranceCompany' | 'ServiceShop' | 'Manufacturer' | 'VehicleRegistry' | 'PoliceOffice' | 'Adminstrator';
+
+    const roleProfilePath: { [key in UserRole]: string } = {
+        "User": "/profile",
+        "CarDealer": "/dealer/profile",
+        "InsuranceCompany": "/insurance/profile",
+        "ServiceShop": "/service/profile",
+        "Manufacturer": "/manufacturer/profile",
+        "VehicleRegistry": "/registry/profile",
+        "PoliceOffice": "/police/profile",
+        "Adminstrator": "/admin/profile"
+    };
+    const roleNotificationPath: { [key in UserRole]: string } = {
+        "User": "/notification",
+        "CarDealer": "/dealer/notification",
+        "InsuranceCompany": "/insurance/notification",
+        "ServiceShop": "/service/notification",
+        "Manufacturer": "/manufacturer/notification",
+        "VehicleRegistry": "/registry/notification",
+        "PoliceOffice": "/police/notification",
+        "Adminstrator": "/admin/notification"
+    };
+    const roleHomepagePath: { [key in UserRole]: string } = {
+        "User": "/",
+        "CarDealer": "/dealer",
+        "InsuranceCompany": "/insurance",
+        "ServiceShop": "/service",
+        "Manufacturer": "/manufacturer",
+        "VehicleRegistry": "/registry",
+        "PoliceOffice": "/police",
+        "Adminstrator":"/admin"
+    }
+    const profilePath = roleProfilePath[role as UserRole] || '/profile';
+    const notificationPath = roleNotificationPath[role as UserRole] || '/notification';
+    const homepagePath = roleHomepagePath[role as UserRole] || '/'
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const getLanguage = () => {
+        let currentLanguage = i18n.language;
+        if (currentLanguage === 'vn') {
+            i18n.changeLanguage('en')
+            dispatch(setLanguage('en'))
+        } else {
+            i18n.changeLanguage('vn')
+            dispatch(setLanguage('vn'))
+        }
+    }
+    
+    const fetchData = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const userNotifcationResponse: APIResponse = await GetAllUserNotification(JWTDecoder(token).nameidentifier, connectAPIError, language)
+        if (!userNotifcationResponse.error) {
+            setUserNotification(userNotifcationResponse.data)
+        }
+
+    }
 
     useEffect(() => {
         if (token) {
             const data = JWTDecoder(token)
             setUsername(data.name)
+            setUserRole(data.roles)
+            setUserId(data.nameidentifier)
+            setLoading(false);
+            fetchData();
+        } else {
+            setLoading(false);
         }
     }, [token]);
-    //TODO: bug redirect to register when logout
     function Logout() {
-        console.log("Logging out...");
         dispatch(logout())
         navigate('/login')
-        console.log("Should have navigated to /");
         return
     }
     return (
         <nav className="global-nav">
             <div className="left-section">
                 <div className="logo-container">
-                    <a href="/">
+                    <a href={role ? homepagePath :"/"}>
                         <img src={logo} alt="Company Logo" className="logo" />
                     </a>
                 </div>
@@ -51,34 +127,51 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                             {item.dropdownItems ? (
                                 <div className="dropdown">
                                     <a onClick={() => setDropdownOpen(!dropdownOpen)}>
-                                        {item.label}
+                                        {t(item.label)}
                                     </a>
                                     {dropdownOpen && (
                                         <ul className="dropdown-menu">
                                             {item.dropdownItems.map((dropdownItem, idx) => (
                                                 <li key={idx}>
-                                                    <a href={dropdownItem.link}>{dropdownItem.label}</a>
+                                                    <a href={dropdownItem.link}>{t(dropdownItem.label)}</a>
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
                                 </div>
                             ) : (
-                                <a href={item.link}>{item.label}</a>
+                                <a href={item.link}>{t(item.label)}</a>
                             )}
                         </li>
                     ))}
+                    {role === "User" && (
+                        <li>
+                            <a href='/request'>{t('Admin Request')}</a>
+                        </li>
+
+                    )}
                 </ul>
             </div>
             {token ? (
                 <div className="right-section">
-                    <a href="/profile" className="nav-item">Hi, {username}</a>
-                    <a className="nav-item" onClick={Logout}>Logout</a>
+                    <input type="checkbox" id="languageSwitch" onChange={getLanguage} checked={i18n.language === 'vn' ? false : true} className="language-toggle-switch" />
+                    <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
+                    <label className="currentLanguage">{i18n.language}</label>
+                    <a href={profilePath} className="nav-item">{t('Hi')}, {username}</a>
+                    <IconButton onClick={() => navigate(notificationPath)}>
+                        <Badge color="secondary" badgeContent={userNotification?.filter(notification => !notification.isRead)?.length}>
+                            <NotificationsIcon sx={{ color: 'white' }} />
+                        </Badge>
+                    </IconButton>
+                    <a className="nav-item" onClick={Logout}>{t('Logout')}</a>
                 </div>
             ): (
-                <div className="right-section">
-                    <a href="/login" className="nav-item">Login</a>
-                    <a href="/register" className="nav-item">Register</a>
+                    <div className="right-section">
+                    <input type="checkbox" id="languageSwitch" onChange={getLanguage} checked={i18n.language === 'vn' ? false : true} className="language-toggle-switch" />
+                    <label className="language-toggle-switch" htmlFor="languageSwitch">Toggle Language</label>
+                    <label className="currentLanguage">{i18n.language}</label>
+                    <a href="/login" className="nav-item">{t('Login')}</a>
+                    <a href="/register" className="nav-item">{t('Register')}</a>
                 </div >
             )}
         </nav>

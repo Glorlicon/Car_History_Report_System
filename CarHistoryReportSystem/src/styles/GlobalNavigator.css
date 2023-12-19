@@ -33,6 +33,7 @@
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background-color 0.3s;
+    display: inline-flex;
  }
 
 .nav-list a:hover{
@@ -147,7 +148,7 @@
 }
 
 .logo {
-    height: 40px;
+    height: 65px;
     margin-right: 0px; 
 }
 .left-section {
@@ -172,4 +173,46 @@
 
 .nav-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+input[id=languageSwitch] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.language-toggle-switch {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 40px;
+    height: 20px;
+    background: grey;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+}
+.language-toggle-switch:after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 90px;
+    transition: 0.3s;
+}
+.language-toggle-switch:checked + .language-toggle-switch {
+    background: #bada55;
+}
+.language-toggle-switch:checked + .language-toggle-switch:after {
+    left: calc(100% - 5px);
+	transform: translateX(-100%);
+}
+.language-toggle-switch:active:after {
+    width: 30px;
+}
+.currentLanguage{
+    color: white;
+    padding-left: 5px;
 }

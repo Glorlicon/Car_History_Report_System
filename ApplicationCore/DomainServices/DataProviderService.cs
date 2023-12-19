@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.DTO.Car;
+using Application.DTO.CarRecall;
 using Application.DTO.CarSpecification;
 using Application.DTO.DataProvider;
 using Application.Interfaces;
@@ -13,6 +14,7 @@ using FluentValidation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,22 +44,24 @@ namespace Application.DomainServices
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProviders(parameter, trackChange: false);
             var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
-            var count = await _dataProviderRepository.CountAll();
+            var count = await _dataProviderRepository.CountAll(parameter);
             return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
+        public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersWithoutUser(DataProviderParameter parameter, DataProviderType type)
         {
             var dataProviders = await _dataProviderRepository.GetAllDataProvidersWithoutUser(parameter, type, trackChange: false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
+            var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountByCondition(x => x.Type == type && !x.Users.Any(), parameter);
+            return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
-        public async Task<IEnumerable<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type)
+        public async Task<PagedList<DataProviderDetailsResponseDTO>> GetAllDataProvidersByType(DataProviderType type, DataProviderParameter parameter)
         {
-            var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, false);
-            var dataProvidersResponse = _mapper.Map<IEnumerable<DataProviderDetailsResponseDTO>>(dataProviders);
-            return dataProvidersResponse;
+            var dataProviders = await _dataProviderRepository.GetAllDataProvidersByType(type, parameter,  false);
+            var dataProvidersResponse = _mapper.Map<List<DataProviderDetailsResponseDTO>>(dataProviders);
+            var count = await _dataProviderRepository.CountByCondition(x => x.Type == type, parameter);
+            return new PagedList<DataProviderDetailsResponseDTO>(dataProvidersResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 
         public async Task<DataProviderDetailsResponseDTO> GetDataProvider(int dataProviderId)
@@ -121,10 +125,6 @@ namespace Application.DomainServices
             {
                 throw new UserNotFoundException("No current user is logged in");
             }
-            if (user.DataProviderId is null)
-            {
-                throw new UnauthorizedAccessException();
-            }
             var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, true);
 
             if (dataProvider is null)
@@ -185,6 +185,50 @@ namespace Application.DomainServices
             review.DataProviderId = dataProviderId;
             review.UserId = user.Id;
             _reviewRepository.Create(review);
+            await _reviewRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<bool> EditReviewDataProvider(int dataProviderId, DataProviderReviewUpdateRequestDTO request)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, trackChange: false);
+            if (dataProvider is null)
+            {
+                throw new DataProviderNotFoundException(dataProviderId);
+            }
+            var oldReview = await _reviewRepository.GetReview(user.Id, dataProviderId, trackChange: true);
+            if (oldReview is null)
+            {
+                throw new OldReviewNotExistException(user.Id, dataProviderId);
+            }
+            _mapper.Map(request, oldReview);
+            await _reviewRepository.SaveAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteReviewDataProvider(int dataProviderId, string userId)
+        {
+            var user = await _authenticationServices.GetCurrentUserAsync();
+            if (user is null)
+            {
+                throw new UserNotFoundException("No current user is logged in");
+            }
+            var dataProvider = await _dataProviderRepository.GetDataProvider(dataProviderId, false);
+            if (dataProvider is null)
+            {
+                throw new DataProviderNotFoundException(dataProviderId);
+            }
+            var review = await _reviewRepository.GetReview(user.Id, dataProviderId, trackChange: true);
+            if (review is null)
+            {
+                throw new OldReviewNotExistException(user.Id, dataProviderId);
+            }
+            _reviewRepository.Delete(review);
             await _dataProviderRepository.SaveAsync();
             return true;
         }
@@ -193,7 +237,7 @@ namespace Application.DomainServices
         {
             var reviews = await _reviewRepository.GetAllReview(parameter, trackChange: false);
             var reviewsResponse = _mapper.Map<List<DataProviderReviewsResponseDTO>>(reviews);
-            var count = await _reviewRepository.CountAll();
+            var count = await _reviewRepository.CountAll(parameter);
             return new PagedList<DataProviderReviewsResponseDTO>(reviewsResponse, count: count, parameter.PageNumber, parameter.PageSize);
         }
 

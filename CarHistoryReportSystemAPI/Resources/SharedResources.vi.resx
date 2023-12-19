@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="An error occurred while saving the entity changes. See the inner exception for details." xml:space="preserve">
+    <value>Có lỗi bất ngờ xảy ra. Thử lại hoặc liên hệ quản trị viên nếu lặp lại nhiều lần</value>
+  </data>
+  <data name="Can only be -1 for descending, 1 for ascending, 0 for not sorting" xml:space="preserve">
+    <value>Chọn -1 cho giảm dần, 1 cho tăng dần và 0 cho việc không sắp xếp</value>
+  </data>
+  <data name="car have already been tracked by user" xml:space="preserve">
+    <value>Xe đã được theo dõi</value>
+  </data>
+  <data name="car haven't been sold from other data provider" xml:space="preserve">
+    <value>Xe này không nằm trong kho của bạn</value>
+  </data>
+  <data name="car history record Not Found" xml:space="preserve">
+    <value>Bản ghi Lịch sử này của xe không tìm thấy</value>
+  </data>
+  <data name="Car Model not found" xml:space="preserve">
+    <value>Mẫu xe không tìm thấy</value>
+  </data>
+  <data name="Car Not Found" xml:space="preserve">
+    <value>Xe không tìm thấy</value>
+  </data>
+  <data name="Car Recall Not Found" xml:space="preserve">
+    <value>Bản ghi triệu hồi xe không tìm thấy</value>
+  </data>
+  <data name="Car recall status Not Found" xml:space="preserve">
+    <value>Trạng thái triệu hồi xe không tìm thấy</value>
+  </data>
+  <data name="Collection is null" xml:space="preserve">
+    <value>Danh sách không tồn tại</value>
+  </data>
+  <data name="Data Provider Id is required" xml:space="preserve">
+    <value>Data Provider Id là bắt buộc</value>
+  </data>
+  <data name="Data Provider not found" xml:space="preserve">
+    <value>Bên cung cấp thông tin không tìm thấy</value>
+  </data>
+  <data name="Day of week can only be in range of [0,6] (0 equal Sunday)" xml:space="preserve">
+    <value>Ngày trong tuần chỉ trong khoảng 0 đến 6</value>
+  </data>
+  <data name="Description cannot be empty" xml:space="preserve">
+    <value>Mô tả không thể trống</value>
+  </data>
+  <data name="DOB cannot be in the future" xml:space="preserve">
+    <value>Ngày sinh không thể ở tương lai</value>
+  </data>
+  <data name="Engine Number cannot be empty" xml:space="preserve">
+    <value>Số máy không thể trống</value>
+  </data>
+  <data name="history record of car not found" xml:space="preserve">
+    <value>Lịch sử này của xe không tìm thấy</value>
+  </data>
+  <data name="Hour can only be in range of [0,23]" xml:space="preserve">
+    <value>Giờ chỉ trong khoảng 0 đến 23</value>
+  </data>
+  <data name="Inspect Date cannot be in the future" xml:space="preserve">
+    <value>Ngày kiểm định không thể trống</value>
+  </data>
+  <data name="Inspection Number already exist" xml:space="preserve">
+    <value>Số Kiểm định đã tồn tại</value>
+  </data>
+  <data name="Inspection Number should not be empty" xml:space="preserve">
+    <value>Số kiểm định không thể trống</value>
+  </data>
+  <data name="InspectionCategory should not be empty" xml:space="preserve">
+    <value>Mục kiểm định không thể trống</value>
+  </data>
+  <data name="Insurance Number already exist" xml:space="preserve">
+    <value>Số bảo hiểm đã tồn tại</value>
+  </data>
+  <data name="Invalid email" xml:space="preserve">
+    <value>Email không hợp lệ</value>
+  </data>
+  <data name="Invalid phone number" xml:space="preserve">
+    <value>Số điện thoại không hợp lệ</value>
+  </data>
+  <data name="License Plate Number cannot be empty" xml:space="preserve">
+    <value>Biển số xe không thể trống</value>
+  </data>
+  <data name="License Plate Number should be correct format Ex: 12A-12345" xml:space="preserve">
+    <value>Biển số xe nên ở đúng định dạng. VD: 12A-12345</value>
+  </data>
+  <data name="Login failed because username/email or password is wrong" xml:space="preserve">
+    <value>Đăng nhập thất bại vì tên đăng nhập/email hoặc mật khẩu sai</value>
+  </data>
+  <data name="Mileage Min Have to be smaller than Mileage Max" xml:space="preserve">
+    <value>Quãng đường đi nhỏ nhất phải nhỏ hơn quãng đường đi lớn nhất</value>
+  </data>
+  <data name="Minute can only be in range of [0,59]" xml:space="preserve">
+    <value>Phút chỉ trong khoảng 0 đến 59</value>
+  </data>
+  <data name="Name should not be empty" xml:space="preserve">
+    <value>Tên không thể trống</value>
+  </data>
+  <data name="Notification Not Found" xml:space="preserve">
+    <value>Thông báo không tồn tại</value>
+  </data>
+  <data name="object already exist in list" xml:space="preserve">
+    <value>Đã tồn tại trong danh sách</value>
+  </data>
+  <data name="object not exist in list" xml:space="preserve">
+    <value>Không tồn tại trong danh sách</value>
+  </data>
+  <data name="Odometer value must be equal or greater than 0" xml:space="preserve">
+    <value>Quãng đường đi này phải lớn hơn 0</value>
+  </data>
+  <data name="Order not found" xml:space="preserve">
+    <value>Đơn đặt hàng không tìm thấy</value>
+  </data>
+  <data name="Order Option not found" xml:space="preserve">
+    <value>Lựa chọn đơn đặt hàng không tìm thấy</value>
+  </data>
+  <data name="Price Min Have to be smaller than Price Max" xml:space="preserve">
+    <value>Giá nhỏ nhất phải nhỏ hơn giá lớn nhất</value>
+  </data>
+  <data name="Rating can only be in range of [0,5]" xml:space="preserve">
+    <value>Đánh giá chỉ có thể trong khoảng 0 đến 5</value>
+  </data>
+  <data name="Registration Number already exist" xml:space="preserve">
+    <value>Số Đăng Kí đã tồn tại</value>
+  </data>
+  <data name="Registration Number cannot be empty" xml:space="preserve">
+    <value>Số đăng kí không thể trống</value>
+  </data>
+  <data name="Report Date cannot be in the future" xml:space="preserve">
+    <value>Ngày báo cáo không thể ở tương lai</value>
+  </data>
+  <data name="Request was not found" xml:space="preserve">
+    <value>Yêu cầu không tìm thấy</value>
+  </data>
+  <data name="Review for this data provider already existed" xml:space="preserve">
+    <value>Review của người dùng cho bên cung cấp thông tin này đã tồn tại</value>
+  </data>
+  <data name="Review for this data provider was not found" xml:space="preserve">
+    <value>Review của người dùng cho bên cung cấp thông tin này không tìm thấy</value>
+  </data>
+  <data name="Start Date must be before Endate" xml:space="preserve">
+    <value>Ngày bắt đầu phải nhỏ hơn ngày kết thúc</value>
+  </data>
+  <data name="Status can only be in range of [0,2]" xml:space="preserve">
+    <value>Trạng thái chỉ trong khoảng 0 đến 2</value>
+  </data>
+  <data name="Status should be Open or Closed only" xml:space="preserve">
+    <value>Trạng thái chỉ có thể Mở hoặc Đóng</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>TestOK</value>
+  </data>
+  <data name="Transaction id must be unique" xml:space="preserve">
+    <value>Số giao dịch phải là duy nhất</value>
+  </data>
+  <data name="Type can only be in range of [0,4]" xml:space="preserve">
+    <value>Kiểu chỉ có thể trong khoảng 0 đến 4</value>
+  </data>
+  <data name="Type can only be in range of [0,5]" xml:space="preserve">
+    <value>Type chỉ có thể từ 0 đến 5</value>
+  </data>
+  <data name="User currently not tracking this car" xml:space="preserve">
+    <value>Người dùng không theo dõi xe này</value>
+  </data>
+  <data name="User dont have enough report number to get a new report of car, please buy more" xml:space="preserve">
+    <value>Người dùng không đủ số lượng báo cáo để lấy báo cáo của xe, xin hãy mua thêm</value>
+  </data>
+  <data name="User dont have this notification" xml:space="preserve">
+    <value>Người dùng không có thông báo này</value>
+  </data>
+  <data name="User dont own car report for this Car" xml:space="preserve">
+    <value>Người dùng không sở hữu báo cáo lịch sử của xe này</value>
+  </data>
+  <data name="User not found" xml:space="preserve">
+    <value>Người dùng không tìm thấy</value>
+  </data>
+  <data name="Year Start Have to be smaller than Year End" xml:space="preserve">
+    <value>Năm bắt đầu phải nhỏ hơn năm kết thúc</value>
+  </data>
+  <data name="You don't own or don't have right to access this car report" xml:space="preserve">
+    <value>Bạn không sở hữu hoặc không có quyền truy cập lịch sử xe này</value>
+  </data>
+  <data name="Your Vin Number is not Vaid" xml:space="preserve">
+    <value>Số Khung không hợp lệ</value>
+  </data>
+</root>
