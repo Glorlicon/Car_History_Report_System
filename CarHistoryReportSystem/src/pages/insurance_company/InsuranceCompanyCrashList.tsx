@@ -392,12 +392,6 @@ function InsuranceCompanyCrashList() {
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DemoContainer components={['DatePicker', 'DatePicker']}>
                                                 <DatePicker label={t('Accident Date')} defaultValue={dayjs(showCarCrashReport.accidentDate)} disabled/>
-                                            </DemoContainer>
-                                        </LocalizationProvider>
-                                        </div>
-                                        <div className="pol-crash-form-column">
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DemoContainer components={['DatePicker', 'DatePicker']}>
                                                 <DatePicker label={t('Report Date')} defaultValue={dayjs(showCarCrashReport.reportDate)} disabled />
                                             </DemoContainer>
                                         </LocalizationProvider>
