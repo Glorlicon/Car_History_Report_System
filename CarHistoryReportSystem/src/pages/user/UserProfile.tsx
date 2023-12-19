@@ -273,28 +273,28 @@ function UserProfile() {
                             <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>Email</h2>
-                                    <a style={{ color: 'gray' }}>{user.email}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.email}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Username')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.userName}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.userName}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Full Name')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.firstName} {user.lastName}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.firstName} {user.lastName}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Phone Number')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.phoneNumber}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.phoneNumber}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Address')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.address}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.address}</a>
                                 </div>
                                 {user.dataProvider && (
                                     <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                         <h2>{t('Data Provider')}</h2>
-                                        <a style={{ color: 'gray' }}>{user.dataProvider.name}</a>
+                                        <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'  }}>{user.dataProvider.name}</a>
                                     </div>
                                 )}
                             </div>
