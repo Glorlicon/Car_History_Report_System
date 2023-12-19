@@ -31,6 +31,11 @@ function UserForm({
     useEffect(() => {
         i18n.changeLanguage(currentLanguage)
     }, []);
+    useEffect(() => {
+        const isNumberValid = isValidNumber(phoneNumber);
+        setValidNumber(isNumberValid);
+        setValid(isNumberValid);
+    }, [phoneNumber])
 
     return (
         <FormWrapper title="User Details">
@@ -57,6 +62,11 @@ function UserForm({
                 value={phoneNumber}
                 onChange={e => updateFields({ phoneNumber: e.target.value })}
             />
+            <div className={` ${shake ? 'shaking' : 'validation'}`}>
+                {!validNumber && (
+                    <div className="error">{t('Phone number is not valid')}!!</div>
+                )}
+            </div>
         </FormWrapper>
     );
 }

@@ -7,7 +7,7 @@ import '../../styles/CarForSale.css'
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
-import cardefaultimage from '../../car-default.jpg';
+import cardefaultimage from '../../images/car-default.jpg';
 
 
 function CarSalesPage() {

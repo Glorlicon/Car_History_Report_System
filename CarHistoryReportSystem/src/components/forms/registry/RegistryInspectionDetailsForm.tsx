@@ -65,12 +65,6 @@ const RegistryInspectionDetailsForm: React.FC<RegistryInspectionDetailsFormProps
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker', 'DatePicker']}>
                       <DatePicker label={t('Report Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
-                  </DemoContainer>
-              </LocalizationProvider>
-              </div>
-              <div className="pol-crash-form-column">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={['DatePicker', 'DatePicker']}>
                       <DatePicker label={t('Inspect Date')} defaultValue={dayjs(model.inspectDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'inspectDate') }} />
                   </DemoContainer>
               </LocalizationProvider>

@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { APIResponse, Car, CarSaleDetails, CarSaleSearchParams, CarSalesInfo, CarStorageSearchParams, CarTracking, PartialPlateSearchParams } from "../../utils/Interfaces";
+import { APIResponse, Car, CarManuSearchParams, CarSaleDetails, CarSaleSearchParams, CarSalesInfo, CarStorageSearchParams, CarTracking, PartialPlateSearchParams } from "../../utils/Interfaces";
 
 export async function ListCarDealerCarForSale(dealerId: number, token: string, pageNumber: number, connectAPIError: string, language: string, searchParams: CarSaleSearchParams): Promise<APIResponse> {
     try {
@@ -237,6 +237,46 @@ export async function ListDealerCarStorage(token: string, pageNumber: number, co
             params.MileageMax = searchParams.odometerMax;
         }
         const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/storage`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept-Language': `${language}`,
+                    'Cache-Control': 'no-cache'
+                },
+                params: params
+            })
+        return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
+    } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.code === "ERR_NETWORK") {
+            return { error: connectAPIError }
+        } else {
+            return { error: (axiosError.response?.data as any).error[0] }
+        }
+    }
+}
+
+export async function ListCarByManu(id:number, token: string, pageNumber: number, connectAPIError: string, language: string, searchParams: CarManuSearchParams): Promise<APIResponse> {
+    try {
+        let params: any = {
+            PageNumber: pageNumber,
+            VinId: searchParams.vin,
+            Model: searchParams.model
+        };
+
+        if (searchParams.releaseDateMin !== '') {
+            params.YearStart = searchParams.releaseDateMin;
+        }
+        if (searchParams.releaseDateMax !== '') {
+            params.YearEnd = searchParams.releaseDateMax;
+        }
+        if (searchParams.odometerMin !== '') {
+            params.MileageMin = searchParams.odometerMin;
+        }
+        if (searchParams.odometerMax !== '') {
+            params.MileageMax = searchParams.odometerMax;
+        }
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/Cars/manufacturer/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { CarCrash } from '../../../utils/Interfaces';
-import car from '../../../car.jpg'
+import car from '../../../images/car.jpg'
 import { CAR_SIDES } from '../../../utils/const/CarSides';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';

@@ -65,34 +65,6 @@ function CarHistoryReportPage() {
                     setIsLoading(false);
                     navigate(`/car-report/${vin}`)
                 }
-                //const userResponse: APIResponse = await Get(id, token, connectAPIError, unknownError, language)
-                // if (userResponse.data.maxReportNumber > 0) {
-                //     let decodedToken = JWTDecoder(token)
-                //     const reportData: AddReport = {
-                //         userId: decodedToken.nameidentifier,
-                //         carId: vin
-                //     }
-                //     const checkReportExist: APIResponse = await CheckReportExist(reportData, token, connectAPIError, language)
-                //     console.log(checkReportExist)
-                //     if (checkReportExist.error) {
-                //         setIsLoading(false);
-                //         setVinError(checkReportExist.error)
-                //         const addReportResponse: APIResponse = await AddUserReport(reportData, token, connectAPIError, language)
-                //         if (addReportResponse.error) {
-                //             setIsLoading(false);
-                //             setVinError(addReportResponse.error)
-                //         } else {
-                //             setIsLoading(false);
-                //             navigate(`/car-report/${vin}`)
-                //         }
-                //     } else {
-                //         setIsLoading(false);
-                //         navigate(`/car-report/${vin}`)
-                //     }
-                // } else {
-                //     setIsLoading(false);
-                //     navigate(`/payment/${vin}`)
-                // }
             }
         }
     };

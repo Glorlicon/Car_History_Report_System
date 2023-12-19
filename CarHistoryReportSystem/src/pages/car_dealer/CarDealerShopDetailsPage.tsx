@@ -15,7 +15,7 @@ import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProvider, editWorkingTime, Manufacturer, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import i18n from '../../localization/config';
-import cardefaultimage from '../../car-default.jpg'
+import cardefaultimage from '../../images/car-default.jpg'
 
 function CarDealerShopDetailsPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GetImages } from '../../../services/azure/Images';
 import { CarDealer, DataProvider, EditDataProvider } from '../../../utils/Interfaces';
-import blank from '../../../blank.png'
+import blank from '../../../images/blank.png'
 import { t } from 'i18next';
 
 interface CarDealerProfileImageProps {

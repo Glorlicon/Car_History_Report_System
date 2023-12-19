@@ -13,7 +13,7 @@ import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } 
 import { t } from 'i18next';
 import i18n from '../../localization/config';
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
-import cardefaultimage from '../../car-default.jpg';
+import cardefaultimage from '../../images/car-default.jpg';
 
 function CarDealerProfile() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string

@@ -1,4 +1,7 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/State';
 import {ServiceCarRecalls} from '../../../utils/Interfaces';
 
 interface CarServiceRecallDetailCapacityProps {
@@ -15,17 +18,22 @@ const CarServiceRecallDetail: React.FC<CarServiceRecallDetailCapacityProps> = ({
     newRecall,
     handleCloseRecall
 }) => {
+    const { t, i18n } = useTranslation()
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     return (
         <>
             <div className="manu-car-model-form-columns">
                     <div className="ad-car-model-form-column">
-                    <label>Car ID</label>
+                    <label>{t('VIN')}</label>
                     <input type="text" name="carId" value={searchQuery} disabled min="0" />
                     </div>
             </div>
             <div className="manu-car-model-form-columns">
                 <div className="dealer-car-sales-form-column">
-                    <label>Recalls availible for car: </label>
+                    <label>{t('Recalls availible for car')}: </label>
                     <ul className="dealer-car-sales-feature-list">
                         {newRecall.map((serviceValue, index) => (
                             <li key={index} className="dealer-car-sales-feature-list-item">

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -18,7 +19,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
 interface Column {
-    id: 'licensePlateNumber' | 'vinId' | 'modelId';
+    id: 'licensePlateNumber' | 'vinId' | 'modelId' | 'action';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -31,7 +32,7 @@ const getSearchPlate = (plateCharacters: string[]) => {
         plateArrayCopy.splice(3, 0, ' ');
     }
     for (let i = 0; i < plateArrayCopy.length; i++) {
-        if (plateArrayCopy[i] === '') plateArrayCopy[i]='*'
+        if (plateArrayCopy[i] === '') plateArrayCopy[i] = '*'
     }
     let result = plateArrayCopy.join('')
     return result
@@ -59,7 +60,8 @@ function PolicePartialPlateSearch() {
     const columns: readonly Column[] = [
         { id: 'licensePlateNumber', label: t('License Plate Number'), minWidth: 170 },
         { id: 'vinId', label: t('VIN'), minWidth: 100 },
-        { id: 'modelId', label: t('modelId'), minWidth: 100 }
+        { id: 'modelId', label: t('modelId'), minWidth: 100 },
+        { id: 'action', label: t('Action'), minWidth: 100 }
     ];
     const handleCharacterChange = (value: string, position: number) => {
         if (value.length === 1) {
@@ -95,10 +97,10 @@ function PolicePartialPlateSearch() {
             setPlateCharacters(Array(newLength).fill('*'));
         }
     };
-    const handleViewReport = () => {
-        navigate(`/police/car-report/${selectedRow?.vinId}`)
+    const handleViewReport = (vin: string) => {
+        navigate(`/police/car-report/${vin}`)
     }
-    const fetchData = async() => {
+    const fetchData = async () => {
         const response: APIResponse = await ListManufacturer()
         setManufacturerList(response.data)
     }
@@ -171,8 +173,8 @@ function PolicePartialPlateSearch() {
     }, []);
     return (
         <div className="pol-plate-search-page">
-            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
-                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex:'2000' }}>
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
                     {message}
                 </MuiAlert>
             </Snackbar>
@@ -199,7 +201,7 @@ function PolicePartialPlateSearch() {
                     {plateCharacters.map((char, index) => (
                         <input
                             key={index}
-                            id={`input-${index}`} 
+                            id={`input-${index}`}
                             type="text"
                             maxLength={2}
                             value={char}
@@ -259,8 +261,8 @@ function PolicePartialPlateSearch() {
             <div className="plate-search-page-row">
                 <div className="plate-search-page-item-2">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
-                        {t('Cars Found')}
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
+                            {t('Cars Found')}
                         </span>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -279,23 +281,35 @@ function PolicePartialPlateSearch() {
                                 </TableHead>
                                 <TableBody>
                                     {carList.length > 0 ? carList
-                                        .map((row, index) => {
-                                            if (index >= 3 * page && index < 3*(page+1))
-                                            return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId} onClick={() => setSelectedRow(row)} style={{ backgroundColor: index % 2 === 1 ? 'white' : '#E1E1E1' }}>
-                                                    {columns.map((column) => {
-                                                        const value = row[column.id] ? row[column.id]?.toString() : 'Unknown';
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })}
-                                                </TableRow>
-                                            );
+                                        .map((row, index1) => {
+                                            if (index1 >= 6 * page && index1 < 6 * (page + 1))
+                                                return (
+                                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId} onClick={() => setSelectedRow(row)} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                        {columns.map((column) => {
+                                                            if (column.id !== 'action') {
+                                                                let value = row[column.id]
+                                                                return (
+                                                                    <TableCell
+                                                                        key={column.id + '-' + index1}
+                                                                        align={column.align}
+                                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
+                                                                    >
+                                                                        {value}
+                                                                    </TableCell>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <TableCell key={column.id + '-' + index1} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1', borderRight: selectedRow === row ? '5px solid blue' : 'None' }} component="th" scope="row">
+                                                                        <button className="pol-crash-action-button-2" style={{ fontSize: '15px' }} onClick={() => { handleViewReport(row.vinId) }} >{t('View Report For Car')}</button>
+                                                                    </TableCell>
+                                                                )
+                                                            }
+                                                        })}
+                                                    </TableRow>
+                                                );
                                         }) :
                                         <TableRow>
-                                            <TableCell colSpan={3}>
+                                            <TableCell colSpan={4}>
                                                 {t('No cars found')}
                                             </TableCell>
                                         </TableRow>
@@ -304,67 +318,66 @@ function PolicePartialPlateSearch() {
                             </Table>
                         </TableContainer>
                         <TablePagination
-                            rowsPerPageOptions={[3]}
+                            rowsPerPageOptions={[6]}
                             component="div"
                             count={carList.length > 0 ? carList.length : 0}
-                            rowsPerPage={3}
+                            rowsPerPage={6}
                             page={page}
                             onPageChange={handleChangePage}
                             labelDisplayedRows={
                                 ({ from, to, count }) => {
-                                    return '' + from + '-' + to +' '+ t('of') + ' ' +count
+                                    return '' + from + '-' + to + ' ' + t('of') + ' ' + count
                                 }
                             }
                         />
                     </div>
-                    <div className="plate-search-page-item-4" style={{border:'None'}}>
-                        <h3>{t('Car Report')}</h3>
-                        {selectedRow ? 
-                            <div className="plate-view-report-button-div">
-                                {t('Click on button to see report for car ') + selectedRow.vinId}
-                                <button className="plate-view-report-button" onClick={handleViewReport} disabled={selectedRow ? false : true}>{t('View Report For Car')}</button>
-                            </div> :
-                        <a>
-                                {t('Click on the car to see able to access car report')}
-                        </a>}
-                    </div>
                 </div>
                 <div className="plate-search-page-item">
-                    <h3>{t('Car Details')}</h3>
-                    {selectedRow ?
-                        <div className="dealer-car-sales-details-section">
-                            <p>
-                                <strong>{t('VIN')}:</strong> {selectedRow.vinId}
-                            </p>
-                            <p>
-                                <strong>{t('License Plate Number')}:</strong> {selectedRow.licensePlateNumber}
-                            </p>
-                            <p>
-                                <strong>{t('Color')}:</strong> {selectedRow.colorName}
-                            </p>
-                            <p>
-                                <strong>{t('Current Odometer')}:</strong> {selectedRow.currentOdometer}
-                            </p>
-                            <p>
-                                <strong>{t('Engine Number')}:</strong> {selectedRow.engineNumber}
-                            </p>
-                            <p>
-                                <strong>{t('Modified')}:</strong> {selectedRow.isModified ? t('Yes') : t('No')}
-                            </p>
-                            <p>
-                                <strong>{t('Commercial Use')}:</strong> {selectedRow.isCommercialUse ? t('Yes') : t('No')}
-                            </p>
-                            <p>
-                                <strong>{t('Model ID')}:</strong> {selectedRow.modelId}
-                            </p>
-                        </div> :
+                    <h3 style={{ textAlign: 'center', borderBottom: '1px solid gray', justifyItems: 'center', fontSize: '25px', color: 'gray' }}>{t('Car Details')}</h3>
+                    {selectedRow ? (
+                        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap', paddingBottom:'5%', marginLeft:'5%', marginRight:'5%' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('VIN')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.vinId ? selectedRow.vinId : t('None')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('License Plate Number')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.licensePlateNumber ? selectedRow.licensePlateNumber : t('None')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Color')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.colorName ? selectedRow.colorName : t('None')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Current Odometer')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.currentOdometer ? selectedRow.currentOdometer + ' KM' : t('None')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Engine Number')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.engineNumber ? selectedRow.engineNumber : t('None')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Modified')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.isModified ? t('Yes') : t('No')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Commercial Use')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.isCommercialUse ? t('Yes') : t('No')}</a>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                <h2 style={{fontSize:'30px'}}>{t('Model ID')}</h2>
+                                <a style={{ fontSize:'20px',color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedRow.modelId ? selectedRow.modelId : t('None')}</a>
+                            </div>
+                        </div>
+                    ) : (
                         <a>
-                            {t('Click on the car to see the details')}
-                        </a>}
+                            
+                        </a>
+                    )}
                 </div>
             </div>
         </div>
-  );
+    );
 }
 
 export default PolicePartialPlateSearch;

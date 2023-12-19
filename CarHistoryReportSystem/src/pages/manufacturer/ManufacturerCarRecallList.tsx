@@ -1,17 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import RegistryRegistrationDetailsForm from '../../../components/forms/registry/RegistryRegistrationDetailsForm';
-import { AddCarRegistration, DownloadRegistrationExcelFile, EditCarRegistration, GetRegistrationExcel, ImportRegistrationFromExcel, ListCarRegistration } from '../../../services/api/CarRegistration';
-import { RootState } from '../../../store/State';
-import { APIResponse, CarModel, CarRecalls, CarRecallSearchParams, CarRegistration, CarRegistrationSearchParams, Paging } from '../../../utils/Interfaces';
-import { isValidPlateNumber, isValidVIN } from '../../../utils/Validators';
-import '../../../styles/ManufacturerCarRecall.css'
+import { RootState } from '../../store/State';
+import { APIResponse, CarModel, CarRecalls, CarRecallSearchParams, Paging } from '../../utils/Interfaces';
+import '../../styles/ManufacturerCarRecall.css'
 import { useTranslation } from 'react-i18next';
-import { JWTDecoder } from '../../../utils/JWTDecoder';
-import { Pagination } from '@mui/material';
-import { AddCarRecalls, EditCarRecall, ListManufacturerRecallss, ListManufaturerCarModels } from '../../../services/api/Recall';
-import CarRecallAddModal from '../../../components/forms/manufacturer/Recall/CarRecallAddModal';
-import CarRecallEditModal from '../../../components/forms/manufacturer/Recall/CarRecallEditModal';
+import { JWTDecoder } from '../../utils/JWTDecoder';
+import { AddCarRecalls, EditCarRecall, ListManufacturerRecallss, ListManufaturerCarModels } from '../../services/api/Recall';
+import CarRecallAddModal from '../../components/forms/manufacturer/Recall/CarRecallAddModal';
+import CarRecallEditModal from '../../components/forms/manufacturer/Recall/CarRecallEditModal';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';

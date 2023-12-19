@@ -12,7 +12,8 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* You can adjust this value based on your design */
+    margin-left:10%;
+    margin-right:10%;
 }
 .footer-content p {
     padding: 0;

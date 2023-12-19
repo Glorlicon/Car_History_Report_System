@@ -341,7 +341,7 @@ function PoliceStolenCarList() {
                     </AccordionDetails>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Using Excel')}
+                            {t('Add Using Excel')}
                         </Typography>
                         <button className="add-pol-crash-btn" onClick={() => { handleDownloadTemplate() }}>&dArr; {t('Excel Template')}</button>
                         <a

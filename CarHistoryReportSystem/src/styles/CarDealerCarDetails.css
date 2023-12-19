@@ -1,6 +1,7 @@
 .dealer-car-sales-details-page {
     padding: 20px;
     padding-top: 120px;
+    flex:1;
 }
 .dealer-car-sales-details-spinner {
     border: 8px solid #f3f3f3;

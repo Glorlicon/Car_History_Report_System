@@ -115,7 +115,6 @@ function PaymentReturnPage() {
                 return
             }
         } else {
-            console.log(order)
             const orderResponse: APIResponse = await CreateOrder(order, connectAPIError, language)
             if (!orderResponse.error) {
                 console.log(orderResponse.data)
@@ -142,28 +141,27 @@ function PaymentReturnPage() {
     return (
         <div className="pol-alert-page">
             <div className="code-container">
-            <div className="verification-success">
-                <svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-                    <path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-                </svg>
-                {loading && (
-                    <>
-                    <p>{t('Transaction successful! Please wait until we complete remaining operations')}!</p>
-                    <div className="loading"></div>
-                    </>
-                )}
-                {successOrder ? (
-                    <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
-                        {t('Everything is completed! Thanks for your support of our system')}!
-                    </MuiAlert>
-                ) : (
-                    <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
-                        {t('Something went wrong in the process. Please contact admin for support')}! {t('Your transaction ID')}: {vnp_TransactionNo}
-                    </MuiAlert>
-                )}
+                <div className="verification-success">
+                    <svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                        <path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                    {loading ? (
+                        <>
+                            <p>{t('Transaction successful! Please wait until we complete remaining operations')}!</p>
+                            <div className="loading"></div>
+                        </>
+                    ) : successOrder ? (
+                        <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                            {t('Everything is completed! Thanks for your support of our system')}!
+                        </MuiAlert>
+                    ) : (
+                        <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                            {t('Something went wrong in the process. Please contact admin for support')}! {t('Your transaction ID')}: {vnp_TransactionNo}
+                        </MuiAlert>
+                    )}
+                </div>
             </div>
-            </div>           
         </div>
     )
 }

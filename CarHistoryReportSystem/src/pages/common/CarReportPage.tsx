@@ -10,17 +10,17 @@ import { RootState } from '../../store/State';
 import { clearVerifyToken } from '../../store/authSlice';
 import { CAR_SIDES } from '../../utils/const/CarSides';
 import { useTranslation } from 'react-i18next';
-import logo from '../../logoCHRS.png'
-import accident from '../../accident.png'
-import service from '../../service.png'
-import owner from '../../owner.png'
-import stolen from '../../stolen.png'
-import recall from '../../recall.png'
-import general from '../../general.png'
-import ownerOne from '../../owner_one.png'
-import inspection from '../../inspection.png'
-import insurance from '../../insurance.png'
-import registration from '../../registration.png'
+import logo from '../../images/logoCHRS.png'
+import accident from '../../images/accident.png'
+import service from '../../images/service.png'
+import owner from '../../images/owner.png'
+import stolen from '../../images/stolen.png'
+import recall from '../../images/recall.png'
+import general from '../../images/general.png'
+import ownerOne from '../../images/owner_one.png'
+import inspection from '../../images/inspection.png'
+import insurance from '../../images/insurance.png'
+import registration from '../../images/registration.png'
 import { FUEL_TYPES } from '../../utils/const/FuelTypes';
 import { BODY_TYPES } from '../../utils/const/BodyTypes';
 import MuiAlert from '@mui/material/Alert';

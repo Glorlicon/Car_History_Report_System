@@ -1,6 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import SearchDealerForm from '../../components/forms/common/SearchDealerForm';
 import { GetDataProviderByType } from '../../services/api/SearchShop';
 import { RootState } from '../../store/State';
 import '../../styles/DealerSearch.css';

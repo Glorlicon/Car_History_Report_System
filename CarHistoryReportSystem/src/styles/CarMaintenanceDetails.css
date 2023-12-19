@@ -6,6 +6,7 @@
     border: 1px solid black;
     border-radius: 10px;
     box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.5);
+    flex:1;
 }
 
 .car-maintenance-details-spinner {

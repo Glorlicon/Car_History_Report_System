@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/GlobalNavigator.css'
-import logo from '../../logoCHRS.png';
+import logo from '../../images/logoCHRS.png';
 import { APIResponse, NavItem, UserNotification } from '../../utils/Interfaces';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
@@ -105,10 +105,6 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
             setLoading(false);
         }
     }, [token]);
-    //useEffect(() => {
-    //    i18n.changeLanguage(currentLanguage)
-    //})
-    //TODO: bug redirect to register when logout
     function Logout() {
         dispatch(logout())
         navigate('/login')
@@ -151,33 +147,9 @@ const GlobalNavigator: React.FC<GlobalNavigatorProps> = ({ items }) => {
                     {role === "User" && (
                         <li>
                             <a href='/request'>{t('Admin Request')}</a>
-                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
-                                {t('Search Shop')}
-                            </a>
                         </li>
 
                     )}
-                    {!token && (
-                        <li>
-                            <a onClick={handleClick} className="dropdown" style={{ cursor: 'pointer' }}>
-                                {t('Search Shop')}
-                            </a>
-                        </li>
-                    )}
-                    <li>
-                        <Menu
-                            id="fade-menu"
-                            MenuListProps={{
-                                'aria-labelledby': 'fade-button',
-                            }}
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
-                            TransitionComponent={Fade}
-                        >
-                            <MenuItem onClick={() => navigate("/dealers/search")}>{t('Dealer Shop')}</MenuItem>
-                        </Menu>
-                    </li>
                 </ul>
             </div>
             {token ? (

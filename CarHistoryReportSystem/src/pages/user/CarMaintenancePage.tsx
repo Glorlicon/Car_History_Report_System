@@ -4,8 +4,8 @@ import { AddCarMaintenance, ListCarMaintenance, RemoveCarMaintenance } from '../
 import { RootState } from '../../store/State';
 import { APIResponse, CarMaintenance } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import carIcon from '../../car-icon.png'
-import deleteIcon from '../../delete.png'
+import carIcon from '../../images/car-icon.png'
+import deleteIcon from '../../images/delete.png'
 import '../../styles/CarMaintenance.css'
 import { isValidVIN } from '../../utils/Validators';
 import { useNavigate } from 'react-router-dom';
