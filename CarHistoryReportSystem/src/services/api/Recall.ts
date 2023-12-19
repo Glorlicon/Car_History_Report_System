@@ -3,7 +3,7 @@ import { APIResponse, CarModel, CarRecalls, CarRecallSearchParams, CarRegistrati
 
 export async function ListManufaturerCarModels(id: number, token: string): Promise<APIResponse> {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarRecall/manufacturer/${id}`,
+        const response = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/CarSpecification/manufacturer/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

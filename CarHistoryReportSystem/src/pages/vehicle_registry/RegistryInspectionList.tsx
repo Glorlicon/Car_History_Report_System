@@ -44,8 +44,8 @@ function RegistryInspectionList() {
     const columns: readonly Column[] = [
         { id: 'id', label: 'ID', minWidth: 10 },
         { id: 'carId', label: t('VIN'), minWidth: 100 },
-        { id: 'inspectionNumber', label: t('Location'), minWidth: 100 },
-        { id: 'inspectDate', label: t('Severity'), minWidth: 100 },
+        { id: 'inspectionNumber', label: t('Inspection Number'), minWidth: 100 },
+        { id: 'inspectDate', label: t('Inspect Date'), minWidth: 100 },
         { id: 'description', label: t('Description'), minWidth: 100 },
         { id: 'carInspectionHistoryDetail', label: t('Inspected Categories'), minWidth: 100 },
         { id: 'odometer', label: t('Odometer'), minWidth: 100 },
@@ -412,9 +412,9 @@ function RegistryInspectionList() {
                   </AccordionSummary>
                   <AccordionDetails>
                       <Typography>
-                          + {t('Add Manually')}
+                          {t('Add Manually')}
                       </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('+ Add Car Inspection')}</button>
+                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car Inspection')}</button>
                   </AccordionDetails>
               </Accordion>
           </div>

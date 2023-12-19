@@ -161,9 +161,9 @@ function UserRequest() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            + {t('Add Manually')}
+                            {t('Add Manually')}
                         </Typography>
-                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>+ {t('Add New Request')}</button>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add New Request')}</button>
                     </AccordionDetails>
                 </Accordion>
             </div>
