@@ -9,11 +9,11 @@ import { useTranslation } from 'react-i18next';
 import CreateIcon from '@mui/icons-material/Create';
 import DoneIcon from '@mui/icons-material/Done';
 import IconButton from "@mui/material/IconButton";
-import brake from '../../brake.png'
-import mrecall from '../../mrecall.png'
-import oil from '../../oil.png'
-import part from '../../part.png'
-import tire from '../../tire.png'
+import brake from '../../images/brake.png'
+import mrecall from '../../images/mrecall.png'
+import oil from '../../images/oil.png'
+import part from '../../images/part.png'
+import tire from '../../images/tire.png'
 import SpeedIcon from '@mui/icons-material/Speed';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';

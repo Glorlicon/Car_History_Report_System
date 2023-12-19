@@ -64,8 +64,8 @@ const PoliceCarStolenDetailsForm: React.FC<PoliceCarStolenDetailsFormProps> = ({
               </div>
               <div className="pol-crash-form-column">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['DatePicker', 'DatePicker']}>
-                          <DatePicker label={t('Report Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
+                      <DemoContainer components={['DatePicker']}>
+                          <DatePicker label={t('Report Date')} slotProps={{ textField: { fullWidth: true } }} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
                       </DemoContainer>
                   </LocalizationProvider>
               </div>

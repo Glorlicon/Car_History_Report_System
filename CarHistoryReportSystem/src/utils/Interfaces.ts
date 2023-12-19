@@ -614,6 +614,15 @@ export interface CarStorageSearchParams {
     releaseDateMin: string
     releaseDateMax: string
 }
+
+export interface CarManuSearchParams {
+    vin: string
+    model: string
+    odometerMin: string
+    odometerMax: string
+    releaseDateMin: string
+    releaseDateMax: string
+}
 export interface CarSaleSearchParams {
     vin: string
     manufacturer: string

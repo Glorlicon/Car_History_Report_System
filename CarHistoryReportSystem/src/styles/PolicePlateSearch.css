@@ -20,6 +20,10 @@
     box-shadow: 5px 10px #888888;
     width: 50%;
     min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 .plate-search-page-item-3 {
     border-radius: 20px;

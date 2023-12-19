@@ -6,7 +6,7 @@ import '../../styles/PaymentPage.css'
 import { ReportPackages } from '../../utils/const/ReportPackages';
 import { VNP_CONST } from '../../utils/const/VNPay';
 import { ReportPackage } from '../../utils/Interfaces';
-import logo from '../../VNPAY-Logo-scaled.jpg'
+import logo from '../../images/VNPAY-Logo-scaled.jpg'
 import CryptoJS from 'crypto-js';
 import qs from 'qs'
 import { useTranslation } from 'react-i18next';

@@ -6,7 +6,7 @@ import { GetCrashInsuranceExcel, ListCarCrashInsurance } from '../../services/ap
 import { RootState } from '../../store/State';
 import { CAR_SIDES } from '../../utils/const/CarSides';
 import { APIResponse, CarCrash, CarCrashSearchParams, Paging } from '../../utils/Interfaces';
-import car from '../../car.jpg'
+import car from '../../images/car.jpg'
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';

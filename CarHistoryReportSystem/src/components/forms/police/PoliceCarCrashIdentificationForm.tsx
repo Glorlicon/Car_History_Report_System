@@ -61,12 +61,6 @@ const PoliceCarCrashIdentificationForm: React.FC<PoliceCarCrashIdentificationFor
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker', 'DatePicker']}>
                       <DatePicker label={t('Accident Date')} defaultValue={dayjs(model.accidentDate)} onChange={(value) => { if (value) handleFormatDateChange(value,'accidentDate') }} />
-                  </DemoContainer>
-              </LocalizationProvider>
-              </div>
-              <div className="pol-crash-form-column">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={['DatePicker', 'DatePicker']}>
                       <DatePicker label={t('Report Date')} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
                   </DemoContainer>
               </LocalizationProvider>

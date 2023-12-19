@@ -46,8 +46,8 @@ const CarRecallEditModal: React.FC<CarRecallEditModalCapacityProps> = ({
                 </div>
             <div className="pol-crash-form-column">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker', 'DatePicker']}>
-                        <DatePicker label={t('Recall Date')} defaultValue={dayjs(model.recallDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'recallDate') }} />
+                    <DemoContainer components={['DatePicker']}>
+                        <DatePicker label={t('Recall Date')} slotProps={{ textField: { fullWidth: true } }} defaultValue={dayjs(model.recallDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'recallDate') }} />
                     </DemoContainer>
                 </LocalizationProvider>
             </div>

@@ -503,7 +503,7 @@
   "Any Stars": "Tất cả sao",
   "Stars Number": "Đánh giá",
   "Sort By Rating": "Sắp xếp theo đánh giá",
-  "Search Shop": "Tìm cửa hàng",
+  "Find A Car Dealer": "Tìm đại lý bán xe",
   "Dealer Shop": "Của hàng bán xe",
   "Find Dealer Near Me": "Tìm cửa hàng bán xe gần tôi",
   "Search Description": "CHRS cung cấp dữ liệu chuẩn xác đi kèm với đánh giá của khách hàng để giúp bạn tìm nơi hợp lí",
@@ -840,5 +840,7 @@
   "Reports":"Thông tin báo cáo",
   "Information":"Thông tin",
   "View My Reports":"Xem báo cáo của tôi",
-  "Report List":"Danh sách báo cáo"
+  "Report List":"Danh sách báo cáo",
+  "Car List":"Danh sách ô tô",
+  "Recalls availible for car":"Đơn thu hồi đang mở của xe"
 }

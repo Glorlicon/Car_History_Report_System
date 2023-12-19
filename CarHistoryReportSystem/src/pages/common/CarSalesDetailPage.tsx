@@ -7,7 +7,7 @@ import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
-import cardefaultimage from '../../car-default.jpg';
+import cardefaultimage from '../../images/car-default.jpg';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string

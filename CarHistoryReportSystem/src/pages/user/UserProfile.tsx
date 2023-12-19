@@ -6,7 +6,7 @@ import { RootState } from '../../store/State';
 import '../../styles/UserProfile.css'
 import { APIResponse, PasswordChange, User, UserReport } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import blank from '../../blank.png'
+import blank from '../../images/blank.png'
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { isValidEmail, isValidNumber, isValidPassword } from '../../utils/Validators';
 import { useTranslation } from 'react-i18next';
@@ -15,9 +15,9 @@ import UserReportListPage from '../../components/forms/user/UserReportListPage';
 import Avatar from '@mui/material/Avatar';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import IconButton from "@mui/material/IconButton";
-import passwordIcon from '../../password.png'
-import reportsIcon from '../../reports.png'
-import editIcon from '../../edit.png'
+import passwordIcon from '../../images/password.png'
+import reportsIcon from '../../images/reports.png'
+import editIcon from '../../images/edit.png'
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField'
 import MuiAlert from '@mui/material/Alert';
@@ -261,11 +261,13 @@ function UserProfile() {
                                         <img src={passwordIcon} height='100%' alt='' />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title={t('View My Reports')}>
-                                    <IconButton onClick={() => { setOpenReports(true) }} sx={{ height: "50px", width: "50px" }} >
-                                        <img src={reportsIcon} height='100%' alt='' />
-                                    </IconButton>
-                                </Tooltip>
+                                {user.roleName === 'User' && (
+                                    <Tooltip title={t('View My Reports')}>
+                                        <IconButton onClick={() => { setOpenReports(true) }} sx={{ height: "50px", width: "50px" }} >
+                                            <img src={reportsIcon} height='100%' alt='' />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '5%', width: '100%', paddingLeft: '5%', paddingRight: '5%' }}>
@@ -273,40 +275,44 @@ function UserProfile() {
                             <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>Email</h2>
-                                    <a style={{ color: 'gray' }}>{user.email}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Username')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.userName}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.userName}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Full Name')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.firstName} {user.lastName}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.firstName} {user.lastName}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Phone Number')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.phoneNumber}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.phoneNumber}</a>
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                     <h2>{t('Address')}</h2>
-                                    <a style={{ color: 'gray' }}>{user.address}</a>
+                                    <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.address}</a>
                                 </div>
                                 {user.dataProvider && (
                                     <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
                                         <h2>{t('Data Provider')}</h2>
-                                        <a style={{ color: 'gray' }}>{user.dataProvider.name}</a>
+                                        <a style={{ color: 'gray', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.dataProvider.name}</a>
                                     </div>
                                 )}
                             </div>
-                            <h3 style={{ textAlign: 'left', borderBottom: '1px solid gray', justifyItems: 'center', fontSize: '25px', color: 'gray' }}>{t('Reports')}</h3>
-                            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
-                                    <a>{t('Available Reports')}: {user.maxReportNumber}</a>
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
-                                    <a>{t('Purchased Reports')}: {reports.length}</a>
-                                </div>
-                            </div>
+                            {user.roleName === 'User' && (
+                                <>
+                                    <h3 style={{ textAlign: 'left', borderBottom: '1px solid gray', justifyItems: 'center', fontSize: '25px', color: 'gray' }}>{t('Reports')}</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                            <a>{t('Available Reports')}: {user.maxReportNumber}</a>
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '2px', textAlign: 'left', width: '50%' }}>
+                                            <a>{t('Purchased Reports')}: {reports.length}</a>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </>

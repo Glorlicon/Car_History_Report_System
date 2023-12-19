@@ -52,8 +52,8 @@ const CarModelModalIdentificationPage: React.FC<CarModelModalIdentificationProps
                 </div>
                 <div className="pol-crash-form-column">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker', 'DatePicker']}>
-                            <DatePicker label={t('Released Date')} defaultValue={dayjs(model.releasedDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'releasedDate') }} />
+                        <DemoContainer components={['DatePicker']}>
+                            <DatePicker label={t('Released Date')} slotProps={{ textField: { fullWidth: true } }} defaultValue={dayjs(model.releasedDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'releasedDate') }} />
                         </DemoContainer>
                     </LocalizationProvider>
                 </div>

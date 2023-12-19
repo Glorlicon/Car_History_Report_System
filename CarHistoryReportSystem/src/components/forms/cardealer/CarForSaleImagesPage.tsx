@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { GetImages } from '../../../services/azure/Images';
 import { RootState } from '../../../store/State';
 import { CarSalesInfo } from '../../../utils/Interfaces';
-import emptyCar from '../../../car-default.jpg'
+import emptyCar from '../../../images/car-default.jpg'
 
 interface CarForSaleImagesPageProps {
     model: CarSalesInfo

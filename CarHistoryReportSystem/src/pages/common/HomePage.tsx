@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
 import '../../styles/Homepage.css';
-import Logo from '../../logoCHRS.png';
-import CHRS_Report from '../../CHRS_Report.png';
+import Logo from '../../images/logoCHRS.png';
+import CHRS_Report from '../../images/CHRS_Report.png';
 import { useTranslation } from 'react-i18next';
-import CHRS_Maintainance from '../../CHRS_Maintainance.png';
+import CHRS_Maintainance from '../../images/CHRS_Maintainance.png';
 import { useNavigate } from 'react-router-dom';
 function HomePage() {
     const { t, i18n } = useTranslation();

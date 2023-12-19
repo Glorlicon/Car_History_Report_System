@@ -6,7 +6,8 @@ export const UserNavigation = [
             { label: 'Find A Service Shop', link: '/services/search' },
             { label: 'Track My Car Maintenance', link: '/maintenance' }
         ]
-    }
+    },
+    { label: 'Find A Car Dealer', link: '/dealers/search'}
 ]
 
 export const RequestNavigation = [
