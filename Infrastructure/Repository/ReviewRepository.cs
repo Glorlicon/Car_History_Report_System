@@ -39,6 +39,7 @@ namespace Infrastructure.Repository
             return await FindAll(trackChange)
                             .Filter(parameter)
                             .Sort(parameter)
+                            .Include(x => x.User)
                             .Skip((parameter.PageNumber - 1) * parameter.PageSize)
                             .Take(parameter.PageSize)
                             .ToListAsync();

@@ -50,7 +50,9 @@ namespace Application.Common
 
             CreateMap<DataProvider, DataProviderDetailsResponseDTO>()
                 .ForMember(dp => dp.TypeName, opt => opt.MapFrom(x => x.Type.ToString()));
-            CreateMap<Review, DataProviderReviewsResponseDTO>();
+            CreateMap<Review, DataProviderReviewsResponseDTO>()
+                .ForMember(rv => rv.UserFirstName, opt => opt.MapFrom(x => x.User.FirstName))
+                .ForMember(rv => rv.UserLastName, opt => opt.MapFrom(x => x.User.LastName));
             CreateMap<DataProviderReviewCreateRequestDTO, Review>();
             CreateMap<DataProviderReviewUpdateRequestDTO, Review>();
             CreateMap<WorkingTime, DataProviderWorkingTimesResponseDTO>();
