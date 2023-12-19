@@ -420,12 +420,12 @@ function InsuranceCompanyCrashList() {
                                             <div className="pol-crash-checkboxes">
                                                 {Object.entries(CAR_SIDES).map(([key, value]) => (
                                                     <label key={key}>
-                                                        {t(key.charAt(0).toUpperCase() + key.slice(1))}
                                                         <input
                                                             type="checkbox"
                                                             checked={isSideColored(value)}
                                                             disabled
                                                         />
+                                                        {t(key.charAt(0).toUpperCase() + key.slice(1))}
                                                     </label>
                                                 ))}
                                             </div>
