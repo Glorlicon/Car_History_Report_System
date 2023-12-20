@@ -61,7 +61,6 @@ function UserListPage() {
     const [loading, setLoading] = useState<boolean>(false);
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [currentId, setCurrentId] = useState<string>("")
     const [newUser, setNewUser] = useState<User>({
         id: '',
         userName: '',
@@ -116,15 +115,46 @@ function UserListPage() {
             return false;
         }
         console.log("Validate last")
-        console.log(user.dataProviderId == -1)
+        console.log(user.dataProviderId &&  user.dataProviderId == -1)
         if (user.dataProviderId && user.dataProviderId == -1) {
             setAddError(t('Data provider must be chosen'))
+            return false
+        }
+        if (user.dataProvider && !user.dataProvider.name){
+            setAddError(t('Please enter data provider name'))
+            return false
+        }
+        if (user.dataProvider && !user.dataProvider.description){
+            setAddError(t('Please enter data provider description'))
+            return false
         }
         return true;
     };
 
 
     const handleCheckboxToggle = () => {
+        if(!isNewDataProvider){
+            setNewUser({
+                ...newUser,
+                dataProviderId: undefined,
+                dataProvider: {
+                    name: '',
+                    description: '',
+                    address:'',
+                    websiteLink:'',
+                    phoneNumber:'',
+                    email:'',
+                    type: newUser.role,
+                    imageLink:''
+                }
+            })
+        } else {
+            setNewUser({
+                ...newUser,
+                dataProviderId: -1,
+                dataProvider: undefined
+            })
+        }
         setNewDataProvider(!isNewDataProvider)
     }
 
@@ -228,7 +258,6 @@ function UserListPage() {
     };
 
     const handleInputDataProviderSelect = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        console.log("tarr",e.target.value)
         setNewUser({
             ...newUser,
             dataProviderId: e.target.value as unknown as number,
@@ -289,7 +318,13 @@ function UserListPage() {
             newUser.role == USER_ROLE.REGISTRY ||
             newUser.role == USER_ROLE.SERVICE
         ) {
+            //initial checkbox is old data provider
             const temp = setIsDataProvider(true)
+            setNewUser({
+                ...newUser,
+                dataProviderId: -1,
+                dataProvider: undefined
+            })
             let connectAPIError = t('Cannot connect to API! Please try again later')
             let unknownError = t('Something went wrong. Please try again')
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
@@ -336,9 +371,6 @@ function UserListPage() {
         setOpenSuccess(false);
         setOpenError(false);
     };
-    useEffect(() => {
-         changeSize()
-    }, [isDataProvider])
 
     useEffect(() => {
         if (editingUser?.dataProvider) editChangeSize()
