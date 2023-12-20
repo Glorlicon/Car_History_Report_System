@@ -832,7 +832,7 @@
   "Recall Notices": "Recall Notices",
   "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.": "Review manufacturer recall notices to quickly identify affected vehicles and prepare for necessary repairs or parts replacements.",
   "Notification ID": "Notification ID",
-  "Add Dataprovider": "Add Dataprovider",
+  "Add Dataprovider": "Add Data provider",
   "Edit Car Recall": "Edit Car Recall",
   "Full Name":"Full Name",
   "Available Reports":"Available Reports",
@@ -842,5 +842,6 @@
   "View My Reports":"View My Reports",
   "Report List":"Report List",
   "Car List":"Car List",
-  "Recalls availible for car":"Recalls availible for car"
+  "Recalls availible for car":"Recalls availible for car",
+  "Edit Dataprovider":"Edit Data provider"
 }

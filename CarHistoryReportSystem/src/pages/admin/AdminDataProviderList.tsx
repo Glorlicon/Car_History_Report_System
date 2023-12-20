@@ -441,7 +441,7 @@ function AdminDataProviderList() {
                           </div>
                           <div className="pol-crash-form-column">
                               <label>{t('Data Provider')}</label>
-                              <select name="type" value={newDp.type ? newDp.type : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
+                              <select name="type" value={newDp.type !== null && newDp.type !== undefined ? newDp.type : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }}>
                                   <option value={-1}>{t('Not chosen')}</option>
                                   <option value={USER_ROLE.DEALER-2}>{t('Car Dealer')}</option>
                                   <option value={USER_ROLE.INSURANCE-2}>{t('Insurance Company')}</option>
@@ -469,7 +469,7 @@ function AdminDataProviderList() {
               <div className="pol-crash-modal">
                   <div className="pol-crash-modal-content">
                       <span className="pol-crash-close-btn" onClick={() => { setEditDp(null); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Edit Manufacturer')}</h2>
+                      <h2>{t('Edit Dataprovider')}</h2>
                       <div className="pol-crash-modal-content-2">
                           <div className="pol-crash-form-column">
                               <label>ID</label>
@@ -501,7 +501,7 @@ function AdminDataProviderList() {
                           </div>
                           <div className="pol-crash-form-column">
                               <label>{t('Data Provider')}</label>
-                              <select name="type" value={editDp.type ? editDp.type : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }} disabled>
+                              <select name="type" value={editDp.type !== null && editDp.type !== undefined ? editDp.type : -1} onChange={handleInputChange} style={{ borderRadius: '5px', borderColor: 'gray', height: '40px' }} disabled>
                                   <option value={-1}>{t('Not chosen')}</option>
                                   <option value={USER_ROLE.DEALER-2}>{t('Car Dealer')}</option>
                                   <option value={USER_ROLE.INSURANCE-2}>{t('Insurance Company')}</option>
