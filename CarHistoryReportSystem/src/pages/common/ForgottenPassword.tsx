@@ -7,11 +7,11 @@ import { setToken, setUserData, setVerifyToken } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import { SendVerifyToken } from '../../services/auth/Verify';
-import { t } from 'i18next';
 import { RootState } from '../../store/State';
-import i18n from '../../localization/config';
+import { useTranslation } from 'react-i18next';
 
 function ForgottenPassword() {
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);

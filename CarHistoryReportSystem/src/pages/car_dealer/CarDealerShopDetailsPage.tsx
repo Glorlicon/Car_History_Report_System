@@ -1,7 +1,6 @@
 import { Avatar, Box, Pagination, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
-import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -14,10 +13,11 @@ import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProvider, editWorkingTime, Manufacturer, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
-import i18n from '../../localization/config';
 import cardefaultimage from '../../images/car-default.jpg'
+import { useTranslation } from 'react-i18next';
 
 function CarDealerShopDetailsPage() {
+    const { t, i18n } = useTranslation();
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const dealerId = JWTDecoder(token).dataprovider
     const [error, setError] = useState<string | null>(null);

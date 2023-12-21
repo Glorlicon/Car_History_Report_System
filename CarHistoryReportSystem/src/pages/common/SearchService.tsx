@@ -7,12 +7,12 @@ import { APIResponse, DataProvider, DataProviderSearchForm, Paging, Reviews } fr
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GoogleMap, InfoWindow, LoadScript, Marker as GoogleMapMarker } from '@react-google-maps/api';
-import { t } from 'i18next';
-import i18n from '../../localization/config';
 import { Avatar, Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
+import { useTranslation } from 'react-i18next';
 
 function SearchService() {
+    const { t, i18n } = useTranslation();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carDealerList, setCarDealerList] = useState<DataProvider[]>([]);

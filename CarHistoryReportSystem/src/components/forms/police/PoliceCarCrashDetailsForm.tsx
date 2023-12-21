@@ -50,7 +50,20 @@ const PoliceCarCrashDetailsForm: React.FC<PoliceCarCrashDetailsFormProps> = ({
               </div>
               <div className="pol-crash-form-column">
                   <label>{t('Damage Location')}</label>
-                  <div className="pol-crash-car-container">
+                  <div className="pol-crash-car-container" style={{justifyContent:'space-between'}}>
+                    {/* invisible div to push image to center*/}
+                  <div className="pol-crash-checkboxes" style={{visibility:'hidden'}}>
+                  {Object.entries(CAR_SIDES).map(([key, value]) => (
+                          <label key={key}>
+                              <input
+                                  type="checkbox"
+                                  checked={isSideColored(value)}
+                                  onChange={() => handleDamageLocationChange(value)}
+                              />
+                              {t(key.charAt(0).toUpperCase() + key.slice(1))}
+                          </label>
+                      ))}
+                  </div>
                       <img src={car} alt="Car" className="pol-crash-car-image" style={{
                           borderTop: `5px solid ${isSideColored(CAR_SIDES.Front) ? 'red' : 'black'}`,
                           borderBottom: `5px solid ${isSideColored(CAR_SIDES.Rear) ? 'red' : 'black'}`,

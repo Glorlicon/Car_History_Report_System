@@ -10,12 +10,12 @@ import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GetImages } from '../../services/azure/Images';
 import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } from '@mui/material';
-import { t } from 'i18next';
-import i18n from '../../localization/config';
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 import cardefaultimage from '../../images/car-default.jpg';
+import { useTranslation } from 'react-i18next';
 
 function CarDealerProfile() {
+    const { t, i18n } = useTranslation();
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
