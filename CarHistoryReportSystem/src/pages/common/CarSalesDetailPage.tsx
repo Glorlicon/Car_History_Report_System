@@ -16,6 +16,7 @@ function CarSalesDetailPage() {
         id: string
     }
     const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const { id } = useParams<RouteParams>()
     const limitedDisplayCount = 6;
     const [loading, setLoading] = useState<boolean>(false);
@@ -99,8 +100,9 @@ function CarSalesDetailPage() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        i18n.changeLanguage(currentLanguage)
+        fetchData()
+    }, [])
 
     return (
         <>

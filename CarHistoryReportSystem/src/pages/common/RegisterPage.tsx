@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import AccountForm from '../../components/forms/register/AccountForm';
 import UserForm from '../../components/forms/register/UserForm';
 import useMultistepForm from '../../utils/useMultistepForm';
@@ -6,9 +6,10 @@ import '../../styles/RegisterPage.css'
 import { registerUser } from '../../services/auth/Register';
 import { USER_ROLE } from '../../utils/const/UserRole';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUserData, setVerifyToken } from '../../store/authSlice';
 import { useTranslation } from 'react-i18next';
+import { RootState } from '../../store/State';
 
 type RegisterData = {
     email: string
@@ -40,6 +41,7 @@ const INITIAL_ERRORS: ValidationErrors = {
 
 function RegisterPage() {
     const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const [data, setData] = useState(INITIAL_DATA)
     const [valid, setValid] = useState(false)
     const [shake, setShake] = useState(false)
@@ -85,6 +87,9 @@ function RegisterPage() {
         setRegisterError(true)
         setErrorMessage(response.error as string)
     }
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage)
+    }, []);
     //TODO: fix css
     return (
         <div className="register-container">
@@ -106,10 +111,10 @@ function RegisterPage() {
                         <div className="register-buttons">
                             {!isFirstStep && (
                                 <button type="button" onClick={() => { setRegisterError(false); back(); }}>
-                                    Back
+                                    {t('Back')}
                                 </button>
                             )}
-                            <button type="submit">{isLastStep ? "Register" : "Next"}</button>
+                            <button type="submit">{isLastStep ? t('Register') : t('Next')}</button>
                         </div>
                 )}
             </form>

@@ -4,11 +4,11 @@ import '../../styles/ForgotPassword.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { t } from 'i18next';
 import { RootState } from '../../store/State';
-import i18n from '../../localization/config';
+import { useTranslation } from 'react-i18next';
 
 function ForgottenPasswordSuccess() {
+    const { t, i18n } = useTranslation();
     const location = useLocation();
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const searchParams = new URLSearchParams(location.search);

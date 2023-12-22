@@ -324,7 +324,8 @@ function RegistryRegistrationList() {
             setRegistrationList(carRegistrationResponse.data)
             setPaging(carRegistrationResponse.pages)
             const responseCsv: APIResponse = await GetRegistrationExcel(id, token, page + 1, connectAPIError, language, searchParams)
-            setData(responseCsv.data)
+            let bom = '\uFEFF'
+            setData(bom+responseCsv.data)
         }
         setLoading(false)
     }
@@ -731,7 +732,7 @@ function RegistryRegistrationList() {
                 <div className="plate-search-page-row">
                     <button className="export-pol-crash-btn" onClick={handleDownloadCsv}>{t('Export to excel')}</button>
                     <a
-                        href={`data:text/csv;charset=utf-8,${escape(data)}`}
+                        href={`data:text/csv;charset=utf-8,${encodeURIComponent(data)}`}
                         download={`registration-${Date.now()}.csv`}
                         hidden
                         id="excel"

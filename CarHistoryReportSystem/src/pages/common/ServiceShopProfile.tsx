@@ -1,13 +1,12 @@
 import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
-import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
-import i18n from '../../localization/config';
 import { AddReview, EditProfile, editUserReview, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDataProviderByID, GetDealerProfileData, GetReviewAllByDataProvider, GetReviewByDataProvider, GetUserById, GetUserComment } from '../../services/api/Profile';
 import { GetImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
@@ -16,6 +15,7 @@ import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWork
 import { JWTDecoder } from '../../utils/JWTDecoder';
 
 function ServiceShopProfile() {
+    const { t, i18n } = useTranslation();
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const LoggedUserID = token ? JWTDecoder(token).nameidentifier : null
     const [error, setError] = useState<string | null>(null);

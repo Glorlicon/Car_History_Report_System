@@ -104,7 +104,7 @@ function UserRequest() {
         }
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const RequestListResponse: APIResponse = await GetUserRequests(id, token, page+1, connectAPIError, language, searchParams)
+        const RequestListResponse: APIResponse = await GetUserRequests(id, token, page + 1, connectAPIError, language, searchParams)
         if (RequestListResponse.error) {
             setError(RequestListResponse.error)
         } else {
@@ -168,84 +168,62 @@ function UserRequest() {
                 </Accordion>
             </div>
             <div className="pol-alert-action">
-            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
-                    {message}
-                </MuiAlert>
-            </Snackbar>
-            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
-                    {error ? error : addError}
-                </MuiAlert>
-            </Snackbar>
-            <div className="pol-alert-action">
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
-                        <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <div className="reg-inspec-search-filter-container">
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Type')}</label>
-                                <select className="reg-inspec-search-bar"
-                                    onChange={(e) => setRequestType(Number(e.target.value))}
-                                    value={requestType}
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <div className="reg-inspec-search-filter-container">
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Type')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setRequestType(Number(e.target.value))}
+                                        value={requestType}
+                                    >
+                                        <option value="-1">{t('Any Type')}</option>
+                                        <option value="0">{t('Data Correction')}</option>
+                                        <option value="1">{t('Technical Support')}</option>
+                                        <option value="2">{t('Report Inaccuracy')}</option>
+                                        <option value="3">{t('Feedback')}</option>
+                                        <option value="4">{t('General')}</option>
+                                    </select>
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Status')}</label>
+                                    <select className="reg-inspec-search-bar"
+                                        onChange={(e) => setRequestStatus(Number(e.target.value))}
+                                        value={requestStatus}
+                                    >
+                                        <option value="-1">{t('Any Status')}</option>
+                                        <option value="0">{t('Pending')}</option>
+                                        <option value="1">{t('Approved')}</option>
+                                        <option value="2">{t('Rejected')}</option>
+                                    </select>
+                                </div>
+                                <button
+                                    className="search-reg-inspec-btn"
+                                    onClick={() => { setPage(0); fetchData(); }}
                                 >
-                                    <option value="-1">{t('Any Type')}</option>
-                                    <option value="0">{t('Data Correction')}</option>
-                                    <option value="1">{t('Technical Support')}</option>
-                                    <option value="2">{t('Report Inaccuracy')}</option>
-                                    <option value="3">{t('Feedback')}</option>
-                                    <option value="4">{t('General')}</option>
-                                </select>
-                            </div>
-                            <div className="reg-inspec-search-filter-item">
-                                <label>{t('Status')}</label>
-                                <select className="reg-inspec-search-bar"
-                                    onChange={(e) => setRequestStatus(Number(e.target.value))}
-                                    value={requestStatus}
+                                    {t('Search...')}
+                                </button>
+                                <button
+                                    className="reset-reg-inspec-btn"
+                                    onClick={handleResetFilters}
                                 >
-                                    <option value="-1">{t('Any Status')}</option>
-                                    <option value="0">{t('Pending')}</option>
-                                    <option value="1">{t('Approved')}</option>
-                                    <option value="2">{t('Rejected')}</option>
-                                </select>
+                                    {t('Reset Filters')}
+                                </button>
                             </div>
-                            {/*<div className="reg-inspec-search-filter-item">*/}
-                            {/*    <label>{t('Sort By Date')}</label>*/}
-                            {/*    <select className="reg-inspec-search-bar"*/}
-                            {/*        onChange={(e) => setSortByDate(Number(e.target.value))}*/}
-                            {/*        value={sortByDate}*/}
-                            {/*    >*/}
-                            {/*        <option value="0">{t('Descending')}</option>*/}
-                            {/*        <option value="1">{t('Ascending')}</option>*/}
-                            {/*    </select>*/}
-                            {/*</div>*/}
-                            <button
-                                className="search-reg-inspec-btn"
-                                onClick={() => { setPage(0); fetchData(); }}
-                            >
-                                {t('Search...')}
-                            </button>
-                            <button
-                                className="reset-reg-inspec-btn"
-                                onClick={handleResetFilters}
-                            >
-                                {t('Reset Filters')}
-                            </button>
-                        </div>
-                    </AccordionDetails>
-                </Accordion>
-                </div>
+                        </AccordionDetails>
+                    </Accordion>
             </div>
             <div className="plate-search-page-row">
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
-                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
                             {t('Request List')}
                         </span>
                         <TableContainer>
