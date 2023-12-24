@@ -8,6 +8,9 @@ import { RootState } from '../../store/State';
 import '../../styles/CarSaleDetails.css'
 import { APIResponse, Car, ContactMail } from '../../utils/Interfaces';
 import cardefaultimage from '../../images/car-default.jpg';
+import FactoryIcon from '@mui/icons-material/Factory';
+import { BODY_TYPES } from '../../utils/const/BodyTypes';
+import { FUEL_TYPES } from '../../utils/const/FuelTypes';
 
 function CarSalesDetailPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
@@ -68,6 +71,22 @@ function CarSalesDetailPage() {
             setCurrentImageIndex(currentImageIndex - 1)
         }
     }
+    function getBodyTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(BODY_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
+    function getFuelTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(FUEL_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
 
     const handleMessageSend= async () => {
         setAdding(true);
@@ -109,32 +128,31 @@ function CarSalesDetailPage() {
             <div className="car-detail-container">
                 <div className="content-wrapper">
                     <div className="car-detail-main">
-                        {/* Car Image Section */}
                         <div className="car-image-section">
                             <div className="box">
                                 <div className="car-detail-image">
                                     <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
                                     <img src={
-                                        car?.carImages && car.carImages.length > 0 && car.carImages[currentImageIndex]?.id !== -1 ?
+                                        car?.carImages && car.carImages.length > 0  ?
                                             GetImages(car.carImages[currentImageIndex].imageLink) :
                                             cardefaultimage
                                     } alt="Car Image" />
                                     <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
                                     {/* Image counter */}
                                     <div className="image-count">
-                                        {car?.carSalesInfo?.carImages?.length || 0} {t('Photos')}
+                                        {car?.carImages?.length || 0} {t('Photos')}
                                     </div>
                                 </div>
                                 <div className="vehicle-info">
-                                    <h1>{t('Used')} {car?.modelId}</h1>
-                                    <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
-                                    <p>{t('VIN')}: {car?.vinId}</p>
+                                    <h1>{car?.model?.releasedDate.split('-')[0]} {car?.modelId} {t(getFuelTypeName(car?.model?.fuelType as unknown as number))} {t(getBodyTypeName(car?.model?.bodyType as unknown as number))}</h1>
+                                    <p style={{fontSize:'30px'}}>{car?.carSalesInfo?.price} {t('VND')} | {car?.currentOdometer} KM</p>
+                                    <p><span>{t('VIN')}:</span> {car?.vinId}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="vehicle-highlights-box">
-                            <h2>{t('Vehicle Highlights')}</h2>
+                            <h1>{t('Vehicle Highlights')}</h1>
                             <div className="box">
                                 <div className="highlight-content">
                                     <div className="notable-parts">
@@ -145,18 +163,24 @@ function CarSalesDetailPage() {
                                             </div>
                                             <div>
                                                 <p>{t('Dimension')}</p>
-                                                <p>{car?.model?.dimension}</p>
+                                                <p>{car?.model?.dimension} mm</p>
                                             </div>
                                             <div>
                                                 <p>{t('Wheel Base')}</p>
-                                                <p>{car?.model?.wheelBase}</p>
+                                                <p>{car?.model?.wheelBase} mm</p>
                                             </div>
                                             <div>
                                                 <p>{t('Weight')}</p>
-                                                <p>{car?.model?.weight}</p>
+                                                <p>{car?.model?.weight} kg</p>
                                             </div>
-                                        </div>
-                                        <div className="second-section">
+                                            <div>
+                                                <p>{t('Wheel Formula')}</p>
+                                                <p>{car?.model?.wheelFormula}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Weight')}</p>
+                                                <p>{car?.model?.weight} kg</p>
+                                            </div>
                                             <div>
                                                 <p>{t('Released Date')}</p>
                                                 <p>{car?.model?.releasedDate}</p>
@@ -164,6 +188,42 @@ function CarSalesDetailPage() {
                                             <div>
                                                 <p>{t('Country Of Origin')}</p>
                                                 <p>{car?.model?.country}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Fuel Type')}</p>
+                                                <p>{getFuelTypeName(car?.model?.fuelType as unknown as number)}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Body Type')}</p>
+                                                <p>{getBodyTypeName(car?.model?.bodyType as unknown as number)}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Person Carried Number')}</p>
+                                                <p>{car?.model?.personCarriedNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Seat Number')}</p>
+                                                <p>{car?.model?.seatNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Laying Place Number')}</p>
+                                                <p>{car?.model?.layingPlaceNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Maximum Output')}</p>
+                                                <p>{car?.model?.maximumOutput} kW</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Engine Displacement')}</p>
+                                                <p>{car?.model?.personCarriedNumber} cm3</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('RPM')}</p>
+                                                <p>{car?.model?.rpm}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Tire Number')}</p>
+                                                <p>{car?.model?.tireNumber}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -206,8 +266,6 @@ function CarSalesDetailPage() {
                         </div>
 
                     </div>
-
-                    {/* Contact Form Section */}
                     <div className="availability-section narrow-section">
                         <div className="box">
                             <div className="info-header">
@@ -228,8 +286,8 @@ function CarSalesDetailPage() {
 
                                     <div className="contact-description">
                                         <p>{t('Mail Intro')}</p>
-                                        <h3>{t('Used')} {car?.modelId}</h3>
-                                        <p>{car?.carSalesInfo?.price} VND | {car?.currentOdometer} {t('Milage')}</p>
+                                        <h3>{car?.model?.releasedDate.split('-')[0]} {car?.modelId} {t(getFuelTypeName(car?.model?.fuelType as unknown as number))} {t(getBodyTypeName(car?.model?.bodyType as unknown as number))}</h3>
+                                        <p>{car?.carSalesInfo?.price} {t('VND')} | {car?.currentOdometer} KM</p>
                                     </div>
                                 </div>
 

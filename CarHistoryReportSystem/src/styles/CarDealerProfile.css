@@ -4,14 +4,19 @@
     gap: 20px;
     padding-top: 100px;
     flex:1;
+    background-color: ghostwhite;
 }
 
 .car-dealer-profile-header-section {
-    height: 200px;
     align-items: center;
-    background-color: #f6f6f6;
+    background-color: white;
     padding: 20px;
     display:flex;
+    justify-content: space-evenly;
+    padding-left: 10%;
+    padding-right: 10%;
+    box-shadow: 1px 3px #e7e3e3;
+    border-radius: 5px;
 }
 
 .breadcrumb {
@@ -21,14 +26,14 @@
     margin-bottom:20px;
 }
 
-.dealer-info {
+.dealer-info-2 {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-    .dealer-info h1 {
-        font-size: 24px;
+    .dealer-info-2 h1 {
+        font-size: 48px;
         color: #333;
         margin: 0;
     }
@@ -44,6 +49,9 @@
     text-transform: uppercase;
     font-weight: bold;
     cursor: pointer;
+}
+.car-btn-filter:hover{
+    background-color: #2580C6;
 }
 
 .rating, .favorites {
@@ -79,26 +87,24 @@
 .phone-info {
     display: flex;
     flex-direction: row;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    justify-content: space-between;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    justify-content: flex-start;
     gap: 5px;
     font-size:18
 }
 
-    .phone-info span {
-        width: 33.3%;
-    }
-
 .navigation {
+    padding-top:10px;
     display: flex;
     gap: 20px;
+    font-weight: bold;
 }
 
     .navigation a {
         text-decoration: none;
         color: #333;
-        font-size: 16px;
+        font-size: 20px;
         padding: 5px 10px;
         border-radius: 5px;
         transition: background-color 0.3s;
@@ -118,9 +124,12 @@
 }
 
 .cars-for-sale-section {
-    background-color: #e6e6e6;
-    padding: 20px;
-    margin: 100px 50px 50px 50px
+    background-color: white;
+    padding-left:40px;
+    padding-right: 40px;
+    margin: 20px 50px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 1px 2px #e7e3e3;
 }
 
 .ratings-reviews-section {
@@ -142,7 +151,7 @@
     gap:20px;
 }
 
-.dealer-info{
+.dealer-info-2{
     text-align:left;
 }
 
@@ -213,10 +222,14 @@
 
 
 .ratings-reviews-section {
-    background-color: #d6d6d6;
-    padding: 20px;
     gap: 20px;
-    margin: 100px 50px 50px 50px
+    background-color: white;
+    padding: 20px;
+    padding-left:40px;
+    padding-right: 40px;
+    margin: 20px 50px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 1px 2px #e7e3e3;
 }
 
     .ratings-reviews-section h1{
@@ -278,9 +291,17 @@
 
 .review-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 10px;
     font-size: 14px;
+    flex-direction: column;
+    align-items: baseline;
+}
+.review-content{
+    text-align: left;
+    padding: 20px;
+    font-size: 20px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .review-comment-box {
@@ -332,12 +353,16 @@
 }
 
 .about-us-section {
-    background-color: #e9e9e9;
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    margin: 100px 50px 50px 50px
+    gap: 20px;
+    background-color: white;
+    padding: 20px;
+    padding-left:40px;
+    padding-right: 40px;
+    margin: 20px 50px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 1px 2px #e7e3e3;
 }
 
 .contact-section, .service-information {
@@ -452,16 +477,31 @@ svg {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: #f6f6f6;
+    background-color: white;
     padding: 20px;
+    padding-left:40px;
+    padding-right: 40px;
     margin: 20px 50px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 1px 2px #e7e3e3;
+}
+
+.service-information-section-header{
+    font-size: 40px;
+    text-align: left;
+    padding-top: 0px;
 }
 
 .service-info, .makes-serviced {
-    padding: 20px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #fff;
+    text-align: left;
+}
+.service-info h3{
+    font-size: 30px;
+}
+.service-info p {
+    font-size: 20px;
 }
 
 .services-list, .makes-list {
@@ -478,7 +518,12 @@ svg {
         margin: 5px 0;
     }
 
-.operation-hours p{
-    text-align:center;
+.operation-hours td{
+    text-align:left;
     gap:50px;
+    font-size: 20px;
+    padding-right: 20px;
+}
+.about-us-title{
+    text-align: left;
 }

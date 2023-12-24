@@ -13,6 +13,9 @@ import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
 import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
+import LanguageIcon from '@mui/icons-material/Language';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 function ServiceShopProfile() {
     const { t, i18n } = useTranslation();
@@ -60,7 +63,7 @@ function ServiceShopProfile() {
             isClosed: true
         })
     });
-    
+
     const [open, setOpen] = React.useState(false);
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -144,6 +147,7 @@ function ServiceShopProfile() {
             } else {
                 setOpen(true);
                 fetchData()
+                handleCheckUserReview()
             }
         }
     };
@@ -154,73 +158,106 @@ function ServiceShopProfile() {
         const actualIdString = id?.replace('id=', '');
         const actualId = Number(actualIdString);
         const dataProviderResponse: APIResponse = await GetDealerProfileData(actualId as unknown as string);
-            if (dataProviderResponse.error) {
-                setError(dataProviderResponse.error);
-            } else {
-                let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
+        if (dataProviderResponse.error) {
+            setError(dataProviderResponse.error);
+        } else {
+            let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
 
-                if (Array.isArray(dataProviderResponse.data.workingTimes)) {
-                    transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
-                        const [startHour, startMinute] = time.startTime.split(':').map(Number);
-                        const [endHour, endMinute] = time.endTime.split(':').map(Number);
+            if (Array.isArray(dataProviderResponse.data.workingTimes)) {
+                transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
+                    const [startHour, startMinute] = time.startTime.split(':').map(Number);
+                    const [endHour, endMinute] = time.endTime.split(':').map(Number);
 
-                        return {
-                            dayOfWeek: time.dayOfWeek,
-                            startHour,
-                            startMinute,
-                            endHour,
-                            endMinute,
-                            isClosed: time.isClosed
-                        };
-                    });
-                }
-
-                setUserDetails({
-                    ...dataProviderResponse.data,
-                    workingTimes: transformedWorkingTimes
+                    return {
+                        dayOfWeek: time.dayOfWeek,
+                        startHour,
+                        startMinute,
+                        endHour,
+                        endMinute,
+                        isClosed: time.isClosed
+                    };
                 });
-                let connectAPIError = t('Cannot connect to API! Please try again later')
-                let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-                const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(actualId);
-                if (carServiceResponse.error) {
-                    setError(carServiceResponse.error);
-                } else {
-                    setCarServicesList(carServiceResponse.data);
-
-                    // Define the initial value of the accumulator explicitly as an array of strings
-                    const initialServices: string[] = [];
-
-                    const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
-                        if (item.servicesName) {
-                            const serviceNames = item.servicesName.split(', ').map(name => name.trim());
-                            return acc.concat(serviceNames);
-                        }
-                        return acc;
-                    }, []);
-                    // Remove duplicates
-                    const uniqueServices = Array.from(new Set<string>(services));
-                    setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
-                }
-
-
-                let searchReviewParams: ReviewSearchParams = {
-                    dataproviderId: dataProviderResponse?.data.id,
-                    rating: rating,
-                    sortByRating: sortByRating,
-                    sortByDate: sortByDate
-                }
-                const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
-                if (filteredReviewListResponse.error) {
-                    setError(filteredReviewListResponse.error);
-                } else {
-                    setFilteredReview(filteredReviewListResponse.data);
-                    const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
-                    setReview(reviewListReponse.data)
-                }
-                setLoading(false);
             }
+
+            setUserDetails({
+                ...dataProviderResponse.data,
+                workingTimes: transformedWorkingTimes
+            });
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(actualId);
+            if (carServiceResponse.error) {
+                setError(carServiceResponse.error);
+            } else {
+                setCarServicesList(carServiceResponse.data);
+
+                // Define the initial value of the accumulator explicitly as an array of strings
+                const initialServices: string[] = [];
+
+                const services = carServiceResponse.data.reduce((acc: string[], item: CarServices) => {
+                    if (item.servicesName) {
+                        const serviceNames = item.servicesName.split(', ').map(name => name.trim());
+                        return acc.concat(serviceNames);
+                    }
+                    return acc;
+                }, []);
+                // Remove duplicates
+                const uniqueServices = Array.from(new Set<string>(services));
+                setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
+            }
+
+
+            let searchReviewParams: ReviewSearchParams = {
+                dataproviderId: dataProviderResponse?.data.id,
+                rating: rating,
+                sortByRating: sortByRating,
+                sortByDate: sortByDate
+            }
+            const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+            if (filteredReviewListResponse.error) {
+                setError(filteredReviewListResponse.error);
+            } else {
+                setFilteredReview(filteredReviewListResponse.data);
+                setReviewPaging(filteredReviewListResponse.pages)
+                const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
+                setReview(reviewListReponse.data)
+            }
+            setLoading(false);
+        }
         setLoading(false);
     };
+
+    const getReviews = async () => {
+        setLoading(true);
+        setAddError(null);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchReviewParams: ReviewSearchParams = {
+            dataproviderId: userDetails.id,
+            rating: rating,
+            sortByRating: sortByRating,
+            sortByDate: sortByDate
+        }
+
+        const reviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+        if (reviewListResponse.error) {
+            setAddError(reviewListResponse.error);
+        } else {
+            setFilteredReview(reviewListResponse.data);
+            setReviewPaging(reviewListResponse.pages)
+            const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, userDetails.id)
+            setReview(reviewListReponse.data)
+        }
+
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        getReviews()
+    }, [resetReviewTrigger])
+    useEffect(() => {
+        getReviews()
+    }, [reviewPage])
 
     useEffect(() => {
         let totalRating = 0;
@@ -269,6 +306,8 @@ function ServiceShopProfile() {
             const reviewResponse: APIResponse = await GetUserComment(id as unknown as number, LoggedUserID, token);
             if (!reviewResponse.error && reviewResponse != null) {
                 setExistingReview(reviewResponse.data);
+                setComment(reviewResponse.data.description)
+                setRatingValue(reviewResponse.data.rating)
             }
         }
     };
@@ -310,10 +349,7 @@ function ServiceShopProfile() {
         <div className="car-dealer-profile">
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    <div className="breadcrumb">
-                        Home
-                    </div>
-                    <div className="dealer-info">
+                    <div className="dealer-info-2">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
@@ -329,26 +365,40 @@ function ServiceShopProfile() {
 
                     </div>
                     <div className="phone-info">
-                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
+                        <PhoneIcon /><span>{t('Phone Number')}: <a href={`tel:${userDetails?.phoneNumber}`}>{userDetails?.phoneNumber}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LocationOnIcon /><span>{t('Address')}: <a href={`http://maps.google.com/?q=${userDetails?.address}`}>{userDetails?.address}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LanguageIcon /><span>Website: <a href={`https://${userDetails?.websiteLink}`}>{userDetails?.websiteLink}</a></span>
                     </div>
                     <div className="navigation">
-                        <a href="#service-information-section">{t('Top Service Performed')}</a>
+                        <a href="#service-information-section">{t('Service Information')}</a>
                         <a href="#ratings-reviews-section">{t('Reviews')}</a>
                         <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
                 <div>
-                    <div className="profile-image">
-                            <Avatar
-                                alt="Dealer Shop"
-                                src={GetImages(userDetails?.imageLink)}
-                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
-                            />
+                    <div className="profile-icon">
+                        <Avatar
+                            alt="Dealer Shop"
+                            style={{ border: '1px solid gray' }}
+                            src={GetImages(userDetails?.imageLink)}
+                            sx={{ width: 200, height: 200, cursor: 'pointer' }}
+                        />
                     </div>
                 </div>
             </div>
 
             <div className="service-information-section" id="service-information-section">
+                <h3 className="service-information-section-header">{t('Service Information')}</h3>
+                <div className="service-info">
+                    <h3>{t('Shop Description')}</h3>
+                    <p>
+                        {userDetails.description}
+                    </p>
+                </div>
                 <div className="service-info">
                     <h3>{t('Top Services Performed')}</h3>
                     <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
@@ -377,26 +427,28 @@ function ServiceShopProfile() {
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
-                            {Object.keys(starCounts)
-                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
-                                .map((star, index) => {
-                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
-                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
-                                    return (
-                                        <div className="star-row" key={index}>
-                                            <span className="star-label">{star} {t('Stars')}</span>
-                                            <div className="star-bar">
-                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The filled portion of the bar */}
-                                                </div>
-                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The empty portion of the bar */}
-                                                </div>
-                                            </div>
-                                            <span className="star-percentage">{percentage}%</span>
-                                        </div>
-                                    );
-                                })}
+                            <table>
+                                <tbody>
+                                    {Object.keys(starCounts)
+                                        .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                        .map((star, index) => {
+                                            const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                            const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                            return (
+                                                <tr className="star-row" key={index}>
+                                                    <td><span className="star-label">{star} {t('Stars')}</span></td>
+                                                    <td className="star-bar">
+                                                        <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                        <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className="star-percentage">{percentage}%</span></td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -473,29 +525,17 @@ function ServiceShopProfile() {
                             </span>
                             <span>
                                 <div className="filter-choice">
-                                    <label>{t('Sort By Rating')}</label>
-                                    <select className="reg-inspec-search-bar"
-                                        onChange={(e) => setSortByRating(Number(e.target.value))}
-                                        value={sortByRating}
-                                    >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
-                                    </select>
-                                </div>
-                            </span>
-                            <span>
-                                <div className="filter-choice">
                                     <label>{t('Sort By Date')}</label>
                                     <select className="reg-inspec-search-bar"
                                         onChange={(e) => setSortByDate(Number(e.target.value))}
                                         value={sortByDate}
                                     >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
+                                        <option value="1">{t('Descending')}</option>
+                                        <option value="-1">{t('Ascending')}</option>
                                     </select>
                                 </div>
                             </span>
-                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={() => { let x = setReviewPage(1); getReviews(); }} className="car-btn-filter">{t('Search')}</button>
                             <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
                         </div>
                         {filteredReview.length > 0 ? (
@@ -504,7 +544,7 @@ function ServiceShopProfile() {
                                     <div className="review-header">
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
+                                            {t('by')} {reviewItem.userFirstName + ' ' + reviewItem.userLastName} {t('on')} {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -515,46 +555,41 @@ function ServiceShopProfile() {
                         ) : (
                             <p>{t('No reviews available')}</p>
                         )}
+                        <div id="pagination">
+                            {reviewPaging && reviewPaging.TotalPages > 0 &&
+                                <>
+                                    <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                                </>
+                            }
+                        </div>
                     </div>
-
-
-
                 </div>
-                <div id="pagination">
-                    {reviewPaging && reviewPaging.TotalPages > 0 &&
-                        <>
-
-                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
-                        </>
-                    }
-                </div>
-
             </div>
 
 
             <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>{t('Working Schedule')}</h2>
+                    <h1>{t('Working Schedule')}</h1>
                 </div>
 
-                <div className="about-us-section">
-                    {/* ... other parts of the section ... */}
-
-                    <div className="operation-hours">
-                        {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>{t('No work schedule present')}</p>
-                        ) : (
-                            userDetails.workingTimes.map((day, index) => (
-                                <p key={index}>
-                                    {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
-                                </p>
-                            ))
-                        )}
-                    </div>
-
-                    {/* ... other parts of the section ... */}
+                <div className="operation-hours">
+                    {isDefaultSchedule(userDetails.workingTimes) ? (
+                        <p>{t('No work schedule present')}</p>
+                    ) : (
+                        <table>
+                            <tbody>
+                                {
+                                    userDetails.workingTimes.map((day, index) => (
+                                        <tr key={index}>
+                                            <td>{daysOfWeek[day.dayOfWeek]}</td>
+                                            <td>{day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
         </div>

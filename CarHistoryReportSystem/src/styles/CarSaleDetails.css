@@ -30,10 +30,11 @@
     border: none;
     cursor: pointer;
     font-size: 24px;
-    color: #007BFF;
-    padding: 0;
+    color: white;
+    padding: 10px;
     margin: 0;
     outline: none;
+    background-color: gray;
 }
 
 .dealer-car-sales-images-arrow-left {
@@ -77,6 +78,7 @@
 .first-section div:nth-child(n+1){
     width: 25%;
     flex-direction:column;
+    flex-wrap: wrap;
 }
 
 .first-section div p:nth-child(1) {

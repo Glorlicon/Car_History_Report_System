@@ -252,7 +252,7 @@ function UserProfile() {
                             <p style={{ fontSize: '20px', color: 'white' }}>{t(user.roleName)}</p>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Tooltip title={t('Edit Profile')}>
-                                    <IconButton onClick={() => { setEditing(true) }} sx={{ height: "50px", width: "50px" }} >
+                                    <IconButton onClick={() => { handleEditButton() }} sx={{ height: "50px", width: "50px" }} >
                                         <img src={editIcon} height='100%' alt='' />
                                     </IconButton>
                                 </Tooltip>

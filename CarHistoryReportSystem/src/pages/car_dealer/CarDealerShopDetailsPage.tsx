@@ -15,6 +15,11 @@ import { APIResponse, Car, CarModel, CarSearchParams, DataProvider, EditDataProv
 import { JWTDecoder } from '../../utils/JWTDecoder';
 import cardefaultimage from '../../images/car-default.jpg'
 import { useTranslation } from 'react-i18next';
+import LanguageIcon from '@mui/icons-material/Language';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 function CarDealerShopDetailsPage() {
     const { t, i18n } = useTranslation();
@@ -79,6 +84,8 @@ function CarDealerShopDetailsPage() {
     const handleResetCarFilters = () => {
         setCarMake('')
         setCarModel('')
+        setSelectedMake(0)
+        setModelList([])
         setYearStart(0)
         setPriceMax(9999999999)
         setMilageMax(9999999999)
@@ -90,18 +97,6 @@ function CarDealerShopDetailsPage() {
         setSortByDate(0)
         setResetReviewTrigger(prev => prev + 1);
     }
-
-    const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = Number(e.target.value);
-        setSelectedMake(selectedValue);
-        let connectAPIError = t('Cannot connect to API! Please try again later')
-        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
-
-        if (!ManufacturerModelResponse.error) {
-            setModelList(ManufacturerModelResponse.data);
-        }
-    };
 
     interface TransformedWorkingTime {
         dayOfWeek: number;
@@ -149,11 +144,7 @@ function CarDealerShopDetailsPage() {
 
 
     const handleNextPage = () => {
-        if (modalPage < 2) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editDealerProfile) handleEditDealerProfile();
-        }
+        if (editDealerProfile) handleEditDealerProfile();
     };
 
     const handlePreviousPage = () => {
@@ -179,11 +170,11 @@ function CarDealerShopDetailsPage() {
 
     const fetchData = async () => {
         setLoading(true);
-        setError(null);
+        setAddError(null);
 
         const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
-            setError(dataProviderResponse.error);
+            setAddError(dataProviderResponse.error);
         } else {
             if (dataProviderResponse.data.imageLink) {
                 const image = GetImages(dataProviderResponse.data.imageLink)
@@ -221,13 +212,14 @@ function CarDealerShopDetailsPage() {
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
             const filteredCarListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, carPage, connectAPIError, language, searchCarParams);
             if (filteredCarListResponse.error) {
-                setError(filteredCarListResponse.error);
+                setAddError(filteredCarListResponse.error);
             } else {
                 const manufacturerReponse: APIResponse = await ListManufacturer();
                 setManufacturerList(manufacturerReponse.data)
                 setFilteredCarList(filteredCarListResponse.data);
                 const CarListResponse: APIResponse = await GetAllCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, connectAPIError, language);
                 setCarList(CarListResponse.data)
+                setCarPaging(filteredCarListResponse.pages)
             }
 
             let searchReviewParams: ReviewSearchParams = {
@@ -238,9 +230,10 @@ function CarDealerShopDetailsPage() {
             }
             const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
             if (filteredReviewListResponse.error) {
-                setError(filteredReviewListResponse.error);
+                setAddError(filteredReviewListResponse.error);
             } else {
                 setFilteredReview(filteredReviewListResponse.data);
+                setReviewPaging(filteredReviewListResponse.pages)
                 const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
                 setReview(reviewListReponse.data)
             }
@@ -248,6 +241,80 @@ function CarDealerShopDetailsPage() {
         }
         setLoading(false);
     };
+
+    const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = Number(e.target.value);
+        setSelectedMake(selectedValue);
+        let make = manufacturerList.find(m => m.id === selectedValue)
+        setCarMake(make ? make.name : '')
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
+
+        if (!ManufacturerModelResponse.error) {
+            setModelList(ManufacturerModelResponse.data);
+        }
+    };
+
+    const getCars = async () => {
+        setError(null);
+        let searchParams: CarSearchParams = {
+            make: carMake,
+            model: carModel,
+            yearstart: yearStart,
+            pricemax: priceMax,
+            milagemax: milageMax
+        }
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carListResponse: APIResponse = await GetCarForSaleBySellerID(userDetails.id as unknown as string, carPage, connectAPIError, language, searchParams)
+        if (carListResponse.error) {
+            setError(carListResponse.error)
+        } else {
+            const manufacturerReponse: APIResponse = await ListManufacturer();
+            setManufacturerList(manufacturerReponse.data)
+            setFilteredCarList(carListResponse.data)
+            setCarPaging(carListResponse.pages)
+        }
+        setLoading(false)
+    }
+
+    const getReviews = async () => {
+        setAddError(null);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchReviewParams: ReviewSearchParams = {
+            dataproviderId: userDetails.id,
+            rating: rating,
+            sortByRating: sortByRating,
+            sortByDate: sortByDate
+        }
+
+        const reviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+        if (reviewListResponse.error) {
+            setAddError(reviewListResponse.error);
+        } else {
+            setFilteredReview(reviewListResponse.data);
+            setReviewPaging(reviewListResponse.pages)
+            const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, userDetails.id)
+            setReview(reviewListReponse.data)
+        }
+
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        getReviews()
+    }, [resetReviewTrigger])
+    useEffect(() => {
+        getReviews()
+    }, [reviewPage])
+    useEffect(() => {
+        getCars()
+    }, [resetCarTrigger])
+    useEffect(() => {
+        getCars()
+    }, [carPage])
 
     useEffect(() => {
         let totalRating = 0;
@@ -273,34 +340,40 @@ function CarDealerShopDetailsPage() {
 
 
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number, field?: string) => {
         const { name, value, type } = e.target;
-
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
-            if (index !== undefined && field) {
-                let updatedTimes = [...prevProfile.workingTimes];
-                if (type === 'time') {
-                    const [hours, minutes] = value.split(':').map(Number);
-                    updatedTimes = updatedTimes.map((time, i) => {
-                        if (i === index) {
-                            if (field === 'startHour') {
-                                return { ...time, startHour: hours, startMinute: minutes };
-                            } else if (field === 'endHour') {
-                                return { ...time, endHour: hours, endMinute: minutes };
+            if (e.target instanceof HTMLInputElement) {
+                const { type, checked } = e.target;
+
+                if (index !== undefined && field) {
+                    let updatedTimes = [...prevProfile.workingTimes];
+
+                    if (type === 'time') {
+                        const [hours, minutes] = value.split(':').map(Number);
+                        updatedTimes = updatedTimes.map((time, i) => {
+                            if (i === index) {
+                                if (field === 'startHour') {
+                                    return { ...time, startHour: hours, startMinute: minutes };
+                                } else if (field === 'endHour') {
+                                    return { ...time, endHour: hours, endMinute: minutes };
+                                }
                             }
-                        }
-                        return time;
-                    });
-                } else if (type === 'checkbox' && field === 'isClosed') {
-                    updatedTimes = updatedTimes.map((time, i) =>
-                        i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
-                    );
+                            return time;
+                        });
+                    } else if (type === 'checkbox' && field === 'isClosed') {
+                        updatedTimes = updatedTimes.map((time, i) =>
+                            i === index ? { ...time, isClosed: checked, } : time
+                        );
+                    }
+
+                    return { ...prevProfile, workingTimes: updatedTimes };
                 }
-                return { ...prevProfile, workingTimes: updatedTimes };
-            } else {
-                return { ...prevProfile, [name]: value };
             }
+
+            // For changes from textarea or other input types
+            return { ...prevProfile, [name]: value };
         });
     };
 
@@ -322,19 +395,26 @@ function CarDealerShopDetailsPage() {
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
             let notFoundError = t('No image was found')
             let failedError = t('Failed to upload image')
-            const uploadImage = await UploadImages(image, notFoundError, failedError)
-            if (uploadImage.error) {
-                setError(uploadImage.error)
-            } else {
-                const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadImage.data }, token);
-                setAdding(false);
-                if (response.error) {
-                    setAddError(response.error);
+            let uploadedImage = ''
+            if (image !== null) {
+                const uploadImage = await UploadImages(image, notFoundError, failedError)
+                if (uploadImage.error) {
+                    setAdding(false)
+                    setAddError(uploadImage.error)
                 } else {
-                    setEditDealerProfile(null);
-                    setModalPage(1);
-                    fetchData();
+                    uploadedImage = uploadImage.data
                 }
+            }
+            const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadedImage ? uploadedImage : userDetails.imageLink }, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setEditDealerProfile(null);
+                setModalPage(1);
+                setMessage('Edit Profile Successfully')
+                setOpenSuccess(true)
+                fetchData();
             }
         }
     };
@@ -367,20 +447,26 @@ function CarDealerShopDetailsPage() {
         });
     }, [value, max, userDetails, defaultSchedule]);
 
-
-
+    const [message, setMessage] = useState('')
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [openError, setOpenError] = useState(false)
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccess(false);
+        setOpenError(false);
+    };
     return (
         <div className="car-dealer-profile">
-
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
-                    {/*<div className="breadcrumb">*/}
-                    {/*    Home*/}
-                    {/*</div>*/}
-
-                    {/* Dealer Name and Ratings */}
-                    <div className="dealer-info">
+                    <div className="dealer-info-2">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
@@ -395,7 +481,13 @@ function CarDealerShopDetailsPage() {
                     </div>
 
                     <div className="phone-info">
-                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
+                        <PhoneIcon /><span>{t('Phone Number')}: <a href={`tel:${userDetails?.phoneNumber}`}>{userDetails?.phoneNumber}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LocationOnIcon /><span>{t('Address')}: <a href={`http://maps.google.com/?q=${userDetails?.address}`}>{userDetails?.address}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LanguageIcon /><span>Website: <a href={`https://${userDetails?.websiteLink}`}>{userDetails?.websiteLink}</a></span>
                     </div>
 
                     {/* Navigation */}
@@ -408,12 +500,13 @@ function CarDealerShopDetailsPage() {
 
                 {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
-                    <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                    <div className="profile-icon" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }); setAddError(null) }}>
                         <Tooltip title={t('Edit')}>
                             <Avatar
                                 alt="Dealer Shop"
+                                style={{ border: '1px solid gray' }}
                                 src={GetImages(userDetails?.imageLink)}
-                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                                sx={{ width: 200, height: 200, cursor: 'pointer' }}
                             />
                         </Tooltip>
                     </div>
@@ -427,7 +520,7 @@ function CarDealerShopDetailsPage() {
                 <div className="listing-header">
                     <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
                     <div className="filters">
-                        <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                        <button onClick={() => { let x = setCarPage(1); getCars(); }} className="car-btn-filter">{t('Search')}</button>
 
                         <span>
                             <div className="filter-choice">
@@ -439,7 +532,26 @@ function CarDealerShopDetailsPage() {
                                             <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
                                         ))
                                     ) : (
-                                        <option value="" disabled>Loading...</option>
+                                        <option value="" disabled>{t('Loading')}...</option>
+                                    )}
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Model')}</p>
+                                <select
+                                    onChange={(e) => setCarModel(e.target.value)}
+                                    disabled={modelList.length === 0}
+                                    value={carModel}
+                                >
+                                    <option value="">{t('Any Model')}</option>
+                                    {modelList.length > 0 ? (
+                                        modelList.map((model, index) => (
+                                            <option key={index} value={model.modelID}>{model.modelID}</option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>{t('Loading')}...</option>
                                     )}
                                 </select>
                             </div>
@@ -517,7 +629,7 @@ function CarDealerShopDetailsPage() {
                             </td>
                         </tr>
                     ) : filteredCarList.length > 0 ? (
-                        carList.map((model: any, index: number) => (
+                        filteredCarList.map((model: any, index: number) => (
                             <div className="vehicle-card">
                                 <div className="vehicle-image">
                                     <Box
@@ -532,8 +644,8 @@ function CarDealerShopDetailsPage() {
                                     />
                                 </div>
                                 <p>{t('Used')} <span>{model.modelId}</span></p>
-                                <p>{t('Price')}: <span>{model.carSalesInfo.price}</span></p>
-                                <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                                <p>{t('Price')}: <span>{model.carSalesInfo.price} {t('VND')}</span></p>
+                                <a href={`/dealer/sales/details/${model.vinId}`}>{t('More Detail')}</a>
                             </div>
                         ))
                     ) : (
@@ -543,7 +655,7 @@ function CarDealerShopDetailsPage() {
                     )}
 
                 </div>
-                <div id="pagination">
+                <div id="pagination" style={{paddingBottom:'5px'}}>
                     {carPaging && carPaging.TotalPages > 0 &&
                         <>
                             <Pagination count={carPaging.TotalPages} onChange={(e, value) => setCarPage(value)} />
@@ -563,26 +675,28 @@ function CarDealerShopDetailsPage() {
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
-                            {Object.keys(starCounts)
-                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
-                                .map((star, index) => {
-                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
-                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
-                                    return (
-                                        <div className="star-row" key={index}>
-                                            <span className="star-label">{star} {t('Stars')}</span>
-                                            <div className="star-bar">
-                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The filled portion of the bar */}
-                                                </div>
-                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The empty portion of the bar */}
-                                                </div>
-                                            </div>
-                                            <span className="star-percentage">{percentage}%</span>
-                                        </div>
-                                    );
-                                })}
+                            <table>
+                                <tbody>
+                                    {Object.keys(starCounts)
+                                        .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                        .map((star, index) => {
+                                            const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                            const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                            return (
+                                                <tr className="star-row" key={index}>
+                                                    <td><span className="star-label">{star} {t('Stars')}</span></td>
+                                                    <td className="star-bar">
+                                                        <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                        <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className="star-percentage">{percentage}%</span></td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -604,29 +718,17 @@ function CarDealerShopDetailsPage() {
                             </span>
                             <span>
                                 <div className="filter-choice">
-                                    <label>{t('Sort By Rating')}</label>
-                                    <select className="reg-inspec-search-bar"
-                                        onChange={(e) => setSortByRating(Number(e.target.value))}
-                                        value={sortByRating}
-                                    >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
-                                    </select>
-                                </div>
-                            </span>
-                            <span>
-                                <div className="filter-choice">
                                     <label>{t('Sort By Date')}</label>
                                     <select className="reg-inspec-search-bar"
                                         onChange={(e) => setSortByDate(Number(e.target.value))}
                                         value={sortByDate}
                                     >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
+                                        <option value="1">{t('Descending')}</option>
+                                        <option value="-1">{t('Ascending')}</option>
                                     </select>
                                 </div>
                             </span>
-                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={() => { let x = setReviewPage(1); getReviews(); }} className="car-btn-filter">{t('Search')}</button>
                             <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
                         </div>
                         {filteredReview.length > 0 ? (
@@ -635,7 +737,7 @@ function CarDealerShopDetailsPage() {
                                     <div className="review-header">
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
+                                            {t('by')} {reviewItem.userFirstName + ' ' + reviewItem.userLastName} {t('on')} {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -646,14 +748,14 @@ function CarDealerShopDetailsPage() {
                         ) : (
                             <p>{t('No reviews available')}</p>
                         )}
+                        <div id="pagination">
+                            {reviewPaging && reviewPaging.TotalPages > 0 &&
+                                <>
+                                    <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                                </>
+                            }
+                        </div>
                     </div>
-                </div>
-                <div id="pagination">
-                    {reviewPaging && reviewPaging.TotalPages > 0 &&
-                        <>
-                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
-                        </>
-                    }
                 </div>
             </div>
 
@@ -664,65 +766,50 @@ function CarDealerShopDetailsPage() {
                     <h2>{t('Working Schedule')}</h2>
                 </div>
 
-                <div className="about-us-section">
-                    {/* ... other parts of the section ... */}
-
-                    <div className="operation-hours">
-                        {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>{t('No work schedule present')}</p>
-                        ) : (
-                            userDetails.workingTimes.map((day, index) => (
-                                <p key={index}>
-                                    {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
-                                </p>
-                            ))
-                        )}
-                    </div>
-
-                    {/* ... other parts of the section ... */}
+                <div className="operation-hours">
+                    {isDefaultSchedule(userDetails.workingTimes) ? (
+                        <p>{t('No work schedule present')}</p>
+                    ) : (
+                        <table>
+                            <tbody>
+                                {
+                                    userDetails.workingTimes.map((day, index) => (
+                                        <tr key={index}>
+                                            <td>{daysOfWeek[day.dayOfWeek]}</td>
+                                            <td>{day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
             {editDealerProfile && (
-                <div className="dealer-car-sales-modal">
-                    <div className="dealer-car-sales-modal-content-2">
-                        <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
-                        <h2>Edit Profile</h2>
-                        {modalPage === 1 && (
-                            <CarDealerProfilePage
-                                action="Edit"
-                                userDetails={editDealerProfile}
-                                handleInputChange={handleInputChange}
-                            />
-                        )}
-                        {modalPage === 2 && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1); setAddError(null); setError(null) }}>&times;</span>
+                        <h2>{t('Edit Profile')}</h2>
+                        <div className="pol-crash-modal-content-2">
                             <CarDealerProfileImage
                                 model={editDealerProfile}
                                 handleAddImages={handleAddImages}
                                 imageUrl={imageUrl}
                             />
-                        )}
-                        {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
-                            <>
-                                <div>
-                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        Previous
-                                    </button>
-                                    <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? 'Next' : 'Edit'}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                        {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
-                        {/*    Previous*/}
-                        {/*</button>*/}
-                        {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
-                        {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
-                        {/*</button>*/}
-                        {addError && (
-                            <p className="dealer-car-sales-error">{addError}</p>
-                        )}
+                            <CarDealerProfilePage
+                                action="Edit"
+                                userDetails={editDealerProfile}
+                                handleInputChange={handleInputChange}
+                            />
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleNextPage} disabled={adding} className="reg-reg-model-add-btn">
+                                {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

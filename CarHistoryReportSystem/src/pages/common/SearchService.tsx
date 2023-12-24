@@ -115,6 +115,7 @@ function SearchService() {
                 setError(DataProviderResponse.error);
             } else {
                 setCarDealerList(DataProviderResponse.data);
+                setPaging(DataProviderResponse.pages)
                 await geocodeDealerAddresses(DataProviderResponse.data);
             }
         } catch (error) {
@@ -124,7 +125,9 @@ function SearchService() {
             setLoading(false);
         }
     };
-
+    useEffect(() =>{
+        fetchData()
+    },[page])
     const geocodeDealerAddresses = async (dealers: DataProvider[]) => {
         const newMarkers = [];
         for (const dealer of dealers) {
@@ -197,10 +200,11 @@ function SearchService() {
                 <div className="filter-choice">
                     <label>{t('Sort By Name')}</label>
                     <select
+                        style={{width:'100px'}}
                         onChange={(e) => setSortByName(Number(e.target.value))}
                         value={sortByName}
                     >
-                        <option value="0">{t('Z-A')}</option>
+                        <option value="-1">{t('Z-A')}</option>
                         <option value="1">{t('A-Z')}</option>
                     </select>
                 </div>

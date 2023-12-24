@@ -7,7 +7,7 @@ import { APIResponse, DataProvider, DataProviderSearchForm, Paging, Reviews } fr
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { GoogleMap, InfoWindow, LoadScript, Marker as GoogleMapMarker } from '@react-google-maps/api';
-import { Avatar, Pagination} from '@mui/material';
+import { Avatar, Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +28,7 @@ function SearchDealer() {
     const [sortByName, setSortByName] = useState(0)
     const [shouldGeocode, setShouldGeocode] = useState(false);
     const apiKey = "AIzaSyBnnzmm550Bo1McFJZ_MCaQ5IKha6TH8G8"
-    
+
     interface MarkerData {
         position: {
             lat: number;
@@ -115,6 +115,7 @@ function SearchDealer() {
                 setError(DataProviderResponse.error);
             } else {
                 setCarDealerList(DataProviderResponse.data);
+                setPaging(DataProviderResponse.pages)
                 await geocodeDealerAddresses(DataProviderResponse.data);
             }
         } catch (error) {
@@ -124,6 +125,9 @@ function SearchDealer() {
             setLoading(false);
         }
     };
+    useEffect(() =>{
+        fetchData()
+    },[page])
 
     const geocodeDealerAddresses = async (dealers: DataProvider[]) => {
         const newMarkers = [];
@@ -149,7 +153,7 @@ function SearchDealer() {
     };
 
     const geocodeAddress = async (address: string) => {
-        
+
         const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
         const response = await fetch(url);
@@ -198,6 +202,7 @@ function SearchDealer() {
                 <div className="filter-choice">
                     <label>{t('Sort By Name')}</label>
                     <select
+                        style={{ width: '100px' }}
                         onChange={(e) => setSortByName(Number(e.target.value))}
                         value={sortByName}
                     >

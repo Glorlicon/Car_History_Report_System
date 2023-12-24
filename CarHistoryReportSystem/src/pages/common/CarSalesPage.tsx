@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/State';
-import {ListCarForSale, ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
+import { ListCarForSale, ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 import { APIResponse, Car, CarModel, CarSearchParams, Manufacturer, Paging } from '../../utils/Interfaces';
 import '../../styles/CarForSale.css'
 import { useTranslation } from 'react-i18next';
 import { Pagination } from '@mui/material';
 import { GetImages } from '../../services/azure/Images';
 import cardefaultimage from '../../images/car-default.jpg';
+import { BODY_TYPES } from '../../utils/const/BodyTypes';
+import { FUEL_TYPES } from '../../utils/const/FuelTypes';
 
 
 function CarSalesPage() {
@@ -64,7 +66,6 @@ function CarSalesPage() {
             pricemax: priceMax,
             milagemax: milageMax
         }
-        console.log(searchParams.make)
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const carListResponse: APIResponse = await ListCarForSale(page, connectAPIError, language, searchParams)
@@ -73,11 +74,9 @@ function CarSalesPage() {
         } else {
             const manufacturerReponse: APIResponse = await ListManufacturer();
             setManufacturerList(manufacturerReponse.data)
-            console.log(manufacturerReponse.data)
             setCarList(carListResponse.data)
             setPaging(carListResponse.pages)
         }
-        console.log(carListResponse.data)
         setLoading(false)
     }
 
@@ -92,14 +91,26 @@ function CarSalesPage() {
     useEffect(() => {
         fetchData();
     }, [resetTrigger]);
-
+    function getBodyTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(BODY_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
+    function getFuelTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(FUEL_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
     return (
         <>
             <div className="car-sale">
-                <aside id="filters">
-                    {/*<div id="search">*/}
-                    {/*    <input type="text" placeholder={t('Search')} />*/}
-                    {/*</div>*/}
+                <div id="filters" style={{ position: 'sticky', top: '100px', height: '500px' }}>
                     <button onClick={fetchData} id="clear-filters">{t('Search')}</button>
                     <div className="clear-filters">
                         <p>{t('Filters')}</p>
@@ -181,21 +192,12 @@ function CarSalesPage() {
                             </select>
                         </div>
                     </div>
-                </aside>
+                </div>
 
                 <section id="car-listings">
                     <div id="sorting">
                         <div className="paging-result">
-                            <p>Showing {paging && paging.TotalPages > 0 ? paging?.CurrentPage : paging?.TotalPages} out of {paging?.TotalPages} pages</p>
-                        </div>
-                        <div className="sorting-option">
-                            {/*<label htmlFor="sort-by">Sort By: </label>*/}
-                            {/*<select id="sort-by">*/}
-                            {/*    <option value="distance">Distance</option>*/}
-                            {/*    <option value="value">Value</option>*/}
-                            {/*    <option value="price">Price</option>*/}
-                            {/*    */}{/* ... other sorting options ... */}
-                            {/*</select>*/}
+                            <p>{t('Showing')} {paging && paging.TotalPages > 0 ? paging?.CurrentPage : paging?.TotalPages} {t('out of')} {paging?.TotalPages} {t('pages')}</p>
                         </div>
                     </div>
 
@@ -212,41 +214,50 @@ function CarSalesPage() {
                                 <button onClick={fetchData} className="ad-car-retry-btn">Retry</button>
                             </td>
                         </tr>
-                        ) : carList.length > 0 ? (
-                                carList.map((model: any, index: number) => (
-                                    <a className="carlink" href={`/sales/details/${model.vinId}`}>
-                                        <div className="car-card" key={index}>
-                                            <div className="car-image">
-                                                <img src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
-                                                    alt="Car" />
-                                                <span className="image-count">{model.carImages.length} {t('Photos')}</span>
-                                            </div>
-                                            <div className="car-details">
-                                                <h3>{t('Used')} {model.modelId}</h3>
-                                                <div className="price">{t('Price')}: {model.carSalesInfo.price}</div>
-                                                <div className="details">
-                                                    <p>{t('Color')}: {t(model.colorName)}</p>
-                                                    <p>{t('Milage')}: {model.currentOdometer}</p>
-                                                    {/* Other details */}
-                                                </div>
-                                                <div className="dealer-info">
-                                                    <p>
-                                                        {t('Car Dealer')}: 
-                                                        <a
-                                                            href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
-                                                            className="dealer-link"
-                                                        >
-                                                            {model.carSalesInfo.dataProvider.name}
-                                                        </a>
-                                                    </p>
-                                                </div>
+                    ) : carList.length > 0 ? (
+                        carList.map((model: any, index: number) => (
+                            <a className="carlink" href={`/sales/details/${model.vinId}`}>
+                                <div className="car-card" key={index}>
+                                    <h1 style={{ fontSize: '40px', textAlign: 'left' }}>{model.model?.releasedDate.split('-')[0]} {model.modelId} {t(getFuelTypeName(model.model?.fuelType))} {t(getBodyTypeName(model.model?.bodyType))}</h1>
+                                    <div style={{ display: 'flex' }}>
+                                        <div className="car-image">
+                                            <img src={model.carImages && model.carImages.length > 0 ? GetImages(model.carImages[0].imageLink) : cardefaultimage}
+                                                alt="Car" />
+                                            <span className="image-count">{model.carImages.length} {t('Photos')}</span>
+                                        </div>
+                                        <div className="car-details">
+                                            <h1 className="price" style={{ textAlign: 'left' }}>{t('Price')}: {model.carSalesInfo.price} {t('VND')}</h1>
+                                            <div className="details">
+                                                <p><span>{t('Color')}:</span> {t(model.colorName)}</p>
+                                                <p><span>{t('Country')}:</span> {t(model.model?.country)}</p>
+                                                <p><span>{t('Dimension')}:</span> {t(model.model?.dimension)}</p>
+                                                <p><span>{t('Mileage')}:</span> {t(model.currentOdometer)} KM</p>
+                                                <p><span>{t('Manifacturer')}:</span> {t(model.model?.manufacturerName)}</p>
+                                                <p><span>{t('RPM')}:</span> {t(model.model?.rpm)}</p>
+                                                <p><span>{t('Dimension')}:</span> {t(model.model?.dimension)}</p>
+                                                <p><span>{t('Engine Number')}:</span> {t(model.engineNumber)}</p>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
+                                    <div className="dealer-info">
+                                        <p style={{fontSize:'25px'}}><span>{t('VIN')}:</span> {model.vinId}</p>
+                                        <p style={{fontSize:'25px'}}>
+                                            <span>{t('Car Dealer')}:</span>{' '}
+                                            <a
+                                                href={`sales/dealer/${model.carSalesInfo.dataProvider.id}`}
+                                                className="dealer-link"
+                                            >
+                                                {model.carSalesInfo.dataProvider.name}
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+
                         ))
                     ) : (
                         <tr>
-                                        <td colSpan={5}>{t('No cars found')}</td>
+                            <td colSpan={5}>{t('No cars found')}</td>
                         </tr>
                     )}
                     <div id="pagination">
