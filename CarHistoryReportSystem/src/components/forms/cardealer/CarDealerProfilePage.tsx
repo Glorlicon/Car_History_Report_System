@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import i18n from '../../../localization/config';
 import { RootState } from '../../../store/State';
+import TextField from '@mui/material/TextField'
 import { CarDealer, DataProvider, EditDataProvider, workingTimes, } from '../../../utils/Interfaces';
+import Textarea from '@mui/joy/Textarea';
 interface CarDealerProfilePageProps {
     action: "Add" | "Edit";
     userDetails: EditDataProvider;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => void;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number, field?: string) => void;
 }
 const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
     action,
@@ -27,19 +29,28 @@ const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
 
     return (
         <>
-            <div className="dealer-car-sales-form-columns">
-                <div className="dealer-car-sales-form-column">
-                    <label>{t('Shop Name')}:</label>
-                    <input type="text" name="name" value={userDetails.name} onChange={handleInputChange} />
+                <div className="pol-crash-form-column">
+                    <label>{t('Shop Name')}:</label>                   
+                    <TextField type="text" name="name" value={userDetails.name} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
                 </div>
-                <div className="dealer-car-sales-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Phone Number')}:</label>
-                    <input type="text" name="phoneNumber" value={userDetails.phoneNumber} onChange={handleInputChange} />
+                    <TextField type="text" name="phoneNumber" value={userDetails.phoneNumber} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
+                </div>
+                <div className="pol-crash-form-column">
+                    <label>{t('Address')}:</label>
+                    <TextField type="text" name="address" value={userDetails.address} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
+                </div>
+                <div className="pol-crash-form-column">
+                    <label>{t('Description')}:</label>
+                    <Textarea  name="description" value={userDetails.description} onChange={handleInputChange}/>
+                </div>
+                <div className="pol-crash-form-column">
+                    <label>{t('Website Link')}:</label>
+                    <TextField type="text" name="websiteLink" value={userDetails.websiteLink} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
                 </div>
                 
-            </div>
-            <div className="dealer-car-sales-form-columns">
-                <div className="dealer-car-sales-form-column">
+                <div className="pol-crash-form-column">
                     <label>{t('Working Schedule')}: </label>
                     {userDetails?.workingTimes?.map((day, index) => (
                         <div className="dealer-schedule" key={index}>
@@ -75,7 +86,6 @@ const CarDealerProfilePage: React.FC<CarDealerProfilePageProps> = ({
                         </div>
                     ))}
                 </div>
-            </div>
 
         </>
     );

@@ -445,7 +445,7 @@ function ServiceShopHistory() {
                                                     <TableCell
                                                         key={column.id + '-' + index}
                                                         align={column.align}
-                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
                                                     >
                                                         {column.label}
                                                     </TableCell>

@@ -1,36 +1,46 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { GetCar } from '../../services/api/Car';
 import { RootState } from '../../store/State';
-import { ListCarForSale } from '../../services/api/CarForSale';
-import { APIResponse, Car, CarImages } from '../../utils/Interfaces';
+import { GetCarForSale, ListCarForSale, SendContactMail } from '../../services/api/CarForSale';
+import { APIResponse, Car, CarImages, ContactMail } from '../../utils/Interfaces';
 import '../../styles/CarDealerCarDetails.css'
 import { GetImages } from '../../services/azure/Images';
 import { useTranslation } from 'react-i18next';
+import { BODY_TYPES } from '../../utils/const/BodyTypes';
+import cardefaultimage from '../../images/car-default.jpg';
+import { FUEL_TYPES } from '../../utils/const/FuelTypes';
 
 function CarDealerCarDetails() {
-    const { t, i18n } = useTranslation()
-    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    const data = useSelector((state: RootState) => state.auth.token);
     type RouteParams = {
         id: string
     }
+    const { t, i18n } = useTranslation();
+    const currentLanguage = useSelector((state: RootState) => state.auth.language);
     const { id } = useParams<RouteParams>()
+    const limitedDisplayCount = 6;
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [car, setCar] = useState<Car|null>()
+    const [addError, setAddError] = useState<string | null>(null);
+    const [adding, setAdding] = useState(false);
+    const [car, setCar] = useState<Car | null>()
+    const [isExpanded, setIsExpanded] = useState(false);
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-        let connectAPIError = t('Cannot connect to API! Please try again later')
-        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-        const carSalesListResponse: APIResponse = await GetCar(id as unknown as string, token,connectAPIError,language)
-        if (carSalesListResponse.error) {
-            setError(carSalesListResponse.error)
+        const carSalesResponse: APIResponse = await GetCarForSale(id as unknown as string)
+        if (carSalesResponse.error) {
+            console.log("error")
+            setError(carSalesResponse.error)
         } else {
-            setCar(carSalesListResponse.data)
+            setCar(carSalesResponse.data)
+            console.log(carSalesResponse)
         }
+
         setLoading(false)
     }
 
@@ -43,8 +53,8 @@ function CarDealerCarDetails() {
         if (currentImageIndex === 0) {
             setCurrentImageIndex(car.carImages!.length - 1)
         } else {
-            setCurrentImageIndex((prev) => (prev-1))
-        }  
+            setCurrentImageIndex((prev) => (prev - 1))
+        }
     };
 
     const handleNextImage = () => {
@@ -55,80 +65,202 @@ function CarDealerCarDetails() {
             setCurrentImageIndex(0)
         } else {
             setCurrentImageIndex((prev) => (prev + 1))
-        } 
+        }
+    };
+    const handleChangeIndex = () => {
+        if (currentImageIndex > 0) {
+            setCurrentImageIndex(currentImageIndex - 1)
+        }
+    }
+    function getBodyTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(BODY_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
+    function getFuelTypeName(value: number): string | null {
+        for (const [key, val] of Object.entries(FUEL_TYPES)) {
+            if (val === value) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    const handleMessageSend = async () => {
+        setAdding(true);
+        setAddError(null);
+
+        const response: APIResponse = await SendContactMail(newEmail);
+        setAdding(false);
+        if (response.error) {
+            setAddError(response.error);
+        } else {
+            fetchData();
+        }
+    }
+
+    const [newEmail, setNewEmail] = useState<ContactMail>({
+        firstName: '',
+        lastName: '',
+        zipCode: '',
+        phoneNumber: '',
+        email: '',
+        vinId: id as string
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+        setNewEmail({
+            ...newEmail,
+            [e.target.name]: value,
+        });
     };
 
     useEffect(() => {
-        fetchData();
         i18n.changeLanguage(currentLanguage)
-    }, []);
+        fetchData()
+    }, [])
+
     return (
-        <div className="dealer-car-sales-details-page">
-            {loading ? (
-                <div className="dealer-car-sales-details-spinner"></div>
-            ): error ? (
-                <div>
-                        {error}
-                        <button onClick={fetchData} className="dealer-car-sales-details-retry-btn">Retry</button>
-                </div>
-            ): car && (
-                        <div className="dealer-car-sales-details-container">
-                            <h1 className="dealer-car-sales-details-header">Car Details</h1>
-                            <div className="dealer-car-sales-details-section">
-                                <p>
-                                    <strong>VIN ID:</strong> {car.vinId}
-                                </p>
-                                <p>
-                                    <strong>License Plate Number:</strong> {car.licensePlateNumber}
-                                </p>
-                                <p>
-                                    <strong>Color:</strong> {car.colorName}
-                                </p>
-                                <p>
-                                    <strong>Current Odometer:</strong> {car.currentOdometer}
-                                </p>
-                                <p>
-                                    <strong>Engine Number:</strong> {car.engineNumber}
-                                </p>
-                                <p>
-                                    <strong>Modified:</strong> {car.isModified ? "Yes" : "No"}
-                                </p>
-                                <p>
-                                    <strong>CommercialUse:</strong> {car.isCommercialUse ? "Yes" : "No"}
-                                </p>
-                                <p>
-                                    <strong>Model ID:</strong> {car.modelId}
-                                </p>
+        <>
+            <div style={{paddingTop:'100px', flex:'1'}}>
+                <div style={{minHeight:'100vh'}}>
+                    <div className="car-image-section">
+                        <div className="box">
+                            <div className="car-detail-image">
+                                <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
+                                <img src={
+                                    car?.carImages && car.carImages.length > 0 ?
+                                        GetImages(car.carImages[currentImageIndex].imageLink) :
+                                        cardefaultimage
+                                } alt="Car Image" />
+                                <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
+                                {/* Image counter */}
+                                <div className="image-count">
+                                    {car?.carImages?.length || 0} {t('Photos')}
+                                </div>
+                            </div>
+                            <div className="vehicle-info">
+                                <h1>{car?.model?.releasedDate.split('-')[0]} {car?.modelId} {t(getFuelTypeName(car?.model?.fuelType as unknown as number))} {t(getBodyTypeName(car?.model?.bodyType as unknown as number))}</h1>
+                                <p style={{ fontSize: '30px' }}>{car?.carSalesInfo?.price} {t('VND')} | {car?.currentOdometer} KM</p>
+                                <p><span>{t('VIN')}:</span> {car?.vinId}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="vehicle-highlights-box">
+                        <h1>{t('Vehicle Highlights')}</h1>
+                        <div className="box">
+                            <div className="highlight-content">
+                                <div className="notable-parts">
+                                    <div className="first-section">
+                                    <div>
+                                                <p>{t('Manufacturer')}</p>
+                                                <p>{car?.carSalesInfo?.dataProvider?.name}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Dimension')}</p>
+                                                <p>{car?.model?.dimension} mm</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Wheel Base')}</p>
+                                                <p>{car?.model?.wheelBase} mm</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Weight')}</p>
+                                                <p>{car?.model?.weight} kg</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Wheel Formula')}</p>
+                                                <p>{car?.model?.wheelFormula}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Weight')}</p>
+                                                <p>{car?.model?.weight} kg</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Released Date')}</p>
+                                                <p>{car?.model?.releasedDate}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Country Of Origin')}</p>
+                                                <p>{car?.model?.country}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Fuel Type')}</p>
+                                                <p>{getFuelTypeName(car?.model?.fuelType as unknown as number)}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Body Type')}</p>
+                                                <p>{getBodyTypeName(car?.model?.bodyType as unknown as number)}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Person Carried Number')}</p>
+                                                <p>{car?.model?.personCarriedNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Seat Number')}</p>
+                                                <p>{car?.model?.seatNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Laying Place Number')}</p>
+                                                <p>{car?.model?.layingPlaceNumber}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Maximum Output')}</p>
+                                                <p>{car?.model?.maximumOutput} kW</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Engine Displacement')}</p>
+                                                <p>{car?.model?.personCarriedNumber} cm3</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('RPM')}</p>
+                                                <p>{car?.model?.rpm}</p>
+                                            </div>
+                                            <div>
+                                                <p>{t('Tire Number')}</p>
+                                                <p>{car?.model?.tireNumber}</p>
+                                            </div>
+                                    </div>                                   
+                                </div>
                             </div>
 
-                            <h2 className="dealer-car-sales-details-header">Car Images</h2>
-                            <div className="dealer-car-sales-details-images">
-                                <button className="dealer-car-sales-details-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
-                                <img src={GetImages(car?.carImages?.at(currentImageIndex)?.imageLink as string)} alt="Car" className="dealer-car-sales-details-image" />
-                                <button className="dealer-car-sales-details-images-arrow-right" onClick={handleNextImage}>&gt;</button>
-                            </div>
-
-                            <h2 className="dealer-car-sales-details-header">Car Sale Details</h2>
-                            <div className="dealer-car-sales-details-section">
-                                <p>
-                                    <strong>Description:</strong> {car.carSalesInfo?.description}
-                                </p>
-                                <p>
-                                    <strong>Price:</strong> {car.carSalesInfo?.price}
-                                </p>
-                                <p>
-                                    <strong>Features:</strong>
-                                    {car.carSalesInfo?.features.map((f, index) => (
-                                        <li key={index}>
-                                            <span style={{ marginRight: '10px' }}>{f}</span>
-                                        </li>
+                            <div className="top-features">
+                                <p className="top-features-header">{t('Top Features')}</p>
+                                <div className="tags-container">
+                                    {car?.carSalesInfo?.features.slice(0, isExpanded ? car.carSalesInfo.features.length : limitedDisplayCount).map((feature, index) => (
+                                        <div className="tag" key={index}>
+                                            <p>{feature}</p>
+                                        </div>
                                     ))}
-                                </p>
+                                </div>
+                                {car && car.carSalesInfo && car.carSalesInfo.features && car.carSalesInfo.features.length > limitedDisplayCount && (
+                                    <div className="toggle_btn" onClick={() => setIsExpanded(!isExpanded)}>
+                                        <span className="toggle_text">{isExpanded ? 'Show Less' : 'Show More'}</span>
+                                        <span className="arrow">
+                                            <i className={`fas fa-angle-${isExpanded ? 'up' : 'down'}`}></i>
+                                        </span>
+                                    </div>
+                                )}
                             </div>
-                        </div>   
-            )}
-        </div>
-  );
+                            <div className="sales-description">
+                                <p className="sales-description-header">{t('Description')}</p>
+                                <div>
+                                    <p>
+                                        {car?.carSalesInfo?.description}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default CarDealerCarDetails;

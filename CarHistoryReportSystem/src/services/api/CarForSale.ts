@@ -16,7 +16,8 @@ export async function ListCarForSale(pageNumber: number, connectAPIError: string
                     Model: carSearchParams.model,
                     YearStart: carSearchParams.yearstart,
                     PriceMax: carSearchParams.pricemax,
-                    MilageMax: carSearchParams.milagemax
+                    MilageMax: carSearchParams.milagemax,
+                    PageSize: 10
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }

@@ -1,11 +1,11 @@
 .car-sale {
     display: flex;
     justify-content: center;
-    margin: auto;
-    margin-top: 100px;
-    max-width: 1200px;
-    margin-bottom: 200px;
+    padding-left:100px;
+    padding-right:100px;
+    padding-top: 100px;
     flex:1;
+    background-color: ghostwhite;
 }
 
 #logo {
@@ -81,6 +81,9 @@ aside#filters {
     font-weight: bold;
     cursor: pointer;
 }
+#clear-filters:hover{
+    background-color: #2B81C3;
+}
 
 /* Search input styles */
 #search input {
@@ -112,6 +115,7 @@ aside#filters {
 
 .car-card {
     display: flex;
+    flex-direction: column;
     border: 1px solid #ddd;
     padding: 20px;
     margin-bottom: 20px;
@@ -160,7 +164,19 @@ aside#filters {
         margin: 0;
         padding: 2px 0;
     }
-
+.details{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-align: left;
+    max-height: 250px;
+}
+.dealer-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+}
 .dealer-info .dealer-link {
     color: #0000EE;
     text-decoration: none;

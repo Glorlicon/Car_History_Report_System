@@ -117,7 +117,7 @@ function UserNotificationPage() {
                 <div className="plate-alert-page-item">
                     <div className="plate-search-page-item-3">
                         <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
-                            {t('Request List')}
+                            {t('Notification List')}
                         </span>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table">

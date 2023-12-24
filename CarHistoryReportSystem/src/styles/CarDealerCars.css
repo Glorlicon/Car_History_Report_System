@@ -206,7 +206,7 @@
     border-radius: 5px;
     background-color: #11C942;
     color: white;
-    padding: 3%;
+    padding: 5px;
     margin-bottom: 1%;
 }
 .dealer-car-sales-form-image-add-button:hover {
@@ -228,7 +228,7 @@
 }
 
 
-.dealer-car-sales-images-arrow-left {
+.dealer-car-sales-images-arrow-left-2 {
     position: absolute;
     top: 50%;
     transform: translateY(-90%);
@@ -241,7 +241,7 @@
     left: 5%;
 }
 
-.dealer-car-sales-images-arrow-right {
+.dealer-car-sales-images-arrow-right-2 {
     position: absolute;
     top: 50%;
     transform: translateY(-90%);

@@ -133,6 +133,7 @@ function PolicePartialPlateSearch() {
     const handleSearch = async () => {
         if (!validatePlateSearch(getSearchPlate(plateCharacters))) {
             setError(t('Only maximum of 2 wildcard characters allowed'))
+            setOpenError(true)
             return
         }
         setLoading(true);
@@ -148,6 +149,7 @@ function PolicePartialPlateSearch() {
         const response = await PlateSearch(page, token, connectAPIError, language, searchParams)
         if (response.error) {
             setError(response.error)
+            setOpenError(true)
         } else {
             setCarList(response.data)
             setMessage(t('Search succesfully. Please check the results'))

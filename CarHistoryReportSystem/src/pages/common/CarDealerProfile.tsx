@@ -13,6 +13,10 @@ import { Alert, Avatar, Box, Button, Pagination, Snackbar, TextField, Tooltip } 
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
 import cardefaultimage from '../../images/car-default.jpg';
 import { useTranslation } from 'react-i18next';
+import LanguageIcon from '@mui/icons-material/Language';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import MuiAlert from '@mui/material/Alert';
 
 function CarDealerProfile() {
     const { t, i18n } = useTranslation();
@@ -132,6 +136,8 @@ function CarDealerProfile() {
     const handleResetCarFilters = () => {
         setCarMake('')
         setCarModel('')
+        setSelectedMake(0)
+        setModelList([])
         setYearStart(0)
         setPriceMax(9999999999)
         setMilageMax(9999999999)
@@ -147,6 +153,8 @@ function CarDealerProfile() {
     const handleSelectChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = Number(e.target.value);
         setSelectedMake(selectedValue);
+        let make = manufacturerList.find(m => m.id === selectedValue)
+        setCarMake(make ? make.name : '')
         let connectAPIError = t('Cannot connect to API! Please try again later')
         let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const ManufacturerModelResponse: APIResponse = await ListManufacturerModel(connectAPIError, language, selectedValue);
@@ -205,6 +213,8 @@ function CarDealerProfile() {
             const reviewResponse: APIResponse = await GetUserComment(id as unknown as number, LoggedUserID, token);
             if (!reviewResponse.error && reviewResponse != null) {
                 setExistingReview(reviewResponse.data);
+                setComment(reviewResponse.data.description)
+                setRatingValue(reviewResponse.data.rating)
             }
         }
     };
@@ -220,68 +230,70 @@ function CarDealerProfile() {
     const fetchData = async () => {
         setLoading(true);
         setError(null);
-            const dataProviderResponse: APIResponse = await GetDealerProfileData(id as unknown as string);
-            if (dataProviderResponse.error) {
-                setError(dataProviderResponse.error);
-            } else {
-                let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
+        const dataProviderResponse: APIResponse = await GetDealerProfileData(id as unknown as string);
+        if (dataProviderResponse.error) {
+            setError(dataProviderResponse.error);
+        } else {
+            let transformedWorkingTimes: TransformedWorkingTime[] = []; // Typed as an array of TransformedWorkingTime
 
-                if (Array.isArray(dataProviderResponse.data.workingTimes)) {
-                    transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
-                        const [startHour, startMinute] = time.startTime.split(':').map(Number);
-                        const [endHour, endMinute] = time.endTime.split(':').map(Number);
+            if (Array.isArray(dataProviderResponse.data.workingTimes)) {
+                transformedWorkingTimes = dataProviderResponse.data.workingTimes.map((time: OriginalWorkingTime) => {
+                    const [startHour, startMinute] = time.startTime.split(':').map(Number);
+                    const [endHour, endMinute] = time.endTime.split(':').map(Number);
 
-                        return {
-                            dayOfWeek: time.dayOfWeek,
-                            startHour,
-                            startMinute,
-                            endHour,
-                            endMinute,
-                            isClosed: time.isClosed
-                        };
-                    });
-                }
-
-                setUserDetails({
-                    ...dataProviderResponse.data,
-                    workingTimes: transformedWorkingTimes
+                    return {
+                        dayOfWeek: time.dayOfWeek,
+                        startHour,
+                        startMinute,
+                        endHour,
+                        endMinute,
+                        isClosed: time.isClosed
+                    };
                 });
-                let searchCarParams: CarSearchParams = {
-                    make: carMake,
-                    model: carModel,
-                    yearstart: yearStart,
-                    pricemax: priceMax,
-                    milagemax: milageMax
-                }
-                let connectAPIError = t('Cannot connect to API! Please try again later')
-                let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
-                const filteredCarListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, carPage, connectAPIError, language, searchCarParams);
-                if (filteredCarListResponse.error) {
-                    setError(filteredCarListResponse.error);
-                } else {
-                    const manufacturerReponse: APIResponse = await ListManufacturer();
-                    setManufacturerList(manufacturerReponse.data)
-                    setFilteredCarList(filteredCarListResponse.data);
-                    const CarListResponse: APIResponse = await GetAllCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, connectAPIError, language);
-                    setCarList(CarListResponse.data)
-                }
-
-                let searchReviewParams: ReviewSearchParams = {
-                    dataproviderId: dataProviderResponse?.data.id,
-                    rating: rating,
-                    sortByRating: sortByRating,
-                    sortByDate: sortByDate
-                }
-                const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
-                if (filteredReviewListResponse.error) {
-                    setError(filteredReviewListResponse.error);
-                } else {
-                    setFilteredReview(filteredReviewListResponse.data);
-                    const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
-                    setReview(reviewListReponse.data)
-                }
-                setLoading(false);
             }
+
+            setUserDetails({
+                ...dataProviderResponse.data,
+                workingTimes: transformedWorkingTimes
+            });
+            let searchCarParams: CarSearchParams = {
+                make: carMake,
+                model: carModel,
+                yearstart: yearStart,
+                pricemax: priceMax,
+                milagemax: milageMax
+            }
+            let connectAPIError = t('Cannot connect to API! Please try again later')
+            let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+            const filteredCarListResponse: APIResponse = await GetCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, carPage, connectAPIError, language, searchCarParams);
+            if (filteredCarListResponse.error) {
+                setError(filteredCarListResponse.error);
+            } else {
+                const manufacturerReponse: APIResponse = await ListManufacturer();
+                setManufacturerList(manufacturerReponse.data)
+                setFilteredCarList(filteredCarListResponse.data);
+                console.log(filteredCarListResponse.data)
+                const CarListResponse: APIResponse = await GetAllCarForSaleBySellerID(dataProviderResponse?.data.id as unknown as string, connectAPIError, language);
+                setCarList(CarListResponse.data)
+                setCarPaging(filteredCarListResponse.pages)
+            }
+
+            let searchReviewParams: ReviewSearchParams = {
+                dataproviderId: dataProviderResponse?.data.id,
+                rating: rating,
+                sortByRating: sortByRating,
+                sortByDate: sortByDate
+            }
+            const filteredReviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+            if (filteredReviewListResponse.error) {
+                setError(filteredReviewListResponse.error);
+            } else {
+                setFilteredReview(filteredReviewListResponse.data);
+                const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
+                setReview(reviewListReponse.data)
+            }
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -329,18 +341,71 @@ function CarDealerProfile() {
         });
 
     }, [value, max, userDetails, defaultSchedule]);
+
+    const getCars = async () => {
+        setError(null);
+        let searchParams: CarSearchParams = {
+            make: carMake,
+            model: carModel,
+            yearstart: yearStart,
+            pricemax: priceMax,
+            milagemax: milageMax
+        }
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        const carListResponse: APIResponse = await GetCarForSaleBySellerID(userDetails.id as unknown as string, carPage, connectAPIError, language, searchParams)
+        if (carListResponse.error) {
+            setError(carListResponse.error)
+        } else {
+            const manufacturerReponse: APIResponse = await ListManufacturer();
+            setManufacturerList(manufacturerReponse.data)
+            setFilteredCarList(carListResponse.data)
+            setCarPaging(carListResponse.pages)
+        }
+        setLoading(false)
+    }
+
+    const getReviews = async () => {
+        setAddError(null);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchReviewParams: ReviewSearchParams = {
+            dataproviderId: userDetails.id,
+            rating: rating,
+            sortByRating: sortByRating,
+            sortByDate: sortByDate
+        }
+
+        const reviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+        if (reviewListResponse.error) {
+            setAddError(reviewListResponse.error);
+        } else {
+            setFilteredReview(reviewListResponse.data);
+            setReviewPaging(reviewListResponse.pages)
+            const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, userDetails.id)
+            setReview(reviewListReponse.data)
+        }
+
+        setLoading(false);
+    }
+    useEffect(() => {
+        getReviews()
+    }, [resetReviewTrigger])
+    useEffect(() => {
+        getReviews()
+    }, [reviewPage])
+    useEffect(() => {
+        getCars()
+    }, [resetCarTrigger])
+    useEffect(() => {
+        getCars()
+    }, [carPage])
     return (
         <div className="car-dealer-profile">
 
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/* Breadcrumb */}
-                    {/*<div className="breadcrumb">*/}
-                    {/*    Home*/}
-                    {/*</div>*/}
-
-                    {/* Dealer Name and Ratings */}
-                    <div className="dealer-info">
+                    <div className="dealer-info-2">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
@@ -354,8 +419,15 @@ function CarDealerProfile() {
 
                     </div>
 
+
                     <div className="phone-info">
-                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
+                        <PhoneIcon /><span>{t('Phone Number')}: <a href={`tel:${userDetails?.phoneNumber}`}>{userDetails?.phoneNumber}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LocationOnIcon /><span>{t('Address')}: <a href={`http://maps.google.com/?q=${userDetails?.address}`}>{userDetails?.address}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LanguageIcon /><span>Website: <a href={`https://${userDetails?.websiteLink}`}>{userDetails?.websiteLink}</a></span>
                     </div>
 
                     {/* Navigation */}
@@ -368,12 +440,13 @@ function CarDealerProfile() {
 
                 {/* Profile Image (This could be a user or dealer profile) */}
                 <div>
-                    <div className="profile-image">
-                            <Avatar
-                                alt="Dealer Shop"
-                                src={GetImages(userDetails?.imageLink)}
-                                sx={{ width: 100, height: 100}}
-                            />
+                    <div className="profile-icon">
+                        <Avatar
+                            alt="Dealer Shop"
+                            style={{ border: '1px solid gray' }}
+                            src={GetImages(userDetails?.imageLink)}
+                            sx={{ width: 200, height: 200 }}
+                        />
                     </div>
                 </div>
 
@@ -385,8 +458,8 @@ function CarDealerProfile() {
                 <div className="listing-header">
                     <h2>{carList.length} {t('Used Vehicles for Sale at')} {userDetails?.name}</h2>
                     <div className="filters">
-                        <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
-                        
+                        <button onClick={() => { let x = setCarPage(1); getCars(); }} className="car-btn-filter">{t('Search')}</button>
+
                         <span>
                             <div className="filter-choice">
                                 <p>{t('Make')}</p>
@@ -397,7 +470,26 @@ function CarDealerProfile() {
                                             <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
                                         ))
                                     ) : (
-                                        <option value="" disabled>Loading...</option>
+                                        <option value="" disabled>{t('Loading')}...</option>
+                                    )}
+                                </select>
+                            </div>
+                        </span>
+                        <span>
+                            <div className="filter-choice">
+                                <p>{t('Model')}</p>
+                                <select
+                                    onChange={(e) => setCarModel(e.target.value)}
+                                    disabled={modelList.length === 0}
+                                    value={carModel}
+                                >
+                                    <option value="">{t('Any Model')}</option>
+                                    {modelList.length > 0 ? (
+                                        modelList.map((model, index) => (
+                                            <option key={index} value={model.modelID}>{model.modelID}</option>
+                                        ))
+                                    ) : (
+                                        <option value="" disabled>{t('Loading')}...</option>
                                     )}
                                 </select>
                             </div>
@@ -471,11 +563,11 @@ function CarDealerProfile() {
                         <tr>
                             <td colSpan={5} style={{ textAlign: 'center' }}>
                                 {error}
-                                <button onClick={fetchData} className="ad-car-retry-btn">{t('Retry')}</button>
+                                <button onClick={getCars} className="ad-car-retry-btn">{t('Retry')}</button>
                             </td>
                         </tr>
                     ) : filteredCarList.length > 0 ? (
-                        carList.map((model: any, index: number) => (
+                        filteredCarList.map((model: any, index: number) => (
                             <div className="vehicle-card">
                                 <div className="vehicle-image">
                                     <Box
@@ -490,8 +582,8 @@ function CarDealerProfile() {
                                     />
                                 </div>
                                 <p>{t('Used')} <span>{model.modelId}</span></p>
-                                <p>{t('Price')}: <span>{model.carSalesInfo.price}</span></p>
-                                <a href={`/sales/details/${model.vinId}`}>More Detail</a>
+                                <p>{t('Price')}: <span>{model.carSalesInfo.price} {t('VND')}</span></p>
+                                <a href={`/sales/details/${model.vinId}`}>{t('More Detail')}</a>
                             </div>
                         ))
                     ) : (
@@ -499,9 +591,8 @@ function CarDealerProfile() {
                             <td colSpan={5}>{t('No cars found')}</td>
                         </tr>
                     )}
-
                 </div>
-                <div id="pagination">
+                <div id="pagination" style={{paddingBottom:'5px'}}>
                     {carPaging && carPaging.TotalPages > 0 &&
                         <>
                             <Pagination count={carPaging.TotalPages} onChange={(e, value) => setCarPage(value)} />
@@ -522,26 +613,28 @@ function CarDealerProfile() {
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
-                            {Object.keys(starCounts)
-                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
-                                .map((star, index) => {
-                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
-                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
-                                    return (
-                                        <div className="star-row" key={index}>
-                                            <span className="star-label">{star} {t('Stars')}</span>
-                                            <div className="star-bar">
-                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The filled portion of the bar */}
-                                                </div>
-                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The empty portion of the bar */}
-                                                </div>
-                                            </div>
-                                            <span className="star-percentage">{percentage}%</span>
-                                        </div>
-                                    );
-                                })}
+                            <table>
+                                <tbody>
+                                    {Object.keys(starCounts)
+                                        .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                        .map((star, index) => {
+                                            const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                            const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                            return (
+                                                <tr className="star-row" key={index}>
+                                                    <td><span className="star-label">{star} {t('Stars')}</span></td>
+                                                    <td className="star-bar">
+                                                        <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                        <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className="star-percentage">{percentage}%</span></td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -580,13 +673,13 @@ function CarDealerProfile() {
                                 </>
                             ) : (
                                 <TextField
-                                        id="filled-basic"
-                                        label={t('Please log in to submit a review.')}
-                                        variant="filled"
-                                        multiline
-                                        fullWidth
-                                        disabled
-                                    />
+                                    id="filled-basic"
+                                    label={t('Please log in to submit a review.')}
+                                    variant="filled"
+                                    multiline
+                                    fullWidth
+                                    disabled
+                                />
                             )}
                             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
@@ -618,29 +711,17 @@ function CarDealerProfile() {
                             </span>
                             <span>
                                 <div className="filter-choice">
-                                    <label>{t('Sort By Rating')}</label>
-                                    <select className="reg-inspec-search-bar"
-                                        onChange={(e) => setSortByRating(Number(e.target.value))}
-                                        value={sortByRating}
-                                    >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
-                                    </select>
-                                </div>
-                            </span>
-                            <span>
-                                <div className="filter-choice">
                                     <label>{t('Sort By Date')}</label>
                                     <select className="reg-inspec-search-bar"
                                         onChange={(e) => setSortByDate(Number(e.target.value))}
                                         value={sortByDate}
                                     >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
+                                        <option value="1">{t('Descending')}</option>
+                                        <option value="-1">{t('Ascending')}</option>
                                     </select>
                                 </div>
                             </span>
-                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={() => { let x = setReviewPage(1); getReviews(); }} className="car-btn-filter">{t('Search')}</button>
                             <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
                         </div>
                         {filteredReview.length > 0 ? (
@@ -649,7 +730,7 @@ function CarDealerProfile() {
                                     <div className="review-header">
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
+                                            {t('by')} {reviewItem.userFirstName + ' ' + reviewItem.userLastName} {t('on')} {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -660,20 +741,16 @@ function CarDealerProfile() {
                         ) : (
                             <p>{t('No reviews available')}</p>
                         )}
+                        <div id="pagination">
+                            {reviewPaging && reviewPaging.TotalPages > 0 &&
+                                <>
+
+                                    <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                                </>
+                            }
+                        </div>
                     </div>
-
-
-
                 </div>
-                <div id="pagination">
-                    {reviewPaging && reviewPaging.TotalPages > 0 &&
-                        <>
-
-                        <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
-                        </>
-                    }
-                </div>
-
             </div>
 
 
@@ -681,21 +758,23 @@ function CarDealerProfile() {
                 <div className="about-us-title">
                     <h2>{t('Working Schedule')}</h2>
                 </div>
-                <div className="about-us-section">
-                    {/* ... other parts of the section ... */}
-                    <div className="operation-hours">
-                        {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>{t('No work schedule present')}</p>
-                        ) : (
-                            userDetails.workingTimes.map((day, index) => (
-                                <p key={index}>
-                                    {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
-                                </p>
-                            ))
-                        )}
-                    </div>
-                    {/* ... other parts of the section ... */}
+                <div className="operation-hours">
+                    {isDefaultSchedule(userDetails.workingTimes) ? (
+                        <p>{t('No work schedule present')}</p>
+                    ) : (
+                        <table>
+                            <tbody>
+                                {
+                                    userDetails.workingTimes.map((day, index) => (
+                                        <tr key={index}>
+                                            <td>{daysOfWeek[day.dayOfWeek]}</td>
+                                            <td>{day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
         </div>

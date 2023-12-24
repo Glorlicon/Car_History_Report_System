@@ -27,6 +27,12 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField'
 import { ListManufacturer, ListManufacturerModel } from '../../services/api/CarForSale';
+import dayjs, { Dayjs } from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import moment from "moment";
 
 interface Column {
     id: 'vinId' | 'modelId' | 'price' | 'action';
@@ -81,7 +87,7 @@ function CarDealerCarList() {
     const [removedImages, setRemovedImages] = useState<string[]>([])
     const [newCarSales, setNewCarSales] = useState<CarSalesInfo>(basicCarSale);
     const [feature, setFeature] = useState<string>('');
-    const [editCarSales, setEditCarSales] = useState<CarSalesInfo|null>(null)
+    const [editCarSales, setEditCarSales] = useState<CarSalesInfo | null>(null)
     const [adding, setAdding] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -94,13 +100,13 @@ function CarDealerCarList() {
             setAddError(t('VIN must be filled out'));
             return false;
         }
-        if (carSales.price <=0) {
+        if (carSales.price <= 0) {
             setAddError(t('Price must be larger than 0'));
             return false;
         }
         return true;
     };
-    const [saleDetails, setSaleDetails] = useState<CarSaleDetails|null>();
+    const [saleDetails, setSaleDetails] = useState<CarSaleDetails | null>();
 
     const handleSetFeature = (index: number, value: string) => {
         if (editCarSales) {
@@ -215,7 +221,7 @@ function CarDealerCarList() {
                 ...editCarSales,
                 carImages: [
                     ...(editCarSales.carImages as CarImages[]).filter(image => image.id !== -1),
-                    ... addImages.data
+                    ...addImages.data
                 ]
             }, token, connectAPIError, language);
             setAdding(false);
@@ -260,6 +266,24 @@ function CarDealerCarList() {
             });
         }
     };
+    const handleDateChange = (value: Dayjs, type: string) => {
+        let date = moment(value.toDate()).format('YYYY-MM-DD');
+        if (type === 'DOB') {
+            if (saleDetails) {
+                setSaleDetails({
+                    ...saleDetails,
+                    dob: date
+                })
+            }
+        } else if (type === 'startDate') {
+            if (saleDetails) {
+                setSaleDetails({
+                    ...saleDetails,
+                    startDate: date
+                })
+            }
+        }
+    }
 
     const handleSoldClick = (id: string) => {
         setSaleDetails({
@@ -269,14 +293,14 @@ function CarDealerCarList() {
             note: '',
             phoneNumber: '',
             startDate: '',
-            dob:''
+            dob: ''
         })
     }
     const handleDetailsClick = (id: string) => {
         navigate(`/dealer/sales/details/${id}`)
     }
-    const handleCarSale = async() => {
-        if (saleDetails!=null && validateSaleDetails(saleDetails)) {
+    const handleCarSale = async () => {
+        if (saleDetails != null && validateSaleDetails(saleDetails)) {
             setAdding(true);
             setAddError(null);
             let connectAPIError = t('Cannot connect to API! Please try again later')
@@ -345,12 +369,12 @@ function CarDealerCarList() {
             if (removedImage[0].id != -1) setRemovedImages([...removedImages, removedImage[0].imageLink])
         }
     }
-    const handleSalesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleSalesChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         if (saleDetails)
-        setSaleDetails({
-            ...saleDetails,
-            [e.target.name]: e.target.value
-        })
+            setSaleDetails({
+                ...saleDetails,
+                [e.target.name]: e.target.value
+            })
     }
 
     const validateSaleDetails = (d: CarSaleDetails) => {
@@ -396,7 +420,7 @@ function CarDealerCarList() {
             priceMax: searchPriceMax,
             priceMin: searchPriceMin
         }
-        const carSalesListResponse: APIResponse = await ListCarDealerCarForSale(dealerId, token, page+1, connectAPIError, language, searchParams)
+        const carSalesListResponse: APIResponse = await ListCarDealerCarForSale(dealerId, token, page + 1, connectAPIError, language, searchParams)
         if (carSalesListResponse.error) {
             setError(carSalesListResponse.error)
         } else {
@@ -431,421 +455,421 @@ function CarDealerCarList() {
     useEffect(() => {
         fetchData();
     }, [resetTrigger]);
-  return (
-      <div className="pol-crash-list-page">
-          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
-              <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
-                  {message}
-              </MuiAlert>
-          </Snackbar>
-          <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
-              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
-                  {error ? error : addError}
-              </MuiAlert>
-          </Snackbar>
-          <div className="pol-alert-action">
-              <Accordion>
-                  <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                  >
-                      <Typography style={{ fontWeight: 'bold' }}>+ {t('Add Car Sale')}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                      <Typography>
-                          {t('Add Manually')}
-                      </Typography>
-                      <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car Sale')}</button>
-                  </AccordionDetails>
-              </Accordion>
-          </div>
-          <div className="pol-alert-action">
-              <Accordion>
-                  <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                  >
-                      <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                      <div className="reg-inspec-search-filter-container-3">
-                          <div className="reg-inspec-search-filter-container-2">
-                              <div className="reg-inspec-search-filter-item-2">
-                                  <label>{t('Release Year')}</label>
-                                  <div className="reg-inspec-search-filter-item-2-dates">
-                                      <label>{t('From')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchReleaseDateMin}
-                                          onChange={(e) => setSearchReleaseDateMin(e.target.value)}
-                                          min="1900"
-                                          max="2099"
-                                          step="1"
-                                      />
-                                      <label>{t('To')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchReleaseDateMax}
-                                          onChange={(e) => setSearchReleaseDateMax(e.target.value)}
-                                          min="1900"
-                                          max="2099"
-                                          step="1"
-                                      />
-                                  </div>
-                              </div>
-                              <div className="reg-inspec-search-filter-item-2">
-                                  <label>{t('Odometer')}</label>
-                                  <div className="reg-inspec-search-filter-item-2-dates">
-                                      <label>{t('From')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchOdometerMin}
-                                          onChange={(e) => setSearchOdometerMin(e.target.value)}
-                                          min="0"
-                                      />
-                                      <label>{t('To')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchOdometerMax}
-                                          onChange={(e) => setSearchOdometerMax(e.target.value)}
-                                          min="0"
-                                      />
-                                  </div>
-                              </div>
-                              <div className="reg-inspec-search-filter-item-2">
-                                  <label>{t('Price')}</label>
-                                  <div className="reg-inspec-search-filter-item-2-dates">
-                                      <label>{t('From')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchPriceMin}
-                                          onChange={(e) => setSearchPriceMin(e.target.value)}
-                                          min="0"
-                                      />
-                                      <label>{t('To')}: </label>
-                                      <input
-                                          type="number"
-                                          className="reg-inspec-search-bar"
-                                          value={searchPriceMax}
-                                          onChange={(e) => setSearchPriceMax(e.target.value)}
-                                          min="0"
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                          <div className="reg-inspec-search-filter-container-2">
-                              <div className="reg-inspec-search-filter-item">
-                                  <label>{t('Car ID')}</label>
-                                  <input
-                                      type="text"
-                                      className="reg-inspec-search-bar"
-                                      placeholder={t('Search by Car ID')}
-                                      value={searchVin}
-                                      onChange={(e) => setSearchVin(e.target.value)}
-                                  />
-                              </div>
-                              <div className="reg-inspec-search-filter-item">
-                                  <label>{t('Manufacturer')}</label>
-                                  <select onChange={handleSelectChange} value={selectedMake} className="reg-inspec-search-bar">
-                                      <option value="">{t('Any Make')}</option>
-                                      {searchManuList.length > 0 ? (
-                                          searchManuList.map((manufacturer, index) => (
-                                              <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
-                                          ))
-                                      ) : (
-                                          <option value="" disabled>{t('Loading')}...</option>
-                                      )}
-                                  </select>
-                              </div>
-                              <div className="reg-inspec-search-filter-item">
-                                  <label>{t('Car Model')}</label>
-                                  <select
-                                      className="reg-inspec-search-bar"
-                                      onChange={(e) => setSearchModel(e.target.value)}
-                                      disabled={searchModelList.length === 0}
-                                      value={searchModel}
-                                  >
-                                      <option value="">{t('Any Model')}</option>
-                                      {searchModelList.length > 0 ? (
-                                          searchModelList.map((model, index) => (
-                                              <option key={index} value={model.modelID}>{model.modelID}</option>
-                                          ))
-                                      ) : (
-                                          <option value="" disabled>{t('Loading')}...</option>
-                                      )}
-                                  </select>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="reg-inspec-search-filter-item-4">
-                          <button
-                              className="search-reg-inspec-btn"
-                              onClick={fetchData}
-                          >
-                              {t('Search...')}
-                          </button>
-                          <button
-                              className="reset-reg-inspec-btn"
-                              onClick={handleResetFilters}
-                          >
-                              {t('Reset Filters')}
-                          </button>
-                      </div>
-                  </AccordionDetails>
-              </Accordion>
-          </div>
-          <div className="plate-search-page-row">
-              <div className="plate-alert-page-item">
-                  <div className="plate-search-page-item-3">
-                      <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom:'15px',paddingTop:'15px' }}>
-                          {t('Car Sales List')}
-                      </span>
-                      <TableContainer>
-                          <Table stickyHeader aria-label="sticky table">
-                              <TableHead>
-                                  <TableRow>
-                                      {columns.map((column, index) => {
-                                          if (column.id !== 'action') {
-                                              return (
-                                                  <TableCell
-                                                      key={column.id + '-' + index}
-                                                      align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
-                                                  >
-                                                      {column.label}
-                                                  </TableCell>
-                                              )
-                                          } else {
-                                              return (
-                                                  <TableCell
-                                                      sx={stickyCellStyle}
-                                                      key={column.id + '-' + index}
-                                                      align={column.align}
-                                                      style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
-                                                  >
-                                                      {column.label}
-                                                  </TableCell>
-                                              )
-                                          }
-                                      })}
-                                  </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                  {loading ? (
-                                      <TableRow>
-                                          <TableCell colSpan={4}>
-                                              <div className="pol-crash-spinner"></div>
-                                          </TableCell>
-                                      </TableRow>
-                                  ) : error ? (
-                                      <TableRow>
-                                          <TableCell colSpan={4}>
-                                              {error}
-                                              <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
-                                          </TableCell>
-                                      </TableRow>
-                                  ) : carList.length > 0 ? carList
-                                      .map((row, index1) => {
-                                          return (
-                                              <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
-                                                  {columns.map((column, index) => {
-                                                      if (column.id !== 'action' && column.id !== 'price') {
-                                                          let value = row[column.id]
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
-                                                                  {value}
-                                                              </TableCell>
-                                                          )
-                                                      } else if (column.id === 'price') {
-                                                          let value = row.carSalesInfo?.price;
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
-                                                                  {value} {t('VND')}
-                                                              </TableCell>
-                                                          )
-                                                      } else if (column.id === 'action') {
-                                                          return (
-                                                              <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
-                                                                  <div className="pol-crash-modal-content-2-buttons" style={{ justifyContent: 'flex-start' }}>
-                                                                      <button onClick={() => { if (row.carSalesInfo) setEditCarSales({ ...row.carSalesInfo, carId: row.vinId, carImages: row.carImages }) }} disabled={adding} className="pol-crash-action-button">
-                                                                          {t('Edit1')} &#x270E;
-                                                                      </button>
-                                                                      <button onClick={() => handleDetailsClick(row.vinId)} disabled={adding} className="pol-crash-action-button-2">
-                                                                          {t('Details')}
-                                                                      </button>
-                                                                      <button onClick={() => handleSoldClick(row.vinId)} disabled={adding} className="pol-crash-action-button-3">
-                                                                          {t('Sold')}
-                                                                      </button>
-                                                                  </div>
-                                                              </TableCell>
-                                                          )
-                                                      }
-                                                  })}
-                                              </TableRow>
-                                          );
-                                      }) :
-                                      <TableRow>
-                                          <TableCell colSpan={4}>
-                                              {t('No cars found')}
-                                          </TableCell>
-                                      </TableRow>
-                                  }
-                              </TableBody>
-                          </Table>
-                      </TableContainer>
-                      <TablePagination
-                          rowsPerPageOptions={[15]}
-                          component="div"
-                          count={paging ? paging.TotalCount : 0}
-                          rowsPerPage={15}
-                          page={page}
-                          onPageChange={handleChangePage}
-                          labelDisplayedRows={
-                              ({ from, to, count }) => {
-                                  return '' + from + '-' + to + ' ' + t('of') + ' ' + count
-                              }
-                          }
-                      />
-                  </div>
-              </div>
-          </div>         
-          {showModal && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale); setModalPage(1); setError(''); setAddError('') }}>&times;</span>
-                      <h2>{t('Add Car Sale')}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          {modalPage === 1 && (
-                              <CarForSaleDetailsPage
-                                  action="Add"
-                                  model={newCarSales}
-                                  handleAddFeature={handleAddFeature}
-                                  handleRemoveFeature={handleRemoveFeature}
-                                  handleInputChange={handleInputChange}
-                                  handleSetFeature={handleSetFeature}
-                              />
-                          )}
-                          {modalPage === 2 && (
-                              <CarForSaleImagesPage
-                                  model={newCarSales}
-                                  handleAddImages={handleAddImages}
-                                  handleRemoveImages={handleRemoveImage}
-                              />
-                          )}
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
-                              <div className="pol-crash-modal-content-2-buttons">
-                                  <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
-                                      {t('Previous')}
-                                  </button>
-                                  <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
-                                      {modalPage < 2 ? t('Next') : t('Finish')}
-                                  </button>
-                              </div>
-                          )}
-                      </div>                     
-                  </div>
-              </div>
-          )}
-          {editCarSales && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setEditCarSales(null); setModalPage(1) }}>&times;</span>
-                      <h2>{t('Edit Car Sale')}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          {modalPage === 1 && (
-                              <CarForSaleDetailsPage
-                                  action="Edit"
-                                  model={editCarSales}
-                                  handleAddFeature={handleAddFeature}
-                                  handleRemoveFeature={handleRemoveFeature}
-                                  handleInputChange={handleInputChange}
-                                  handleSetFeature={handleSetFeature}
-                              />
-                          )}
-                          {modalPage === 2 && (
-                              <CarForSaleImagesPage
-                                  model={editCarSales}
-                                  handleAddImages={handleAddImages}
-                                  handleRemoveImages={handleRemoveImage}
-                              />
-                          )}
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
-                              <div className="pol-crash-modal-content-2-buttons">
-                                  <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
-                                      {t('Previous')}
-                                  </button>
-                                  <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
-                                      {modalPage < 2 ? t('Next') : t('Finish')}
-                                  </button>
-                              </div>
-                          )}
-                      </div>                      
-                  </div>
-              </div>
-          )}
-          {saleDetails && (
-              <div className="pol-crash-modal">
-                  <div className="pol-crash-modal-content">
-                      <span className="pol-crash-close-btn" onClick={() => { setSaleDetails(null); }}>&times;</span>
-                      <h2>{t('Sale Car')} {saleDetails.carId}</h2>
-                      <div className="pol-crash-modal-content-2">
-                          <div className="pol-crash-form-column">
-                              <label>{t('Customer name')}</label>
-                              <input type="text" name="name" value={saleDetails.name} onChange={handleSalesChange} />
-                          </div>
-                          <div className="pol-crash-form-column">
-                              <label>{t('Phone Number')}</label>
-                              <input type="text" name="phoneNumber" value={saleDetails.phoneNumber} onChange={handleSalesChange} />
-                          </div>
-                          <div className="ad-car-model-form-column">
-                              <label>{t('Address')}</label>
-                              <input type="text" name="address" value={saleDetails.address} onChange={handleSalesChange} />
-                          </div>
-                          <div className="pol-crash-form-column">
-                              <label>{t('DOB')}</label>
-                              <input type="date" name="dob" value={saleDetails.dob} onChange={handleSalesChange} />
-                          </div>
-                          <div className="pol-crash-form-column">
-                              <label>{t('Sale Start Date')}</label>
-                              <input type="date" name="startDate" value={saleDetails.startDate} onChange={handleSalesChange} />
-                          </div>
-                          <div className="pol-crash-form-column">
-                              <label>{t('Note')}</label>
-                              <input type="text" name="note" value={saleDetails.note} onChange={handleSalesChange} />
-                          </div>
-                          {addError && (
-                              <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
-                                  {addError}
-                              </MuiAlert>
-                          )}
-                          <button onClick={handleCarSale} disabled={adding} className="ad-user-add-btn">
-                              {adding ? (
-                                  <div className="ad-user-inline-spinner"></div>
-                              ) : t('Confirm Sale') }
-                          </button>
-                      </div>                     
-                  </div>
-              </div>
-          )}
-      </div>
-  );
+    return (
+        <div className="pol-crash-list-page">
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
+                <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                    {message}
+                </MuiAlert>
+            </Snackbar>
+            <Snackbar open={openError} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
+                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '100%', zIndex: '2000' }}>
+                    {error ? error : addError}
+                </MuiAlert>
+            </Snackbar>
+            <div className="pol-alert-action">
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography style={{ fontWeight: 'bold' }}>+ {t('Add Car Sale')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            {t('Add Manually')}
+                        </Typography>
+                        <button className="add-pol-crash-btn" onClick={() => setShowModal(true)}>{t('Add Car Sale')}</button>
+                    </AccordionDetails>
+                </Accordion>
+            </div>
+            <div className="pol-alert-action">
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography style={{ fontWeight: 'bold' }}>{t('Search Bars and Filters')}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <div className="reg-inspec-search-filter-container-3">
+                            <div className="reg-inspec-search-filter-container-2">
+                                <div className="reg-inspec-search-filter-item-2">
+                                    <label>{t('Release Year')}</label>
+                                    <div className="reg-inspec-search-filter-item-2-dates">
+                                        <label>{t('From')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchReleaseDateMin}
+                                            onChange={(e) => setSearchReleaseDateMin(e.target.value)}
+                                            min="1900"
+                                            max="2099"
+                                            step="1"
+                                        />
+                                        <label>{t('To')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchReleaseDateMax}
+                                            onChange={(e) => setSearchReleaseDateMax(e.target.value)}
+                                            min="1900"
+                                            max="2099"
+                                            step="1"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="reg-inspec-search-filter-item-2">
+                                    <label>{t('Odometer')}</label>
+                                    <div className="reg-inspec-search-filter-item-2-dates">
+                                        <label>{t('From')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchOdometerMin}
+                                            onChange={(e) => setSearchOdometerMin(e.target.value)}
+                                            min="0"
+                                        />
+                                        <label>{t('To')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchOdometerMax}
+                                            onChange={(e) => setSearchOdometerMax(e.target.value)}
+                                            min="0"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="reg-inspec-search-filter-item-2">
+                                    <label>{t('Price')}</label>
+                                    <div className="reg-inspec-search-filter-item-2-dates">
+                                        <label>{t('From')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchPriceMin}
+                                            onChange={(e) => setSearchPriceMin(e.target.value)}
+                                            min="0"
+                                        />
+                                        <label>{t('To')}: </label>
+                                        <input
+                                            type="number"
+                                            className="reg-inspec-search-bar"
+                                            value={searchPriceMax}
+                                            onChange={(e) => setSearchPriceMax(e.target.value)}
+                                            min="0"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="reg-inspec-search-filter-container-2">
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Car ID')}</label>
+                                    <input
+                                        type="text"
+                                        className="reg-inspec-search-bar"
+                                        placeholder={t('Search by Car ID')}
+                                        value={searchVin}
+                                        onChange={(e) => setSearchVin(e.target.value)}
+                                    />
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Manufacturer')}</label>
+                                    <select onChange={handleSelectChange} value={selectedMake} className="reg-inspec-search-bar">
+                                        <option value="">{t('Any Make')}</option>
+                                        {searchManuList.length > 0 ? (
+                                            searchManuList.map((manufacturer, index) => (
+                                                <option key={index} value={manufacturer.id}>{manufacturer.name}</option>
+                                            ))
+                                        ) : (
+                                            <option value="" disabled>{t('Loading')}...</option>
+                                        )}
+                                    </select>
+                                </div>
+                                <div className="reg-inspec-search-filter-item">
+                                    <label>{t('Car Model')}</label>
+                                    <select
+                                        className="reg-inspec-search-bar"
+                                        onChange={(e) => setSearchModel(e.target.value)}
+                                        disabled={searchModelList.length === 0}
+                                        value={searchModel}
+                                    >
+                                        <option value="">{t('Any Model')}</option>
+                                        {searchModelList.length > 0 ? (
+                                            searchModelList.map((model, index) => (
+                                                <option key={index} value={model.modelID}>{model.modelID}</option>
+                                            ))
+                                        ) : (
+                                            <option value="" disabled>{t('Loading')}...</option>
+                                        )}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="reg-inspec-search-filter-item-4">
+                            <button
+                                className="search-reg-inspec-btn"
+                                onClick={fetchData}
+                            >
+                                {t('Search...')}
+                            </button>
+                            <button
+                                className="reset-reg-inspec-btn"
+                                onClick={handleResetFilters}
+                            >
+                                {t('Reset Filters')}
+                            </button>
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+            </div>
+            <div className="plate-search-page-row">
+                <div className="plate-alert-page-item">
+                    <div className="plate-search-page-item-3">
+                        <span style={{ display: 'block', width: '100%', fontWeight: 'bold', fontSize: '30px', textAlign: 'center', borderTopRightRadius: '20px', borderTopLeftRadius: '20px', backgroundColor: '#3876BF', color: 'white', paddingBottom: '15px', paddingTop: '15px' }}>
+                            {t('Car Sales List')}
+                        </span>
+                        <TableContainer>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column, index) => {
+                                            if (column.id !== 'action') {
+                                                return (
+                                                    <TableCell
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell
+                                                        sx={stickyCellStyle}
+                                                        key={column.id + '-' + index}
+                                                        align={column.align}
+                                                        style={{ minWidth: column.minWidth, fontWeight: 'bold', fontSize: '20px', textAlign: 'left' }}
+                                                    >
+                                                        {column.label}
+                                                    </TableCell>
+                                                )
+                                            }
+                                        })}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {loading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4}>
+                                                <div className="pol-crash-spinner"></div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : error ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4}>
+                                                {error}
+                                                <button onClick={fetchData} className="pol-crash-retry-btn">{t('Retry')}</button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : carList.length > 0 ? carList
+                                        .map((row, index1) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.vinId + '-' + index1} style={{ backgroundColor: index1 % 2 === 1 ? 'white' : '#E1E1E1' }}>
+                                                    {columns.map((column, index) => {
+                                                        if (column.id !== 'action' && column.id !== 'price') {
+                                                            let value = row[column.id]
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
+                                                                    {value}
+                                                                </TableCell>
+                                                            )
+                                                        } else if (column.id === 'price') {
+                                                            let value = row.carSalesInfo?.price;
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }}>
+                                                                    {value} {t('VND')}
+                                                                </TableCell>
+                                                            )
+                                                        } else if (column.id === 'action') {
+                                                            return (
+                                                                <TableCell key={column.id + '-' + index} align={column.align} style={{ textAlign: 'left' }} sx={{ position: 'sticky', right: 0, background: index1 % 2 === 1 ? 'white' : '#E1E1E1' }} component="th" scope="row">
+                                                                    <div className="pol-crash-modal-content-2-buttons" style={{ justifyContent: 'flex-start' }}>
+                                                                        <button onClick={() => { if (row.carSalesInfo) setEditCarSales({ ...row.carSalesInfo, carId: row.vinId, carImages: row.carImages }) }} disabled={adding} className="pol-crash-action-button">
+                                                                            {t('Edit1')} &#x270E;
+                                                                        </button>
+                                                                        <button onClick={() => handleDetailsClick(row.vinId)} disabled={adding} className="pol-crash-action-button-2">
+                                                                            {t('Details')}
+                                                                        </button>
+                                                                        <button onClick={() => handleSoldClick(row.vinId)} disabled={adding} className="pol-crash-action-button-3">
+                                                                            {t('Sold')}
+                                                                        </button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            )
+                                                        }
+                                                    })}
+                                                </TableRow>
+                                            );
+                                        }) :
+                                        <TableRow>
+                                            <TableCell colSpan={4}>
+                                                {t('No cars found')}
+                                            </TableCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[15]}
+                            component="div"
+                            count={paging ? paging.TotalCount : 0}
+                            rowsPerPage={15}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            labelDisplayedRows={
+                                ({ from, to, count }) => {
+                                    return '' + from + '-' + to + ' ' + t('of') + ' ' + count
+                                }
+                            }
+                        />
+                    </div>
+                </div>
+            </div>
+            {showModal && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setShowModal(false); setNewCarSales(basicCarSale); setModalPage(1); setError(''); setAddError('') }}>&times;</span>
+                        <h2>{t('Add Car Sale')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            {modalPage === 1 && (
+                                <CarForSaleDetailsPage
+                                    action="Add"
+                                    model={newCarSales}
+                                    handleAddFeature={handleAddFeature}
+                                    handleRemoveFeature={handleRemoveFeature}
+                                    handleInputChange={handleInputChange}
+                                    handleSetFeature={handleSetFeature}
+                                />
+                            )}
+                            {modalPage === 2 && (
+                                <CarForSaleImagesPage
+                                    model={newCarSales}
+                                    handleAddImages={handleAddImages}
+                                    handleRemoveImages={handleRemoveImage}
+                                />
+                            )}
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
+                                <div className="pol-crash-modal-content-2-buttons">
+                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
+                                        {t('Previous')}
+                                    </button>
+                                    <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
+                                        {modalPage < 2 ? t('Next') : t('Finish')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {editCarSales && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setEditCarSales(null); setModalPage(1) }}>&times;</span>
+                        <h2>{t('Edit Car Sale')}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            {modalPage === 1 && (
+                                <CarForSaleDetailsPage
+                                    action="Edit"
+                                    model={editCarSales}
+                                    handleAddFeature={handleAddFeature}
+                                    handleRemoveFeature={handleRemoveFeature}
+                                    handleInputChange={handleInputChange}
+                                    handleSetFeature={handleSetFeature}
+                                />
+                            )}
+                            {modalPage === 2 && (
+                                <CarForSaleImagesPage
+                                    model={editCarSales}
+                                    handleAddImages={handleAddImages}
+                                    handleRemoveImages={handleRemoveImage}
+                                />
+                            )}
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : (
+                                <div className="pol-crash-modal-content-2-buttons">
+                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="pol-crash-model-prev-btn">
+                                        {t('Previous')}
+                                    </button>
+                                    <button onClick={handleNextPage} disabled={adding} className="pol-crash-model-next-btn">
+                                        {modalPage < 2 ? t('Next') : t('Finish')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+            {saleDetails && (
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setSaleDetails(null); }}>&times;</span>
+                        <h2>{t('Sale Car')} {saleDetails.carId}</h2>
+                        <div className="pol-crash-modal-content-2">
+                            <div className="pol-crash-form-column">
+                                <label>{t('Customer name')}</label>
+                                <TextField type="text" name="name" value={saleDetails.name} onChange={handleSalesChange} style={{ width: '100%' }} size='small' />
+                            </div>
+                            <div className="pol-crash-form-column">
+                                <label>{t('Phone Number')}</label>
+                                <TextField type="text" name="phoneNumber" value={saleDetails.phoneNumber} onChange={handleSalesChange} style={{ width: '100%' }} size='small' />
+                            </div>
+                            <div className="pol-crash-form-column">
+                                <label>{t('Address')}</label>
+                                <TextField type="text" name="address" value={saleDetails.address} onChange={handleSalesChange} style={{ width: '100%' }} size='small' />
+                            </div>
+                            <div className="pol-crash-form-column">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker', 'DatePicker']}>
+                                        <DatePicker label={t('DOB')} defaultValue={saleDetails.dob ? dayjs(saleDetails.dob): dayjs(new Date())} onChange={(value) => { if (value) handleDateChange(value, 'DOB') }} />
+                                        <DatePicker label={t('Sale Start Date')} defaultValue={saleDetails.startDate ? dayjs(saleDetails.startDate) : dayjs(new Date())} onChange={(value) => { if (value) handleDateChange(value, 'startDate') }} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </div>
+                            <div className="pol-crash-form-column">
+                                <label>{t('Note')}</label>
+                                <TextField type="text" name="note" value={saleDetails.note} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
+                            </div>
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleCarSale} disabled={adding} className="ad-user-add-btn">
+                                {adding ? (
+                                    <div className="ad-user-inline-spinner"></div>
+                                ) : t('Confirm Sale')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default CarDealerCarList;

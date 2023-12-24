@@ -56,7 +56,8 @@ export async function GetCarForSaleBySellerID(Id: string, pageNumber: number, co
                     Model: carSearchParams.model,
                     YearStart: carSearchParams.yearstart,
                     PriceMax: carSearchParams.pricemax,
-                    MilageMax: carSearchParams.milagemax
+                    MilageMax: carSearchParams.milagemax,
+                    PageSize:3
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }
@@ -154,7 +155,8 @@ export async function GetReviewByDataProvider(pageNumber: number, connectAPIErro
                     DataProviderId: reviewSearchParams.dataproviderId,
                     ...(reviewSearchParams.rating !== 0 && { Rating: reviewSearchParams.rating }),
                     SortByRating: reviewSearchParams.sortByRating,
-                    SortByDate: reviewSearchParams.sortByDate
+                    SortByDate: reviewSearchParams.sortByDate,
+                    PageSize:3
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }

@@ -228,7 +228,7 @@ function InsuranceCompanyInsuranceList() {
                     note: '',
                     reportDate: ''
                 })
-                setMessage(t('Add car stolen report successfully'))
+                setMessage(t('Add car insurance successfully'))
                 setOpenSuccess(true)
                 setShowModal(false);
                 fetchData();
@@ -248,7 +248,7 @@ function InsuranceCompanyInsuranceList() {
                 setAddError(response.error);
             } else {
                 setEditCarInsurance(null)
-                setMessage(t('Add car stolen report successfully'))
+                setMessage(t('Edit car insurance successfully'))
                 setOpenSuccess(true)
                 fetchData();
             }

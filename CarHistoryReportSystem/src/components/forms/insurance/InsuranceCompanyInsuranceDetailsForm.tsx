@@ -64,15 +64,15 @@ const InsuranceCompanyInsuranceDetailsForm: React.FC<InsuranceCompanyInsuranceDe
               <div className="pol-crash-form-column">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker', 'DatePicker']}>
-                      <DatePicker label={t('Insurance Start Date')} defaultValue={dayjs(model.startDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'startDate') }} />
-                      <DatePicker label={t('Insurance End Date')} defaultValue={dayjs(model.endDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'endDate') }} />
+                      <DatePicker label={t('Insurance Start Date')} defaultValue={model.startDate ? dayjs(model.startDate) : dayjs(new Date())} onChange={(value) => { if (value) handleFormatDateChange(value, 'startDate') }} />
+                      <DatePicker label={t('Insurance End Date')} defaultValue={model.endDate ? dayjs(model.endDate) : dayjs(new Date())} onChange={(value) => { if (value) handleFormatDateChange(value, 'endDate') }} />
                   </DemoContainer>
               </LocalizationProvider>
               </div>
               <div className="pol-crash-form-column">
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={['DatePicker']}>
-                          <DatePicker label={t('Report Date')} slotProps={{ textField: { fullWidth: true } }} defaultValue={dayjs(model.reportDate)} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
+                          <DatePicker label={t('Report Date')} slotProps={{ textField: { fullWidth: true } }} defaultValue={model.reportDate ? dayjs(model.reportDate) : dayjs(new Date())} onChange={(value) => { if (value) handleFormatDateChange(value, 'reportDate') }} />
                       </DemoContainer>
                   </LocalizationProvider>
               </div>

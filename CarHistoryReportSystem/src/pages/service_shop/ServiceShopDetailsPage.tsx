@@ -8,17 +8,21 @@ import { useParams } from 'react-router-dom';
 import CarDealerProfileImage from '../../components/forms/cardealer/CarDealerProfileImage';
 import CarDealerProfilePage from '../../components/forms/cardealer/CarDealerProfilePage';
 import i18n from '../../localization/config';
-import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewByDataProvider } from '../../services/api/Profile';
+import { EditProfile, GetCarForSaleBySellerID, GetCarServiceByDataprovider, GetDealerProfileData, GetReviewAllByDataProvider, GetReviewByDataProvider } from '../../services/api/Profile';
 import { GetImages, UploadImages } from '../../services/azure/Images';
 import { RootState } from '../../store/State';
 import '../../styles/CarDealerProfile.css'
-import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews } from '../../utils/Interfaces';
+import { APIResponse, Car, CarServices, DataProvider, EditDataProvider, editWorkingTime, Paging, Reviews, ReviewSearchParams } from '../../utils/Interfaces';
 import { JWTDecoder } from '../../utils/JWTDecoder';
+import LanguageIcon from '@mui/icons-material/Language';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 function ServiceShopDetailsPage() {
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
     const dealerId = JWTDecoder(token).dataprovider
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [carServicesList, setCarServicesList] = useState<CarServices[]>([]);
     const [editDealerProfile, setEditDealerProfile] = useState<EditDataProvider | null>(null)
@@ -65,6 +69,7 @@ function ServiceShopDetailsPage() {
         setRating(0)
         setSortByRating(0)
         setSortByDate(0)
+        setReviewPage(1)
         setResetReviewTrigger(prev => prev + 1);
     }
 
@@ -114,11 +119,7 @@ function ServiceShopDetailsPage() {
 
 
     const handleNextPage = () => {
-        if (modalPage < 2) {
-            setModalPage(prevPage => prevPage + 1);
-        } else {
-            if (editDealerProfile) handleEditDealerProfile();
-        }
+        if (editDealerProfile) handleEditDealerProfile();
     };
 
     const handlePreviousPage = () => {
@@ -127,7 +128,7 @@ function ServiceShopDetailsPage() {
         }
     };
     const [addError, setAddError] = useState<string | null>(null);
-
+    const [error, setError] = useState<string | null>(null);
 
     const data = useSelector((state: RootState) => state.auth.token)
     type RouteParams = {
@@ -142,12 +143,39 @@ function ServiceShopDetailsPage() {
     const value = 50;
     const max = 100;
 
+    const getReviews = async () => {
+        setLoading(true);
+        setAddError(null);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
+        let searchReviewParams: ReviewSearchParams = {
+            dataproviderId: userDetails.id,
+            rating: rating,
+            sortByRating: sortByRating,
+            sortByDate: sortByDate
+        }
+
+        const reviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+        if (reviewListResponse.error) {
+            setAddError(reviewListResponse.error);
+        } else {
+            setFilteredReview(reviewListResponse.data);
+            setReviewPaging(reviewListResponse.pages)
+            const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, userDetails.id)
+            setReview(reviewListReponse.data)
+        }
+
+        setLoading(false);
+    }
+
     const fetchData = async () => {
         setLoading(true);
-        setError(null);
+        setAddError(null);
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         const dataProviderResponse: APIResponse = await GetDealerProfileData(dealerId as unknown as string);
         if (dataProviderResponse.error) {
-            setError(dataProviderResponse.error);
+            setAddError(dataProviderResponse.error);
         } else {
             if (dataProviderResponse.data.imageLink) {
                 const image = GetImages(dataProviderResponse.data.imageLink)
@@ -176,7 +204,7 @@ function ServiceShopDetailsPage() {
             });
             const carServiceResponse: APIResponse = await GetCarServiceByDataprovider(dealerId);
             if (carServiceResponse.error) {
-                setError(carServiceResponse.error);
+                setAddError(carServiceResponse.error);
             } else {
                 setCarServicesList(carServiceResponse.data);
 
@@ -193,22 +221,33 @@ function ServiceShopDetailsPage() {
                 const uniqueServices = Array.from(new Set<string>(services));
                 setAllServices(uniqueServices); // <-- Update the state with the deduplicated services
             }
+            let searchReviewParams: ReviewSearchParams = {
+                dataproviderId: dataProviderResponse?.data.id,
+                rating: rating,
+                sortByRating: sortByRating,
+                sortByDate: sortByDate
+            }
 
+            const reviewListResponse: APIResponse = await GetReviewByDataProvider(reviewPage, connectAPIError, language, searchReviewParams)
+            if (reviewListResponse.error) {
+                setAddError(reviewListResponse.error);
+            } else {
+                setFilteredReview(reviewListResponse.data);
+                setReviewPaging(reviewListResponse.pages)
+                const reviewListReponse: APIResponse = await GetReviewAllByDataProvider(connectAPIError, language, dataProviderResponse?.data.id)
+                setReview(reviewListReponse.data)
+            }
 
-            //const reviewListResponse: APIResponse = await GetReviewByDataProvider(dataProviderResponse?.data.id)
-            //if (reviewListResponse.error) {
-            //    setError(reviewListResponse.error);
-            //} else {
-            //    setReview(reviewListResponse.data);
-            //}
-
-            //setLoading(false);
+            setLoading(false);
         }
-
-
-
         setLoading(false);
     };
+    useEffect(() => {
+        getReviews()
+    }, [resetReviewTrigger])
+    useEffect(() => {
+        getReviews()
+    }, [reviewPage])
 
     useEffect(() => {
         let totalRating = 0;
@@ -234,40 +273,40 @@ function ServiceShopDetailsPage() {
 
 
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number, field?: string) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number, field?: string) => {
         const { name, value, type } = e.target;
         setEditDealerProfile(prevProfile => {
             if (!prevProfile) return null;
+            if (e.target instanceof HTMLInputElement) {
+                const { type, checked } = e.target;
 
-            // If the change is related to working times
-            if (index !== undefined && field) {
-                let updatedTimes = [...prevProfile.workingTimes];
+                if (index !== undefined && field) {
+                    let updatedTimes = [...prevProfile.workingTimes];
 
-                if (type === 'time') {
-                    const [hours, minutes] = value.split(':').map(Number);
-
-                    updatedTimes = updatedTimes.map((time, i) => {
-                        if (i === index) {
-                            if (field === 'startHour') {
-                                return { ...time, startHour: hours, startMinute: minutes };
-                            } else if (field === 'endHour') {
-                                return { ...time, endHour: hours, endMinute: minutes };
+                    if (type === 'time') {
+                        const [hours, minutes] = value.split(':').map(Number);
+                        updatedTimes = updatedTimes.map((time, i) => {
+                            if (i === index) {
+                                if (field === 'startHour') {
+                                    return { ...time, startHour: hours, startMinute: minutes };
+                                } else if (field === 'endHour') {
+                                    return { ...time, endHour: hours, endMinute: minutes };
+                                }
                             }
-                        }
-                        return time;
-                    });
-                } else if (type === 'checkbox' && field === 'isClosed') {
-                    // Handle isClosed separately
-                    updatedTimes = updatedTimes.map((time, i) =>
-                        i === index ? { ...time, isClosed: e.target.checked, startHour: 0, startMinute: 0, endHour: 0, endMinute: 0 } : time
-                    );
-                }
+                            return time;
+                        });
+                    } else if (type === 'checkbox' && field === 'isClosed') {
+                        updatedTimes = updatedTimes.map((time, i) =>
+                            i === index ? { ...time, isClosed: checked, } : time
+                        );
+                    }
 
-                return { ...prevProfile, workingTimes: updatedTimes };
-            } else {
-                // For changes outside of working times
-                return { ...prevProfile, [name]: value };
+                    return { ...prevProfile, workingTimes: updatedTimes };
+                }
             }
+
+            // For changes from textarea or other input types
+            return { ...prevProfile, [name]: value };
         });
     };
 
@@ -294,19 +333,26 @@ function ServiceShopDetailsPage() {
             let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
             let notFoundError = t('No image was found')
             let failedError = t('Failed to upload image')
-            const uploadImage = await UploadImages(image, notFoundError, failedError)
-            if (uploadImage.error) {
-                setError(uploadImage.error)
-            } else {
-                const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadImage.data }, token);
-                setAdding(false);
-                if (response.error) {
-                    setAddError(response.error);
+            let uploadedImage = ''
+            if (image !== null) {
+                const uploadImage = await UploadImages(image, notFoundError, failedError)
+                if (uploadImage.error) {
+                    setAdding(false)
+                    setAddError(uploadImage.error)
                 } else {
-                    setEditDealerProfile(null);
-                    setModalPage(1);
-                    fetchData();
+                    uploadedImage = uploadImage.data
                 }
+            }
+            const response: APIResponse = await EditProfile({ ...editDealerProfile, imageLink: uploadedImage ? uploadedImage : userDetails.imageLink }, token);
+            setAdding(false);
+            if (response.error) {
+                setAddError(response.error);
+            } else {
+                setEditDealerProfile(null);
+                setMessage('Edit Profile Successfully')
+                setOpenSuccess(true)
+                setModalPage(1);
+                fetchData();
             }
         }
     };
@@ -337,17 +383,27 @@ function ServiceShopDetailsPage() {
         });
 
     }, [value, max, userDetails, defaultSchedule]);
-
-
+    const [message, setMessage] = useState('')
+    const [openSuccess, setOpenSuccess] = useState(false)
+    const [openError, setOpenError] = useState(false)
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSuccess(false);
+        setOpenError(false);
+    };
 
     return (
         <div className="car-dealer-profile">
+          <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleClose} key={'top' + 'right'} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{ marginTop: '200px' }}>
+              <MuiAlert elevation={6} variant="filled" severity="success" sx={{ width: '100%', zIndex: '2000' }}>
+                  {message}
+              </MuiAlert>
+          </Snackbar>
             <div className="car-dealer-profile-header-section">
                 <div className="profile-information">
-                    {/*<div className="breadcrumb">*/}
-                    {/*    Home*/}
-                    {/*</div>*/}
-                    <div className="dealer-info">
+                    <div className="dealer-info-2">
                         <h1>{userDetails?.name}</h1>
                         <div className="rating-favoured">
                             <div className="star-summary">
@@ -356,28 +412,33 @@ function ServiceShopDetailsPage() {
                                 </Typography>
                                 <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                             </div>
-                            <span className="favorites">
-                            </span>
                             <div className="overlay"></div>
                         </div>
 
                     </div>
                     <div className="phone-info">
-                        <span>{t('Phone Number')}: {userDetails?.phoneNumber}</span>
+                        <PhoneIcon /><span>{t('Phone Number')}: <a href={`tel:${userDetails?.phoneNumber}`}>{userDetails?.phoneNumber}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LocationOnIcon /><span>{t('Address')}: <a href={`http://maps.google.com/?q=${userDetails?.address}`}>{userDetails?.address}</a></span>
+                    </div>
+                    <div className="phone-info">
+                        <LanguageIcon /><span>Website: <a href={`https://${userDetails?.websiteLink}`}>{userDetails?.websiteLink}</a></span>
                     </div>
                     <div className="navigation">
-                        <a href="#service-information-section">{t('Top Service Performed')}</a>
+                        <a href="#service-information-section">{t('Service Information')}</a>
                         <a href="#ratings-reviews-section">{t('Reviews')}</a>
                         <a href="#about-us-section">{t('Working Schedule')}</a>
                     </div>
                 </div>
                 <div>
-                    <div className="profile-image" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }) }}>
+                    <div className="profile-icon" onClick={() => { setEditDealerProfile({ ...userDetails as EditDataProvider }); setAddError(null) }}>
                         <Tooltip title={t('Click to edit')}>
                             <Avatar
                                 alt="Dealer Shop"
+                                style={{ border: '1px solid gray' }}
                                 src={GetImages(userDetails?.imageLink)}
-                                sx={{ width: 100, height: 100, cursor: 'pointer' }}
+                                sx={{ width: 200, height: 200, cursor: 'pointer' }}
                             />
                         </Tooltip>
                     </div>
@@ -385,6 +446,13 @@ function ServiceShopDetailsPage() {
             </div>
 
             <div className="service-information-section" id="service-information-section">
+                <h3 className="service-information-section-header">{t('Service Information')}</h3>
+                <div className="service-info">
+                    <h3>{t('Shop Description')}</h3>
+                    <p>
+                        {userDetails.description}
+                    </p>
+                </div>
                 <div className="service-info">
                     <h3>{t('Top Services Performed')}</h3>
                     <p>{t('Based on CHRS Service History')}, <strong>{userDetails?.name}</strong> {t('specializes in these services, in addition to many others:')}</p>
@@ -412,26 +480,28 @@ function ServiceShopDetailsPage() {
                             <Rating name="read-only" value={averageRating} precision={0.1} readOnly />
                         </div>
                         <div className="star-details">
-                            {Object.keys(starCounts)
-                                .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
-                                .map((star, index) => {
-                                    const starKey = star as keyof typeof starCounts; // Assert the type of star
-                                    const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
-                                    return (
-                                        <div className="star-row" key={index}>
-                                            <span className="star-label">{star} {t('Stars')}</span>
-                                            <div className="star-bar">
-                                                <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The filled portion of the bar */}
-                                                </div>
-                                                <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
-                                                    {/* The empty portion of the bar */}
-                                                </div>
-                                            </div>
-                                            <span className="star-percentage">{percentage}%</span>
-                                        </div>
-                                    );
-                                })}
+                            <table>
+                                <tbody>
+                                    {Object.keys(starCounts)
+                                        .sort((a, b) => parseInt(b) - parseInt(a)) // Sort keys in descending order
+                                        .map((star, index) => {
+                                            const starKey = star as keyof typeof starCounts; // Assert the type of star
+                                            const percentage = review.length > 0 ? ((starCounts[starKey] / review.length) * 100).toFixed(2) : "0.00";
+                                            return (
+                                                <tr className="star-row" key={index}>
+                                                    <td><span className="star-label">{star} {t('Stars')}</span></td>
+                                                    <td className="star-bar">
+                                                        <div className="star-fill" style={{ width: `${percentage}%`, backgroundColor: 'green', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                        <div className="star-empty" style={{ width: `${100 - parseFloat(percentage)}%`, backgroundColor: 'lightgrey', height: '100%', borderRadius: '5px' }}>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className="star-percentage">{percentage}%</span></td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -453,29 +523,17 @@ function ServiceShopDetailsPage() {
                             </span>
                             <span>
                                 <div className="filter-choice">
-                                    <label>{t('Sort By Rating')}</label>
-                                    <select className="reg-inspec-search-bar"
-                                        onChange={(e) => setSortByRating(Number(e.target.value))}
-                                        value={sortByRating}
-                                    >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
-                                    </select>
-                                </div>
-                            </span>
-                            <span>
-                                <div className="filter-choice">
                                     <label>{t('Sort By Date')}</label>
                                     <select className="reg-inspec-search-bar"
                                         onChange={(e) => setSortByDate(Number(e.target.value))}
                                         value={sortByDate}
                                     >
-                                        <option value="0">{t('Descending')}</option>
-                                        <option value="1">{t('Ascending')}</option>
+                                        <option value="1">{t('Descending')}</option>
+                                        <option value="-1">{t('Ascending')}</option>
                                     </select>
                                 </div>
                             </span>
-                            <button onClick={fetchData} className="car-btn-filter">{t('Search')}</button>
+                            <button onClick={() => { let x = setReviewPage(1); getReviews(); }} className="car-btn-filter">{t('Search')}</button>
                             <button onClick={handleResetReviewFilters} className="car-btn-filter">{t('Clear Filters')}</button>
                         </div>
                         {filteredReview.length > 0 ? (
@@ -484,7 +542,7 @@ function ServiceShopDetailsPage() {
                                     <div className="review-header">
                                         <Rating name="read-only" value={reviewItem.rating} readOnly />
                                         <span className="review-user">
-                                            by {reviewItem.userId} on {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
+                                            {t('by')} {reviewItem.userFirstName + ' ' + reviewItem.userLastName} {t('on')} {reviewItem.createdTime ? new Date(reviewItem.createdTime).toLocaleDateString() : t('UnknownDate')}
                                         </span>
                                     </div>
                                     <p className="review-content">
@@ -495,14 +553,14 @@ function ServiceShopDetailsPage() {
                         ) : (
                             <p>{t('No reviews available')}</p>
                         )}
+                        <div id="pagination">
+                            {reviewPaging && reviewPaging.TotalPages > 0 &&
+                                <>
+                                    <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
+                                </>
+                            }
+                        </div>
                     </div>
-                </div>
-                <div id="pagination">
-                    {reviewPaging && reviewPaging.TotalPages > 0 &&
-                        <>
-                            <Pagination count={reviewPaging.TotalPages} onChange={(e, value) => setReviewPage(value)} />
-                        </>
-                    }
                 </div>
             </div>
 
@@ -510,68 +568,53 @@ function ServiceShopDetailsPage() {
             <div className="about-us-section" id="about-us-section">
 
                 <div className="about-us-title">
-                    <h2>{t('Working Schedule')}</h2>
+                    <h1>{t('Working Schedule')}</h1>
                 </div>
 
-                <div className="about-us-section">
-                    {/* ... other parts of the section ... */}
-
-                    <div className="operation-hours">
-                        {isDefaultSchedule(userDetails.workingTimes) ? (
-                            <p>{t('No work schedule present')}</p>
-                        ) : (
-                            userDetails.workingTimes.map((day, index) => (
-                                <p key={index}>
-                                    {daysOfWeek[day.dayOfWeek]}:
-                                    {day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}
-                                </p>
-                            ))
-                        )}
-                    </div>
-
-                    {/* ... other parts of the section ... */}
+                <div className="operation-hours">
+                    {isDefaultSchedule(userDetails.workingTimes) ? (
+                        <p>{t('No work schedule present')}</p>
+                    ) : (
+                        <table>
+                            <tbody>
+                                {
+                                    userDetails.workingTimes.map((day, index) => (
+                                        <tr key={index}>
+                                            <td>{daysOfWeek[day.dayOfWeek]}</td>
+                                            <td>{day.isClosed ? t('Closed') : `${String(day.startHour).padStart(2, ' 0')}:${String(day.startMinute).padStart(2, '0')} - ${String(day.endHour).padStart(2, '0')}:${String(day.endMinute).padStart(2, '0')}`}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
             {editDealerProfile && (
-                <div className="dealer-car-sales-modal">
-                    <div className="dealer-car-sales-modal-content-2">
-                        <span className="dealer-car-sales-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1) }}>&times;</span>
+                <div className="pol-crash-modal">
+                    <div className="pol-crash-modal-content">
+                        <span className="pol-crash-close-btn" onClick={() => { setEditDealerProfile(null); setModalPage(1);setAddError(null);setError(null) }}>&times;</span>
                         <h2>{t('Edit Profile')}</h2>
-                        {modalPage === 1 && (
-                            <CarDealerProfilePage
-                                action="Edit"
-                                userDetails={editDealerProfile}
-                                handleInputChange={handleInputChange}
-                            />
-                        )}
-                        {modalPage === 2 && (
+                        <div className="pol-crash-modal-content-2">
                             <CarDealerProfileImage
                                 model={editDealerProfile}
                                 handleAddImages={handleAddImages}
                                 imageUrl={imageUrl}
                             />
-                        )}
-                        {adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : (
-                            <>
-                                <div>
-                                    <button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">
-                                        {t('Previous')}
-                                    </button>
-                                    <button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">
-                                        {modalPage < 2 ? t('Next') : t('Edit')}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                        {/*<button onClick={handlePreviousPage} disabled={modalPage === 1} className="dealer-car-sales-prev-btn">*/}
-                        {/*    Previous*/}
-                        {/*</button>*/}
-                        {/*<button onClick={handleNextPage} disabled={adding} className="dealer-car-sales-next-btn">*/}
-                        {/*    {modalPage < 2 ? 'Next' : (adding ? (<div className="dealer-car-sales-inline-spinner"></div>) : 'Edit')}*/}
-                        {/*</button>*/}
-                        {addError && (
-                            <p className="dealer-car-sales-error">{addError}</p>
-                        )}
+                            <CarDealerProfilePage
+                                action="Edit"
+                                userDetails={editDealerProfile}
+                                handleInputChange={handleInputChange}
+                            />
+                            {addError && (
+                                <MuiAlert elevation={6} variant="filled" severity="error" sx={{ zIndex: '2000', marginTop: '20px' }}>
+                                    {addError}
+                                </MuiAlert>
+                            )}
+                            <button onClick={handleNextPage} disabled={adding} className="reg-reg-model-add-btn">
+                                {adding ? (<div className="pol-crash-model-inline-spinner"></div>) : t('Finish')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

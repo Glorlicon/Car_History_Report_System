@@ -394,6 +394,8 @@ export interface Reviews {
     description: string
     rating: number
     createdTime?: Date
+    userFirstName?: string
+    userLastName?: string
 }
 
 export interface ModelMaintenance {

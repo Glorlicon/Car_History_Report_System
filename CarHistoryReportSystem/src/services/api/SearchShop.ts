@@ -12,7 +12,8 @@ export async function GetDataProviderByType(pageNumber: number, connectAPIError:
                 params: {
                     PageNumber: pageNumber,
                     Name: DealerSearchParams.name,
-                    SortByName: DealerSearchParams.sortByName
+                    SortByName: DealerSearchParams.sortByName,
+                    PageSize:4
                 }
             })
         return { data: response.data, pages: JSON.parse(response.headers['x-pagination']) }

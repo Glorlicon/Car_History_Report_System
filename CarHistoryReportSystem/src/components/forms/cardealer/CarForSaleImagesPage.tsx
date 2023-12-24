@@ -69,14 +69,14 @@ const CarForSaleImagesPage: React.FC<CarForSaleImagesPageProps> = ({
               <button onClick={handleAddClick} className="dealer-car-sales-form-image-add-button"> + {t('Add Image')}</button>
                   {model.carImages && model.carImages?.length > 0 ? (
                       <div className="dealer-car-sales-images">
-                          <button className="dealer-car-sales-images-arrow-left" onClick={handlePrevImage}>&lt;</button>
+                          <button className="dealer-car-sales-images-arrow-left-2" onClick={handlePrevImage}>&lt;</button>
                           <img src={
                               model?.carImages?.at(currentImageIndex)?.id != -1 ? 
                                   GetImages(model?.carImages?.at(currentImageIndex)?.imageLink as string) :
                                   model?.carImages?.at(currentImageIndex)?.imageLink
                               }
-                              alt="Car" className="dealer-car-sales-details-image" />
-                      <button className="dealer-car-sales-images-arrow-right" onClick={handleNextImage}>&gt;</button>
+                              alt="Car" style={{width:'400px',height:'250px'}}/>
+                      <button className="dealer-car-sales-images-arrow-right-2" onClick={handleNextImage}>&gt;</button>
                       < button type="button" className="dealer-car-sales-form-image-remove-button" onClick={() => { handleRemoveImages(currentImageIndex); handleChangeIndex() }}>{t('Remove Current Image')}</button>
                       </div>
                   ): (
