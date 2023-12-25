@@ -852,7 +852,7 @@ function CarDealerCarList() {
                             </div>
                             <div className="pol-crash-form-column">
                                 <label>{t('Note')}</label>
-                                <TextField type="text" name="note" value={saleDetails.note} onChange={handleInputChange} style={{ width: '100%' }} size='small' />
+                                <TextField type="text" name="note" value={saleDetails.note} onChange={handleSalesChange} style={{ width: '100%' }} size='small' />
                             </div>
                             {addError && (
                                 <MuiAlert elevation={6} variant="filled" severity="error" sx={{ width: '90%', zIndex: '2000', marginTop: '20px' }}>
