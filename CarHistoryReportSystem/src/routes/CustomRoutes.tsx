@@ -68,26 +68,26 @@ const CustomRoutes = () => {
         <Router>
             <Routes>
                 {/*Guest*/}
-                <Route path="/unauthorized" element={<UserLayout navItems={UserNavigation}> <UnauthorizedPage /> </UserLayout>} />
-                <Route path="/" element={<UserLayout navItems={UserNavigation}> <HomePage /> </UserLayout>} />
-                <Route path="/sales" element={<UserLayout navItems={UserNavigation}> <CarSalesPage /> </UserLayout>} />
+                <Route path="/unauthorized" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <HomePage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/sales" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarSalesPage /> </UserLayout>} ></ProtectedRoute>}/>
                 <Route path="/login" element={<UserLayout navItems={UserNavigation}> <LoginPage /> </UserLayout>} />
                 <Route path="/register" element={<UserLayout navItems={UserNavigation}> <RegisterPage /> </UserLayout>} />
                 <Route path="/account-verify" element={<UserLayout navItems={UserNavigation}> <AccountVeryficationPage /> </UserLayout>} />
                 <Route path="/suspended" element={<UserLayout navItems={UserNavigation}> <SuspendPage /> </UserLayout>} />
-                <Route path="/report" element={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>} />
-                <Route path="/payment/:vin" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
-                <Route path="/payment/" element={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>} />
-                <Route path="/car-report/:vin/:date" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
-                <Route path="/car-report/:vin" element={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>} />
-                <Route path="/payment-return" element={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>} />
-                <Route path="/sales/details/:id" element={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>} />
-                <Route path="/sales/dealer/:id" element={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>} />
-                <Route path="/service/:id" element={<UserLayout navItems={UserNavigation}> <CarServiceShoprProfile /> </UserLayout>} />
-                <Route path="/dealers/search" element={<UserLayout navItems={UserNavigation}> <SearchCarDealer /> </UserLayout>} />
-                <Route path="/services/search" element={<UserLayout navItems={UserNavigation}> <SearchServiceShop /> </UserLayout>} />
-                <Route path="/forgotpassword" element={<UserLayout navItems={UserNavigation}> <ForgotPassword /> </UserLayout>} />
-                <Route path="/forgotpassword/initiate/:email" element={<UserLayout navItems={UserNavigation}> <ForgotPasswordInitiate /> </UserLayout>} />
+                <Route path="/report" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarHistoryReportPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/payment/:vin" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/payment/" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <PaymentPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/car-report/:vin/:date" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>}></ProtectedRoute>}/>
+                <Route path="/car-report/:vin" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarReportPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/payment-return" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <PaymentReturnPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/sales/details/:id" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarSalesDetailPage /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/sales/dealer/:id" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarDealerProfile /> </UserLayout>}></ProtectedRoute>} />
+                <Route path="/service/:id" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <CarServiceShoprProfile /> </UserLayout>} ></ProtectedRoute>}/>
+                <Route path="/dealers/search" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <SearchCarDealer /> </UserLayout>} ></ProtectedRoute>}/>
+                <Route path="/services/search" element={<ProtectedRoute roles={['User','Guest']} children={<UserLayout navItems={UserNavigation}> <SearchServiceShop /> </UserLayout>} ></ProtectedRoute>}/>
+                <Route path="/forgotpassword" element={<UserLayout navItems={UserNavigation}> <ForgotPassword /> </UserLayout>}/>
+                <Route path="/forgotpassword/initiate/:email" element={<UserLayout navItems={UserNavigation}> <ForgotPasswordInitiate /> </UserLayout>}/>
                 <Route path="/forgotpassword/sucess" element={<UserLayout navItems={UserNavigation}> <ForgottenPasswordSuccess /> </UserLayout>} />
                 {/*User*/}
                 <Route path="/profile" element={<ProtectedRoute roles={['User']} children={<UserLayout navItems={UserNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
@@ -105,6 +105,7 @@ const CustomRoutes = () => {
                 <Route path="/admin/monetization" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><AdminMonetizationPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/admin/profile" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/admin/notification" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/admin/unauthorized" element={<ProtectedRoute roles={['Adminstrator']} children={<UserLayout navItems={AdminNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Service Shop*/}
                 <Route path="/service" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/details" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><ServiceShopDetailsPage /></UserLayout>}></ProtectedRoute>} />
@@ -113,6 +114,7 @@ const CustomRoutes = () => {
                 <Route path="/service/requests" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><RequestPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/profile" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/service/notification" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/service/unauthorized" element={<ProtectedRoute roles={['ServiceShop']} children={<UserLayout navItems={ServiceShopNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Insurance*/}
                 <Route path="/insurance" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceCompanyHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/insurance/insurance-list" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceCompanyInsuranceList /></UserLayout>}></ProtectedRoute>} />
@@ -123,6 +125,7 @@ const CustomRoutes = () => {
                 <Route path="/insurance/notification" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/insurance/car-report/:vin" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/insurance/reports" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}><InsuranceSearchCarReport /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/insurance/unauthorized" element={<ProtectedRoute roles={['InsuranceCompany']} children={<UserLayout navItems={InsuranceNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Police*/}
                 <Route path="/police" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/stolen" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceStolenCarList /></UserLayout>}></ProtectedRoute>} />
@@ -134,6 +137,7 @@ const CustomRoutes = () => {
                 <Route path="/police/notification" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/reports" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><PoliceSearchCarReport /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/police/car-report/:vin" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/police/unauthorized" element={<ProtectedRoute roles={['PoliceOffice']} children={<UserLayout navItems={PoliceNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Manufacturer*/}
                 <Route path="/manufacturer" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-models" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarModelList /></UserLayout>}></ProtectedRoute>} />
@@ -143,6 +147,7 @@ const CustomRoutes = () => {
                 <Route path="/manufacturer/notification" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/car-report/:vin" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/manufacturer/reports" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}><ManufacturerCarReport /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/manufacturer/unauthorized" element={<ProtectedRoute roles={['Manufacturer']} children={<UserLayout navItems={ManufacturerNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Car Dealer*/}
                 <Route path="/dealer" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/dealer/details" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerShopDetailsPage /></UserLayout>}></ProtectedRoute>} />
@@ -153,6 +158,7 @@ const CustomRoutes = () => {
                 <Route path="/dealer/profile" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><UserProfile /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/dealer/notification" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/dealer/sales/details/:id" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}><CarDealerCarDetails /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/dealer/unauthorized" element={<ProtectedRoute roles={['CarDealer']} children={<UserLayout navItems={CarDealerNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
                 {/*Vehicle Registry*/}
                 <Route path="/registry" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><VehicleRegistryHomePage /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/registry/inspection" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RegistryInspectionList /></UserLayout>}></ProtectedRoute>} />
@@ -162,6 +168,7 @@ const CustomRoutes = () => {
                 <Route path="/registry/notification" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><UserNotification /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/registry/reports" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><RegistrySearchCarReport /></UserLayout>}></ProtectedRoute>} />
                 <Route path="/registry/car-report/:vin" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}><CarReportPage /></UserLayout>}></ProtectedRoute>} />
+                <Route path="/registry/unauthorized" element={<ProtectedRoute roles={['VehicleRegistry']} children={<UserLayout navItems={RegistryNavigation}> <UnauthorizedPage /> </UserLayout>}></ProtectedRoute>} />
             </Routes>
         </Router>
     )

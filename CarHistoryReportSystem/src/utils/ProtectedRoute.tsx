@@ -12,23 +12,39 @@ const ProtectedRoute: React.FC<AuthorizationProps> = ({
     children,
     roles
 }) => {
-    let authorized = false
     const token = useSelector((state: RootState) => state.auth.token) as unknown as string
+    let redirectPath = '/unauthorized';
+    let authorized = true
     if (token) {
-        const decodedToken = JWTDecoder(token)
-        authorized = roles.includes(decodedToken.roles)
+        const decodedToken = JWTDecoder(token);
+        if (roles.includes(decodedToken.roles)) {
+            authorized = true
+        } else {
+            authorized = false
+            const roleToPathMap: { [role: string]: string } = {
+                'Adminstrator': '/admin/unauthorized',
+                'User': '/unauthorized',
+                'ServiceShop': '/service/unauthorized',
+                'InsuranceCompany': '/insurance/unauthorized',
+                'PoliceOffice': '/police/unauthorized',
+                'Manufacturer': '/manufacturer/unauthorized',
+                'CarDealer': '/dealer/unauthorized',
+                'VehicleRegistry': '/registry/unauthorized',
+            };
+            redirectPath = roleToPathMap[decodedToken.roles] || '/unauthorized';
+        }
     } else {
-        authorized = false
-    }   
-  return (
-      <>
-          {authorized ? (
-              children
-          ) : (
-              <Navigate to="/unauthorized" replace />
-          )}
-      </>
-  );
+        if (roles.includes('Guest')) {
+            authorized = true
+        } else {
+            authorized = false
+        }
+    }
+    return (
+        <>
+            {authorized ? children : <Navigate to={redirectPath} replace />}
+        </>
+    );
 }
 
 export default ProtectedRoute;

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { AddCar, AddOldCarToStorage, EditCar, ListCarByManu, ListDealerCarStorage } from "../../services/api/Car";
+import { AddCar, AddOldCarToStorage, CheckCar, EditCar, ListCarByManu, ListDealerCarStorage } from "../../services/api/Car";
 import { ListManufacturerModel, ListManufacturer } from "../../services/api/CarForSale";
 import { ListAllCarModels } from "../../services/api/CarModel";
 import { RootState } from "../../store/State";
@@ -100,14 +100,22 @@ function ManufacturerCarReport() {
     const [vinError, setVinError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const handleVINCheck = async () => {
+        let connectAPIError = t('Cannot connect to API! Please try again later')
+        let unknownError = t('Something went wrong. Please try again')
+        let language = currentLanguage === 'vn' ? 'vi-VN,vn;' : 'en-US,en;'
         if (!vin) {
             setVinError(t('Please enter VIN'));
         } else if (!isValidVIN(vin)) {
             setVinError(t('The VIN entered is invalid. Please check and try again'));
         } else {
+            const checkCar: APIResponse = await CheckCar(vin, connectAPIError, language)
+            if (checkCar.error) {
+                setVinError(checkCar.error)
+                return
+            }
             setVinError(null);
             setIsLoading(true);
-            navigate(`/police/car-report/${vin}`)
+            navigate(`/manufacturer/car-report/${vin}`)
         }
     };
     const handleChangePage = (event: unknown, newPage: number) => {

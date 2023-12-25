@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router';
 import { RootState } from '../../store/State';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
 import MuiAlert from '@mui/material/Alert';
+import { APIResponse } from '../../utils/Interfaces';
+import { CheckCar } from '../../services/api/Car';
 
 function RegistrySearchCarReport() {
     const { t, i18n } = useTranslation()
@@ -26,6 +28,11 @@ function RegistrySearchCarReport() {
         } else if (!isValidVIN(vin)) {
             setVinError(t('The VIN entered is invalid. Please check and try again'));
         } else {
+            const checkCar: APIResponse = await CheckCar(vin, connectAPIError, language)
+            if (checkCar.error) {
+                setVinError(checkCar.error)
+                return
+            }
             setVinError(null);
             setIsLoading(true);
             navigate(`/registry/car-report/${vin}`)
