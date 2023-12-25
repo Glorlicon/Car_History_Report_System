@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router';
 import { RootState } from '../../store/State';
 import { isValidPlateNumber, isValidVIN } from '../../utils/Validators';
 import MuiAlert from '@mui/material/Alert';
+import { CheckCar } from '../../services/api/Car';
+import { APIResponse } from '../../utils/Interfaces';
 function PoliceSearchCarReport() {
     const { t, i18n } = useTranslation()
     const currentLanguage = useSelector((state: RootState) => state.auth.language);
@@ -25,6 +27,11 @@ function PoliceSearchCarReport() {
         } else if (!isValidVIN(vin)) {
             setVinError(t('The VIN entered is invalid. Please check and try again'));
         } else {
+            const checkCar: APIResponse = await CheckCar(vin, connectAPIError, language)
+            if (checkCar.error) {
+                setVinError(checkCar.error)
+                return
+            }
             setVinError(null);
             setIsLoading(true);
             navigate(`/police/car-report/${vin}`)
